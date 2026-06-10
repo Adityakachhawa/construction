@@ -1,0 +1,56 @@
+---
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'outline';
+export type ButtonSize = 'sm' | 'md' | 'lg';
+
+interface Props {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  href?: string;
+  type?: 'button' | 'submit' | 'reset';
+  disabled?: boolean;
+  class?: string;
+  ariaLabel?: string;
+}
+
+const {
+  variant = 'primary',
+  size = 'md',
+  href,
+  type = 'button',
+  disabled = false,
+  class: className = '',
+  ariaLabel,
+} = Astro.props;
+
+const baseClasses =
+  'inline-flex items-center justify-center font-semibold rounded-lg transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-primary)] disabled:opacity-50 disabled:cursor-not-allowed';
+
+const variantClasses: Record<ButtonVariant, string> = {
+  primary:
+    'bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)] active:bg-[var(--color-primary-hover)]',
+  secondary:
+    'bg-[var(--color-neutral-100)] text-[var(--color-text-primary)] hover:bg-[var(--color-neutral-200)]',
+  ghost:
+    'text-[var(--color-text-secondary)] hover:bg-[var(--color-neutral-100)] hover:text-[var(--color-text-primary)]',
+  outline:
+    'border border-[var(--color-border)] text-[var(--color-text-primary)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]',
+};
+
+const sizeClasses: Record<ButtonSize, string> = {
+  sm: 'text-sm px-3 py-1.5 gap-1.5',
+  md: 'text-sm px-4 py-2 gap-2',
+  lg: 'text-base px-6 py-3 gap-2',
+};
+
+const classes = [baseClasses, variantClasses[variant], sizeClasses[size], className].join(' ');
+---
+
+{href ? (
+  <a href={href} class={classes} aria-label={ariaLabel}>
+    <slot />
+  </a>
+) : (
+  <button type={type} class={classes} disabled={disabled} aria-label={ariaLabel}>
+    <slot />
+  </button>
+)}

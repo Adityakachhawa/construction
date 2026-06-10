@@ -1,0 +1,30 @@
+---
+interface Props {
+  name: string;
+  size?: number;
+  class?: string;
+}
+
+const { name, size = 28, class: className = '' } = Astro.props;
+
+const icons: Record<string, string> = {
+  concrete: `<rect x="3" y="8" width="18" height="11" rx="1.5" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M7 8V6a2 2 0 014 0v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M3 12h18" stroke="currentColor" stroke-width="1.5"/>`,
+  decking: `<path d="M2 6h20M2 12h20M2 18h20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M6 4v16M12 4v16M18 4v16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`,
+  fencing: `<path d="M4 20V8l4-4 4 4v12M12 20V8l4-4 4 4v12" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" fill="none"/><path d="M2 20h20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M2 12h8M12 12h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`,
+  framing: `<path d="M3 20V6l9-3 9 3v14" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" fill="none"/><path d="M3 12h18" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="14" width="6" height="6" stroke="currentColor" stroke-width="1.5" fill="none"/>`,
+  excavation: `<path d="M3 18c2-4 4-6 6-6s4 2 6 2 4-2 6-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M3 22h18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M17 8l2-4h2l1 4-3 2-2-2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" fill="none"/>`,
+  masonry: `<rect x="2" y="4" width="9" height="5" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/><rect x="13" y="4" width="9" height="5" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/><rect x="2" y="11" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/><rect x="9" y="11" width="6" height="5" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/><rect x="17" y="11" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/><rect x="2" y="18" width="9" height="4" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/><rect x="13" y="18" width="9" height="4" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/>`,
+};
+
+const paths = icons[name] ?? icons['concrete'];
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  aria-hidden="true"
+  class={`text-[var(--color-primary)] ${className}`}
+  set:html={paths}
+/>

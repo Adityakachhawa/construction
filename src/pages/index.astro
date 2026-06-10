@@ -1,11 +1,154 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { buildHomeMeta } from '../utils/seo';
+import { buildWebSiteSchema, buildOrganizationSchema } from '../utils/schema';
+import { categories } from '../data/categories';
+import { getFeaturedCalculators, calculatorRegistry } from '../data/registry';
+import Card from '../components/ui/Card.astro';
+import Badge from '../components/ui/Badge.astro';
+import Button from '../components/ui/Button.astro';
+import CategoryIcon from '../components/ui/CategoryIcon.astro';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const meta = buildHomeMeta();
+// WebSite + Organization schemas belong only on the homepage
+const schemas = [buildWebSiteSchema(), buildOrganizationSchema()];
+const featuredCalcs = getFeaturedCalculators(6);
+const totalCalcs = calculatorRegistry.length;
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<BaseLayout meta={meta} schemas={schemas}>
+
+  <!-- Hero -->
+  <section class="bg-gradient-to-b from-[var(--color-primary-50)] to-white border-b border-[var(--color-border)]">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24 text-center">
+      <Badge color="blue" size="md" class="mb-4">Free • No signup required</Badge>
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--color-text-primary)] leading-tight max-w-3xl mx-auto">
+        Construction Calculators for Every Project
+      </h1>
+      <p class="mt-4 text-lg sm:text-xl text-[var(--color-text-secondary)] max-w-2xl mx-auto leading-relaxed">
+        Accurate material estimates for concrete, framing, decking, fencing, and more. Built for professionals and serious DIYers.
+      </p>
+      <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
+        <Button href="/calculators/" size="lg">Browse All Calculators</Button>
+        <Button href="/guides/" variant="outline" size="lg">View Guides</Button>
+      </div>
+      {totalCalcs > 0 && (
+        <p class="mt-6 text-sm text-[var(--color-text-muted)]">
+          {totalCalcs} calculator{totalCalcs !== 1 ? 's' : ''} and counting
+        </p>
+      )}
+    </div>
+  </section>
+
+  <!-- Featured Calculators -->
+  {featuredCalcs.length > 0 && (
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 py-14">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-bold text-[var(--color-text-primary)]">Popular Calculators</h2>
+        <a href="/calculators/" class="text-sm text-[var(--color-primary)] font-medium hover:underline">
+          View all →
+        </a>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {featuredCalcs.map(calc => (
+          <Card href={`/calculators/${calc.slug}/`} variant="bordered" padding="md">
+            <div class="flex flex-col h-full gap-3">
+              <div class="flex items-start justify-between gap-2">
+                <h3 class="font-semibold text-[var(--color-text-primary)] leading-snug">{calc.name}</h3>
+                <Badge color="gray" size="sm">{calc.category}</Badge>
+              </div>
+              <p class="text-sm text-[var(--color-text-secondary)] leading-relaxed flex-1">
+                {calc.description}
+              </p>
+              <span class="text-sm font-medium text-[var(--color-primary)]">
+                Open calculator →
+              </span>
+            </div>
+          </Card>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <!-- Category grid -->
+  <section class="bg-[var(--color-neutral-50)] border-y border-[var(--color-border)]">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-14">
+      <h2 class="text-xl font-bold text-[var(--color-text-primary)] mb-6">Browse by Category</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        {categories.map(cat => (
+          <a
+            href={`/category/${cat.slug}/`}
+            class="flex flex-col items-center gap-2 p-4 rounded-xl bg-white border border-[var(--color-border)] hover:border-[var(--color-primary)] hover:shadow-[var(--shadow-md)] transition-all text-center group"
+          >
+            <CategoryIcon name={cat.icon} />
+            <span class="text-sm font-medium text-[var(--color-text-primary)] group-hover:text-[var(--color-primary)] transition-colors">
+              {cat.name}
+            </span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Why use section -->
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 py-14">
+    <div class="grid md:grid-cols-2 gap-10 items-center">
+      <div>
+        <h2 class="text-2xl font-bold text-[var(--color-text-primary)]">
+          Built for accuracy, not guesswork
+        </h2>
+        <p class="mt-3 text-[var(--color-text-secondary)] leading-relaxed">
+          Every calculator uses industry-standard formulas with built-in waste factors. Switch between imperial and metric with one click. Results update instantly as you type.
+        </p>
+        <ul class="mt-6 space-y-3">
+          {[
+            'Standard formulas used by contractors',
+            'Imperial and metric support',
+            'Material cost estimates included',
+            'No account or login required',
+          ].map(item => (
+            <li class="flex items-start gap-3 text-sm text-[var(--color-text-secondary)]">
+              <svg width="16" height="16" viewBox="0 0 16 16" class="mt-0.5 shrink-0 text-[var(--color-success-500)]" fill="none" aria-hidden="true">
+                <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              {item}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        {[
+          { label: 'Calculators', value: '5+' },
+          { label: 'Categories', value: String(categories.length) },
+          { label: 'Unit systems', value: '2' },
+          { label: 'Cost', value: 'Free' },
+        ].map(stat => (
+          <div class="rounded-xl border border-[var(--color-border)] bg-white p-5 text-center">
+            <p class="text-3xl font-bold text-[var(--color-primary)]">{stat.value}</p>
+            <p class="mt-1 text-sm text-[var(--color-text-muted)]">{stat.label}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Bottom CTA -->
+  <section class="bg-[var(--color-primary-900)] text-white">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-14 text-center">
+      <h2 class="text-2xl font-bold">Start calculating your project today</h2>
+      <p class="mt-3 text-[var(--color-primary-200)] max-w-xl mx-auto">
+        All calculators are free, work on any device, and require no sign-up.
+      </p>
+      <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
+        <Button href="/calculators/" size="lg" class="bg-white text-[var(--color-primary)] hover:bg-[var(--color-primary-50)]">
+          Browse Calculators
+        </Button>
+        <Button href="/guides/" variant="ghost" size="lg" class="text-white hover:bg-white/10">
+          Read Guides
+        </Button>
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>

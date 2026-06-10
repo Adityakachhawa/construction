@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { buildPageTitle } from '../../utils/seo';
+
+const meta = {
+  title: buildPageTitle('Blog'),
+  description: 'Construction tips, guides, and project planning advice from the ConstructCalc team.',
+  canonical: 'https://constructcalc.com/blog/',
+  ogType: 'website' as const,
+};
+---
+
+<BaseLayout meta={meta}>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-10">
+    <h1 class="text-2xl sm:text-3xl font-bold text-[var(--color-text-primary)]">Blog</h1>
+    <p class="mt-2 text-[var(--color-text-secondary)]">Construction tips and project planning advice.</p>
+    <div class="mt-12 text-center py-16 rounded-xl border border-dashed border-[var(--color-border)]">
+      <p class="text-[var(--color-text-muted)]">Articles coming soon.</p>
+    </div>
+  </div>
+</BaseLayout>

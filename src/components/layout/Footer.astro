@@ -1,0 +1,69 @@
+---
+import { categories } from '../../data/categories';
+---
+
+<footer class="border-t border-[var(--color-border)] bg-[var(--color-neutral-50)] mt-20">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+
+      <!-- Brand -->
+      <div class="col-span-2 md:col-span-1">
+        <a href="/" class="flex items-center gap-2 font-bold text-[var(--color-text-primary)] mb-3">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <rect x="2" y="14" width="6" height="8" rx="1" fill="var(--color-primary)" />
+            <rect x="9" y="8" width="6" height="14" rx="1" fill="var(--color-primary)" opacity="0.75" />
+            <rect x="16" y="2" width="6" height="20" rx="1" fill="var(--color-primary)" opacity="0.5" />
+          </svg>
+          ConstructCalc
+        </a>
+        <p class="text-sm text-[var(--color-text-muted)] leading-relaxed">
+          Free construction calculators for professionals and DIYers.
+        </p>
+      </div>
+
+      <!-- Calculators -->
+      <div>
+        <h3 class="text-sm font-semibold text-[var(--color-text-primary)] mb-3">Calculators</h3>
+        <ul class="space-y-2">
+          {categories.slice(0, 5).map(cat => (
+            <li>
+              <a href={`/category/${cat.slug}/`} class="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors">
+                {cat.name}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Resources -->
+      <div>
+        <h3 class="text-sm font-semibold text-[var(--color-text-primary)] mb-3">Resources</h3>
+        <ul class="space-y-2">
+          <li><a href="/blog/" class="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors">Blog</a></li>
+          <li><a href="/guides/" class="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors">Guides</a></li>
+          <li><a href="/calculators/" class="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors">All Calculators</a></li>
+        </ul>
+      </div>
+
+      <!-- Company -->
+      <div>
+        <h3 class="text-sm font-semibold text-[var(--color-text-primary)] mb-3">Company</h3>
+        <ul class="space-y-2">
+          <li><a href="/about/" class="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors">About</a></li>
+          <li><a href="/privacy/" class="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors">Privacy Policy</a></li>
+          <li><a href="/contact/" class="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors">Contact</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="mt-10 pt-6 border-t border-[var(--color-border)] flex flex-col sm:flex-row items-center justify-between gap-3">
+      <p class="text-xs text-[var(--color-text-muted)]">
+        &copy; {new Date().getFullYear()} ConstructCalc. All rights reserved.
+      </p>
+      <p class="text-xs text-[var(--color-text-muted)]">
+        Results are estimates. Always verify with a licensed professional.
+      </p>
+    </div>
+  </div>
+</footer>

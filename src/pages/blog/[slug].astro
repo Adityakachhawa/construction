@@ -1,0 +1,71 @@
+---
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import { buildArticleMeta } from '../../utils/seo';
+import { buildArticleSchema, buildBreadcrumbList } from '../../utils/schema';
+import { getCollection, render } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  return posts.map((post) => {
+    const slug = post.id.replace(/\.[^.]+$/, '');
+    return {
+      params: { slug },
+      props: { post, slug },
+    };
+  });
+};
+
+const { post, slug } = Astro.props;
+const { Content } = await render(post);
+
+const meta = buildArticleMeta({
+  title: post.data.title,
+  description: post.data.description,
+  slug,
+  section: 'blog',
+  publishedAt: post.data.publishedAt,
+  updatedAt: post.data.updatedAt,
+  ogImage: post.data.featuredImage,
+});
+
+const schemas = [
+  buildArticleSchema({
+    title: post.data.title,
+    description: post.data.description,
+    url: meta.canonical,
+    imageUrl: post.data.featuredImage ?? 'https://constructcalc.com/og-default.png',
+    publishedAt: post.data.publishedAt,
+    updatedAt: post.data.updatedAt,
+    authorName: post.data.author,
+    type: 'Article',
+  }),
+  buildBreadcrumbList([
+    { name: 'Home', href: '/' },
+    { name: 'Blog', href: '/blog/' },
+    { name: post.data.title, href: `/blog/${slug}/` },
+  ]),
+];
+
+const breadcrumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Blog', href: '/blog/' },
+  { name: post.data.title, href: `/blog/${slug}/` },
+];
+---
+
+<ArticleLayout
+  meta={meta}
+  schemas={schemas}
+  breadcrumbs={breadcrumbs}
+  variant="blog"
+  title={post.data.title}
+  description={post.data.description}
+  publishedAt={post.data.publishedAt}
+  updatedAt={post.data.updatedAt}
+  author={post.data.author}
+  featuredImage={post.data.featuredImage}
+  tags={post.data.tags}
+>
+  <Content />
+</ArticleLayout>

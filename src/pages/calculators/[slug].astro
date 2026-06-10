@@ -1,0 +1,87 @@
+---
+import CalculatorLayout from '../../layouts/CalculatorLayout.astro';
+import { buildCalculatorMeta } from '../../utils/seo';
+import { buildWebAppSchema, buildBreadcrumbList } from '../../utils/schema';
+import { calculatorRegistry, getRelatedCalculators } from '../../data/registry';
+import { getCategoryBySlug } from '../../data/categories';
+import Card from '../../components/ui/Card.astro';
+import type { GetStaticPaths } from 'astro';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  return calculatorRegistry.map((calc) => ({
+    params: { slug: calc.slug },
+    props: { calc },
+  }));
+};
+
+const { calc } = Astro.props;
+
+const category = getCategoryBySlug(calc.category);
+const categoryName = category?.name ?? calc.category;
+
+const meta = buildCalculatorMeta({
+  title: calc.seo.title,
+  description: calc.seo.description,
+  slug: calc.slug,
+  ogImage: calc.seo.ogImage,
+});
+
+const schemas = [
+  buildWebAppSchema({
+    name: calc.name,
+    description: calc.seo.description,
+    url: meta.canonical,
+    appType: calc.schema.appType,
+    features: calc.schema.features,
+  }),
+  buildBreadcrumbList([
+    { name: 'Home', url: '/' },
+    { name: `${categoryName} Calculators`, url: `/category/${calc.category}/` },
+    { name: calc.name, url: `/calculators/${calc.slug}/` },
+  ]),
+];
+
+const breadcrumbs = [
+  { name: 'Home', href: '/' },
+  { name: `${categoryName} Calculators`, href: `/category/${calc.category}/` },
+  { name: calc.name, href: `/calculators/${calc.slug}/` },
+];
+
+const relatedCalcs = getRelatedCalculators(calc.relatedCalculators);
+---
+
+<CalculatorLayout
+  meta={meta}
+  schemas={schemas}
+  breadcrumbs={breadcrumbs}
+  h1={calc.seo.h1}
+  intro={calc.seo.description}
+>
+  <!--
+    Each named slot fills a section of CalculatorLayout.
+    CalculatorWidget (built when calculators are implemented) will replace the
+    placeholder below. The architecture is: page → layout, never slot forwarding.
+  -->
+  <div slot="calculator" id="calculator-widget" data-calculator={calc.slug}>
+    <p class="text-sm text-[var(--color-text-muted)] py-8 text-center">
+      Calculator widget — coming soon.
+    </p>
+  </div>
+
+  {relatedCalcs.length > 0 && (
+    <div slot="related" class="mt-12">
+      <h2 class="text-lg font-semibold text-[var(--color-text-primary)] mb-4">Related Calculators</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {relatedCalcs.map(related => (
+          <Card href={`/calculators/${related.slug}/`} variant="bordered" padding="md">
+            <div class="flex flex-col gap-2">
+              <h3 class="font-semibold text-[var(--color-text-primary)] leading-snug">{related.name}</h3>
+              <p class="text-sm text-[var(--color-text-secondary)] leading-relaxed">{related.description}</p>
+              <span class="text-sm font-medium text-[var(--color-primary)] mt-1">Open →</span>
+            </div>
+          </Card>
+        ))}
+      </div>
+    </div>
+  )}
+</CalculatorLayout>

@@ -1,0 +1,46 @@
+---
+interface Props {
+  variant?: 'default' | 'bordered' | 'flat';
+  padding?: 'sm' | 'md' | 'lg' | 'none';
+  class?: string;
+  href?: string;
+}
+
+const {
+  variant = 'default',
+  padding = 'md',
+  class: className = '',
+  href,
+} = Astro.props;
+
+const variantClasses = {
+  default: 'bg-white border border-[var(--color-border)] shadow-[var(--shadow-md)]',
+  bordered: 'bg-white border border-[var(--color-border)]',
+  flat: 'bg-[var(--color-neutral-50)]',
+};
+
+const paddingClasses = {
+  none: '',
+  sm: 'p-4',
+  md: 'p-6',
+  lg: 'p-8',
+};
+
+const classes = [
+  'rounded-xl overflow-hidden',
+  variantClasses[variant],
+  paddingClasses[padding],
+  href ? 'transition-shadow hover:shadow-[var(--shadow-lg)] cursor-pointer' : '',
+  className,
+].join(' ');
+---
+
+{href ? (
+  <a href={href} class={classes}>
+    <slot />
+  </a>
+) : (
+  <div class={classes}>
+    <slot />
+  </div>
+)}

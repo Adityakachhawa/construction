@@ -1,0 +1,37 @@
+---
+export type BadgeColor = 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple' | 'brown';
+
+interface Props {
+  color?: BadgeColor;
+  size?: 'sm' | 'md';
+  class?: string;
+}
+
+const { color = 'gray', size = 'sm', class: className = '' } = Astro.props;
+
+const colorClasses: Record<BadgeColor, string> = {
+  gray: 'bg-[var(--color-neutral-100)] text-[var(--color-neutral-700)]',
+  blue: 'bg-[var(--color-primary-50)] text-[var(--color-primary-700)]',
+  green: 'bg-[var(--color-success-50)] text-[var(--color-success-600)]',
+  yellow: 'bg-[var(--color-warning-50)] text-[var(--color-warning-500)]',
+  red: 'bg-[var(--color-error-50)] text-[var(--color-error-500)]',
+  purple: 'bg-purple-50 text-purple-700',
+  brown: 'bg-amber-50 text-amber-800',
+};
+
+const sizeClasses = {
+  sm: 'text-xs px-2 py-0.5',
+  md: 'text-sm px-2.5 py-1',
+};
+
+const classes = [
+  'inline-flex items-center font-medium rounded-full',
+  colorClasses[color],
+  sizeClasses[size],
+  className,
+].join(' ');
+---
+
+<span class={classes}>
+  <slot />
+</span>

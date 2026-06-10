@@ -1,0 +1,72 @@
+---
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import { buildArticleMeta } from '../../utils/seo';
+import { buildArticleSchema, buildBreadcrumbList } from '../../utils/schema';
+import { getCollection, render } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const guides = await getCollection('guides', ({ data }) => !data.draft);
+  return guides.map((guide) => {
+    const slug = guide.id.replace(/\.[^.]+$/, '');
+    return {
+      params: { slug },
+      props: { guide, slug },
+    };
+  });
+};
+
+const { guide, slug } = Astro.props;
+const { Content } = await render(guide);
+
+const meta = buildArticleMeta({
+  title: guide.data.title,
+  description: guide.data.description,
+  slug,
+  section: 'guides',
+  publishedAt: guide.data.publishedAt,
+  updatedAt: guide.data.updatedAt,
+  ogImage: guide.data.featuredImage,
+});
+
+const schemas = [
+  buildArticleSchema({
+    title: guide.data.title,
+    description: guide.data.description,
+    url: meta.canonical,
+    imageUrl: guide.data.featuredImage ?? 'https://constructcalc.com/og-default.png',
+    publishedAt: guide.data.publishedAt,
+    updatedAt: guide.data.updatedAt,
+    authorName: guide.data.author,
+    type: 'TechArticle',
+  }),
+  buildBreadcrumbList([
+    { name: 'Home', href: '/' },
+    { name: 'Guides', href: '/guides/' },
+    { name: guide.data.title, href: `/guides/${slug}/` },
+  ]),
+];
+
+const breadcrumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Guides', href: '/guides/' },
+  { name: guide.data.title, href: `/guides/${slug}/` },
+];
+---
+
+<ArticleLayout
+  meta={meta}
+  schemas={schemas}
+  breadcrumbs={breadcrumbs}
+  variant="guide"
+  title={guide.data.title}
+  description={guide.data.description}
+  publishedAt={guide.data.publishedAt}
+  updatedAt={guide.data.updatedAt}
+  author={guide.data.author}
+  readingTime={guide.data.readingTime}
+  featuredImage={guide.data.featuredImage}
+  tags={guide.data.tags}
+>
+  <Content />
+</ArticleLayout>

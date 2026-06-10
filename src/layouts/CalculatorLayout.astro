@@ -1,0 +1,47 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumbs from '../components/layout/Breadcrumbs.astro';
+import type { MetaProps } from '../utils/seo';
+import type { BreadcrumbItem } from '../utils/schema';
+
+interface Props {
+  meta: MetaProps;
+  schemas?: Record<string, unknown>[];
+  breadcrumbs: BreadcrumbItem[];
+  h1: string;
+  intro?: string;
+}
+
+const { meta, schemas = [], breadcrumbs, h1, intro } = Astro.props;
+---
+
+<BaseLayout meta={meta} schemas={schemas}>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6">
+    <Breadcrumbs items={breadcrumbs} />
+
+    <div class="mt-4 mb-8">
+      <h1 class="text-2xl sm:text-3xl font-bold text-[var(--color-text-primary)]">{h1}</h1>
+      {intro && (
+        <p class="mt-2 text-[var(--color-text-secondary)] text-base max-w-2xl">{intro}</p>
+      )}
+    </div>
+
+    <!-- Calculator panel (form + results) -->
+    <slot name="calculator" />
+
+    <!-- SVG Diagram -->
+    <slot name="diagram" />
+
+    <!-- How to use + Formula -->
+    <slot name="explainer" />
+
+    <!-- FAQ -->
+    <slot name="faq" />
+
+    <!-- Related calculators -->
+    <slot name="related" />
+
+    <!-- Long-form MDX content -->
+    <slot name="content" />
+  </div>
+</BaseLayout>

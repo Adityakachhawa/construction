@@ -1,0 +1,86 @@
+---
+import CategoryLayout from '../../layouts/CategoryLayout.astro';
+import { buildCategoryMeta } from '../../utils/seo';
+import { buildCollectionPageSchema, buildBreadcrumbList } from '../../utils/schema';
+import { categories } from '../../data/categories';
+import { getCalculatorsByCategory } from '../../data/registry';
+import { getCollection, render } from 'astro:content';
+import Card from '../../components/ui/Card.astro';
+import type { GetStaticPaths } from 'astro';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  return categories.map((cat) => ({
+    params: { slug: cat.slug },
+    props: { cat },
+  }));
+};
+
+const { cat } = Astro.props;
+const calcs = getCalculatorsByCategory(cat.slug);
+
+// Fetch MDX content for this category if it exists
+const allCategoryContent = await getCollection('categories');
+const categoryContent = allCategoryContent.find(
+  (entry) => entry.id.replace(/\.[^.]+$/, '') === cat.slug
+);
+const { Content } = categoryContent ? await render(categoryContent) : { Content: null };
+
+const meta = buildCategoryMeta({
+  name: cat.name,
+  description: cat.description,
+  slug: cat.slug,
+});
+
+const schemas = [
+  buildCollectionPageSchema({
+    name: `${cat.name} Calculators`,
+    description: cat.description,
+    url: meta.canonical,
+  }),
+  buildBreadcrumbList([
+    { name: 'Home', href: '/' },
+    { name: `${cat.name} Calculators`, href: `/category/${cat.slug}/` },
+  ]),
+];
+
+const breadcrumbs = [
+  { name: 'Home', href: '/' },
+  { name: `${cat.name} Calculators`, href: `/category/${cat.slug}/` },
+];
+---
+
+<CategoryLayout
+  meta={meta}
+  schemas={schemas}
+  breadcrumbs={breadcrumbs}
+  name={cat.name}
+  description={cat.description}
+  calculatorCount={calcs.length}
+>
+  <div slot="grid">
+    {calcs.length === 0 ? (
+      <p class="text-[var(--color-text-muted)] text-sm py-8">No calculators in this category yet. Check back soon.</p>
+    ) : (
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {calcs.map(calc => (
+          <Card href={`/calculators/${calc.slug}/`} variant="bordered" padding="md">
+            <div class="flex flex-col gap-2">
+              <h3 class="font-semibold text-[var(--color-text-primary)]">{calc.name}</h3>
+              <p class="text-sm text-[var(--color-text-secondary)] leading-relaxed">{calc.description}</p>
+              <span class="text-sm font-medium text-[var(--color-primary)] mt-1">Open →</span>
+            </div>
+          </Card>
+        ))}
+      </div>
+    )}
+  </div>
+
+  {Content && (
+    <div slot="content" class="mt-12 prose prose-neutral max-w-none
+      prose-headings:font-bold prose-headings:text-[var(--color-text-primary)]
+      prose-p:text-[var(--color-text-secondary)] prose-p:leading-relaxed
+      prose-a:text-[var(--color-primary)] prose-a:no-underline hover:prose-a:underline">
+      <Content />
+    </div>
+  )}
+</CategoryLayout>

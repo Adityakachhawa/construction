@@ -1,0 +1,78 @@
+export type UnitSystem = 'imperial' | 'metric';
+
+export type InputType = 'number' | 'select' | 'radio';
+
+export interface SelectOption {
+  value: string;
+  label: string;
+}
+
+export interface InputField {
+  id: string;
+  label: string;
+  type: InputType;
+  unit?: string;
+  unitMetric?: string;
+  min?: number;
+  max?: number;
+  step?: number;
+  options?: SelectOption[];
+  defaultValue: number | string;
+  defaultValueMetric?: number | string;
+  required?: boolean;
+  helpText?: string;
+}
+
+export interface OutputField {
+  id: string;
+  label: string;
+  unit?: string;
+  unitMetric?: string;
+  format: 'number' | 'currency' | 'area' | 'volume' | 'weight' | 'length';
+  primary?: boolean;
+  description?: string;
+}
+
+export interface SeoConfig {
+  title: string;
+  description: string;
+  h1: string;
+  focusKeyword: string;
+  ogImage?: string;
+}
+
+export interface SchemaConfig {
+  appType: string;
+  features: string[];
+}
+
+export type ProgrammaticType = 'location' | 'material' | 'preset';
+
+export interface ProgrammaticConfig {
+  type: ProgrammaticType;
+  locations?: string[];
+  presets?: Record<string, Record<string, number | string>>;
+  contentStrategy: string;
+}
+
+export type CalculatorInputMap = Record<string, number | string>;
+export type CalculatorOutputMap = Record<string, number>;
+
+// Imported here to keep _types.ts self-contained for formula modules.
+// The actual slug union is defined in data/categories.ts.
+import type { CategorySlug } from '../data/categories';
+
+export interface CalculatorConfig {
+  slug: string;
+  name: string;
+  category: CategorySlug;
+  description: string;
+  inputs: InputField[];
+  outputs: OutputField[];
+  formula: (inputs: CalculatorInputMap, unitSystem: UnitSystem) => CalculatorOutputMap;
+  unitSystems: UnitSystem[];
+  relatedCalculators: string[];
+  seo: SeoConfig;
+  schema: SchemaConfig;
+  programmatic?: ProgrammaticConfig;
+}

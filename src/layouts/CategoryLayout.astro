@@ -1,0 +1,53 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumbs from '../components/layout/Breadcrumbs.astro';
+import type { MetaProps } from '../utils/seo';
+import type { BreadcrumbItem } from '../utils/schema';
+
+interface Props {
+  meta: MetaProps;
+  schemas?: Record<string, unknown>[];
+  breadcrumbs: BreadcrumbItem[];
+  name: string;
+  description: string;
+  calculatorCount: number;
+}
+
+const { meta, schemas = [], breadcrumbs, name, description, calculatorCount } = Astro.props;
+---
+
+<BaseLayout meta={meta} schemas={schemas}>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6">
+    <Breadcrumbs items={breadcrumbs} />
+
+    <header class="mt-4 mb-8">
+      <h1 class="text-2xl sm:text-3xl font-bold text-[var(--color-text-primary)]">
+        {name} Calculators
+      </h1>
+      <p class="mt-2 text-[var(--color-text-secondary)] max-w-2xl">
+        {description}
+      </p>
+      <p class="mt-1 text-sm text-[var(--color-text-muted)]">
+        {calculatorCount} calculator{calculatorCount !== 1 ? 's' : ''} available
+      </p>
+    </header>
+
+    <!-- Featured calculators (large cards) -->
+    <slot name="featured" />
+
+    <!-- All calculators grid -->
+    <section class="mt-10">
+      <h2 class="text-lg font-semibold text-[var(--color-text-primary)] mb-4">All {name} Calculators</h2>
+      <slot name="grid" />
+    </section>
+
+    <!-- Related guides -->
+    <slot name="guides" />
+
+    <!-- Category FAQ -->
+    <slot name="faq" />
+
+    <!-- Category content from MDX -->
+    <slot name="content" />
+  </div>
+</BaseLayout>
