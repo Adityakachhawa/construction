@@ -1,9 +1,27 @@
 ---
 import CalculatorLayout from '../../layouts/CalculatorLayout.astro';
 import { buildCalculatorMeta } from '../../utils/seo';
-import { buildWebAppSchema, buildBreadcrumbList } from '../../utils/schema';
+import { buildWebAppSchema, buildBreadcrumbList, buildFaqSchema } from '../../utils/schema';
 import { calculatorRegistry, getRelatedCalculators } from '../../data/registry';
 import { getCategoryBySlug } from '../../data/categories';
+import CalculatorWidget from '../../components/calculators/CalculatorWidget.astro';
+import FormulaDisplay from '../../components/calculators/FormulaDisplay.astro';
+import FaqSection from '../../components/calculators/FaqSection.astro';
+import SlabDiagram from '../../components/calculators/SlabDiagram.astro';
+import GravelDiagram from '../../components/calculators/GravelDiagram.astro';
+import MulchDiagram from '../../components/calculators/MulchDiagram.astro';
+import SandDiagram from '../../components/calculators/SandDiagram.astro';
+import FencePostDiagram from '../../components/calculators/FencePostDiagram.astro';
+import DeckFootingDiagram from '../../components/calculators/DeckFootingDiagram.astro';
+import RetainingWallDiagram from '../../components/calculators/RetainingWallDiagram.astro';
+import PaverBaseDiagram from '../../components/calculators/PaverBaseDiagram.astro';
+import RebarDiagram from '../../components/calculators/RebarDiagram.astro';
+import DrywallDiagram from '../../components/calculators/DrywallDiagram.astro';
+import AsphaltDiagram from '../../components/calculators/AsphaltDiagram.astro';
+import FlooringDiagram from '../../components/calculators/FlooringDiagram.astro';
+import ConcreteColumnDiagram from '../../components/calculators/ConcreteColumnDiagram.astro';
+import TopsoilDiagram from '../../components/calculators/TopsoilDiagram.astro';
+import AggregateDiagram from '../../components/calculators/AggregateDiagram.astro';
 import Card from '../../components/ui/Card.astro';
 import type { GetStaticPaths } from 'astro';
 
@@ -35,10 +53,11 @@ const schemas = [
     features: calc.schema.features,
   }),
   buildBreadcrumbList([
-    { name: 'Home', url: '/' },
-    { name: `${categoryName} Calculators`, url: `/category/${calc.category}/` },
-    { name: calc.name, url: `/calculators/${calc.slug}/` },
+    { name: 'Home', href: '/' },
+    { name: `${categoryName} Calculators`, href: `/category/${calc.category}/` },
+    { name: calc.name, href: `/calculators/${calc.slug}/` },
   ]),
+  ...(calc.faq?.length ? [buildFaqSchema(calc.faq)] : []),
 ];
 
 const breadcrumbs = [
@@ -48,6 +67,21 @@ const breadcrumbs = [
 ];
 
 const relatedCalcs = getRelatedCalculators(calc.relatedCalculators);
+const isSlabCalc          = calc.slug === 'concrete-slab-calculator';
+const isGravelCalc        = calc.slug === 'gravel-calculator';
+const isMulchCalc         = calc.slug === 'mulch-calculator';
+const isSandCalc          = calc.slug === 'sand-calculator';
+const isFencePostCalc     = calc.slug === 'fence-post-calculator';
+const isDeckFootingCalc   = calc.slug === 'deck-footing-calculator';
+const isRetainingWallCalc = calc.slug === 'retaining-wall-calculator';
+const isPaverBaseCalc     = calc.slug === 'paver-base-calculator';
+const isRebarCalc         = calc.slug === 'rebar-calculator';
+const isDrywallCalc       = calc.slug === 'drywall-calculator';
+const isAsphaltCalc       = calc.slug === 'asphalt-calculator';
+const isFlooringCalc      = calc.slug === 'flooring-calculator';
+const isConcreteColumnCalc = calc.slug === 'concrete-column-calculator';
+const isTopsoilCalc        = calc.slug === 'topsoil-calculator';
+const isAggregateCalc      = calc.slug === 'aggregate-calculator';
 ---
 
 <CalculatorLayout
@@ -57,16 +91,31 @@ const relatedCalcs = getRelatedCalculators(calc.relatedCalculators);
   h1={calc.seo.h1}
   intro={calc.seo.description}
 >
-  <!--
-    Each named slot fills a section of CalculatorLayout.
-    CalculatorWidget (built when calculators are implemented) will replace the
-    placeholder below. The architecture is: page → layout, never slot forwarding.
-  -->
-  <div slot="calculator" id="calculator-widget" data-calculator={calc.slug}>
-    <p class="text-sm text-[var(--color-text-muted)] py-8 text-center">
-      Calculator widget — coming soon.
-    </p>
-  </div>
+  <CalculatorWidget slot="calculator" calc={calc} />
+
+  {isSlabCalc          && <SlabDiagram          slot="diagram" />}
+  {isGravelCalc        && <GravelDiagram        slot="diagram" />}
+  {isMulchCalc         && <MulchDiagram         slot="diagram" />}
+  {isSandCalc          && <SandDiagram          slot="diagram" />}
+  {isFencePostCalc     && <FencePostDiagram     slot="diagram" />}
+  {isDeckFootingCalc   && <DeckFootingDiagram   slot="diagram" />}
+  {isRetainingWallCalc && <RetainingWallDiagram slot="diagram" />}
+  {isPaverBaseCalc     && <PaverBaseDiagram     slot="diagram" />}
+  {isRebarCalc         && <RebarDiagram         slot="diagram" />}
+  {isDrywallCalc       && <DrywallDiagram       slot="diagram" />}
+  {isAsphaltCalc       && <AsphaltDiagram       slot="diagram" />}
+  {isFlooringCalc      && <FlooringDiagram      slot="diagram" />}
+  {isConcreteColumnCalc && <ConcreteColumnDiagram slot="diagram" />}
+  {isTopsoilCalc        && <TopsoilDiagram        slot="diagram" />}
+  {isAggregateCalc      && <AggregateDiagram      slot="diagram" />}
+
+  {calc.formulaSteps?.length && (
+    <FormulaDisplay slot="explainer" steps={calc.formulaSteps} />
+  )}
+
+  {calc.faq?.length && (
+    <FaqSection slot="faq" items={calc.faq} />
+  )}
 
   {relatedCalcs.length > 0 && (
     <div slot="related" class="mt-12">

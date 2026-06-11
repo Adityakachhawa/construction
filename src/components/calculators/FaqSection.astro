@@ -1,0 +1,166 @@
+---
+import type { CalculatorFaqItem } from '../../calculators/_types';
+
+interface Props {
+  items: CalculatorFaqItem[];
+  title?: string;
+}
+
+const { items, title = 'Frequently Asked Questions' } = Astro.props;
+---
+
+<section class="faq-section" aria-labelledby="faq-heading">
+  <h2 id="faq-heading" class="faq-title">{title}</h2>
+
+  <div class="faq-list" id="faq-list">
+    {items.map((item, i) => (
+      <div class="faq-item" data-faq-item>
+        <button
+          type="button"
+          class="faq-question"
+          aria-expanded="false"
+          aria-controls={`faq-answer-${i}`}
+          id={`faq-btn-${i}`}
+        >
+          <span class="faq-q-num">Q{i + 1}</span>
+          <span class="faq-q-text">{item.question}</span>
+          <svg class="faq-chevron" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+            <path d="M4.5 6.75l4.5 4.5 4.5-4.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div
+          id={`faq-answer-${i}`}
+          role="region"
+          aria-labelledby={`faq-btn-${i}`}
+          class="faq-answer"
+          style="max-height: 0; overflow: hidden;"
+        >
+          <p class="faq-answer-text">{item.answer}</p>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .faq-section {
+    margin-top: 3.5rem;
+  }
+
+  .faq-title {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+  }
+
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+
+  .faq-item {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: border-color 200ms;
+  }
+  .faq-item.is-open {
+    border-color: var(--color-primary-200);
+  }
+
+  .faq-question {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 1.125rem 1.25rem;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    transition: background 150ms;
+  }
+  .faq-item.is-open .faq-question {
+    background: var(--color-primary-50);
+  }
+  .faq-question:hover:not(.faq-item.is-open .faq-question) {
+    background: var(--surface-page);
+  }
+
+  .faq-q-num {
+    flex-shrink: 0;
+    font-size: 0.8125rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    min-width: 2rem;
+    letter-spacing: -0.01em;
+  }
+
+  .faq-q-text {
+    flex: 1;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+  }
+
+  .faq-chevron {
+    flex-shrink: 0;
+    color: var(--color-text-muted);
+    transition: transform 220ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .faq-item.is-open .faq-chevron {
+    transform: rotate(180deg);
+    color: var(--color-primary);
+  }
+
+  .faq-answer {
+    transition: max-height 220ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .faq-answer-text {
+    padding: 0 1.25rem 1.25rem calc(0.875rem + 2rem + 1.25rem);
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    border-top: 1px solid var(--border-subtle);
+    padding-top: 1rem;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-faq-item]').forEach((item) => {
+    const btn = item.querySelector<HTMLButtonElement>('.faq-question');
+    const answer = item.querySelector<HTMLElement>('.faq-answer');
+    if (!btn || !answer) return;
+
+    btn.addEventListener('click', () => {
+      const isOpen = item.classList.contains('is-open');
+
+      // Close all other items
+      document.querySelectorAll<HTMLElement>('[data-faq-item].is-open').forEach((other) => {
+        if (other === item) return;
+        const otherAnswer = other.querySelector<HTMLElement>('.faq-answer');
+        const otherBtn = other.querySelector<HTMLButtonElement>('.faq-question');
+        other.classList.remove('is-open');
+        if (otherAnswer) otherAnswer.style.maxHeight = '0';
+        otherBtn?.setAttribute('aria-expanded', 'false');
+      });
+
+      if (isOpen) {
+        item.classList.remove('is-open');
+        answer.style.maxHeight = '0';
+        btn.setAttribute('aria-expanded', 'false');
+      } else {
+        item.classList.add('is-open');
+        answer.style.maxHeight = answer.scrollHeight + 'px';
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+</script>

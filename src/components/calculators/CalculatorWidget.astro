@@ -1,0 +1,721 @@
+---
+import type { CalculatorConfig, UnitSystem } from '../../calculators/_types';
+import { formatNumber } from '../../utils/format';
+
+interface Props {
+  calc: CalculatorConfig;
+}
+
+const { calc } = Astro.props;
+
+const defaultUnit: UnitSystem = calc.unitSystems[0] ?? 'imperial';
+const hasMetric = calc.unitSystems.includes('metric');
+const hasImperial = calc.unitSystems.includes('imperial');
+
+const defaultInputs = Object.fromEntries(calc.inputs.map((f) => [f.id, f.defaultValue]));
+const defaultOutputs = calc.formula(defaultInputs, defaultUnit);
+
+const primaryOutput = calc.outputs.find((o) => o.primary) ?? calc.outputs[0];
+const secondaryOutputs = calc.outputs.filter((o) => !o.primary);
+
+const outputsJson = JSON.stringify(
+  calc.outputs.map((o) => ({
+    id: o.id,
+    label: o.label,
+    unit: o.unit ?? '',
+    unitMetric: o.unitMetric ?? '',
+    primary: !!o.primary,
+  }))
+);
+---
+
+<div
+  class="widget-shell"
+  id="calc-widget"
+  data-slug={calc.slug}
+  data-unit={defaultUnit}
+  data-outputs={outputsJson}
+>
+  <!-- ── LEFT: Input panel ──────────────────────────────── -->
+  <div class="widget-inputs">
+    <div class="widget-inputs-header">
+      <h2 class="widget-panel-label">Enter Dimensions</h2>
+      {calc.unitSystems.length > 1 && (
+        <div class="unit-toggle" role="group" aria-label="Unit system">
+          {hasImperial && (
+            <button
+              type="button"
+              class="unit-btn"
+              data-unit="imperial"
+              aria-pressed={defaultUnit === 'imperial' ? 'true' : 'false'}
+            >Imperial</button>
+          )}
+          {hasMetric && (
+            <button
+              type="button"
+              class="unit-btn"
+              data-unit="metric"
+              aria-pressed={defaultUnit === 'metric' ? 'true' : 'false'}
+            >Metric</button>
+          )}
+        </div>
+      )}
+    </div>
+
+    <form id="calc-form" novalidate aria-label={`${calc.name} inputs`}>
+      <div class="field-stack">
+        {calc.inputs.map((field) => {
+          if (field.groupWith) return null;
+          const subField = calc.inputs.find((f) => f.groupWith === field.id);
+          return (
+            <div
+              class="field-row"
+              data-only-in={field.onlyIn ?? 'both'}
+              style={field.onlyIn && field.onlyIn !== defaultUnit ? 'display:none' : ''}
+            >
+              <label for={`field-${field.id}`} class="field-label">
+                {field.label}
+                {field.required && <span class="field-required" aria-hidden="true">*</span>}
+              </label>
+              <div class={subField ? 'field-group' : 'field-single'}>
+                <!-- Leader input -->
+                <div class="input-wrap">
+                  <input
+                    type="number"
+                    id={`field-${field.id}`}
+                    name={field.id}
+                    min={field.min}
+                    max={field.max}
+                    step={field.step ?? 'any'}
+                    value={field.defaultValue}
+                    required={field.required}
+                    aria-describedby={field.helpText ? `help-${field.id}` : undefined}
+                    class="field-input"
+                  />
+                  {field.unit && <span class="field-unit" aria-hidden="true">{field.unit}</span>}
+                </div>
+                <!-- Sub-field (inches, etc.) -->
+                {subField && (
+                  <div
+                    class="input-wrap"
+                    data-only-in={subField.onlyIn ?? 'both'}
+                    style={subField.onlyIn && subField.onlyIn !== defaultUnit ? 'display:none' : ''}
+                  >
+                    <input
+                      type="number"
+                      id={`field-${subField.id}`}
+                      name={subField.id}
+                      min={subField.min}
+                      max={subField.max}
+                      step={subField.step ?? 'any'}
+                      value={subField.defaultValue}
+                      class="field-input"
+                    />
+                    {subField.unit && <span class="field-unit" aria-hidden="true">{subField.unit}</span>}
+                  </div>
+                )}
+              </div>
+              {field.helpText && (
+                <p id={`help-${field.id}`} class="field-help">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                    <circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/>
+                    <path d="M6 5.5v3M6 4v.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                  </svg>
+                  {field.helpText}
+                </p>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </form>
+  </div>
+
+  <!-- ── RIGHT: Results panel ───────────────────────────── -->
+  <div class="widget-results" id="results-panel">
+    <h2 class="widget-panel-label">Results</h2>
+
+    <!-- Primary result — dominant card -->
+    {primaryOutput && (
+      <div class="result-primary" data-output-id={primaryOutput.id}>
+        <span class="result-primary-label">{primaryOutput.label}</span>
+        <div class="result-primary-value-row">
+          <span class="result-primary-number" id="primary-value">
+            {formatNumber(defaultOutputs[primaryOutput.id] ?? 0, 3)}
+          </span>
+          <span class="result-primary-unit" data-output-unit={primaryOutput.id}>
+            {primaryOutput.unit ?? ''}
+          </span>
+        </div>
+        {primaryOutput.description && (
+          <span class="result-primary-desc">{primaryOutput.description}</span>
+        )}
+      </div>
+    )}
+
+    <!-- Secondary results -->
+    {secondaryOutputs.length > 0 && (
+      <div class="result-secondary-grid" id="secondary-results">
+        {secondaryOutputs.map((out) => (
+          <div class="result-secondary" data-output-id={out.id}>
+            <span class="result-secondary-number">
+              {formatNumber(defaultOutputs[out.id] ?? 0, 3)}
+            </span>
+            <span class="result-secondary-unit" data-output-unit={out.id}>{out.unit ?? ''}</span>
+            <span class="result-secondary-label">{out.label}</span>
+          </div>
+        ))}
+      </div>
+    )}
+
+    <!-- Recommended order callout -->
+    {primaryOutput && (
+      <div class="result-callout" id="order-callout">
+        <div class="callout-icon">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M8 2L1.5 13h13L8 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M8 6v3.5M8 11v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <p class="callout-title">
+            Order at least <span id="order-qty">{formatNumber((defaultOutputs[primaryOutput.id] ?? 0) * 1.1, 2)}</span> {primaryOutput.unit}
+          </p>
+          <p class="callout-body">We recommend 10% extra to account for spillage and uneven subgrade.</p>
+        </div>
+      </div>
+    )}
+
+    <!-- Cost estimate -->
+    <details class="cost-estimate" id="cost-section">
+      <summary class="cost-summary">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.25"/>
+          <path d="M7 4.5v5M4.5 7h5" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/>
+        </svg>
+        Estimate Cost
+        <svg class="cost-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+          <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </summary>
+      <div class="cost-body">
+        <div class="cost-input-row">
+          <label for="price-per-unit" class="cost-label">
+            Price per {primaryOutput?.unit ?? 'unit'} ($)
+          </label>
+          <div class="cost-input-wrap">
+            <span class="cost-dollar">$</span>
+            <input
+              type="number"
+              id="price-per-unit"
+              class="cost-input"
+              min="0"
+              step="0.01"
+              value="150"
+              placeholder="150"
+            />
+          </div>
+        </div>
+        <div class="cost-result">
+          <span class="cost-result-label">Estimated total</span>
+          <span class="cost-result-value" id="cost-total">
+            ${((defaultOutputs[primaryOutput?.id ?? ''] ?? 0) * 150).toFixed(2)}
+          </span>
+        </div>
+      </div>
+    </details>
+  </div>
+</div>
+
+<style>
+  /* ── Widget shell: 40/60 two-column layout ────────────── */
+  .widget-shell {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  @media (min-width: 900px) {
+    .widget-shell {
+      grid-template-columns: 2fr 3fr;
+      gap: 2rem;
+    }
+  }
+
+  /* ── Input panel ──────────────────────────────────────── */
+  .widget-inputs {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 20px;
+    box-shadow: var(--shadow-card);
+    padding: 1.75rem;
+  }
+
+  .widget-inputs-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .widget-panel-label {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+  }
+
+  /* Unit toggle — segmented control */
+  .unit-toggle {
+    display: flex;
+    background: var(--surface-page);
+    border: 1px solid var(--border-default);
+    border-radius: 9999px;
+    padding: 3px;
+    gap: 2px;
+  }
+
+  .unit-btn {
+    padding: 0.3rem 0.875rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 9999px;
+    background: transparent;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: background 150ms, color 150ms;
+  }
+  .unit-btn[aria-pressed='true'] {
+    background: var(--surface-card);
+    color: var(--color-text-primary);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  /* Fields */
+  .field-stack { display: flex; flex-direction: column; gap: 1.25rem; }
+
+  .field-row { display: flex; flex-direction: column; gap: 0.375rem; }
+
+  .field-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+
+  .field-required { color: #ef4444; margin-left: 2px; }
+
+  .field-group  { display: flex; gap: 0.625rem; }
+  .field-single { display: flex; }
+
+  .input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex: 1;
+  }
+
+  .field-input {
+    width: 100%;
+    height: 44px;
+    padding: 0 2.5rem 0 0.875rem;
+    background: var(--surface-page);
+    border: 1.5px solid var(--border-default);
+    border-radius: 10px;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    transition: border-color 150ms, box-shadow 150ms;
+    -moz-appearance: textfield;
+  }
+  .field-input::-webkit-outer-spin-button,
+  .field-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .field-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(0,112,243,0.12);
+  }
+
+  .field-unit {
+    position: absolute;
+    right: 0.75rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    pointer-events: none;
+  }
+
+  .field-help {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    line-height: 1.4;
+  }
+
+  /* ── Results panel ────────────────────────────────────── */
+  .widget-results {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: sticky;
+    top: 5rem;
+  }
+
+  .widget-results > .widget-panel-label {
+    margin-bottom: 0.25rem;
+  }
+
+  /* Primary result card — dominant blue */
+  .result-primary {
+    background: var(--color-primary);
+    border-radius: 20px;
+    padding: 2rem 2rem 1.75rem;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    box-shadow: 0 8px 32px rgba(0,112,243,0.35);
+  }
+
+  .result-primary-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    opacity: 0.75;
+  }
+
+  .result-primary-value-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .result-primary-number {
+    font-size: clamp(3rem, 6vw, 4rem);
+    font-weight: 900;
+    letter-spacing: -0.05em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .result-primary-unit {
+    font-size: 1.5rem;
+    font-weight: 600;
+    opacity: 0.7;
+    letter-spacing: -0.01em;
+  }
+
+  .result-primary-desc {
+    font-size: 0.8125rem;
+    opacity: 0.65;
+    line-height: 1.4;
+  }
+
+  /* Secondary results — side by side compact */
+  .result-secondary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .result-secondary {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 14px;
+    padding: 1rem 1.125rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    box-shadow: var(--shadow-card);
+  }
+
+  .result-secondary-number {
+    font-size: 1.625rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.04em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .result-secondary-unit {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+  }
+
+  .result-secondary-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    margin-top: 0.25rem;
+  }
+
+  /* Recommended order callout */
+  .result-callout {
+    display: flex;
+    gap: 0.875rem;
+    align-items: flex-start;
+    background: #fffbeb;
+    border: 1px solid #fcd34d;
+    border-radius: 14px;
+    padding: 1rem 1.125rem;
+  }
+
+  .callout-icon {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: #fef3c7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #b45309;
+    margin-top: 1px;
+  }
+
+  .callout-title {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #78350f;
+    margin-bottom: 0.25rem;
+  }
+
+  .callout-body {
+    font-size: 0.8125rem;
+    color: #92400e;
+    line-height: 1.5;
+  }
+
+  /* Cost estimate */
+  .cost-estimate {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+
+  .cost-summary {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.125rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    list-style: none;
+    transition: background 150ms;
+  }
+  .cost-summary:hover { background: var(--surface-page); }
+  .cost-summary::-webkit-details-marker { display: none; }
+
+  .cost-chevron {
+    margin-left: auto;
+    transition: transform 200ms ease;
+  }
+  details[open] .cost-chevron { transform: rotate(180deg); }
+
+  .cost-body {
+    padding: 0 1.125rem 1.125rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .cost-input-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 0.875rem;
+  }
+
+  .cost-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+  }
+
+  .cost-input-wrap {
+    display: flex;
+    align-items: center;
+    border: 1.5px solid var(--border-default);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--surface-page);
+  }
+
+  .cost-dollar {
+    padding: 0 0.625rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    background: var(--border-subtle);
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+  }
+
+  .cost-input {
+    width: 80px;
+    padding: 0.5rem 0.625rem;
+    border: none;
+    background: transparent;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    -moz-appearance: textfield;
+  }
+  .cost-input::-webkit-outer-spin-button,
+  .cost-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .cost-input:focus { outline: none; }
+
+  .cost-result {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.875rem 1rem;
+    background: var(--surface-page);
+    border-radius: 10px;
+    border: 1px solid var(--border-default);
+  }
+
+  .cost-result-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+  }
+
+  .cost-result-value {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+</style>
+
+<script>
+  import { formulaRegistry } from '../../calculators/client-registry';
+
+  const widget   = document.getElementById('calc-widget') as HTMLElement;
+  const form     = document.getElementById('calc-form') as HTMLFormElement;
+  const priceInput = document.getElementById('price-per-unit') as HTMLInputElement | null;
+  const costTotal  = document.getElementById('cost-total') as HTMLElement | null;
+  const orderQty   = document.getElementById('order-qty') as HTMLElement | null;
+  const primaryValueEl = document.getElementById('primary-value') as HTMLElement | null;
+
+  if (!widget || !form) throw new Error('Calculator DOM missing');
+
+  const slug    = widget.dataset.slug ?? '';
+  const outputs: { id: string; label: string; unit: string; unitMetric: string; primary: boolean }[] =
+    JSON.parse(widget.dataset.outputs ?? '[]');
+  const formula = formulaRegistry[slug];
+  if (!formula) throw new Error(`No formula for "${slug}"`);
+
+  let currentUnit: 'imperial' | 'metric' =
+    (widget.dataset.unit as 'imperial' | 'metric') ?? 'imperial';
+
+  function getInputs(): Record<string, number> {
+    const data: Record<string, number> = {};
+    form.querySelectorAll<HTMLInputElement>('input[name]').forEach((el) => {
+      const row = el.closest<HTMLElement>('[data-only-in]');
+      const onlyIn = row?.dataset.onlyIn;
+      if (onlyIn && onlyIn !== 'both' && onlyIn !== currentUnit) return;
+      data[el.name] = el.value === '' ? 0 : Number(el.value);
+    });
+    return data;
+  }
+
+  function fmt(n: number, decimals = 3): string {
+    return n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: decimals });
+  }
+
+  function updateResults() {
+    const results = formula(getInputs(), currentUnit);
+
+    outputs.forEach(({ id, unit, primary }) => {
+      const raw = results[id] ?? 0;
+      if (primary) {
+        // Update the primary big number
+        if (primaryValueEl) primaryValueEl.textContent = fmt(raw, 3);
+        // Update the recommended order callout
+        if (orderQty) orderQty.textContent = fmt(raw * 1.1, 2);
+        // Update cost estimate
+        updateCost(raw);
+      } else {
+        // Secondary cards — find by data-output-id
+        const card = document.querySelector<HTMLElement>(`#secondary-results [data-output-id="${id}"]`);
+        const numEl = card?.querySelector<HTMLElement>('.result-secondary-number');
+        if (numEl) numEl.textContent = fmt(raw, 3);
+      }
+    });
+  }
+
+  function updateCost(primaryVal?: number) {
+    if (!costTotal || !priceInput) return;
+    const price = parseFloat(priceInput.value) || 0;
+    let val = primaryVal;
+    if (val === undefined) {
+      const results = formula(getInputs(), currentUnit);
+      const primary = outputs.find((o) => o.primary);
+      val = primary ? (results[primary.id] ?? 0) : 0;
+    }
+    const total = val * price;
+    costTotal.textContent = `$${total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  }
+
+  function syncVisibility() {
+    form.querySelectorAll<HTMLElement>('[data-only-in]').forEach((el) => {
+      const v = el.dataset.onlyIn;
+      if (!v || v === 'both') return;
+      el.style.display = v === currentUnit ? '' : 'none';
+    });
+  }
+
+  function syncUnitLabels() {
+    outputs.forEach(({ id, unit, unitMetric }) => {
+      const label = currentUnit === 'metric' && unitMetric ? unitMetric : unit;
+      widget.querySelectorAll<HTMLElement>(`[data-output-unit="${id}"]`).forEach((el) => {
+        el.textContent = label;
+      });
+    });
+  }
+
+  function setUnit(unit: 'imperial' | 'metric') {
+    currentUnit = unit;
+    widget.dataset.unit = unit;
+    widget.querySelectorAll<HTMLButtonElement>('.unit-btn').forEach((btn) => {
+      btn.setAttribute('aria-pressed', btn.dataset.unit === unit ? 'true' : 'false');
+    });
+    syncVisibility();
+    syncUnitLabels();
+    updateResults();
+  }
+
+  widget.querySelectorAll<HTMLButtonElement>('.unit-btn').forEach((btn) => {
+    btn.addEventListener('click', () => setUnit(btn.dataset.unit as 'imperial' | 'metric'));
+  });
+
+  let debounce: ReturnType<typeof setTimeout>;
+  form.addEventListener('input', () => {
+    clearTimeout(debounce);
+    debounce = setTimeout(updateResults, 100);
+  });
+
+  priceInput?.addEventListener('input', () => updateCost());
+
+  syncVisibility();
+  updateResults();
+</script>

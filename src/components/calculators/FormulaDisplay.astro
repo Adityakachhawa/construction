@@ -1,0 +1,153 @@
+---
+import type { FormulaStep } from '../../calculators/_types';
+
+interface Props {
+  steps: FormulaStep[];
+  title?: string;
+}
+
+const { steps, title = 'How the Formula Works' } = Astro.props;
+---
+
+<section class="formula-section" aria-labelledby="formula-heading">
+  <div class="formula-header">
+    <span class="formula-badge">ƒ</span>
+    <h2 id="formula-heading" class="formula-title">{title}</h2>
+  </div>
+
+  <div class="formula-steps">
+    {steps.map((step, i) => (
+      <div class="formula-step">
+        <div class="step-aside">
+          <div class="step-circle">{i + 1}</div>
+          {i < steps.length - 1 && <div class="step-connector"></div>}
+        </div>
+        <div class="step-content">
+          <p class="step-label">{step.label}</p>
+          <div class="step-code-wrap">
+            <code class="step-code">{step.formula}</code>
+          </div>
+          {step.description && (
+            <p class="step-desc">{step.description}</p>
+          )}
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .formula-section {
+    margin-top: 3.5rem;
+  }
+
+  .formula-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .formula-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--color-primary);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 800;
+    border-radius: 8px;
+    font-family: Georgia, serif;
+    flex-shrink: 0;
+  }
+
+  .formula-title {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+  }
+
+  .formula-steps {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .formula-step {
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+  }
+
+  .step-aside {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    width: 36px;
+  }
+
+  .step-circle {
+    width: 36px;
+    height: 36px;
+    background: var(--color-primary);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9375rem;
+    font-weight: 800;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .step-connector {
+    width: 2px;
+    flex: 1;
+    min-height: 1.5rem;
+    background: var(--border-default);
+    margin: 4px 0;
+  }
+
+  .step-content {
+    padding-bottom: 2rem;
+    flex: 1;
+    min-width: 0;
+    padding-top: 0.4rem;
+  }
+
+  .step-label {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.625rem;
+  }
+
+  .step-code-wrap {
+    background: var(--surface-page);
+    border: 1px solid var(--border-default);
+    border-radius: 10px;
+    padding: 0.875rem 1rem;
+    margin-bottom: 0.5rem;
+    overflow-x: auto;
+  }
+
+  .step-code {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--color-text-primary);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .step-desc {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+  }
+</style>

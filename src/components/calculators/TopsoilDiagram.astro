@@ -1,0 +1,210 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<figure class={`diagram-figure ${className}`} aria-labelledby="topsoil-diagram-caption">
+  <div class="diagram-header">
+    <span class="diagram-badge">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <rect x="1" y="7" width="12" height="5" rx="1" stroke="currentColor" stroke-width="1.25"/>
+        <path d="M3 7 Q4 4 7 4 Q10 4 11 7" stroke="currentColor" stroke-width="1.25" fill="none"/>
+        <line x1="4" y1="7" x2="4" y2="5.5" stroke="currentColor" stroke-width="1" opacity="0.6"/>
+        <line x1="7" y1="7" x2="7" y2="4.5" stroke="currentColor" stroke-width="1" opacity="0.6"/>
+        <line x1="10" y1="7" x2="10" y2="5.5" stroke="currentColor" stroke-width="1" opacity="0.6"/>
+      </svg>
+    </span>
+    <h2 id="topsoil-diagram-caption" class="diagram-title">Topsoil Depth Diagram</h2>
+  </div>
+  <div class="diagram-box">
+    <svg
+      viewBox="0 0 480 300"
+      width="100%"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      focusable="false"
+      class="diagram-svg"
+    >
+      <defs>
+        <linearGradient id="topsoilGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#78350f"/>
+          <stop offset="100%" stop-color="#451a03"/>
+        </linearGradient>
+        <linearGradient id="subsoilGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#c8a96e"/>
+          <stop offset="100%" stop-color="#8b6840"/>
+        </linearGradient>
+        <linearGradient id="grassGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#4ade80"/>
+          <stop offset="100%" stop-color="#16a34a"/>
+        </linearGradient>
+        <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#eff6ff"/>
+          <stop offset="100%" stop-color="#dbeafe"/>
+        </linearGradient>
+        <pattern id="topsoilTexture" x="0" y="0" width="12" height="12" patternUnits="userSpaceOnUse">
+          <circle cx="3"  cy="4"  r="1.3" fill="#92400e" opacity="0.45"/>
+          <circle cx="9"  cy="2"  r="1"   fill="#78350f" opacity="0.4"/>
+          <circle cx="6"  cy="9"  r="1.2" fill="#a16207" opacity="0.35"/>
+          <circle cx="11" cy="7"  r="0.9" fill="#92400e" opacity="0.3"/>
+          <circle cx="2"  cy="10" r="0.8" fill="#78350f" opacity="0.35"/>
+        </pattern>
+        <pattern id="subsoilTexture" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+          <circle cx="2.5" cy="2.5" r="1.5" fill="#b8a070" opacity="0.4"/>
+          <circle cx="7"   cy="6"   r="1.2" fill="#a89060" opacity="0.35"/>
+          <circle cx="4"   cy="8"   r="1"   fill="#c8a96e" opacity="0.3"/>
+        </pattern>
+        <!-- Root lines for plants -->
+        <pattern id="rootPattern" x="0" y="0" width="30" height="40" patternUnits="userSpaceOnUse">
+          <line x1="15" y1="0"  x2="12" y2="20" stroke="#a16207" stroke-width="0.8" opacity="0.3"/>
+          <line x1="15" y1="0"  x2="18" y2="18" stroke="#a16207" stroke-width="0.8" opacity="0.3"/>
+          <line x1="15" y1="0"  x2="15" y2="25" stroke="#a16207" stroke-width="0.6" opacity="0.25"/>
+        </pattern>
+      </defs>
+
+      <!-- ── SKY ─────────────────────────────────────────── -->
+      <rect x="0" y="0" width="480" height="90" fill="url(#skyGrad)" opacity="0.5"/>
+
+      <!-- ── SUBSOIL ─────────────────────────────────────── -->
+      <rect x="50" y="200" width="340" height="82" fill="url(#subsoilGrad)" opacity="0.7"/>
+      <rect x="50" y="200" width="340" height="82" fill="url(#subsoilTexture)"/>
+
+      <!-- ── TOPSOIL LAYER ──────────────────────────────── -->
+      <rect x="50" y="110" width="340" height="90" fill="url(#topsoilGrad)" opacity="0.9"/>
+      <rect x="50" y="110" width="340" height="90" fill="url(#topsoilTexture)"/>
+      <!-- Root pattern overlaid on topsoil -->
+      <rect x="50" y="110" width="340" height="90" fill="url(#rootPattern)" opacity="0.6"/>
+
+      <!-- ── GRASS SURFACE ───────────────────────────────── -->
+      <rect x="50" y="100" width="340" height="12" fill="url(#grassGrad)" opacity="0.85" rx="1"/>
+      <!-- Grass blade bumps -->
+      <path d="M55 100 Q57 92 59 100" fill="#22c55e" opacity="0.7"/>
+      <path d="M68 100 Q70 90 72 100" fill="#16a34a" opacity="0.7"/>
+      <path d="M82 100 Q84 93 86 100" fill="#22c55e" opacity="0.6"/>
+      <path d="M96 100 Q98 91 100 100" fill="#16a34a" opacity="0.7"/>
+      <path d="M110 100 Q112 93 114 100" fill="#22c55e" opacity="0.65"/>
+      <path d="M124 100 Q126 92 128 100" fill="#16a34a" opacity="0.7"/>
+      <path d="M138 100 Q140 94 142 100" fill="#22c55e" opacity="0.6"/>
+      <path d="M152 100 Q154 91 156 100" fill="#16a34a" opacity="0.7"/>
+      <path d="M166 100 Q168 93 170 100" fill="#22c55e" opacity="0.65"/>
+      <path d="M180 100 Q182 92 184 100" fill="#16a34a" opacity="0.7"/>
+      <path d="M194 100 Q196 94 198 100" fill="#22c55e" opacity="0.6"/>
+      <path d="M208 100 Q210 91 212 100" fill="#16a34a" opacity="0.7"/>
+      <path d="M222 100 Q224 93 226 100" fill="#22c55e" opacity="0.65"/>
+      <path d="M236 100 Q238 92 240 100" fill="#16a34a" opacity="0.7"/>
+      <path d="M250 100 Q252 94 254 100" fill="#22c55e" opacity="0.6"/>
+      <path d="M264 100 Q266 91 268 100" fill="#16a34a" opacity="0.7"/>
+      <path d="M278 100 Q280 93 282 100" fill="#22c55e" opacity="0.65"/>
+      <path d="M292 100 Q294 92 296 100" fill="#16a34a" opacity="0.7"/>
+      <path d="M306 100 Q308 94 310 100" fill="#22c55e" opacity="0.6"/>
+      <path d="M320 100 Q322 91 324 100" fill="#16a34a" opacity="0.7"/>
+      <path d="M334 100 Q336 93 338 100" fill="#22c55e" opacity="0.65"/>
+      <path d="M348 100 Q350 92 352 100" fill="#16a34a" opacity="0.7"/>
+      <path d="M362 100 Q364 94 366 100" fill="#22c55e" opacity="0.6"/>
+      <path d="M376 100 Q378 91 380 100" fill="#16a34a" opacity="0.7"/>
+
+      <!-- ── LAYER LABELS (right side) ──────────────────── -->
+      <text x="400" y="108" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="700" fill="#16a34a">Grass / plants</text>
+      <text x="400" y="158" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="700" fill="#d97706">Topsoil</text>
+      <text x="400" y="170" font-family="Inter,system-ui,sans-serif" font-size="9"  font-weight="500" fill="#b45309" opacity="0.75">(this layer)</text>
+      <text x="400" y="238" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500" fill="#92400e" opacity="0.65">Subsoil</text>
+
+      <!-- connector ticks -->
+      <line x1="390" y1="106" x2="398" y2="106" stroke="#16a34a" stroke-width="1" opacity="0.4"/>
+      <line x1="390" y1="155" x2="398" y2="155" stroke="#d97706" stroke-width="1" opacity="0.4"/>
+      <line x1="390" y1="238" x2="398" y2="238" stroke="#92400e" stroke-width="1" opacity="0.35"/>
+
+      <!-- ── DEPTH annotation (left, blue) ─────────────── -->
+      <line x1="36" y1="100" x2="48" y2="100" stroke="#0070f3" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
+      <line x1="36" y1="200" x2="48" y2="200" stroke="#0070f3" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
+      <line x1="40" y1="100" x2="40" y2="200" stroke="#0070f3" stroke-width="1.75"/>
+      <polygon points="40,100 35,111 45,111" fill="#0070f3"/>
+      <polygon points="40,200 35,189 45,189" fill="#0070f3"/>
+      <text x="26" y="153" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="11" font-weight="700" fill="#0070f3" letter-spacing="-0.3"
+        transform="rotate(-90 26 153)">Depth</text>
+
+      <!-- ─ LENGTH annotation (top, orange) ───────────── -->
+      <line x1="50"  y1="82" x2="50"  y2="97" stroke="#ea580c" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
+      <line x1="390" y1="82" x2="390" y2="97" stroke="#ea580c" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
+      <line x1="50"  y1="86" x2="390" y2="86" stroke="#ea580c" stroke-width="1.75"/>
+      <polygon points="50,86  60,81  60,91"  fill="#ea580c"/>
+      <polygon points="390,86 380,81 380,91" fill="#ea580c"/>
+      <text x="220" y="76" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="11" font-weight="700" fill="#ea580c" letter-spacing="-0.3">Length</text>
+
+      <!-- ── WIDTH reminder (inset perspective line) ────── -->
+      <line x1="50"  y1="200" x2="68"  y2="220" stroke="#16a34a" stroke-width="1.25" stroke-dasharray="4 3" opacity="0.5"/>
+      <line x1="390" y1="200" x2="408" y2="220" stroke="#16a34a" stroke-width="1.25" stroke-dasharray="4 3" opacity="0.5"/>
+      <line x1="68"  y1="220" x2="408" y2="220" stroke="#16a34a" stroke-width="1.25" stroke-dasharray="4 3" opacity="0.5"/>
+      <text x="238" y="232" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="10" font-weight="700" fill="#16a34a" opacity="0.7">Width</text>
+
+      <!-- ── FORMULA REMINDER ────────────────────────────── -->
+      <rect x="50" y="256" width="180" height="28" rx="6" fill="#fefce8" stroke="#fde68a" stroke-width="1"/>
+      <text x="140" y="268" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="9" fill="#a16207">V (ft³) = Length × Width × Depth</text>
+      <text x="140" y="279" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="8" fill="#b45309" opacity="0.8">÷ 27 = cubic yards</text>
+    </svg>
+  </div>
+  <figcaption class="diagram-caption">
+    Topsoil cross-section: the topsoil layer sits above the subsoil and supports plant roots. Enter area dimensions and desired depth above.
+  </figcaption>
+</figure>
+
+<style>
+  .diagram-figure { margin-top: 3.5rem; }
+
+  .diagram-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .diagram-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--surface-page);
+    border: 1px solid var(--border-default);
+    color: var(--color-text-secondary);
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .diagram-title {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+  }
+
+  .diagram-box {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+
+  .diagram-svg {
+    max-width: 480px;
+    height: auto;
+    display: block;
+  }
+
+  .diagram-caption {
+    margin-top: 0.875rem;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    text-align: center;
+    line-height: 1.5;
+  }
+</style>

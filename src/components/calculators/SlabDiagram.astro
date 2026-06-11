@@ -1,0 +1,143 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<figure class={`diagram-figure ${className}`} aria-labelledby="diagram-caption">
+  <div class="diagram-header">
+    <span class="diagram-badge">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <rect x="1" y="5" width="12" height="8" rx="1" stroke="currentColor" stroke-width="1.25"/>
+        <path d="M4 5V3.5a3 3 0 016 0V5" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/>
+      </svg>
+    </span>
+    <h2 id="diagram-caption" class="diagram-title">Slab Dimensions Diagram</h2>
+  </div>
+  <div class="diagram-box">
+    <svg
+      viewBox="0 0 480 300"
+      width="100%"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      focusable="false"
+      class="diagram-svg"
+    >
+      <defs>
+        <linearGradient id="slabTop" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#cbd5e1"/>
+          <stop offset="100%" stop-color="#94a3b8"/>
+        </linearGradient>
+        <linearGradient id="slabFront" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#94a3b8"/>
+          <stop offset="100%" stop-color="#64748b"/>
+        </linearGradient>
+        <linearGradient id="slabRight" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#7c8fa3"/>
+          <stop offset="100%" stop-color="#64748b"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Isometric slab body -->
+      <!-- Top face -->
+      <polygon points="90,85 330,85 395,135 155,135"
+        fill="url(#slabTop)" stroke="#475569" stroke-width="1.5"/>
+      <!-- Front face -->
+      <polygon points="90,85 90,225 155,225 155,135"
+        fill="url(#slabFront)" stroke="#475569" stroke-width="1.5"/>
+      <!-- Right face -->
+      <polygon points="155,135 395,135 395,225 155,225"
+        fill="url(#slabRight)" stroke="#475569" stroke-width="1.5"/>
+
+      <!-- ── LENGTH annotation (top, horizontal) ── -->
+      <line x1="90" y1="85" x2="90" y2="58" stroke="#0070f3" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="330" y1="85" x2="330" y2="58" stroke="#0070f3" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="90" y1="65" x2="330" y2="65" stroke="#0070f3" stroke-width="1.75"/>
+      <polygon points="90,65 100,60 100,70" fill="#0070f3"/>
+      <polygon points="330,65 320,60 320,70" fill="#0070f3"/>
+      <text x="210" y="52" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="13" font-weight="700" fill="#0070f3" letter-spacing="-0.3">Length</text>
+
+      <!-- ── WIDTH annotation (right side, diagonal) ── -->
+      <line x1="330" y1="85" x2="418" y2="62" stroke="#16a34a" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="395" y1="135" x2="418" y2="155" stroke="#16a34a" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="418" y1="62" x2="418" y2="155" stroke="#16a34a" stroke-width="1.75"/>
+      <polygon points="418,62 413,73 423,73" fill="#16a34a"/>
+      <polygon points="418,155 413,144 423,144" fill="#16a34a"/>
+      <text x="432" y="113" text-anchor="start" font-family="Inter,system-ui,sans-serif"
+        font-size="13" font-weight="700" fill="#16a34a" letter-spacing="-0.3">Width</text>
+
+      <!-- ── THICKNESS annotation (left, vertical) ── -->
+      <line x1="90" y1="85" x2="55" y2="85" stroke="#d97706" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="90" y1="225" x2="55" y2="225" stroke="#d97706" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="62" y1="85" x2="62" y2="225" stroke="#d97706" stroke-width="1.75"/>
+      <polygon points="62,85 57,96 67,96" fill="#d97706"/>
+      <polygon points="62,225 57,214 67,214" fill="#d97706"/>
+      <text x="48" y="158" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="13" font-weight="700" fill="#d97706" letter-spacing="-0.3"
+        transform="rotate(-90 48 158)">Thickness</text>
+    </svg>
+  </div>
+  <figcaption class="diagram-caption">
+    Concrete slab: length × width × thickness — enter each dimension above to calculate volume.
+  </figcaption>
+</figure>
+
+<style>
+  .diagram-figure {
+    margin-top: 3.5rem;
+  }
+
+  .diagram-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .diagram-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--surface-page);
+    border: 1px solid var(--border-default);
+    color: var(--color-text-secondary);
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .diagram-title {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+  }
+
+  .diagram-box {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+
+  .diagram-svg {
+    max-width: 480px;
+    height: auto;
+    display: block;
+  }
+
+  .diagram-caption {
+    margin-top: 0.875rem;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    text-align: center;
+    line-height: 1.5;
+  }
+</style>

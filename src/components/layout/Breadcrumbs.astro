@@ -12,27 +12,64 @@ const { items } = Astro.props;
 ---
 
 <nav aria-label="Breadcrumb">
-  <ol class="flex flex-wrap items-center gap-1.5 text-sm text-[var(--color-text-muted)]">
+  <ol class="breadcrumbs">
     {items.map((item, index) => {
       const isLast = index === items.length - 1;
       return (
-        <li class="flex items-center gap-1.5">
+        <li class="breadcrumb-item">
           {index > 0 && (
-            <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" class="shrink-0 opacity-40">
+            <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" class="breadcrumb-sep">
               <path d="M4 2l4 4-4 4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           )}
           {isLast ? (
-            <span aria-current="page" class="text-[var(--color-text-primary)] font-medium truncate max-w-[200px]">
-              {item.name}
-            </span>
+            <span aria-current="page" class="breadcrumb-current">{item.name}</span>
           ) : (
-            <a href={item.href} class="hover:text-[var(--color-primary)] transition-colors truncate max-w-[120px]">
-              {item.name}
-            </a>
+            <a href={item.href} class="breadcrumb-link">{item.name}</a>
           )}
         </li>
       );
     })}
   </ol>
 </nav>
+
+<style>
+  .breadcrumbs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.375rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .breadcrumb-item {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+
+  .breadcrumb-sep {
+    color: var(--border-strong);
+    flex-shrink: 0;
+  }
+
+  .breadcrumb-link {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    transition: color 150ms;
+  }
+  .breadcrumb-link:hover { color: var(--color-primary); }
+
+  .breadcrumb-current {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+</style>

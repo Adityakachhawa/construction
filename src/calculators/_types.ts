@@ -21,6 +21,10 @@ export interface InputField {
   defaultValueMetric?: number | string;
   required?: boolean;
   helpText?: string;
+  /** Only render this field when the given unit system is active */
+  onlyIn?: UnitSystem;
+  /** ID of the field to visually group with (ft+in pairs) */
+  groupWith?: string;
 }
 
 export interface OutputField {
@@ -58,6 +62,17 @@ export interface ProgrammaticConfig {
 export type CalculatorInputMap = Record<string, number | string>;
 export type CalculatorOutputMap = Record<string, number>;
 
+export interface FormulaStep {
+  label: string;
+  formula: string;
+  description?: string;
+}
+
+export interface CalculatorFaqItem {
+  question: string;
+  answer: string;
+}
+
 // Imported here to keep _types.ts self-contained for formula modules.
 // The actual slug union is defined in data/categories.ts.
 import type { CategorySlug } from '../data/categories';
@@ -74,5 +89,7 @@ export interface CalculatorConfig {
   relatedCalculators: string[];
   seo: SeoConfig;
   schema: SchemaConfig;
+  formulaSteps?: FormulaStep[];
+  faq?: CalculatorFaqItem[];
   programmatic?: ProgrammaticConfig;
 }

@@ -1,10 +1,36 @@
 import type { CalculatorConfig } from '../calculators/_types';
-
-// Import calculator configs here as they are built:
-// import { concreteSlab } from './calculators/concrete-slab';
+import { concreteSlab } from '../calculators/concrete-slab';
+import { gravelCalculator } from '../calculators/gravel-calculator';
+import { mulchCalculator } from '../calculators/mulch-calculator';
+import { sandCalculator } from '../calculators/sand-calculator';
+import { fencePostCalculator } from '../calculators/fence-post-calculator';
+import { deckFootingCalculator } from '../calculators/deck-footing-calculator';
+import { retainingWallCalculator } from '../calculators/retaining-wall-calculator';
+import { paverBaseCalculator } from '../calculators/paver-base-calculator';
+import { rebarCalculator } from '../calculators/rebar-calculator';
+import { drywallCalculator } from '../calculators/drywall-calculator';
+import { asphaltCalculator } from '../calculators/asphalt-calculator';
+import { flooringCalculator } from '../calculators/flooring-calculator';
+import { concreteColumnCalculator } from '../calculators/concrete-column-calculator';
+import { topsoilCalculator } from '../calculators/topsoil-calculator';
+import { aggregateCalculator } from '../calculators/aggregate-calculator';
 
 export const calculatorRegistry: CalculatorConfig[] = [
-  // calculators will be registered here
+  concreteSlab,
+  gravelCalculator,
+  mulchCalculator,
+  sandCalculator,
+  fencePostCalculator,
+  deckFootingCalculator,
+  retainingWallCalculator,
+  paverBaseCalculator,
+  rebarCalculator,
+  drywallCalculator,
+  asphaltCalculator,
+  flooringCalculator,
+  concreteColumnCalculator,
+  topsoilCalculator,
+  aggregateCalculator,
 ];
 
 export function getCalculatorBySlug(slug: string): CalculatorConfig | undefined {

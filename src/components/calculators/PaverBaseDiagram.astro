@@ -1,0 +1,211 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<figure class={`diagram-figure ${className}`} aria-labelledby="paver-base-diagram-caption">
+  <div class="diagram-header">
+    <span class="diagram-badge">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <rect x="1" y="8" width="12" height="4" rx="1" stroke="currentColor" stroke-width="1.25"/>
+        <rect x="1" y="5" width="12" height="3" rx="0.5" stroke="currentColor" stroke-width="1" opacity="0.6"/>
+        <rect x="1" y="2" width="12" height="3" rx="0.5" stroke="currentColor" stroke-width="1" opacity="0.35"/>
+      </svg>
+    </span>
+    <h2 id="paver-base-diagram-caption" class="diagram-title">Paver Base Diagram</h2>
+  </div>
+  <div class="diagram-box">
+    <svg
+      viewBox="0 0 480 300"
+      width="100%"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      focusable="false"
+      class="diagram-svg"
+    >
+      <defs>
+        <linearGradient id="paverGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#94a3b8"/>
+          <stop offset="100%" stop-color="#64748b"/>
+        </linearGradient>
+        <linearGradient id="sandLayerGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#f5deb3"/>
+          <stop offset="100%" stop-color="#dcc48a"/>
+        </linearGradient>
+        <linearGradient id="gravelLayerGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#d6c7a0"/>
+          <stop offset="100%" stop-color="#9e8c5e"/>
+        </linearGradient>
+        <linearGradient id="nativeSoilGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#c8a96e"/>
+          <stop offset="100%" stop-color="#8b6840"/>
+        </linearGradient>
+        <pattern id="gravelTexture" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+          <circle cx="2.5" cy="2.5" r="1.5" fill="#b8a070" opacity="0.5"/>
+          <circle cx="7"   cy="6"   r="1.2" fill="#a89060" opacity="0.45"/>
+          <circle cx="4"   cy="8"   r="1"   fill="#b8a070" opacity="0.4"/>
+        </pattern>
+        <pattern id="sandTexture" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
+          <circle cx="2" cy="2" r="0.7" fill="#d4b45a" opacity="0.55"/>
+          <circle cx="6" cy="5" r="0.6" fill="#e8c870" opacity="0.5"/>
+          <circle cx="4" cy="7" r="0.5" fill="#d4b45a" opacity="0.45"/>
+        </pattern>
+        <!-- Paver joint grid -->
+        <pattern id="paverGrid" x="0" y="0" width="36" height="24" patternUnits="userSpaceOnUse">
+          <rect width="36" height="24" fill="none" stroke="#475569" stroke-width="1.2" opacity="0.5"/>
+          <line x1="18" y1="0" x2="18" y2="24" stroke="#475569" stroke-width="0.6" opacity="0.3"/>
+        </pattern>
+      </defs>
+
+      <!-- ── CROSS-SECTION (left 55%) ──────────────────────── -->
+
+      <!-- Native soil -->
+      <rect x="50" y="240" width="220" height="42" fill="url(#nativeSoilGrad)" opacity="0.55" rx="1"/>
+
+      <!-- Gravel base layer -->
+      <rect x="50" y="175" width="220" height="65" fill="url(#gravelLayerGrad)" opacity="0.85"/>
+      <rect x="50" y="175" width="220" height="65" fill="url(#gravelTexture)"/>
+
+      <!-- Sand bedding layer -->
+      <rect x="50" y="158" width="220" height="17" fill="url(#sandLayerGrad)" opacity="0.95"/>
+      <rect x="50" y="158" width="220" height="17" fill="url(#sandTexture)" opacity="0.7"/>
+
+      <!-- Paver surface -->
+      <rect x="50" y="116" width="220" height="42" fill="url(#paverGrad)"/>
+      <rect x="50" y="116" width="220" height="42" fill="url(#paverGrid)" opacity="0.8"/>
+
+      <!-- Layer labels (right of cross-section) -->
+      <text x="278" y="138" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="600" fill="#475569">Pavers</text>
+      <text x="278" y="171" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="600" fill="#b8860b">Sand</text>
+      <text x="278" y="207" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="600" fill="#8b6914">Gravel Base</text>
+      <text x="278" y="253" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500" fill="#92400e" opacity="0.7">Native Soil</text>
+
+      <!-- Connecting lines to labels -->
+      <line x1="270" y1="137" x2="277" y2="137" stroke="#475569" stroke-width="1" opacity="0.4"/>
+      <line x1="270" y1="168" x2="277" y2="168" stroke="#b8860b" stroke-width="1" opacity="0.4"/>
+      <line x1="270" y1="207" x2="277" y2="207" stroke="#8b6914" stroke-width="1" opacity="0.4"/>
+      <line x1="270" y1="252" x2="277" y2="252" stroke="#92400e" stroke-width="1" opacity="0.35"/>
+
+      <!-- ── SAND DEPTH annotation (left, orange) ─────────── -->
+      <line x1="38" y1="158" x2="48" y2="158" stroke="#d97706" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
+      <line x1="38" y1="175" x2="48" y2="175" stroke="#d97706" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
+      <line x1="42" y1="158" x2="42" y2="175" stroke="#d97706" stroke-width="1.75"/>
+      <polygon points="42,158 37,166 47,166" fill="#d97706"/>
+      <polygon points="42,175 37,167 47,167" fill="#d97706"/>
+
+      <!-- ── GRAVEL BASE DEPTH annotation (left, green) ────── -->
+      <line x1="26" y1="175" x2="48" y2="175" stroke="#16a34a" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
+      <line x1="26" y1="240" x2="48" y2="240" stroke="#16a34a" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
+      <line x1="30" y1="175" x2="30" y2="240" stroke="#16a34a" stroke-width="1.75"/>
+      <polygon points="30,175 25,184 35,184" fill="#16a34a"/>
+      <polygon points="30,240 25,231 35,231" fill="#16a34a"/>
+      <text x="16" y="214" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="11" font-weight="700" fill="#16a34a" letter-spacing="-0.3"
+        transform="rotate(-90 16 214)">Base</text>
+
+      <!-- Sand depth label -->
+      <text x="8" y="170" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="600" fill="#d97706">Sand</text>
+
+      <!-- ── LENGTH annotation (top, blue) ─────────────────── -->
+      <line x1="50"  y1="104" x2="50"  y2="114" stroke="#0070f3" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
+      <line x1="270" y1="104" x2="270" y2="114" stroke="#0070f3" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
+      <line x1="50"  y1="108" x2="270" y2="108" stroke="#0070f3" stroke-width="1.75"/>
+      <polygon points="50,108  60,103  60,113"  fill="#0070f3"/>
+      <polygon points="270,108 260,103 260,113" fill="#0070f3"/>
+      <text x="160" y="96" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="12" font-weight="700" fill="#0070f3" letter-spacing="-0.3">Length</text>
+
+      <!-- ── 3D PAVER PLAN VIEW (right 40%) ─────────────────── -->
+      <text x="390" y="96" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="10" font-weight="600" fill="#6b7280" letter-spacing="0.05em">PLAN VIEW</text>
+
+      <!-- Paver grid top view -->
+      <rect x="330" y="106" width="120" height="90" fill="url(#paverGrad)" rx="2"/>
+      <rect x="330" y="106" width="120" height="90" fill="url(#paverGrid)" opacity="0.9"/>
+
+      <!-- Width arrow (green, right side of plan) -->
+      <line x1="458" y1="106" x2="458" y2="196" stroke="#16a34a" stroke-width="1.75"/>
+      <polygon points="458,106 453,117 463,117" fill="#16a34a"/>
+      <polygon points="458,196 453,185 463,185" fill="#16a34a"/>
+      <line x1="450" y1="106" x2="460" y2="106" stroke="#16a34a" stroke-width="1" stroke-dasharray="3 2" opacity="0.6"/>
+      <line x1="450" y1="196" x2="460" y2="196" stroke="#16a34a" stroke-width="1" stroke-dasharray="3 2" opacity="0.6"/>
+      <text x="471" y="155" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="11" font-weight="700" fill="#16a34a" letter-spacing="-0.3"
+        transform="rotate(90 471 155)">Width</text>
+
+      <!-- ── LEGEND ───────────────────────────────────────── -->
+      <rect x="330" y="218" width="160" height="60" rx="8"
+        fill="#f8fafc" stroke="#e2e4e8" stroke-width="1"/>
+      <rect x="342" y="230" width="14" height="10" fill="url(#gravelLayerGrad)" rx="1"/>
+      <text x="360" y="239" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#4b5563">Gravel base (4–6 in)</text>
+      <rect x="342" y="248" width="14" height="10" fill="url(#sandLayerGrad)" rx="1"/>
+      <text x="360" y="257" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#4b5563">Sand bedding (1 in)</text>
+      <rect x="342" y="266" width="14" height="8" fill="url(#paverGrad)" rx="1"/>
+      <text x="360" y="274" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#4b5563">Pavers</text>
+    </svg>
+  </div>
+  <figcaption class="diagram-caption">
+    Paver base cross-section: native soil → compacted gravel base → sand bedding → pavers. Enter length, width, and depths above.
+  </figcaption>
+</figure>
+
+<style>
+  .diagram-figure {
+    margin-top: 3.5rem;
+  }
+
+  .diagram-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .diagram-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--surface-page);
+    border: 1px solid var(--border-default);
+    color: var(--color-text-secondary);
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .diagram-title {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+  }
+
+  .diagram-box {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+
+  .diagram-svg {
+    max-width: 480px;
+    height: auto;
+    display: block;
+  }
+
+  .diagram-caption {
+    margin-top: 0.875rem;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    text-align: center;
+    line-height: 1.5;
+  }
+</style>

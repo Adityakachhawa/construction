@@ -1,0 +1,166 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<figure class={`diagram-figure ${className}`} aria-labelledby="rebar-diagram-caption">
+  <div class="diagram-header">
+    <span class="diagram-badge">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <line x1="1" y1="4" x2="13" y2="4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="1" y1="7" x2="13" y2="7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="1" y1="10" x2="13" y2="10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="4" y1="1" x2="4" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="7" y1="1" x2="7" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="10" y1="1" x2="10" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </span>
+    <h2 id="rebar-diagram-caption" class="diagram-title">Rebar Grid Diagram</h2>
+  </div>
+  <div class="diagram-box">
+    <svg
+      viewBox="0 0 480 300"
+      width="100%"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      focusable="false"
+      class="diagram-svg"
+    >
+      <defs>
+        <linearGradient id="concreteBase" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#cbd5e1"/>
+          <stop offset="100%" stop-color="#94a3b8"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Concrete slab body (isometric top view, slightly angled) -->
+      <rect x="60" y="60" width="360" height="200" rx="4"
+        fill="url(#concreteBase)" stroke="#64748b" stroke-width="1.5" opacity="0.55"/>
+
+      <!-- ── REBAR GRID ──────────────────────────────────── -->
+
+      <!-- Horizontal bars (rows — run along width) -->
+      <line x1="60"  y1="100" x2="420" y2="100" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="60"  y1="140" x2="420" y2="140" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="60"  y1="180" x2="420" y2="180" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="60"  y1="220" x2="420" y2="220" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/>
+
+      <!-- Vertical bars (columns — run along length) -->
+      <line x1="108" y1="60" x2="108" y2="260" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
+      <line x1="192" y1="60" x2="192" y2="260" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
+      <line x1="276" y1="60" x2="276" y2="260" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
+      <line x1="360" y1="60" x2="360" y2="260" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
+
+      <!-- Bar intersection dots -->
+      <circle cx="108" cy="100" r="4" fill="#dc2626"/>
+      <circle cx="192" cy="100" r="4" fill="#dc2626"/>
+      <circle cx="276" cy="100" r="4" fill="#dc2626"/>
+      <circle cx="360" cy="100" r="4" fill="#dc2626"/>
+      <circle cx="108" cy="140" r="4" fill="#dc2626"/>
+      <circle cx="192" cy="140" r="4" fill="#dc2626"/>
+      <circle cx="276" cy="140" r="4" fill="#dc2626"/>
+      <circle cx="360" cy="140" r="4" fill="#dc2626"/>
+      <circle cx="108" cy="180" r="4" fill="#dc2626"/>
+      <circle cx="192" cy="180" r="4" fill="#dc2626"/>
+      <circle cx="276" cy="180" r="4" fill="#dc2626"/>
+      <circle cx="360" cy="180" r="4" fill="#dc2626"/>
+      <circle cx="108" cy="220" r="4" fill="#dc2626"/>
+      <circle cx="192" cy="220" r="4" fill="#dc2626"/>
+      <circle cx="276" cy="220" r="4" fill="#dc2626"/>
+      <circle cx="360" cy="220" r="4" fill="#dc2626"/>
+
+      <!-- ── SPACING annotation (top between first two vertical bars, blue) ── -->
+      <line x1="108" y1="46" x2="108" y2="62" stroke="#0070f3" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
+      <line x1="192" y1="46" x2="192" y2="62" stroke="#0070f3" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
+      <line x1="108" y1="50" x2="192" y2="50" stroke="#0070f3" stroke-width="1.75"/>
+      <polygon points="108,50 118,45 118,55" fill="#0070f3"/>
+      <polygon points="192,50 182,45 182,55" fill="#0070f3"/>
+      <text x="150" y="38" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="12" font-weight="700" fill="#0070f3" letter-spacing="-0.3">Spacing</text>
+
+      <!-- ── LENGTH annotation (bottom, blue) ─────────────── -->
+      <line x1="60"  y1="272" x2="60"  y2="262" stroke="#0070f3" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
+      <line x1="420" y1="272" x2="420" y2="262" stroke="#0070f3" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
+      <line x1="60"  y1="276" x2="420" y2="276" stroke="#0070f3" stroke-width="1.75"/>
+      <polygon points="60,276  70,271  70,281"  fill="#0070f3"/>
+      <polygon points="420,276 410,271 410,281" fill="#0070f3"/>
+      <text x="240" y="292" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="12" font-weight="700" fill="#0070f3" letter-spacing="-0.3">Slab Length</text>
+
+      <!-- ── WIDTH annotation (right, green) ──────────────── -->
+      <line x1="432" y1="60"  x2="422" y2="60"  stroke="#16a34a" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
+      <line x1="432" y1="260" x2="422" y2="260" stroke="#16a34a" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
+      <line x1="436" y1="60"  x2="436" y2="260" stroke="#16a34a" stroke-width="1.75"/>
+      <polygon points="436,60  431,71  441,71"  fill="#16a34a"/>
+      <polygon points="436,260 431,249 441,249" fill="#16a34a"/>
+      <text x="452" y="163" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="12" font-weight="700" fill="#16a34a" letter-spacing="-0.3"
+        transform="rotate(90 452 163)">Slab Width</text>
+
+      <!-- ── LEGEND ─────────────────────────────────────── -->
+      <line x1="62" y1="288" x2="82" y2="288" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/>
+      <text x="86" y="292" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#4b5563">#4 Rebar grid (both directions)</text>
+    </svg>
+  </div>
+  <figcaption class="diagram-caption">
+    Bidirectional rebar grid: bars run along both length and width at equal spacing — enter slab dimensions and spacing above.
+  </figcaption>
+</figure>
+
+<style>
+  .diagram-figure { margin-top: 3.5rem; }
+
+  .diagram-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .diagram-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--surface-page);
+    border: 1px solid var(--border-default);
+    color: var(--color-text-secondary);
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .diagram-title {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+  }
+
+  .diagram-box {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+
+  .diagram-svg {
+    max-width: 480px;
+    height: auto;
+    display: block;
+  }
+
+  .diagram-caption {
+    margin-top: 0.875rem;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    text-align: center;
+    line-height: 1.5;
+  }
+</style>

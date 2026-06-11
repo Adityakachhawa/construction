@@ -1,0 +1,208 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<figure class={`diagram-figure ${className}`} aria-labelledby="retaining-wall-diagram-caption">
+  <div class="diagram-header">
+    <span class="diagram-badge">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <rect x="1" y="6" width="12" height="7" rx="1" stroke="currentColor" stroke-width="1.25"/>
+        <line x1="1" y1="9" x2="13" y2="9" stroke="currentColor" stroke-width="1" opacity="0.5"/>
+        <line x1="1" y1="11" x2="13" y2="11" stroke="currentColor" stroke-width="1" opacity="0.5"/>
+        <path d="M3 6V4a3 3 0 016 0v2" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/>
+      </svg>
+    </span>
+    <h2 id="retaining-wall-diagram-caption" class="diagram-title">Retaining Wall Diagram</h2>
+  </div>
+  <div class="diagram-box">
+    <svg
+      viewBox="0 0 480 300"
+      width="100%"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      focusable="false"
+      class="diagram-svg"
+    >
+      <defs>
+        <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#e8f4fd"/>
+          <stop offset="100%" stop-color="#dbeafe"/>
+        </linearGradient>
+        <linearGradient id="soilHighGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#86a86e"/>
+          <stop offset="100%" stop-color="#5a7a42"/>
+        </linearGradient>
+        <linearGradient id="soilLowGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#c8a96e"/>
+          <stop offset="100%" stop-color="#8b6840"/>
+        </linearGradient>
+        <linearGradient id="blockGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#94a3b8"/>
+          <stop offset="100%" stop-color="#64748b"/>
+        </linearGradient>
+        <linearGradient id="gravelGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#d6c7a0"/>
+          <stop offset="100%" stop-color="#b8a87a"/>
+        </linearGradient>
+        <linearGradient id="backfillGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#c4a96e" stop-opacity="0.7"/>
+          <stop offset="100%" stop-color="#c4a96e" stop-opacity="0"/>
+        </linearGradient>
+        <!-- Gravel dot pattern -->
+        <pattern id="gravelDots" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
+          <circle cx="2" cy="2" r="1.2" fill="#a89060" opacity="0.5"/>
+          <circle cx="6" cy="5" r="1" fill="#9a8050" opacity="0.45"/>
+        </pattern>
+        <!-- Block coursing lines -->
+        <pattern id="blockPattern" x="0" y="0" width="40" height="20" patternUnits="userSpaceOnUse">
+          <rect width="40" height="20" fill="none" stroke="#475569" stroke-width="0.8" opacity="0.4"/>
+          <line x1="20" y1="0" x2="20" y2="20" stroke="#475569" stroke-width="0.5" opacity="0.25"/>
+        </pattern>
+      </defs>
+
+      <!-- ── BACKGROUND ──────────────────────────────────── -->
+      <!-- High side soil (retained) -->
+      <rect x="200" y="50" width="260" height="190" fill="url(#soilHighGrad)" opacity="0.45"/>
+      <!-- Low side ground -->
+      <rect x="30" y="210" width="450" height="60" fill="url(#soilLowGrad)" opacity="0.4"/>
+      <!-- Sky behind high side -->
+      <rect x="200" y="20" width="260" height="30" fill="url(#skyGrad)" opacity="0.6"/>
+
+      <!-- ── GRAVEL BASE ─────────────────────────────────── -->
+      <rect x="130" y="222" width="80" height="18" fill="url(#gravelGrad)" rx="1" opacity="0.9"/>
+      <rect x="130" y="222" width="80" height="18" fill="url(#gravelDots)" rx="1"/>
+
+      <!-- ── GRAVEL BACKFILL (behind wall) ─────────────────── -->
+      <rect x="200" y="68" width="70" height="154" fill="url(#backfillGrad)" opacity="0.7"/>
+      <rect x="200" y="68" width="70" height="154" fill="url(#gravelDots)" opacity="0.6"/>
+
+      <!-- ── RETAINING WALL BLOCKS ──────────────────────── -->
+      <!-- Wall body -->
+      <rect x="130" y="68" width="72" height="154" fill="url(#blockGrad)" rx="1"/>
+      <!-- Block coursing overlay -->
+      <rect x="130" y="68" width="72" height="154" fill="url(#blockPattern)"/>
+      <!-- Wall face shadow -->
+      <rect x="130" y="68" width="4" height="154" fill="#475569" opacity="0.3" rx="1"/>
+      <!-- Buried first course indicator -->
+      <line x1="130" y1="210" x2="202" y2="210" stroke="#64748b" stroke-width="1"
+        stroke-dasharray="4 2" opacity="0.6"/>
+      <text x="95" y="213" text-anchor="end" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="500" fill="#64748b">Grade</text>
+
+      <!-- ── WALL HEIGHT annotation (left, green) ──────────── -->
+      <line x1="118" y1="68"  x2="128" y2="68"  stroke="#16a34a" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
+      <line x1="118" y1="210" x2="128" y2="210" stroke="#16a34a" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
+      <line x1="122" y1="68"  x2="122" y2="210" stroke="#16a34a" stroke-width="1.75"/>
+      <polygon points="122,68  117,79  127,79"  fill="#16a34a"/>
+      <polygon points="122,210 117,199 127,199" fill="#16a34a"/>
+      <text x="108" y="143" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="12" font-weight="700" fill="#16a34a" letter-spacing="-0.3"
+        transform="rotate(-90 108 143)">Height</text>
+
+      <!-- ── WALL LENGTH annotation (top, blue) ────────────── -->
+      <line x1="130" y1="56" x2="130" y2="66" stroke="#0070f3" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
+      <line x1="202" y1="56" x2="202" y2="66" stroke="#0070f3" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
+      <line x1="130" y1="60" x2="202" y2="60" stroke="#0070f3" stroke-width="1.75"/>
+      <polygon points="130,60 140,55 140,65" fill="#0070f3"/>
+      <polygon points="202,60 192,55 192,65" fill="#0070f3"/>
+      <text x="166" y="46" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="12" font-weight="700" fill="#0070f3" letter-spacing="-0.3">Length</text>
+
+      <!-- ── GRAVEL BASE DEPTH annotation (right of base, orange) ── -->
+      <line x1="214" y1="222" x2="224" y2="222" stroke="#d97706" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
+      <line x1="214" y1="240" x2="224" y2="240" stroke="#d97706" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
+      <line x1="220" y1="222" x2="220" y2="240" stroke="#d97706" stroke-width="1.75"/>
+      <polygon points="220,222 215,230 225,230" fill="#d97706"/>
+      <polygon points="220,240 215,232 225,232" fill="#d97706"/>
+      <text x="230" y="234" font-family="Inter,system-ui,sans-serif"
+        font-size="10" font-weight="600" fill="#d97706">Base</text>
+
+      <!-- ── BACKFILL DEPTH annotation (top-right, purple) ── -->
+      <line x1="200" y1="80" x2="270" y2="80" stroke="#7c3aed" stroke-width="1.75"/>
+      <polygon points="200,80 210,75 210,85" fill="#7c3aed"/>
+      <polygon points="270,80 260,75 260,85" fill="#7c3aed"/>
+      <line x1="200" y1="70" x2="200" y2="90" stroke="#7c3aed" stroke-width="1" stroke-dasharray="3 2" opacity="0.6"/>
+      <line x1="270" y1="70" x2="270" y2="90" stroke="#7c3aed" stroke-width="1" stroke-dasharray="3 2" opacity="0.6"/>
+      <text x="235" y="74" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="10" font-weight="700" fill="#7c3aed">Backfill</text>
+
+      <!-- ── LEGEND ──────────────────────────────────────── -->
+      <rect x="310" y="225" width="12" height="10" fill="url(#blockGrad)" rx="1"/>
+      <text x="326" y="234" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#4b5563">Blocks</text>
+      <rect x="370" y="225" width="12" height="10" fill="url(#gravelGrad)" rx="1"/>
+      <text x="386" y="234" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#4b5563">Gravel</text>
+
+      <!-- ── BLOCK DETAIL callout (bottom right) ─────────── -->
+      <rect x="310" y="248" width="140" height="38" rx="6"
+        fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="380" y="262" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="600" fill="#64748b">Block: Length × Height × Depth</text>
+      <text x="380" y="276" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" fill="#94a3b8">Standard: 12 × 6 × 6 in</text>
+    </svg>
+  </div>
+  <figcaption class="diagram-caption">
+    Cross-section showing wall height, length, gravel base, and backfill zone — enter dimensions above to calculate blocks and material volumes.
+  </figcaption>
+</figure>
+
+<style>
+  .diagram-figure {
+    margin-top: 3.5rem;
+  }
+
+  .diagram-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .diagram-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--surface-page);
+    border: 1px solid var(--border-default);
+    color: var(--color-text-secondary);
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .diagram-title {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+  }
+
+  .diagram-box {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+
+  .diagram-svg {
+    max-width: 480px;
+    height: auto;
+    display: block;
+  }
+
+  .diagram-caption {
+    margin-top: 0.875rem;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    text-align: center;
+    line-height: 1.5;
+  }
+</style>

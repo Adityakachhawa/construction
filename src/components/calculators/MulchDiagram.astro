@@ -1,0 +1,160 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<figure class={`diagram-figure ${className}`} aria-labelledby="mulch-diagram-caption">
+  <div class="diagram-header">
+    <span class="diagram-badge">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <path d="M7 1C4 1 1 4 1 7s3 6 6 6 6-3 6-6-3-6-6-6z" stroke="currentColor" stroke-width="1.25"/>
+        <path d="M7 4v3l2 2" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/>
+      </svg>
+    </span>
+    <h2 id="mulch-diagram-caption" class="diagram-title">Mulch Area Diagram</h2>
+  </div>
+  <div class="diagram-box">
+    <svg
+      viewBox="0 0 480 300"
+      width="100%"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      focusable="false"
+      class="diagram-svg"
+    >
+      <defs>
+        <linearGradient id="mulchTop" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#8B4513"/>
+          <stop offset="100%" stop-color="#6B3410"/>
+        </linearGradient>
+        <linearGradient id="mulchFront" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#5c2c0a"/>
+          <stop offset="100%" stop-color="#3e1e06"/>
+        </linearGradient>
+        <linearGradient id="mulchRight" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#4e2508"/>
+          <stop offset="100%" stop-color="#3e1e06"/>
+        </linearGradient>
+        <!-- Mulch texture: irregular bark chips -->
+        <pattern id="mulchPattern" x="0" y="0" width="24" height="18" patternUnits="userSpaceOnUse">
+          <ellipse cx="6" cy="5" rx="5" ry="2.5" fill="#a0522d" opacity="0.65" transform="rotate(-20 6 5)"/>
+          <ellipse cx="16" cy="4" rx="4" ry="2" fill="#7b3f20" opacity="0.6" transform="rotate(15 16 4)"/>
+          <ellipse cx="11" cy="13" rx="5" ry="2" fill="#a0522d" opacity="0.6" transform="rotate(-10 11 13)"/>
+          <ellipse cx="2" cy="14" rx="3" ry="1.5" fill="#7b3f20" opacity="0.5" transform="rotate(25 2 14)"/>
+          <ellipse cx="21" cy="14" rx="4" ry="1.8" fill="#9c4a20" opacity="0.55" transform="rotate(-15 21 14)"/>
+        </pattern>
+      </defs>
+
+      <!-- Ground layer (soil) -->
+      <polygon points="90,210 330,210 395,248 155,248"
+        fill="#c8a96e" stroke="#a07840" stroke-width="1" opacity="0.5"/>
+      <polygon points="90,210 90,230 155,230 155,248 395,248 395,210 330,210 330,195 90,195"
+        fill="#c8a96e" opacity="0.3"/>
+
+      <!-- Isometric mulch bed body -->
+      <!-- Top face base -->
+      <polygon points="90,100 330,100 395,148 155,148"
+        fill="url(#mulchTop)" stroke="#3e1e06" stroke-width="1.5"/>
+      <!-- Mulch texture overlay on top -->
+      <polygon points="90,100 330,100 395,148 155,148"
+        fill="url(#mulchPattern)" opacity="0.7"/>
+      <!-- Front face -->
+      <polygon points="90,100 90,210 155,210 155,148"
+        fill="url(#mulchFront)" stroke="#3e1e06" stroke-width="1.5"/>
+      <!-- Right face -->
+      <polygon points="155,148 395,148 395,210 155,210"
+        fill="url(#mulchRight)" stroke="#3e1e06" stroke-width="1.5"/>
+
+      <!-- ── LENGTH annotation (top, horizontal) ── -->
+      <line x1="90" y1="100" x2="90" y2="72" stroke="#0070f3" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="330" y1="100" x2="330" y2="72" stroke="#0070f3" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="90" y1="80" x2="330" y2="80" stroke="#0070f3" stroke-width="1.75"/>
+      <polygon points="90,80 100,75 100,85" fill="#0070f3"/>
+      <polygon points="330,80 320,75 320,85" fill="#0070f3"/>
+      <text x="210" y="66" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="13" font-weight="700" fill="#0070f3" letter-spacing="-0.3">Length</text>
+
+      <!-- ── WIDTH annotation (right side, diagonal) ── -->
+      <line x1="330" y1="100" x2="418" y2="76" stroke="#16a34a" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="395" y1="148" x2="418" y2="168" stroke="#16a34a" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="418" y1="76" x2="418" y2="168" stroke="#16a34a" stroke-width="1.75"/>
+      <polygon points="418,76 413,87 423,87" fill="#16a34a"/>
+      <polygon points="418,168 413,157 423,157" fill="#16a34a"/>
+      <text x="432" y="126" text-anchor="start" font-family="Inter,system-ui,sans-serif"
+        font-size="13" font-weight="700" fill="#16a34a" letter-spacing="-0.3">Width</text>
+
+      <!-- ── DEPTH annotation (left, vertical) ── -->
+      <line x1="90" y1="100" x2="55" y2="100" stroke="#d97706" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="90" y1="210" x2="55" y2="210" stroke="#d97706" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="62" y1="100" x2="62" y2="210" stroke="#d97706" stroke-width="1.75"/>
+      <polygon points="62,100 57,111 67,111" fill="#d97706"/>
+      <polygon points="62,210 57,199 67,199" fill="#d97706"/>
+      <text x="48" y="157" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="13" font-weight="700" fill="#d97706" letter-spacing="-0.3"
+        transform="rotate(-90 48 157)">Depth</text>
+    </svg>
+  </div>
+  <figcaption class="diagram-caption">
+    Mulch bed: length × width × depth — enter each dimension above to calculate volume and bags needed.
+  </figcaption>
+</figure>
+
+<style>
+  .diagram-figure {
+    margin-top: 3.5rem;
+  }
+
+  .diagram-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .diagram-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--surface-page);
+    border: 1px solid var(--border-default);
+    color: var(--color-text-secondary);
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .diagram-title {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+  }
+
+  .diagram-box {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+
+  .diagram-svg {
+    max-width: 480px;
+    height: auto;
+    display: block;
+  }
+
+  .diagram-caption {
+    margin-top: 0.875rem;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    text-align: center;
+    line-height: 1.5;
+  }
+</style>

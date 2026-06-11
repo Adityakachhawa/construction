@@ -3,8 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { buildCalculatorsIndexMeta } from '../../utils/seo';
 import { calculatorRegistry } from '../../data/registry';
 import { categories } from '../../data/categories';
-import Card from '../../components/ui/Card.astro';
-import Badge from '../../components/ui/Badge.astro';
+import CategoryIcon from '../../components/ui/CategoryIcon.astro';
 
 const meta = buildCalculatorsIndexMeta();
 
@@ -14,50 +13,252 @@ const grouped = calculatorRegistry.reduce<Record<string, typeof calculatorRegist
   return acc;
 }, {});
 
-// Respect category ordering defined in categories.ts
 const orderedCategories = categories
   .filter((cat) => grouped[cat.slug])
-  .map((cat) => ({ slug: cat.slug, name: cat.name, calcs: grouped[cat.slug] }));
+  .map((cat) => ({ cat, calcs: grouped[cat.slug] }));
 ---
 
 <BaseLayout meta={meta}>
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
-    <h1 class="text-2xl sm:text-3xl font-bold text-[var(--color-text-primary)]">All Construction Calculators</h1>
-    <p class="mt-2 text-[var(--color-text-secondary)]">
-      {calculatorRegistry.length > 0
-        ? `${calculatorRegistry.length} free calculator${calculatorRegistry.length !== 1 ? 's' : ''} across ${orderedCategories.length} categories.`
-        : 'Calculators coming soon.'}
-    </p>
+  <!-- Page header -->
+  <div class="page-header">
+    <div class="container">
+      <h1 class="page-title">Construction Calculators</h1>
+      <p class="page-sub">
+        {calculatorRegistry.length > 0
+          ? `${calculatorRegistry.length} free calculator${calculatorRegistry.length !== 1 ? 's' : ''} across ${orderedCategories.length} categories.`
+          : 'Calculators being built — check back soon.'}
+      </p>
+    </div>
+  </div>
 
-    {calculatorRegistry.length === 0 && (
-      <div class="mt-12 text-center py-16 rounded-xl border border-dashed border-[var(--color-border)]">
-        <p class="text-[var(--color-text-muted)]">Calculators are being built. Check back soon.</p>
-      </div>
-    )}
-
-    {orderedCategories.map(({ slug, name, calcs }) => (
-      <section class="mt-10">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-semibold text-[var(--color-text-primary)]">{name}</h2>
-          <a href={`/category/${slug}/`} class="text-sm text-[var(--color-primary)] hover:underline">
-            View all {name.toLowerCase()} →
-          </a>
+  <div class="content">
+    <div class="container">
+      {calculatorRegistry.length === 0 && (
+        <div class="empty-state">
+          <div class="empty-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 2v20M2 12h20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".4"/>
+              <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <p class="empty-title">Calculators coming soon</p>
+          <p class="empty-body">We're building accurate tools for every trade. Check back shortly.</p>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {calcs.map(calc => (
-            <Card href={`/calculators/${calc.slug}/`} variant="bordered" padding="md">
-              <div class="flex flex-col gap-2">
-                <div class="flex items-start justify-between gap-2">
-                  <h3 class="font-semibold text-[var(--color-text-primary)] leading-snug">{calc.name}</h3>
-                  <Badge color="gray" size="sm">{calc.category}</Badge>
-                </div>
-                <p class="text-sm text-[var(--color-text-secondary)] leading-relaxed">{calc.description}</p>
-                <span class="text-sm font-medium text-[var(--color-primary)] mt-1">Open →</span>
+      )}
+
+      {orderedCategories.map(({ cat, calcs }) => (
+        <section class="cat-section">
+          <div class="cat-section-header">
+            <a href={`/category/${cat.slug}/`} class="cat-section-title-link">
+              <div class="cat-section-icon" style={`--accent: ${cat.color}`}>
+                <CategoryIcon name={cat.icon} size={18} />
               </div>
-            </Card>
-          ))}
-        </div>
-      </section>
-    ))}
+              <h2 class="cat-section-title">{cat.name}</h2>
+            </a>
+            <a href={`/category/${cat.slug}/`} class="cat-section-link">
+              View category →
+            </a>
+          </div>
+          <div class="calc-grid">
+            {calcs.map(calc => (
+              <a href={`/calculators/${calc.slug}/`} class="calc-card" style={`--accent: ${cat.color}`}>
+                <div class="calc-card-icon">
+                  <CategoryIcon name={calc.category} size={20} />
+                </div>
+                <h3 class="calc-card-title">{calc.name}</h3>
+                <p class="calc-card-desc">{calc.description}</p>
+                <span class="calc-card-cta">
+                  Open →
+                </span>
+              </a>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
   </div>
 </BaseLayout>
+
+<style>
+  .page-header {
+    background: var(--surface-page);
+    border-bottom: 1px solid var(--border-default);
+    padding: 3rem 0 2.5rem;
+  }
+
+  .container {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .page-title {
+    font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+    font-weight: 900;
+    color: var(--color-text-primary);
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+  }
+
+  .page-sub {
+    margin-top: 0.5rem;
+    font-size: 1.0625rem;
+    color: var(--color-text-secondary);
+  }
+
+  .content {
+    padding: 3rem 0 5rem;
+  }
+
+  /* Empty state */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 5rem 1.5rem;
+    border: 1.5px dashed var(--border-default);
+    border-radius: 20px;
+    margin-top: 2rem;
+  }
+
+  .empty-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    background: var(--surface-page);
+    border: 1px solid var(--border-default);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-muted);
+    margin-bottom: 1.25rem;
+  }
+
+  .empty-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  .empty-body {
+    font-size: 0.9375rem;
+    color: var(--color-text-muted);
+  }
+
+  /* Category sections */
+  .cat-section { margin-top: 3.5rem; }
+  .cat-section:first-child { margin-top: 0; }
+
+  .cat-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .cat-section-title-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: opacity 150ms;
+  }
+  .cat-section-title-link:hover { opacity: 0.8; }
+
+  .cat-section-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    background: color-mix(in srgb, var(--accent, #0070f3) 12%, transparent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent, var(--color-primary));
+    flex-shrink: 0;
+  }
+
+  .cat-section-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+  }
+
+  .cat-section-link {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    flex-shrink: 0;
+    transition: opacity 150ms;
+  }
+  .cat-section-link:hover { opacity: 0.7; }
+
+  /* Calculator card grid */
+  .calc-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1rem;
+  }
+  @media (min-width: 640px)  { .calc-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) { .calc-grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .calc-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    padding: 1.375rem;
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-left: 3px solid var(--accent, var(--color-primary));
+    border-radius: 16px;
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 150ms, transform 150ms, border-color 150ms;
+    cursor: pointer;
+  }
+  .calc-card:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-3px);
+    border-color: var(--accent, var(--color-primary));
+  }
+
+  .calc-card-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 9px;
+    background: color-mix(in srgb, var(--accent, var(--color-primary)) 12%, transparent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent, var(--color-primary));
+    flex-shrink: 0;
+  }
+
+  .calc-card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+  }
+
+  .calc-card-desc {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .calc-card-cta {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    margin-top: 0.25rem;
+  }
+</style>

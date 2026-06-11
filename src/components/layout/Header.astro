@@ -8,99 +8,332 @@ interface Props {
 const { currentPath = '' } = Astro.props;
 
 const navLinks = [
-  { href: '/calculators/', label: 'All Calculators' },
-  { href: '/blog/', label: 'Blog' },
+  { href: '/calculators/', label: 'Calculators' },
   { href: '/guides/', label: 'Guides' },
+  { href: '/blog/', label: 'Blog' },
 ];
 ---
 
-<header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-[var(--color-border)]">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6">
-    <div class="flex items-center justify-between h-14">
+<header class="site-header">
+  <div class="header-inner">
 
-      <!-- Logo -->
-      <a href="/" class="flex items-center gap-2 font-bold text-[var(--color-text-primary)] hover:text-[var(--color-primary)] transition-colors" aria-label="ConstructCalc Home">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <rect x="2" y="14" width="6" height="8" rx="1" fill="var(--color-primary)" />
-          <rect x="9" y="8" width="6" height="14" rx="1" fill="var(--color-primary)" opacity="0.75" />
-          <rect x="16" y="2" width="6" height="20" rx="1" fill="var(--color-primary)" opacity="0.5" />
-        </svg>
-        <span class="text-base">ConstructCalc</span>
-      </a>
+    <!-- Logo -->
+    <a href="/" class="logo" aria-label="ConstructCalc Home">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+        <rect x="2" y="14" width="7" height="12" rx="1.5" fill="var(--color-primary)"/>
+        <rect x="10.5" y="8" width="7" height="18" rx="1.5" fill="var(--color-primary)" opacity="0.75"/>
+        <rect x="19" y="2" width="7" height="24" rx="1.5" fill="var(--color-primary)" opacity="0.5"/>
+      </svg>
+      <span>ConstructCalc</span>
+    </a>
 
-      <!-- Desktop nav -->
-      <nav class="hidden md:flex items-center gap-1" aria-label="Main navigation">
-        {navLinks.map(link => (
-          <a
-            href={link.href}
-            class={[
-              'px-3 py-1.5 text-sm font-medium rounded-lg transition-colors',
-              currentPath.startsWith(link.href)
-                ? 'text-[var(--color-primary)] bg-[var(--color-primary-50)]'
-                : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-neutral-100)]',
-            ].join(' ')}
-          >
-            {link.label}
-          </a>
-        ))}
-      </nav>
-
-      <!-- Mobile menu button -->
-      <button
-        id="mobile-menu-toggle"
-        type="button"
-        aria-label="Toggle navigation menu"
-        aria-expanded="false"
-        aria-controls="mobile-menu"
-        class="md:hidden p-2 rounded-lg text-[var(--color-text-secondary)] hover:bg-[var(--color-neutral-100)] transition-colors"
-      >
-        <svg id="icon-open" width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-          <path fill-rule="evenodd" d="M3 5h14a1 1 0 010 2H3a1 1 0 010-2zm0 4h14a1 1 0 010 2H3a1 1 0 010-2zm0 4h14a1 1 0 010 2H3a1 1 0 010-2z" clip-rule="evenodd"/>
-        </svg>
-        <svg id="icon-close" width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="hidden">
-          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
-        </svg>
-      </button>
-
-    </div>
-  </div>
-
-  <!-- Mobile menu -->
-  <div id="mobile-menu" class="hidden md:hidden border-t border-[var(--color-border)] bg-white">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-col gap-1">
+    <!-- Desktop nav -->
+    <nav class="desktop-nav" aria-label="Main navigation">
       {navLinks.map(link => (
         <a
           href={link.href}
-          class="px-3 py-2 text-sm font-medium rounded-lg text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-neutral-100)] transition-colors"
+          class={[
+            'nav-link',
+            currentPath.startsWith(link.href) ? 'nav-link--active' : '',
+          ].join(' ')}
         >
           {link.label}
         </a>
       ))}
-      <div class="mt-2 pt-2 border-t border-[var(--color-border)]">
-        <p class="px-3 py-1 text-xs font-semibold text-[var(--color-text-muted)] uppercase tracking-wide">Categories</p>
-        {categories.slice(0, 6).map(cat => (
-          <a
-            href={`/category/${cat.slug}/`}
-            class="px-3 py-2 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-neutral-100)] rounded-lg block transition-colors"
-          >
+    </nav>
+
+    <!-- Desktop CTA -->
+    <a href="/calculators/" class="header-cta" aria-label="Browse all calculators">
+      Browse Calculators
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+
+    <!-- Mobile menu button -->
+    <button
+      id="mobile-menu-toggle"
+      type="button"
+      aria-label="Open navigation menu"
+      aria-expanded="false"
+      aria-controls="mobile-overlay"
+      class="mobile-toggle"
+    >
+      <svg id="icon-open" width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path fill-rule="evenodd" d="M3 5h14a1 1 0 010 2H3a1 1 0 010-2zm0 4h14a1 1 0 010 2H3a1 1 0 010-2zm0 4h14a1 1 0 010 2H3a1 1 0 010-2z" clip-rule="evenodd"/>
+      </svg>
+      <svg id="icon-close" width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" style="display:none">
+        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<!-- Mobile full-screen overlay -->
+<div id="mobile-overlay" class="mobile-overlay" aria-hidden="true">
+  <div class="mobile-overlay-inner">
+    <div class="mobile-overlay-header">
+      <a href="/" class="logo">
+        <svg width="24" height="24" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+          <rect x="2" y="14" width="7" height="12" rx="1.5" fill="var(--color-primary)"/>
+          <rect x="10.5" y="8" width="7" height="18" rx="1.5" fill="var(--color-primary)" opacity="0.75"/>
+          <rect x="19" y="2" width="7" height="24" rx="1.5" fill="var(--color-primary)" opacity="0.5"/>
+        </svg>
+        <span>ConstructCalc</span>
+      </a>
+      <button id="mobile-close" type="button" aria-label="Close navigation" class="mobile-close">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+        </svg>
+      </button>
+    </div>
+
+    <nav class="mobile-nav" aria-label="Mobile navigation">
+      {navLinks.map(link => (
+        <a href={link.href} class="mobile-nav-link">{link.label}</a>
+      ))}
+    </nav>
+
+    <div class="mobile-categories">
+      <p class="mobile-categories-label">Categories</p>
+      <div class="mobile-category-grid">
+        {categories.map(cat => (
+          <a href={`/category/${cat.slug}/`} class="mobile-category-chip">
             {cat.name}
           </a>
         ))}
       </div>
     </div>
+
+    <a href="/calculators/" class="mobile-cta">Browse All Calculators →</a>
   </div>
-</header>
+</div>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-default);
+  }
+
+  .header-inner {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: 1.0625rem;
+    color: var(--color-text-primary);
+    letter-spacing: -0.02em;
+    flex-shrink: 0;
+    transition: opacity 150ms ease;
+  }
+  .logo:hover { opacity: 0.8; }
+
+  .desktop-nav {
+    display: none;
+    align-items: center;
+    gap: 0.25rem;
+    margin-left: 0.5rem;
+  }
+  @media (min-width: 768px) { .desktop-nav { display: flex; } }
+
+  .nav-link {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    border-radius: 8px;
+    transition: color 150ms, background 150ms;
+  }
+  .nav-link:hover {
+    color: var(--color-text-primary);
+    background: var(--border-subtle);
+  }
+  .nav-link--active {
+    color: var(--color-primary);
+    background: var(--color-primary-50);
+    font-weight: 600;
+  }
+
+  .header-cta {
+    display: none;
+    align-items: center;
+    gap: 0.375rem;
+    margin-left: auto;
+    padding: 0.5rem 1.125rem;
+    background: var(--color-primary);
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: 9999px;
+    transition: background 150ms, transform 150ms;
+    white-space: nowrap;
+  }
+  .header-cta:hover {
+    background: var(--color-primary-hover);
+    transform: translateY(-1px);
+  }
+  @media (min-width: 768px) { .header-cta { display: flex; } }
+
+  .mobile-toggle {
+    margin-left: auto;
+    padding: 0.5rem;
+    background: none;
+    border: none;
+    color: var(--color-text-secondary);
+    border-radius: 8px;
+    transition: background 150ms;
+  }
+  .mobile-toggle:hover { background: var(--border-subtle); }
+  @media (min-width: 768px) { .mobile-toggle { display: none; } }
+
+  /* Mobile overlay */
+  .mobile-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: #fff;
+    transform: translateX(100%);
+    transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .mobile-overlay.is-open {
+    transform: translateX(0);
+  }
+
+  .mobile-overlay-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 1rem 1.5rem 2rem;
+    overflow-y: auto;
+  }
+
+  .mobile-overlay-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0 1.5rem;
+    border-bottom: 1px solid var(--border-default);
+  }
+
+  .mobile-close {
+    padding: 0.5rem;
+    background: var(--border-subtle);
+    border: none;
+    border-radius: 8px;
+    color: var(--color-text-secondary);
+  }
+
+  .mobile-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--border-default);
+  }
+
+  .mobile-nav-link {
+    padding: 0.75rem 0.5rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    border-radius: 8px;
+    transition: background 150ms;
+  }
+  .mobile-nav-link:hover { background: var(--border-subtle); }
+
+  .mobile-categories { padding: 1.5rem 0; }
+
+  .mobile-categories-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.75rem;
+  }
+
+  .mobile-category-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  .mobile-category-chip {
+    padding: 0.625rem 0.875rem;
+    background: var(--surface-page);
+    border: 1px solid var(--border-default);
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    transition: border-color 150ms, color 150ms;
+  }
+  .mobile-category-chip:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  .mobile-cta {
+    display: block;
+    margin-top: auto;
+    padding: 1rem;
+    background: var(--color-primary);
+    color: #fff;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 12px;
+  }
+</style>
 
 <script>
   const toggle = document.getElementById('mobile-menu-toggle');
-  const menu = document.getElementById('mobile-menu');
+  const close = document.getElementById('mobile-close');
+  const overlay = document.getElementById('mobile-overlay');
   const iconOpen = document.getElementById('icon-open');
   const iconClose = document.getElementById('icon-close');
 
-  toggle?.addEventListener('click', () => {
-    const isOpen = menu?.classList.toggle('hidden') === false;
-    toggle.setAttribute('aria-expanded', String(isOpen));
-    iconOpen?.classList.toggle('hidden', isOpen);
-    iconClose?.classList.toggle('hidden', !isOpen);
+  function openMenu() {
+    overlay?.classList.add('is-open');
+    overlay?.removeAttribute('aria-hidden');
+    toggle?.setAttribute('aria-expanded', 'true');
+    if (iconOpen) iconOpen.style.display = 'none';
+    if (iconClose) iconClose.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMenu() {
+    overlay?.classList.remove('is-open');
+    overlay?.setAttribute('aria-hidden', 'true');
+    toggle?.setAttribute('aria-expanded', 'false');
+    if (iconOpen) iconOpen.style.display = 'block';
+    if (iconClose) iconClose.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  toggle?.addEventListener('click', openMenu);
+  close?.addEventListener('click', closeMenu);
+
+  overlay?.addEventListener('click', (e) => {
+    if (e.target === overlay) closeMenu();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeMenu();
   });
 </script>

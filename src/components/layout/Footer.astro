@@ -2,68 +2,171 @@
 import { categories } from '../../data/categories';
 ---
 
-<footer class="border-t border-[var(--color-border)] bg-[var(--color-neutral-50)] mt-20">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-12">
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+<footer class="site-footer">
+  <!-- Top accent line -->
+  <div class="footer-accent"></div>
 
-      <!-- Brand -->
-      <div class="col-span-2 md:col-span-1">
-        <a href="/" class="flex items-center gap-2 font-bold text-[var(--color-text-primary)] mb-3">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <rect x="2" y="14" width="6" height="8" rx="1" fill="var(--color-primary)" />
-            <rect x="9" y="8" width="6" height="14" rx="1" fill="var(--color-primary)" opacity="0.75" />
-            <rect x="16" y="2" width="6" height="20" rx="1" fill="var(--color-primary)" opacity="0.5" />
-          </svg>
-          ConstructCalc
-        </a>
-        <p class="text-sm text-[var(--color-text-muted)] leading-relaxed">
-          Free construction calculators for professionals and DIYers.
-        </p>
-      </div>
-
-      <!-- Calculators -->
-      <div>
-        <h3 class="text-sm font-semibold text-[var(--color-text-primary)] mb-3">Calculators</h3>
-        <ul class="space-y-2">
-          {categories.slice(0, 5).map(cat => (
-            <li>
-              <a href={`/category/${cat.slug}/`} class="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors">
-                {cat.name}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <!-- Resources -->
-      <div>
-        <h3 class="text-sm font-semibold text-[var(--color-text-primary)] mb-3">Resources</h3>
-        <ul class="space-y-2">
-          <li><a href="/blog/" class="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors">Blog</a></li>
-          <li><a href="/guides/" class="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors">Guides</a></li>
-          <li><a href="/calculators/" class="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors">All Calculators</a></li>
-        </ul>
-      </div>
-
-      <!-- Company -->
-      <div>
-        <h3 class="text-sm font-semibold text-[var(--color-text-primary)] mb-3">Company</h3>
-        <ul class="space-y-2">
-          <li><a href="/about/" class="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors">About</a></li>
-          <li><a href="/privacy/" class="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors">Privacy Policy</a></li>
-          <li><a href="/contact/" class="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors">Contact</a></li>
-        </ul>
-      </div>
-
+  <div class="footer-inner">
+    <!-- Brand column -->
+    <div class="footer-brand">
+      <a href="/" class="footer-logo" aria-label="ConstructCalc Home">
+        <svg width="26" height="26" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+          <rect x="2" y="14" width="7" height="12" rx="1.5" fill="var(--color-primary)"/>
+          <rect x="10.5" y="8" width="7" height="18" rx="1.5" fill="var(--color-primary)" opacity="0.75"/>
+          <rect x="19" y="2" width="7" height="24" rx="1.5" fill="var(--color-primary)" opacity="0.5"/>
+        </svg>
+        <span>ConstructCalc</span>
+      </a>
+      <p class="footer-tagline">
+        Accurate material estimates for construction professionals and serious DIYers.
+      </p>
     </div>
 
-    <div class="mt-10 pt-6 border-t border-[var(--color-border)] flex flex-col sm:flex-row items-center justify-between gap-3">
-      <p class="text-xs text-[var(--color-text-muted)]">
-        &copy; {new Date().getFullYear()} ConstructCalc. All rights reserved.
-      </p>
-      <p class="text-xs text-[var(--color-text-muted)]">
-        Results are estimates. Always verify with a licensed professional.
-      </p>
+    <!-- Calculators column -->
+    <div class="footer-col">
+      <h3 class="footer-col-heading">Calculators</h3>
+      <ul class="footer-links">
+        {categories.map(cat => (
+          <li>
+            <a href={`/category/${cat.slug}/`} class="footer-link">{cat.name}</a>
+          </li>
+        ))}
+        <li>
+          <a href="/calculators/" class="footer-link">All Calculators</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Resources column -->
+    <div class="footer-col">
+      <h3 class="footer-col-heading">Resources</h3>
+      <ul class="footer-links">
+        <li><a href="/blog/" class="footer-link">Blog</a></li>
+        <li><a href="/guides/" class="footer-link">Guides</a></li>
+      </ul>
+    </div>
+
+    <!-- Company column -->
+    <div class="footer-col">
+      <h3 class="footer-col-heading">Company</h3>
+      <ul class="footer-links">
+        <li><a href="/about/" class="footer-link">About</a></li>
+        <li><a href="/privacy/" class="footer-link">Privacy</a></li>
+        <li><a href="/contact/" class="footer-link">Contact</a></li>
+      </ul>
     </div>
   </div>
+
+  <!-- Bottom bar -->
+  <div class="footer-bottom">
+    <p class="footer-copy">&copy; {new Date().getFullYear()} ConstructCalc. All rights reserved.</p>
+    <p class="footer-disclaimer">Results are estimates. Always verify with a licensed professional.</p>
+  </div>
 </footer>
+
+<style>
+  .site-footer {
+    background: var(--ink);
+    color: var(--ink-dim);
+    margin-top: 6rem;
+  }
+
+  .footer-accent {
+    height: 3px;
+    background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-primary-400) 100%);
+  }
+
+  .footer-inner {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 4rem 1.5rem 3rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .footer-inner {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .footer-inner {
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 4rem;
+    }
+  }
+
+  .footer-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.875rem;
+    transition: opacity 150ms;
+  }
+  .footer-logo:hover { opacity: 0.8; }
+
+  .footer-tagline {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--ink-dim);
+    max-width: 24rem;
+  }
+
+  .footer-col-heading {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 1rem;
+  }
+
+  .footer-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+
+  .footer-link {
+    font-size: 0.875rem;
+    color: #71717a;
+    transition: color 150ms;
+  }
+  .footer-link:hover { color: #fff; }
+
+  .footer-bottom {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 1.5rem 1.5rem 2rem;
+    border-top: 1px solid var(--ink-border);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .footer-bottom {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  .footer-copy {
+    font-size: 0.75rem;
+    color: #52525b;
+  }
+
+  .footer-disclaimer {
+    font-size: 0.75rem;
+    color: #52525b;
+    font-style: italic;
+  }
+</style>

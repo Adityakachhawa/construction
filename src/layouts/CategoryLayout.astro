@@ -1,6 +1,7 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import Breadcrumbs from '../components/layout/Breadcrumbs.astro';
+import CategoryIcon from '../components/ui/CategoryIcon.astro';
 import type { MetaProps } from '../utils/seo';
 import type { BreadcrumbItem } from '../utils/schema';
 
@@ -11,43 +12,109 @@ interface Props {
   name: string;
   description: string;
   calculatorCount: number;
+  categoryColor?: string;
+  categoryIcon?: string;
 }
 
-const { meta, schemas = [], breadcrumbs, name, description, calculatorCount } = Astro.props;
+const { meta, schemas = [], breadcrumbs, name, description, calculatorCount, categoryColor = '#0070f3', categoryIcon = 'concrete' } = Astro.props;
 ---
 
 <BaseLayout meta={meta} schemas={schemas}>
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6">
-    <Breadcrumbs items={breadcrumbs} />
+  <!-- Page header -->
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbs} />
+      <div class="header-body">
+        <div class="header-icon" style={`--accent: ${categoryColor}`}>
+          <CategoryIcon name={categoryIcon} size={28} />
+        </div>
+        <div>
+          <h1 class="page-title">{name} Calculators</h1>
+          <p class="page-sub">{description}</p>
+          <p class="page-count">
+            {calculatorCount} calculator{calculatorCount !== 1 ? 's' : ''} available
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <header class="mt-4 mb-8">
-      <h1 class="text-2xl sm:text-3xl font-bold text-[var(--color-text-primary)]">
-        {name} Calculators
-      </h1>
-      <p class="mt-2 text-[var(--color-text-secondary)] max-w-2xl">
-        {description}
-      </p>
-      <p class="mt-1 text-sm text-[var(--color-text-muted)]">
-        {calculatorCount} calculator{calculatorCount !== 1 ? 's' : ''} available
-      </p>
-    </header>
+  <div class="content">
+    <div class="container">
+      <slot name="featured" />
 
-    <!-- Featured calculators (large cards) -->
-    <slot name="featured" />
+      <section class="calc-section">
+        <slot name="grid" />
+      </section>
 
-    <!-- All calculators grid -->
-    <section class="mt-10">
-      <h2 class="text-lg font-semibold text-[var(--color-text-primary)] mb-4">All {name} Calculators</h2>
-      <slot name="grid" />
-    </section>
-
-    <!-- Related guides -->
-    <slot name="guides" />
-
-    <!-- Category FAQ -->
-    <slot name="faq" />
-
-    <!-- Category content from MDX -->
-    <slot name="content" />
+      <slot name="guides" />
+      <slot name="faq" />
+      <slot name="content" />
+    </div>
   </div>
 </BaseLayout>
+
+<style>
+  .page-header {
+    background: var(--surface-page);
+    border-bottom: 1px solid var(--border-default);
+    padding: 2rem 0 2.5rem;
+  }
+
+  .container {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .header-body {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.25rem;
+    margin-top: 1.25rem;
+  }
+
+  .header-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--accent, #0070f3) 12%, transparent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent, var(--color-primary));
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+
+  .page-title {
+    font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+    font-weight: 900;
+    color: var(--color-text-primary);
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+  }
+
+  .page-sub {
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+    max-width: 44rem;
+    line-height: 1.6;
+  }
+
+  .page-count {
+    margin-top: 0.375rem;
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    font-weight: 500;
+  }
+
+  .content {
+    padding: 3rem 0 5rem;
+  }
+
+  .calc-section {
+    margin-top: 0.5rem;
+  }
+</style>
