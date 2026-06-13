@@ -1,4 +1,4 @@
----
+﻿---
 interface Props {
   class?: string;
 }
@@ -61,7 +61,7 @@ const { class: className = '' } = Astro.props;
       <polygon points="155,148 395,148 395,220 155,220"
         fill="url(#gravelRight)" stroke="#7a6a42" stroke-width="1.5"/>
 
-      <!-- ── LENGTH annotation (top, horizontal) ── -->
+      <!-- â”€â”€ LENGTH annotation (top, horizontal) â”€â”€ -->
       <line x1="90" y1="100" x2="90" y2="72" stroke="#0070f3" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
       <line x1="330" y1="100" x2="330" y2="72" stroke="#0070f3" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
       <line x1="90" y1="80" x2="330" y2="80" stroke="#0070f3" stroke-width="1.75"/>
@@ -70,7 +70,7 @@ const { class: className = '' } = Astro.props;
       <text x="210" y="66" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
         font-size="13" font-weight="700" fill="#0070f3" letter-spacing="-0.3">Length</text>
 
-      <!-- ── WIDTH annotation (right side, diagonal) ── -->
+      <!-- â”€â”€ WIDTH annotation (right side, diagonal) â”€â”€ -->
       <line x1="330" y1="100" x2="418" y2="76" stroke="#16a34a" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
       <line x1="395" y1="148" x2="418" y2="168" stroke="#16a34a" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
       <line x1="418" y1="76" x2="418" y2="168" stroke="#16a34a" stroke-width="1.75"/>
@@ -79,7 +79,7 @@ const { class: className = '' } = Astro.props;
       <text x="432" y="126" text-anchor="start" font-family="Inter,system-ui,sans-serif"
         font-size="13" font-weight="700" fill="#16a34a" letter-spacing="-0.3">Width</text>
 
-      <!-- ── DEPTH annotation (left, vertical) ── -->
+      <!-- â”€â”€ DEPTH annotation (left, vertical) â”€â”€ -->
       <line x1="90" y1="100" x2="55" y2="100" stroke="#d97706" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
       <line x1="90" y1="220" x2="55" y2="220" stroke="#d97706" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
       <line x1="62" y1="100" x2="62" y2="220" stroke="#d97706" stroke-width="1.75"/>
@@ -91,7 +91,7 @@ const { class: className = '' } = Astro.props;
     </svg>
   </div>
   <figcaption class="diagram-caption">
-    Gravel bed: length × width × depth — enter each dimension above to calculate volume and weight.
+    Gravel bed: length Ã— width Ã— depth â€” enter each dimension above to calculate volume and weight.
   </figcaption>
 </figure>
 
@@ -141,6 +141,7 @@ const { class: className = '' } = Astro.props;
   .diagram-svg {
     max-width: 480px;
     height: auto;
+  aspect-ratio: 480 / 300;
     display: block;
   }
 

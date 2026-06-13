@@ -1,0 +1,227 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<figure class={`diagram-figure ${className}`} aria-labelledby="stud-diagram-caption">
+  <div class="diagram-header">
+    <span class="diagram-badge">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <rect x="1" y="1" width="12" height="12" rx="1" stroke="currentColor" stroke-width="1.25"/>
+        <line x1="4"  y1="1" x2="4"  y2="13" stroke="currentColor" stroke-width="1.25"/>
+        <line x1="7"  y1="1" x2="7"  y2="5"  stroke="currentColor" stroke-width="1.25"/>
+        <line x1="7"  y1="9" x2="7"  y2="13" stroke="currentColor" stroke-width="1.25"/>
+        <line x1="10" y1="1" x2="10" y2="13" stroke="currentColor" stroke-width="1.25"/>
+      </svg>
+    </span>
+    <h2 id="stud-diagram-caption" class="diagram-title">Wall Framing Diagram</h2>
+  </div>
+  <div class="diagram-box">
+    <svg
+      viewBox="0 0 480 300"
+      width="100%"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      focusable="false"
+      class="diagram-svg"
+    >
+      <defs>
+        <linearGradient id="plateGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#fef3c7"/>
+          <stop offset="100%" stop-color="#fde68a"/>
+        </linearGradient>
+        <linearGradient id="studGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"   stop-color="#fef9ee"/>
+          <stop offset="100%" stop-color="#fde68a"/>
+        </linearGradient>
+        <linearGradient id="headerGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#d97706"/>
+          <stop offset="100%" stop-color="#b45309"/>
+        </linearGradient>
+        <!-- Wood grain for studs -->
+        <pattern id="studGrain" x="0" y="0" width="12" height="40" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="8"  x2="12" y2="8"  stroke="#d97706" stroke-width="0.4" opacity="0.3"/>
+          <line x1="0" y1="18" x2="12" y2="18" stroke="#b45309" stroke-width="0.35" opacity="0.22"/>
+          <line x1="0" y1="28" x2="12" y2="28" stroke="#d97706" stroke-width="0.4" opacity="0.28"/>
+          <line x1="0" y1="37" x2="12" y2="37" stroke="#b45309" stroke-width="0.3" opacity="0.2"/>
+        </pattern>
+      </defs>
+
+      <!-- ── TOP PLATE (double) ──────────────────────────────── -->
+      <rect x="32" y="22" width="416" height="10" fill="url(#plateGrad)" stroke="#d97706" stroke-width="1.25"/>
+      <rect x="32" y="32" width="416" height="10" fill="url(#plateGrad)" stroke="#d97706" stroke-width="1.25"/>
+      <text x="8"  y="31" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="7" font-weight="600" fill="#92400e" transform="rotate(-90 8 31)">Top plates</text>
+
+      <!-- ── BOTTOM PLATE ─────────────────────────────────────── -->
+      <rect x="32" y="268" width="416" height="10" fill="url(#plateGrad)" stroke="#d97706" stroke-width="1.25"/>
+      <text x="8" y="275" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="7" font-weight="600" fill="#92400e" transform="rotate(-90 8 275)">Bottom plate</text>
+
+      <!-- ── FIELD STUDS (left section) ─────────────────────── -->
+      <!-- Stud 1 (left corner king) -->
+      <rect x="32"  y="42" width="11" height="226" fill="url(#studGrad)" stroke="#d97706" stroke-width="1.25"/>
+      <rect x="32"  y="42" width="11" height="226" fill="url(#studGrain)" opacity="0.6"/>
+      <!-- Stud 2 (corner assembly) -->
+      <rect x="44"  y="42" width="11" height="226" fill="url(#studGrad)" stroke="#d97706" stroke-width="1.25"/>
+      <rect x="44"  y="42" width="11" height="226" fill="url(#studGrain)" opacity="0.6"/>
+
+      <!-- Field stud A (16" OC) -->
+      <rect x="90"  y="42" width="11" height="226" fill="url(#studGrad)" stroke="#d97706" stroke-width="1.25"/>
+      <rect x="90"  y="42" width="11" height="226" fill="url(#studGrain)" opacity="0.6"/>
+      <!-- Field stud B -->
+      <rect x="136" y="42" width="11" height="226" fill="url(#studGrad)" stroke="#d97706" stroke-width="1.25"/>
+      <rect x="136" y="42" width="11" height="226" fill="url(#studGrain)" opacity="0.6"/>
+      <!-- Field stud C -->
+      <rect x="182" y="42" width="11" height="226" fill="url(#studGrad)" stroke="#d97706" stroke-width="1.25"/>
+      <rect x="182" y="42" width="11" height="226" fill="url(#studGrain)" opacity="0.6"/>
+
+      <!-- ── OPENING (window) ────────────────────────────────── -->
+      <!-- King stud left of opening -->
+      <rect x="214" y="42" width="11" height="226" fill="url(#studGrad)" stroke="#d97706" stroke-width="1.25"/>
+      <rect x="214" y="42" width="11" height="226" fill="url(#studGrain)" opacity="0.6"/>
+      <!-- Jack/trimmer stud left -->
+      <rect x="226" y="136" width="10" height="132" fill="#fbbf24" stroke="#d97706" stroke-width="1.25" opacity="0.85"/>
+
+      <!-- Header -->
+      <rect x="226" y="108" width="84" height="28" fill="url(#headerGrad)" stroke="#92400e" stroke-width="1.5"/>
+      <text x="268" y="127" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8.5" font-weight="700" fill="#fff">Header</text>
+
+      <!-- Cripple studs above header -->
+      <rect x="248" y="42"  width="8" height="66" fill="url(#studGrad)" stroke="#d97706" stroke-width="1" opacity="0.8"/>
+      <rect x="265" y="42"  width="8" height="66" fill="url(#studGrad)" stroke="#d97706" stroke-width="1" opacity="0.8"/>
+      <rect x="282" y="42"  width="8" height="66" fill="url(#studGrad)" stroke="#d97706" stroke-width="1" opacity="0.8"/>
+
+      <!-- Window rough opening box -->
+      <rect x="226" y="136" width="84" height="132" fill="#e0f2fe" stroke="#0284c7"
+        stroke-width="1.5" stroke-dasharray="5 3" opacity="0.7"/>
+      <text x="268" y="206" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8.5" font-weight="600" fill="#0369a1">Rough</text>
+      <text x="268" y="217" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8.5" font-weight="600" fill="#0369a1">Opening</text>
+
+      <!-- Jack/trimmer stud right -->
+      <rect x="310" y="136" width="10" height="132" fill="#fbbf24" stroke="#d97706" stroke-width="1.25" opacity="0.85"/>
+      <!-- King stud right of opening -->
+      <rect x="321" y="42"  width="11" height="226" fill="url(#studGrad)" stroke="#d97706" stroke-width="1.25"/>
+      <rect x="321" y="42"  width="11" height="226" fill="url(#studGrain)" opacity="0.6"/>
+
+      <!-- ── FIELD STUDS (right section) ─────────────────────── -->
+      <rect x="368" y="42" width="11" height="226" fill="url(#studGrad)" stroke="#d97706" stroke-width="1.25"/>
+      <rect x="368" y="42" width="11" height="226" fill="url(#studGrain)" opacity="0.6"/>
+
+      <!-- Right corner assembly -->
+      <rect x="426" y="42" width="11" height="226" fill="url(#studGrad)" stroke="#d97706" stroke-width="1.25"/>
+      <rect x="426" y="42" width="11" height="226" fill="url(#studGrain)" opacity="0.6"/>
+      <rect x="437" y="42" width="11" height="226" fill="url(#studGrad)" stroke="#d97706" stroke-width="1.25"/>
+      <rect x="437" y="42" width="11" height="226" fill="url(#studGrain)" opacity="0.6"/>
+
+      <!-- ── SPACING ANNOTATION (16" OC) ─────────────────────── -->
+      <line x1="101" y1="15" x2="101" y2="42" stroke="#0070f3" stroke-width="1" stroke-dasharray="3 2" opacity="0.6"/>
+      <line x1="147" y1="15" x2="147" y2="42" stroke="#0070f3" stroke-width="1" stroke-dasharray="3 2" opacity="0.6"/>
+      <line x1="101" y1="14" x2="147" y2="14" stroke="#0070f3" stroke-width="1.5"/>
+      <polygon points="101,14 110,10 110,18" fill="#0070f3"/>
+      <polygon points="147,14 138,10 138,18" fill="#0070f3"/>
+      <text x="124" y="9" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="700" fill="#0070f3">16" OC</text>
+
+      <!-- ── WALL LENGTH annotation (bottom) ─────────────────── -->
+      <line x1="32"  y1="286" x2="448" y2="286" stroke="#0070f3" stroke-width="1.75"/>
+      <line x1="32"  y1="278" x2="32"  y2="294" stroke="#0070f3" stroke-width="1.25"/>
+      <line x1="448" y1="278" x2="448" y2="294" stroke="#0070f3" stroke-width="1.25"/>
+      <polygon points="32,286  45,281  45,291"  fill="#0070f3"/>
+      <polygon points="448,286 435,281 435,291" fill="#0070f3"/>
+      <text x="240" y="299" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="12" font-weight="700" fill="#0070f3" letter-spacing="-0.3">Wall Length</text>
+
+      <!-- ── WALL HEIGHT annotation (right) ─────────────────── -->
+      <line x1="458" y1="22"  x2="458" y2="278" stroke="#16a34a" stroke-width="1.75"/>
+      <line x1="450" y1="22"  x2="466" y2="22"  stroke="#16a34a" stroke-width="1.25"/>
+      <line x1="450" y1="278" x2="466" y2="278" stroke="#16a34a" stroke-width="1.25"/>
+      <polygon points="458,22  453,35  463,35"  fill="#16a34a"/>
+      <polygon points="458,278 453,265 463,265" fill="#16a34a"/>
+      <text x="474" y="154" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="12" font-weight="700" fill="#16a34a" letter-spacing="-0.3"
+        transform="rotate(90 474 154)">Wall Height</text>
+
+      <!-- ── STUD LABELS ─────────────────────────────────────── -->
+      <!-- King stud label -->
+      <line x1="225" y1="90" x2="196" y2="72" stroke="#b45309" stroke-width="1" stroke-dasharray="3 2" opacity="0.6"/>
+      <text x="194" y="70" text-anchor="end" font-family="Inter,system-ui,sans-serif"
+        font-size="8.5" font-weight="600" fill="#b45309">King stud</text>
+
+      <!-- Jack stud label -->
+      <line x1="231" y1="190" x2="196" y2="190" stroke="#d97706" stroke-width="1" stroke-dasharray="3 2" opacity="0.6"/>
+      <text x="194" y="193" text-anchor="end" font-family="Inter,system-ui,sans-serif"
+        font-size="8.5" font-weight="600" fill="#92400e">Jack stud</text>
+
+      <!-- Cripple label -->
+      <line x1="256" y1="72" x2="256" y2="62" stroke="#6b7280" stroke-width="1" opacity="0.5"/>
+      <text x="256" y="59" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8" font-weight="600" fill="#4b5563">Cripples</text>
+    </svg>
+  </div>
+  <figcaption class="diagram-caption">
+    Wall framing: field studs at regular OC spacing, 3-stud corner assemblies at each end, and king/jack/cripple studs around each opening.
+  </figcaption>
+</figure>
+
+<style>
+  .diagram-figure { margin-top: 3.5rem; }
+
+  .diagram-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .diagram-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--surface-page);
+    border: 1px solid var(--border-default);
+    color: var(--color-text-secondary);
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .diagram-title {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+  }
+
+  .diagram-box {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+
+  .diagram-svg {
+    max-width: 480px;
+    height: auto;
+    aspect-ratio: 480 / 300;
+    display: block;
+  }
+
+  .diagram-caption {
+    margin-top: 0.875rem;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    text-align: center;
+    line-height: 1.5;
+  }
+</style>

@@ -1,0 +1,365 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<figure class={`diagram-figure ${className}`} aria-labelledby="mortar-diagram-caption">
+  <div class="diagram-header">
+    <span class="diagram-badge">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <rect x="1" y="4" width="12" height="3" rx="0.5" fill="currentColor" opacity="0.85"/>
+        <rect x="1" y="8.5" width="12" height="3" rx="0.5" fill="currentColor" opacity="0.5"/>
+        <rect x="4" y="1" width="3" height="3" rx="0.5" fill="currentColor" opacity="0.7"/>
+        <rect x="8" y="1" width="3" height="3" rx="0.5" fill="currentColor" opacity="0.7"/>
+      </svg>
+    </span>
+    <h2 id="mortar-diagram-caption" class="diagram-title">Mortar Diagram</h2>
+  </div>
+  <div class="diagram-box">
+    <svg
+      viewBox="0 0 520 310"
+      width="100%"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      focusable="false"
+      class="diagram-svg"
+    >
+      <defs>
+        <!-- Brick face gradient -->
+        <linearGradient id="mBrickFace" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#efd4a0"/>
+          <stop offset="100%" stop-color="#e2c499"/>
+        </linearGradient>
+        <!-- Brick top surface gradient -->
+        <linearGradient id="mBrickTop" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#f5e0b0"/>
+          <stop offset="100%" stop-color="#eacf8e"/>
+        </linearGradient>
+        <!-- Brick right end gradient -->
+        <linearGradient id="mBrickRight" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"   stop-color="#c49060"/>
+          <stop offset="100%" stop-color="#b8865a"/>
+        </linearGradient>
+        <!-- Mortar joint background -->
+        <linearGradient id="mMortar" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#d9dde3"/>
+          <stop offset="100%" stop-color="#c8cdd6"/>
+        </linearGradient>
+        <!-- Bag gradient -->
+        <linearGradient id="mBag" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#f1f5f9"/>
+          <stop offset="100%" stop-color="#e2e8f0"/>
+        </linearGradient>
+      </defs>
+
+      <!-- ══ MORTAR JOINT BACKGROUND ROWS (drawn behind bricks) ══ -->
+      <!-- Horizontal mortar bands for each course gap -->
+      <!-- Between course 1 and 2 (y=209 to 230 → joint strip at y=227) -->
+      <rect x="38" y="226" width="300" height="4" fill="url(#mMortar)" opacity="0.9"/>
+      <!-- Between course 2 and 3 (joint at y=206) -->
+      <rect x="38" y="205" width="300" height="4" fill="url(#mMortar)" opacity="0.9"/>
+      <!-- Between course 3 and 4 (joint at y=185) -->
+      <rect x="38" y="184" width="300" height="4" fill="url(#mMortar)" opacity="0.9"/>
+
+      <!-- ══ BRICK MACRO: front face + top parallelogram + right end ══
+           Helper: each brick at (bx, by) with face 44×18, iso depth 16r/8u
+           Front face: rect bx,by 44×18
+           Top: parallelogram bx,by → bx+44,by → bx+60,by-8 → bx+16,by-8
+           Right end: bx+44,by → bx+60,by-8 → bx+60,by+10 → bx+44,by+18
+      ══ -->
+
+      <!-- ── COURSE 1 (y=230, 6 bricks at x=60,107,154,201,248,295) ── -->
+
+      <!-- Brick 1-1  x=60 -->
+      <polygon points="60,222 76,222 76,214 60,214" fill="url(#mBrickTop)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="104,222 120,222 120,214 104,214" fill="url(#mBrickRight)" stroke="#c4a55d" stroke-width="1"/>
+      <rect x="60" y="222" width="44" height="18" fill="url(#mBrickFace)" stroke="#c4a55d" stroke-width="1"/>
+      <!-- top parallelogram -->
+      <polygon points="60,222 104,222 120,214 76,214" fill="url(#mBrickTop)" stroke="#c4a55d" stroke-width="1"/>
+      <!-- right parallelogram -->
+      <polygon points="104,222 120,214 120,232 104,240" fill="url(#mBrickRight)" stroke="#c4a55d" stroke-width="1"/>
+
+      <!-- Brick 1-2  x=107 -->
+      <rect x="107" y="222" width="44" height="18" fill="url(#mBrickFace)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="107,222 151,222 167,214 123,214" fill="url(#mBrickTop)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="151,222 167,214 167,232 151,240" fill="url(#mBrickRight)" stroke="#c4a55d" stroke-width="1"/>
+
+      <!-- Brick 1-3  x=154 -->
+      <rect x="154" y="222" width="44" height="18" fill="url(#mBrickFace)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="154,222 198,222 214,214 170,214" fill="url(#mBrickTop)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="198,222 214,214 214,232 198,240" fill="url(#mBrickRight)" stroke="#c4a55d" stroke-width="1"/>
+
+      <!-- Brick 1-4  x=201 -->
+      <rect x="201" y="222" width="44" height="18" fill="url(#mBrickFace)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="201,222 245,222 261,214 217,214" fill="url(#mBrickTop)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="245,222 261,214 261,232 245,240" fill="url(#mBrickRight)" stroke="#c4a55d" stroke-width="1"/>
+
+      <!-- Brick 1-5  x=248 -->
+      <rect x="248" y="222" width="44" height="18" fill="url(#mBrickFace)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="248,222 292,222 308,214 264,214" fill="url(#mBrickTop)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="292,222 308,214 308,232 292,240" fill="url(#mBrickRight)" stroke="#c4a55d" stroke-width="1"/>
+
+      <!-- Brick 1-6  x=295 -->
+      <rect x="295" y="222" width="44" height="18" fill="url(#mBrickFace)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="295,222 339,222 355,214 311,214" fill="url(#mBrickTop)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="339,222 355,214 355,232 339,240" fill="url(#mBrickRight)" stroke="#c4a55d" stroke-width="1"/>
+
+      <!-- ── COURSE 2 (y=201, offset +22, x=38,85,132,179,226,273,320) ── -->
+
+      <!-- Brick 2-1  x=38 -->
+      <rect x="38" y="201" width="44" height="18" fill="url(#mBrickFace)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="38,201 82,201 98,193 54,193" fill="url(#mBrickTop)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="82,201 98,193 98,211 82,219" fill="url(#mBrickRight)" stroke="#c4a55d" stroke-width="1"/>
+
+      <!-- Brick 2-2  x=85 -->
+      <rect x="85" y="201" width="44" height="18" fill="url(#mBrickFace)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="85,201 129,201 145,193 101,193" fill="url(#mBrickTop)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="129,201 145,193 145,211 129,219" fill="url(#mBrickRight)" stroke="#c4a55d" stroke-width="1"/>
+
+      <!-- Brick 2-3  x=132 -->
+      <rect x="132" y="201" width="44" height="18" fill="url(#mBrickFace)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="132,201 176,201 192,193 148,193" fill="url(#mBrickTop)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="176,201 192,193 192,211 176,219" fill="url(#mBrickRight)" stroke="#c4a55d" stroke-width="1"/>
+
+      <!-- Brick 2-4  x=179 -->
+      <rect x="179" y="201" width="44" height="18" fill="url(#mBrickFace)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="179,201 223,201 239,193 195,193" fill="url(#mBrickTop)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="223,201 239,193 239,211 223,219" fill="url(#mBrickRight)" stroke="#c4a55d" stroke-width="1"/>
+
+      <!-- Brick 2-5  x=226 -->
+      <rect x="226" y="201" width="44" height="18" fill="url(#mBrickFace)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="226,201 270,201 286,193 242,193" fill="url(#mBrickTop)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="270,201 286,193 286,211 270,219" fill="url(#mBrickRight)" stroke="#c4a55d" stroke-width="1"/>
+
+      <!-- Brick 2-6  x=273 -->
+      <rect x="273" y="201" width="44" height="18" fill="url(#mBrickFace)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="273,201 317,201 333,193 289,193" fill="url(#mBrickTop)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="317,201 333,193 333,211 317,219" fill="url(#mBrickRight)" stroke="#c4a55d" stroke-width="1"/>
+
+      <!-- Brick 2-7  x=320 (partially off right) -->
+      <rect x="320" y="201" width="44" height="18" fill="url(#mBrickFace)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="320,201 355,201 355,193 336,193" fill="url(#mBrickTop)" stroke="#c4a55d" stroke-width="1"/>
+
+      <!-- ── COURSE 3 (y=180, same x as course 1: 60,107,154,201,248,295) ── -->
+
+      <!-- Brick 3-1  x=60 -->
+      <rect x="60" y="180" width="44" height="18" fill="url(#mBrickFace)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="60,180 104,180 120,172 76,172" fill="url(#mBrickTop)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="104,180 120,172 120,190 104,198" fill="url(#mBrickRight)" stroke="#c4a55d" stroke-width="1"/>
+
+      <!-- Brick 3-2  x=107 -->
+      <rect x="107" y="180" width="44" height="18" fill="url(#mBrickFace)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="107,180 151,180 167,172 123,172" fill="url(#mBrickTop)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="151,180 167,172 167,190 151,198" fill="url(#mBrickRight)" stroke="#c4a55d" stroke-width="1"/>
+
+      <!-- Brick 3-3  x=154 -->
+      <rect x="154" y="180" width="44" height="18" fill="url(#mBrickFace)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="154,180 198,180 214,172 170,172" fill="url(#mBrickTop)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="198,180 214,172 214,190 198,198" fill="url(#mBrickRight)" stroke="#c4a55d" stroke-width="1"/>
+
+      <!-- Brick 3-4  x=201 -->
+      <rect x="201" y="180" width="44" height="18" fill="url(#mBrickFace)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="201,180 245,180 261,172 217,172" fill="url(#mBrickTop)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="245,180 261,172 261,190 245,198" fill="url(#mBrickRight)" stroke="#c4a55d" stroke-width="1"/>
+
+      <!-- Brick 3-5  x=248 -->
+      <rect x="248" y="180" width="44" height="18" fill="url(#mBrickFace)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="248,180 292,180 308,172 264,172" fill="url(#mBrickTop)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="292,180 308,172 308,190 292,198" fill="url(#mBrickRight)" stroke="#c4a55d" stroke-width="1"/>
+
+      <!-- Brick 3-6  x=295 -->
+      <rect x="295" y="180" width="44" height="18" fill="url(#mBrickFace)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="295,180 339,180 355,172 311,172" fill="url(#mBrickTop)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="339,180 355,172 355,190 339,198" fill="url(#mBrickRight)" stroke="#c4a55d" stroke-width="1"/>
+
+      <!-- ── COURSE 4 (y=159, same x as course 2: 38,85,132,179,226,273,320) ── -->
+
+      <!-- Brick 4-1  x=38 -->
+      <rect x="38" y="159" width="44" height="18" fill="url(#mBrickFace)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="38,159 82,159 98,151 54,151" fill="url(#mBrickTop)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="82,159 98,151 98,169 82,177" fill="url(#mBrickRight)" stroke="#c4a55d" stroke-width="1"/>
+
+      <!-- Brick 4-2  x=85 -->
+      <rect x="85" y="159" width="44" height="18" fill="url(#mBrickFace)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="85,159 129,159 145,151 101,151" fill="url(#mBrickTop)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="129,159 145,151 145,169 129,177" fill="url(#mBrickRight)" stroke="#c4a55d" stroke-width="1"/>
+
+      <!-- Brick 4-3  x=132 -->
+      <rect x="132" y="159" width="44" height="18" fill="url(#mBrickFace)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="132,159 176,159 192,151 148,151" fill="url(#mBrickTop)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="176,159 192,151 192,169 176,177" fill="url(#mBrickRight)" stroke="#c4a55d" stroke-width="1"/>
+
+      <!-- Brick 4-4  x=179 -->
+      <rect x="179" y="159" width="44" height="18" fill="url(#mBrickFace)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="179,159 223,159 239,151 195,151" fill="url(#mBrickTop)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="223,159 239,151 239,169 223,177" fill="url(#mBrickRight)" stroke="#c4a55d" stroke-width="1"/>
+
+      <!-- Brick 4-5  x=226 -->
+      <rect x="226" y="159" width="44" height="18" fill="url(#mBrickFace)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="226,159 270,159 286,151 242,151" fill="url(#mBrickTop)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="270,159 286,151 286,169 270,177" fill="url(#mBrickRight)" stroke="#c4a55d" stroke-width="1"/>
+
+      <!-- Brick 4-6  x=273 -->
+      <rect x="273" y="159" width="44" height="18" fill="url(#mBrickFace)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="273,159 317,159 333,151 289,151" fill="url(#mBrickTop)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="317,159 333,151 333,169 317,177" fill="url(#mBrickRight)" stroke="#c4a55d" stroke-width="1"/>
+
+      <!-- Brick 4-7  x=320 -->
+      <rect x="320" y="159" width="44" height="18" fill="url(#mBrickFace)" stroke="#c4a55d" stroke-width="1"/>
+      <polygon points="320,159 355,159 355,151 336,151" fill="url(#mBrickTop)" stroke="#c4a55d" stroke-width="1"/>
+
+      <!-- ══ ANNOTATIONS ══════════════════════════════════════════ -->
+
+      <!-- Wall Length — blue double arrow along bottom of front face -->
+      <!-- x=60 to x=339, y=252 -->
+      <line x1="60" y1="252" x2="339" y2="252" stroke="#0070f3" stroke-width="1.75"/>
+      <line x1="60" y1="246" x2="60"  y2="258" stroke="#0070f3" stroke-width="1.25"/>
+      <line x1="339" y1="246" x2="339" y2="258" stroke="#0070f3" stroke-width="1.25"/>
+      <polygon points="60,252 72,247 72,257"   fill="#0070f3"/>
+      <polygon points="339,252 327,247 327,257" fill="#0070f3"/>
+      <text x="200" y="268" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="10" font-weight="700" fill="#0070f3">Wall Length</text>
+
+      <!-- Wall Height — purple double arrow on left -->
+      <!-- y=159 (top of course 4 front) to y=240 (bottom of course 1 front), x=40 -->
+      <line x1="40" y1="159" x2="40" y2="240" stroke="#7c3aed" stroke-width="1.75"/>
+      <line x1="34" y1="159" x2="46" y2="159" stroke="#7c3aed" stroke-width="1.25"/>
+      <line x1="34" y1="240" x2="46" y2="240" stroke="#7c3aed" stroke-width="1.25"/>
+      <polygon points="40,159 35,171 45,171"  fill="#7c3aed"/>
+      <polygon points="40,240 35,228 45,228"  fill="#7c3aed"/>
+      <text x="28" y="202" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="700" fill="#7c3aed"
+        transform="rotate(-90, 28, 202)">Wall Height</text>
+
+      <!-- 3/8″ joint callout — amber leader line from joint between course 1 and 2 -->
+      <!-- Joint strip at y≈226, pointing from x=340 on course 1/2 boundary -->
+      <line x1="340" y1="226" x2="358" y2="215" stroke="#d97706" stroke-width="1.25"/>
+      <circle cx="340" cy="226" r="2.5" fill="#d97706"/>
+      <rect x="358" y="207" width="60" height="18" rx="4"
+        fill="#fffbeb" stroke="#d97706" stroke-width="1.25"/>
+      <text x="388" y="220" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="700" fill="#92400e">3/8″ joint</text>
+
+      <!-- Formula callout box -->
+      <rect x="46" y="278" width="270" height="26" rx="5"
+        fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
+      <text x="181" y="290" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="700" fill="#92400e">Mortar Volume = Area × Joint Factor</text>
+      <text x="181" y="300" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="7.5" font-weight="600" fill="#b45309" opacity="0.9">e.g. 160 ft² × 0.025 = 4.0 ft³ net mortar</text>
+
+      <!-- ══ RIGHT SIDE: MORTAR BAG STACK (x=375–510) ══════════════ -->
+
+      <!-- Bag 1 (bottom) -->
+      <rect x="375" y="218" width="110" height="30" rx="6"
+        fill="url(#mBag)" stroke="#94a3b8" stroke-width="1.25"/>
+      <rect x="380" y="221" width="100" height="24" rx="4"
+        fill="none" stroke="#cbd5e1" stroke-width="0.75" stroke-dasharray="3,2"/>
+      <text x="430" y="232" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="800" fill="#374151">80 lb</text>
+      <text x="430" y="243" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="7.5" font-weight="600" fill="#6b7280">MORTAR MIX</text>
+
+      <!-- Bag 2 (middle) -->
+      <rect x="375" y="185" width="110" height="30" rx="6"
+        fill="url(#mBag)" stroke="#94a3b8" stroke-width="1.25"/>
+      <rect x="380" y="188" width="100" height="24" rx="4"
+        fill="none" stroke="#cbd5e1" stroke-width="0.75" stroke-dasharray="3,2"/>
+      <text x="430" y="199" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="800" fill="#374151">80 lb</text>
+      <text x="430" y="210" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="7.5" font-weight="600" fill="#6b7280">MORTAR MIX</text>
+
+      <!-- Bag 3 (top) -->
+      <rect x="375" y="152" width="110" height="30" rx="6"
+        fill="url(#mBag)" stroke="#94a3b8" stroke-width="1.25"/>
+      <rect x="380" y="155" width="100" height="24" rx="4"
+        fill="none" stroke="#cbd5e1" stroke-width="0.75" stroke-dasharray="3,2"/>
+      <text x="430" y="166" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="800" fill="#374151">80 lb</text>
+      <text x="430" y="177" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="7.5" font-weight="600" fill="#6b7280">MORTAR MIX</text>
+
+      <!-- 0.60 ft³ each annotation -->
+      <text x="430" y="143" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8.5" font-weight="700" fill="#475569">0.60 ft³ each</text>
+
+      <!-- Bags formula box -->
+      <rect x="370" y="256" width="120" height="34" rx="5"
+        fill="#f0fdf4" stroke="#16a34a" stroke-width="1.25"/>
+      <text x="430" y="269" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8" font-weight="700" fill="#15803d">Bags = ⌈Mortar ÷ Yield⌉</text>
+      <text x="430" y="280" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="7.5" font-weight="600" fill="#16a34a" opacity="0.9">always round up ⌈ ⌉</text>
+      <text x="430" y="287" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="7" fill="#15803d" opacity="0.8">incl. waste factor</text>
+
+      <!-- Running bond label -->
+      <text x="200" y="148" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8.5" font-weight="600" fill="#78716c" opacity="0.85">Running bond pattern</text>
+
+    </svg>
+  </div>
+  <figcaption class="diagram-caption">
+    Isometric brick wall with running bond. Mortar volume = Wall Area × Joint Factor. Bags required = ⌈Adjusted Mortar ÷ Yield per Bag⌉.
+  </figcaption>
+</figure>
+
+<style>
+  .diagram-figure { margin-top: 3.5rem; }
+
+  .diagram-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .diagram-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--surface-page);
+    border: 1px solid var(--border-default);
+    color: var(--color-text-secondary);
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .diagram-title {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+  }
+
+  .diagram-box {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+
+  .diagram-svg {
+    max-width: 520px;
+    height: auto;
+    aspect-ratio: 520 / 310;
+    display: block;
+  }
+
+  .diagram-caption {
+    margin-top: 0.875rem;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    text-align: center;
+    line-height: 1.5;
+  }
+</style>

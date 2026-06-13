@@ -1,0 +1,219 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<figure class={`diagram-figure ${className}`} aria-labelledby="roofing-diagram-caption">
+  <div class="diagram-header">
+    <span class="diagram-badge">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <polygon points="7,1 13,8 1,8" stroke="currentColor" stroke-width="1.25" fill="none"/>
+        <rect x="3" y="8" width="8" height="5" rx="0.5" stroke="currentColor" stroke-width="1.25" fill="none"/>
+      </svg>
+    </span>
+    <h2 id="roofing-diagram-caption" class="diagram-title">Roofing Area Diagram</h2>
+  </div>
+  <div class="diagram-box">
+    <svg
+      viewBox="0 0 480 300"
+      width="100%"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      focusable="false"
+      class="diagram-svg"
+    >
+      <defs>
+        <linearGradient id="roofLeftGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"   stop-color="#fef3c7"/>
+          <stop offset="100%" stop-color="#fde68a"/>
+        </linearGradient>
+        <linearGradient id="roofRightGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"   stop-color="#fde68a"/>
+          <stop offset="100%" stop-color="#fbbf24"/>
+        </linearGradient>
+        <linearGradient id="wallFaceGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#e5e7eb"/>
+          <stop offset="100%" stop-color="#d1d5db"/>
+        </linearGradient>
+        <linearGradient id="ridgeGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#92400e"/>
+          <stop offset="100%" stop-color="#78350f"/>
+        </linearGradient>
+        <!-- Shingle row pattern for left slope -->
+        <pattern id="shingleL" x="0" y="0" width="28" height="12" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="6"  x2="28" y2="6"  stroke="#d97706" stroke-width="0.6" opacity="0.32"/>
+          <line x1="14" y1="0" x2="14" y2="6"  stroke="#b45309" stroke-width="0.4" opacity="0.22"/>
+          <line x1="0"  y1="0" x2="0"  y2="6"  stroke="#b45309" stroke-width="0.4" opacity="0.22"/>
+        </pattern>
+        <!-- Shingle row pattern for right slope (darker) -->
+        <pattern id="shingleR" x="0" y="0" width="28" height="12" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="6"  x2="28" y2="6"  stroke="#b45309" stroke-width="0.6" opacity="0.28"/>
+          <line x1="14" y1="0" x2="14" y2="6"  stroke="#92400e" stroke-width="0.4" opacity="0.2"/>
+        </pattern>
+      </defs>
+
+      <!-- ══ ISOMETRIC GABLE ROOF (perspective view) ══════════════ -->
+      <!--
+        Ridge:   (200, 58)  → (400, 58)
+        Eave-L:  (60,  200) → (260, 200)   [front-left slope base]
+        Eave-R:  (260, 200) → (440, 140)   [right slope base, offset for depth]
+        Gable-L: (60,  200) → (200, 58)    [left gable]
+        Back-L:  (200, 58)  → (400, 58)    [ridge]
+        Back-R:  (400, 58)  → (440, 140)   [right back edge]
+      -->
+
+      <!-- ── LEFT ROOF SLOPE ─────────────────────────────────────── -->
+      <!-- Vertices: ridge-front(200,58), ridge-back(400,58), eave-back(440,140)... wait,
+           let me lay this out simply as a standard isometric gable:
+           Ridge front-left  = (160, 72)
+           Ridge front-right = (360, 72)  [ridge runs left-right = Length]
+           Eave front-left   = (60,  220)  [eave at front-left corner = Width/2 down]
+           Eave front-right  = (380, 168)  [eave front-right]
+           Gable end (left):  (60,220) → (160,72) → (260,140) — gable triangle
+      -->
+
+      <!-- Left roof slope: front face of left half -->
+      <polygon points="70,218 280,218 280,82 70,82"
+        fill="url(#roofLeftGrad)" opacity="0"/>
+
+      <!-- Simpler clean layout: front-on elevation + perspective hint -->
+      <!-- FRONT GABLE ELEVATION (left half visible) -->
+
+      <!-- Left roof plane: trapezoid perspective
+           Bottom-left: (52,222), Bottom-right: (280,222),
+           Top-right: (240, 72), Top-left: (92, 72)  — slight perspective skew -->
+      <polygon points="52,222 340,222 300,72 92,72"
+        fill="url(#roofLeftGrad)" stroke="#d97706" stroke-width="1.5"/>
+      <polygon points="52,222 340,222 300,72 92,72"
+        fill="url(#shingleL)" opacity="0.6"/>
+
+      <!-- Right roof plane (depth side, darker):
+           Bottom-right: (340,222), far-bottom-right: (420,168),
+           far-top-right: (380,72), top-right: (300,72) -->
+      <polygon points="340,222 420,168 380,72 300,72"
+        fill="url(#roofRightGrad)" stroke="#d97706" stroke-width="1.5"/>
+      <polygon points="340,222 420,168 380,72 300,72"
+        fill="url(#shingleR)" opacity="0.55"/>
+
+      <!-- ── RIDGE BOARD ──────────────────────────────────────────── -->
+      <line x1="92" y1="72" x2="300" y2="72" stroke="url(#ridgeGrad)" stroke-width="5" stroke-linecap="round"/>
+      <line x1="300" y1="72" x2="380" y2="72" stroke="#78350f" stroke-width="4" stroke-linecap="round"/>
+
+      <!-- ── WALL FACE (front, below eave) ──────────────────────── -->
+      <rect x="52" y="222" width="288" height="46"
+        fill="url(#wallFaceGrad)" stroke="#9ca3af" stroke-width="1.25"/>
+      <!-- Wall depth face (right side) -->
+      <polygon points="340,222 420,168 420,214 340,268"
+        fill="#e5e7eb" stroke="#9ca3af" stroke-width="1.25"/>
+
+      <!-- ── EAVE LINE (front bottom of roof) ───────────────────── -->
+      <line x1="52" y1="222" x2="340" y2="222" stroke="#d97706" stroke-width="2"/>
+
+      <!-- ── PITCH TRIANGLE callout (right gable) ───────────────── -->
+      <!-- Small right-triangle on the gable end showing rise/run -->
+      <line x1="350" y1="132" x2="390" y2="132" stroke="#0070f3" stroke-width="1.25" stroke-dasharray="3 2"/>
+      <line x1="390" y1="72"  x2="390" y2="132" stroke="#16a34a" stroke-width="1.25" stroke-dasharray="3 2"/>
+      <path d="M 382 132 L 382 124 L 390 124" fill="none" stroke="#6b7280" stroke-width="1"/>
+      <text x="370" y="144" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="7.5" font-weight="600" fill="#0070f3">Run</text>
+      <text x="404" y="106" text-anchor="start" font-family="Inter,system-ui,sans-serif"
+        font-size="7.5" font-weight="600" fill="#16a34a">Rise</text>
+
+      <!-- Pitch label -->
+      <rect x="336" y="50" width="68" height="18" rx="4"
+        fill="#fffbeb" stroke="#d97706" stroke-width="1.1"/>
+      <text x="370" y="63" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="700" fill="#92400e">Pitch (X:12)</text>
+
+      <!-- ── LENGTH annotation (bottom, along eave) ─────────────── -->
+      <line x1="52"  y1="280" x2="340" y2="280" stroke="#0070f3" stroke-width="1.75"/>
+      <line x1="52"  y1="272" x2="52"  y2="288" stroke="#0070f3" stroke-width="1.25"/>
+      <line x1="340" y1="272" x2="340" y2="288" stroke="#0070f3" stroke-width="1.25"/>
+      <polygon points="52,280  65,275  65,285"  fill="#0070f3"/>
+      <polygon points="340,280 327,275 327,285" fill="#0070f3"/>
+      <text x="196" y="297" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="12" font-weight="700" fill="#0070f3" letter-spacing="-0.3">Length (ridge)</text>
+
+      <!-- ── WIDTH annotation (left side, full span) ───────────────── -->
+      <!-- Shows the half-width (run) on the left slope face -->
+      <line x1="30" y1="72"  x2="30" y2="222" stroke="#16a34a" stroke-width="1.75"/>
+      <line x1="22" y1="72"  x2="38" y2="72"  stroke="#16a34a" stroke-width="1.25"/>
+      <line x1="22" y1="222" x2="38" y2="222" stroke="#16a34a" stroke-width="1.25"/>
+      <polygon points="30,72  25,85   35,85"  fill="#16a34a"/>
+      <polygon points="30,222 25,209  35,209" fill="#16a34a"/>
+      <text x="14" y="151" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="12" font-weight="700" fill="#16a34a" letter-spacing="-0.3"
+        transform="rotate(-90 14 151)">Width</text>
+
+      <!-- ── SQUARE callout ─────────────────────────────────────── -->
+      <rect x="116" y="118" width="108" height="34" rx="6"
+        fill="#fffbeb" stroke="#d97706" stroke-width="1.25"/>
+      <text x="170" y="131" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8.5" font-weight="700" fill="#b45309">1 square = 100 ft²</text>
+      <text x="170" y="144" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8"   font-weight="500" fill="#92400e">3 bundles per square</text>
+    </svg>
+  </div>
+  <figcaption class="diagram-caption">
+    Gable roof: actual surface area = footprint × pitch factor (√(1 + (pitch÷12)²)). Steeper pitches increase material area above the floor plan footprint.
+  </figcaption>
+</figure>
+
+<style>
+  .diagram-figure { margin-top: 3.5rem; }
+
+  .diagram-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .diagram-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--surface-page);
+    border: 1px solid var(--border-default);
+    color: var(--color-text-secondary);
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .diagram-title {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+  }
+
+  .diagram-box {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+
+  .diagram-svg {
+    max-width: 480px;
+    height: auto;
+    aspect-ratio: 480 / 300;
+    display: block;
+  }
+
+  .diagram-caption {
+    margin-top: 0.875rem;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    text-align: center;
+    line-height: 1.5;
+  }
+</style>

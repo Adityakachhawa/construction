@@ -1,0 +1,227 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<figure class={`diagram-figure ${className}`} aria-labelledby="rafter-diagram-caption">
+  <div class="diagram-header">
+    <span class="diagram-badge">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <line x1="1" y1="13" x2="7" y2="2"  stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/>
+        <line x1="7" y1="2"  x2="13" y2="13" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/>
+        <line x1="1" y1="13" x2="13" y2="13" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/>
+        <line x1="7" y1="8"  x2="7"  y2="13" stroke="currentColor" stroke-width="1"    stroke-linecap="round" stroke-dasharray="2 1.5"/>
+      </svg>
+    </span>
+    <h2 id="rafter-diagram-caption" class="diagram-title">Rafter Framing Diagram</h2>
+  </div>
+  <div class="diagram-box">
+    <svg
+      viewBox="0 0 480 300"
+      width="100%"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      focusable="false"
+      class="diagram-svg"
+    >
+      <defs>
+        <linearGradient id="rafterGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"   stop-color="#fef9ee"/>
+          <stop offset="100%" stop-color="#fde68a"/>
+        </linearGradient>
+        <linearGradient id="ridgeBoardGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#d97706"/>
+          <stop offset="100%" stop-color="#b45309"/>
+        </linearGradient>
+        <linearGradient id="plateGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#fef3c7"/>
+          <stop offset="100%" stop-color="#fde68a"/>
+        </linearGradient>
+        <pattern id="woodGrain" x="0" y="0" width="40" height="8" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="3"  x2="40" y2="3"  stroke="#d97706" stroke-width="0.45" opacity="0.28"/>
+          <line x1="0" y1="6"  x2="40" y2="6"  stroke="#b45309" stroke-width="0.35" opacity="0.22"/>
+        </pattern>
+      </defs>
+
+      <!--
+        Layout:
+          Wall plate left:  x=60,  y=228   (bird's-mouth)
+          Wall plate right: x=380, y=228   (right side — mirror)
+          Ridge center:     x=220, y=68
+          Eave overhang left ends at: x=20, y=254  (overhang projects left + down)
+
+        Left rafter:  (20,254) → (60,228) [overhang section] → (220,68) [structural section]
+        Right rafter: (220,68) → (380,228)
+      -->
+
+      <!-- ── WALL TOP PLATES ─────────────────────────────────── -->
+      <rect x="40"  y="228" width="50" height="12"
+        fill="url(#plateGrad)" stroke="#d97706" stroke-width="1.25"/>
+      <rect x="358" y="228" width="50" height="12"
+        fill="url(#plateGrad)" stroke="#d97706" stroke-width="1.25"/>
+
+      <!-- Wall stubs -->
+      <rect x="50"  y="240" width="30" height="38" fill="#e5e7eb" stroke="#9ca3af" stroke-width="1"/>
+      <rect x="368" y="240" width="30" height="38" fill="#e5e7eb" stroke="#9ca3af" stroke-width="1"/>
+
+      <!-- ── RIDGE BOARD ──────────────────────────────────────── -->
+      <rect x="208" y="60" width="24" height="14"
+        fill="url(#ridgeBoardGrad)" stroke="#92400e" stroke-width="1.5"/>
+      <text x="220" y="53" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8.5" font-weight="700" fill="#92400e">Ridge</text>
+
+      <!-- ── LEFT RAFTER (structural + overhang) ────────────── -->
+      <!-- Structural section: wall plate (65,228) → ridge (220,68) -->
+      <polygon points="60,234 64,224 222,64 218,74"
+        fill="url(#rafterGrad)" stroke="#d97706" stroke-width="1.5"/>
+      <polygon points="60,234 64,224 222,64 218,74"
+        fill="url(#woodGrain)" opacity="0.55"/>
+
+      <!-- Overhang section: (20,254) → (60,228), same width rafter -->
+      <polygon points="16,260 20,250 64,224 60,234"
+        fill="url(#rafterGrad)" stroke="#d97706" stroke-width="1.5" opacity="0.85"/>
+      <polygon points="16,260 20,250 64,224 60,234"
+        fill="url(#woodGrain)" opacity="0.45"/>
+
+      <!-- ── RIGHT RAFTER ─────────────────────────────────────── -->
+      <polygon points="218,74 222,64 378,224 374,234"
+        fill="url(#rafterGrad)" stroke="#d97706" stroke-width="1.5"/>
+      <polygon points="218,74 222,64 378,224 374,234"
+        fill="url(#woodGrain)" opacity="0.55"/>
+
+      <!-- ── RISE (vertical dashed line, ridge to run baseline) ─ -->
+      <line x1="220" y1="74" x2="220" y2="228"
+        stroke="#16a34a" stroke-width="1.5" stroke-dasharray="5 3"/>
+      <!-- Right angle marker at bottom of rise -->
+      <path d="M 220 218 L 230 218 L 230 228"
+        fill="none" stroke="#16a34a" stroke-width="1.25"/>
+
+      <!-- ── RUN (horizontal baseline, wall to below ridge) ───── -->
+      <line x1="65" y1="228" x2="220" y2="228"
+        stroke="#0070f3" stroke-width="1.5" stroke-dasharray="5 3"/>
+
+      <!-- ── OVERHANG (horizontal dashed, beyond wall) ─────────── -->
+      <line x1="20" y1="228" x2="65" y2="228"
+        stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="4 2"/>
+
+      <!-- ── BIRD'S-MOUTH marker ─────────────────────────────── -->
+      <polygon points="60,228 72,228 60,216" fill="#fbbf24" stroke="#d97706" stroke-width="1" opacity="0.9"/>
+      <text x="46" y="214" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="7.5" font-weight="600" fill="#b45309">Bird's-mouth</text>
+
+      <!-- ── ANGLE ARC at wall plate left ───────────────────── -->
+      <!-- Angle between run (horizontal) and rafter at (65,228) -->
+      <!-- rafter direction: (220-65, 68-228) = (155,-160), normalised -->
+      <!-- arc from 180° to rafter angle ≈ 154° in SVG coords, sweep CW -->
+      <path d="M 105,228 A 40,40 0 0,0 90,196"
+        fill="none" stroke="#7c3aed" stroke-width="1.75"/>
+      <text x="118" y="218" text-anchor="start" font-family="Inter,system-ui,sans-serif"
+        font-size="9.5" font-weight="700" fill="#7c3aed">Angle (°)</text>
+
+      <!-- ── RAFTER LENGTH label (along left structural rafter) ─ -->
+      <text x="128" y="141" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="700" fill="#b45309"
+        transform="rotate(-46 128 141)">Rafter length</text>
+
+      <!-- ── OVERHANG label ──────────────────────────────────── -->
+      <text x="36" y="223" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8" font-weight="600" fill="#7c3aed">Overhang</text>
+
+      <!-- ── RUN annotation (blue, horizontal arrow) ────────── -->
+      <line x1="65"  y1="257" x2="220" y2="257" stroke="#0070f3" stroke-width="1.75"/>
+      <line x1="65"  y1="249" x2="65"  y2="265" stroke="#0070f3" stroke-width="1.25"/>
+      <line x1="220" y1="249" x2="220" y2="265" stroke="#0070f3" stroke-width="1.25"/>
+      <polygon points="65,257  78,252  78,262"  fill="#0070f3"/>
+      <polygon points="220,257 207,252 207,262" fill="#0070f3"/>
+      <text x="142" y="280" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="12" font-weight="700" fill="#0070f3" letter-spacing="-0.3">Run</text>
+
+      <!-- ── RISE annotation (green, vertical arrow) ──────────── -->
+      <line x1="248" y1="74"  x2="248" y2="228" stroke="#16a34a" stroke-width="1.75"/>
+      <line x1="240" y1="74"  x2="256" y2="74"  stroke="#16a34a" stroke-width="1.25"/>
+      <line x1="240" y1="228" x2="256" y2="228" stroke="#16a34a" stroke-width="1.25"/>
+      <polygon points="248,74  243,87  253,87"  fill="#16a34a"/>
+      <polygon points="248,228 243,215 253,215" fill="#16a34a"/>
+      <text x="270" y="155" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="12" font-weight="700" fill="#16a34a" letter-spacing="-0.3"
+        transform="rotate(90 270 155)">Rise</text>
+
+      <!-- ── PITCH callout (top right) ──────────────────────── -->
+      <rect x="298" y="80" width="118" height="44" rx="6"
+        fill="#fffbeb" stroke="#d97706" stroke-width="1.25"/>
+      <text x="357" y="96" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8.5" font-weight="700" fill="#b45309">Pitch (X:12)</text>
+      <text x="357" y="112" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9.5" font-weight="800" fill="#92400e">Rise ÷ Run × 12</text>
+      <line x1="298" y1="102" x2="254" y2="140"
+        stroke="#d97706" stroke-width="1" stroke-dasharray="3 2" opacity="0.6"/>
+
+      <!-- ── TOTAL RAFTER label (full line from eave to ridge) ─ -->
+      <text x="14" y="145" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8.5" font-weight="700" fill="#92400e"
+        transform="rotate(-46 14 145)">Total rafter</text>
+    </svg>
+  </div>
+  <figcaption class="diagram-caption">
+    Common rafter framing: the structural rafter spans from the bird's-mouth at the wall plate to the ridge. The eave overhang extends the rafter past the wall at the same slope. Both lengths are calculated using the Pythagorean theorem.
+  </figcaption>
+</figure>
+
+<style>
+  .diagram-figure { margin-top: 3.5rem; }
+
+  .diagram-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .diagram-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--surface-page);
+    border: 1px solid var(--border-default);
+    color: var(--color-text-secondary);
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .diagram-title {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+  }
+
+  .diagram-box {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+
+  .diagram-svg {
+    max-width: 480px;
+    height: auto;
+    aspect-ratio: 480 / 300;
+    display: block;
+  }
+
+  .diagram-caption {
+    margin-top: 0.875rem;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    text-align: center;
+    line-height: 1.5;
+  }
+</style>

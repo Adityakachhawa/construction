@@ -1,4 +1,4 @@
----
+﻿---
 interface Props {
   class?: string;
 }
@@ -63,7 +63,7 @@ const { class: className = '' } = Astro.props;
         </pattern>
       </defs>
 
-      <!-- ── BACKGROUND ──────────────────────────────────── -->
+      <!-- â”€â”€ BACKGROUND â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
       <!-- High side soil (retained) -->
       <rect x="200" y="50" width="260" height="190" fill="url(#soilHighGrad)" opacity="0.45"/>
       <!-- Low side ground -->
@@ -71,15 +71,15 @@ const { class: className = '' } = Astro.props;
       <!-- Sky behind high side -->
       <rect x="200" y="20" width="260" height="30" fill="url(#skyGrad)" opacity="0.6"/>
 
-      <!-- ── GRAVEL BASE ─────────────────────────────────── -->
+      <!-- â”€â”€ GRAVEL BASE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
       <rect x="130" y="222" width="80" height="18" fill="url(#gravelGrad)" rx="1" opacity="0.9"/>
       <rect x="130" y="222" width="80" height="18" fill="url(#gravelDots)" rx="1"/>
 
-      <!-- ── GRAVEL BACKFILL (behind wall) ─────────────────── -->
+      <!-- â”€â”€ GRAVEL BACKFILL (behind wall) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
       <rect x="200" y="68" width="70" height="154" fill="url(#backfillGrad)" opacity="0.7"/>
       <rect x="200" y="68" width="70" height="154" fill="url(#gravelDots)" opacity="0.6"/>
 
-      <!-- ── RETAINING WALL BLOCKS ──────────────────────── -->
+      <!-- â”€â”€ RETAINING WALL BLOCKS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
       <!-- Wall body -->
       <rect x="130" y="68" width="72" height="154" fill="url(#blockGrad)" rx="1"/>
       <!-- Block coursing overlay -->
@@ -92,7 +92,7 @@ const { class: className = '' } = Astro.props;
       <text x="95" y="213" text-anchor="end" font-family="Inter,system-ui,sans-serif"
         font-size="9" font-weight="500" fill="#64748b">Grade</text>
 
-      <!-- ── WALL HEIGHT annotation (left, green) ──────────── -->
+      <!-- â”€â”€ WALL HEIGHT annotation (left, green) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
       <line x1="118" y1="68"  x2="128" y2="68"  stroke="#16a34a" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
       <line x1="118" y1="210" x2="128" y2="210" stroke="#16a34a" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
       <line x1="122" y1="68"  x2="122" y2="210" stroke="#16a34a" stroke-width="1.75"/>
@@ -102,7 +102,7 @@ const { class: className = '' } = Astro.props;
         font-size="12" font-weight="700" fill="#16a34a" letter-spacing="-0.3"
         transform="rotate(-90 108 143)">Height</text>
 
-      <!-- ── WALL LENGTH annotation (top, blue) ────────────── -->
+      <!-- â”€â”€ WALL LENGTH annotation (top, blue) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
       <line x1="130" y1="56" x2="130" y2="66" stroke="#0070f3" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
       <line x1="202" y1="56" x2="202" y2="66" stroke="#0070f3" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
       <line x1="130" y1="60" x2="202" y2="60" stroke="#0070f3" stroke-width="1.75"/>
@@ -111,7 +111,7 @@ const { class: className = '' } = Astro.props;
       <text x="166" y="46" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
         font-size="12" font-weight="700" fill="#0070f3" letter-spacing="-0.3">Length</text>
 
-      <!-- ── GRAVEL BASE DEPTH annotation (right of base, orange) ── -->
+      <!-- â”€â”€ GRAVEL BASE DEPTH annotation (right of base, orange) â”€â”€ -->
       <line x1="214" y1="222" x2="224" y2="222" stroke="#d97706" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
       <line x1="214" y1="240" x2="224" y2="240" stroke="#d97706" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
       <line x1="220" y1="222" x2="220" y2="240" stroke="#d97706" stroke-width="1.75"/>
@@ -120,7 +120,7 @@ const { class: className = '' } = Astro.props;
       <text x="230" y="234" font-family="Inter,system-ui,sans-serif"
         font-size="10" font-weight="600" fill="#d97706">Base</text>
 
-      <!-- ── BACKFILL DEPTH annotation (top-right, purple) ── -->
+      <!-- â”€â”€ BACKFILL DEPTH annotation (top-right, purple) â”€â”€ -->
       <line x1="200" y1="80" x2="270" y2="80" stroke="#7c3aed" stroke-width="1.75"/>
       <polygon points="200,80 210,75 210,85" fill="#7c3aed"/>
       <polygon points="270,80 260,75 260,85" fill="#7c3aed"/>
@@ -129,23 +129,23 @@ const { class: className = '' } = Astro.props;
       <text x="235" y="74" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
         font-size="10" font-weight="700" fill="#7c3aed">Backfill</text>
 
-      <!-- ── LEGEND ──────────────────────────────────────── -->
+      <!-- â”€â”€ LEGEND â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
       <rect x="310" y="225" width="12" height="10" fill="url(#blockGrad)" rx="1"/>
       <text x="326" y="234" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#4b5563">Blocks</text>
       <rect x="370" y="225" width="12" height="10" fill="url(#gravelGrad)" rx="1"/>
       <text x="386" y="234" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#4b5563">Gravel</text>
 
-      <!-- ── BLOCK DETAIL callout (bottom right) ─────────── -->
+      <!-- â”€â”€ BLOCK DETAIL callout (bottom right) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
       <rect x="310" y="248" width="140" height="38" rx="6"
         fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
       <text x="380" y="262" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
-        font-size="9" font-weight="600" fill="#64748b">Block: Length × Height × Depth</text>
+        font-size="9" font-weight="600" fill="#64748b">Block: Length Ã— Height Ã— Depth</text>
       <text x="380" y="276" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
-        font-size="9" fill="#94a3b8">Standard: 12 × 6 × 6 in</text>
+        font-size="9" fill="#94a3b8">Standard: 12 Ã— 6 Ã— 6 in</text>
     </svg>
   </div>
   <figcaption class="diagram-caption">
-    Cross-section showing wall height, length, gravel base, and backfill zone — enter dimensions above to calculate blocks and material volumes.
+    Cross-section showing wall height, length, gravel base, and backfill zone â€” enter dimensions above to calculate blocks and material volumes.
   </figcaption>
 </figure>
 
@@ -195,6 +195,7 @@ const { class: className = '' } = Astro.props;
   .diagram-svg {
     max-width: 480px;
     height: auto;
+  aspect-ratio: 480 / 300;
     display: block;
   }
 

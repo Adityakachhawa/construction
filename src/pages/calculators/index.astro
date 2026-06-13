@@ -1,11 +1,25 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { buildCalculatorsIndexMeta } from '../../utils/seo';
+import { buildCollectionPageSchema, buildBreadcrumbList } from '../../utils/schema';
+import { SITE_URL } from '../../utils/constants';
 import { calculatorRegistry } from '../../data/registry';
 import { categories } from '../../data/categories';
 import CategoryIcon from '../../components/ui/CategoryIcon.astro';
 
 const meta = buildCalculatorsIndexMeta();
+
+const schemas = [
+  buildCollectionPageSchema({
+    name: 'Construction Calculators',
+    description: 'Free online construction calculators for concrete, framing, decking, fencing, excavation, and more. Accurate estimates for every project.',
+    url: `${SITE_URL}/calculators/`,
+  }),
+  buildBreadcrumbList([
+    { name: 'Home', href: '/' },
+    { name: 'Calculators', href: '/calculators/' },
+  ]),
+];
 
 const grouped = calculatorRegistry.reduce<Record<string, typeof calculatorRegistry>>((acc, calc) => {
   if (!acc[calc.category]) acc[calc.category] = [];
@@ -18,7 +32,7 @@ const orderedCategories = categories
   .map((cat) => ({ cat, calcs: grouped[cat.slug] }));
 ---
 
-<BaseLayout meta={meta}>
+<BaseLayout meta={meta} schemas={schemas}>
   <!-- Page header -->
   <div class="page-header">
     <div class="container">

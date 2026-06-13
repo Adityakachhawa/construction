@@ -1,0 +1,224 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<figure class={`diagram-figure ${className}`} aria-labelledby="driveway-diagram-caption">
+  <div class="diagram-header">
+    <span class="diagram-badge">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <rect x="1" y="7" width="12" height="6" rx="1" stroke="currentColor" stroke-width="1.25"/>
+        <path d="M4 7V4a3 3 0 016 0v3" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/>
+        <rect x="4" y="2" width="6" height="3" rx="0.75" stroke="currentColor" stroke-width="1" opacity=".4"/>
+      </svg>
+    </span>
+    <h2 id="driveway-diagram-caption" class="diagram-title">Driveway Dimensions Diagram</h2>
+  </div>
+  <div class="diagram-box">
+    <svg
+      viewBox="0 0 480 300"
+      width="100%"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      focusable="false"
+      class="diagram-svg"
+    >
+      <defs>
+        <linearGradient id="driveTop" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#d1d5db"/>
+          <stop offset="100%" stop-color="#9ca3af"/>
+        </linearGradient>
+        <linearGradient id="driveFront" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#9ca3af"/>
+          <stop offset="100%" stop-color="#6b7280"/>
+        </linearGradient>
+        <linearGradient id="driveRight" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"   stop-color="#7c8fa3"/>
+          <stop offset="100%" stop-color="#6b7280"/>
+        </linearGradient>
+        <linearGradient id="grassGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#86efac"/>
+          <stop offset="100%" stop-color="#4ade80"/>
+        </linearGradient>
+        <linearGradient id="houseWall" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#fef3c7"/>
+          <stop offset="100%" stop-color="#fde68a"/>
+        </linearGradient>
+        <!-- Concrete aggregate texture -->
+        <pattern id="concTex" x="0" y="0" width="18" height="18" patternUnits="userSpaceOnUse">
+          <circle cx="4"  cy="5"  r="1.2" fill="#9ca3af" opacity="0.35"/>
+          <circle cx="12" cy="9"  r="1"   fill="#6b7280" opacity="0.28"/>
+          <circle cx="7"  cy="14" r="1.1" fill="#9ca3af" opacity="0.3"/>
+          <circle cx="15" cy="3"  r="0.9" fill="#d1d5db" opacity="0.25"/>
+        </pattern>
+        <!-- Expansion joint line pattern -->
+        <pattern id="expJoint" x="0" y="0" width="60" height="1" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="0" x2="60" y2="0" stroke="#6b7280" stroke-width="1.5" stroke-dasharray="4 2"/>
+        </pattern>
+      </defs>
+
+      <!-- ── GRASS / YARD (background) ───────────────────────── -->
+      <rect x="0" y="0" width="480" height="300" fill="#f0fdf4" opacity="0.5"/>
+
+      <!-- ── HOUSE (top of driveway) ───────────────────────── -->
+      <!-- Garage wall -->
+      <rect x="120" y="24" width="200" height="52" fill="url(#houseWall)" stroke="#d97706" stroke-width="1.25"/>
+      <!-- Garage door -->
+      <rect x="148" y="32" width="64" height="40" rx="2" fill="#e5e7eb" stroke="#9ca3af" stroke-width="1"/>
+      <line x1="148" y1="52" x2="212" y2="52" stroke="#9ca3af" stroke-width="0.75"/>
+      <line x1="180" y1="32" x2="180" y2="72" stroke="#9ca3af" stroke-width="0.75"/>
+      <!-- Second garage door -->
+      <rect x="228" y="32" width="64" height="40" rx="2" fill="#e5e7eb" stroke="#9ca3af" stroke-width="1"/>
+      <line x1="228" y1="52" x2="292" y2="52" stroke="#9ca3af" stroke-width="0.75"/>
+      <line x1="260" y1="32" x2="260" y2="72" stroke="#9ca3af" stroke-width="0.75"/>
+      <!-- Roof -->
+      <polygon points="108,24 240,4 372,24" fill="#b45309" stroke="#92400e" stroke-width="1.25"/>
+      <!-- House label -->
+      <text x="240" y="56" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="600" fill="#92400e" opacity="0.75">GARAGE</text>
+
+      <!-- ── DRIVEWAY SURFACE (isometric slab) ───────────────── -->
+      <!-- Top face (main driveway surface) -->
+      <polygon points="100,76 340,76 390,118 150,118"
+        fill="url(#driveTop)" stroke="#475569" stroke-width="1.5"/>
+      <polygon points="100,76 340,76 390,118 150,118"
+        fill="url(#concTex)" opacity="0.55"/>
+
+      <!-- Expansion joints on top face (3 lines) -->
+      <line x1="158" y1="82"  x2="188" y2="82"  stroke="#6b7280" stroke-width="1" stroke-dasharray="4 2" opacity="0.5"/>
+      <line x1="209" y1="82"  x2="280" y2="82"  stroke="#6b7280" stroke-width="1" stroke-dasharray="4 2" opacity="0.5"/>
+      <line x1="301" y1="82"  x2="338" y2="82"  stroke="#6b7280" stroke-width="1" stroke-dasharray="4 2" opacity="0.5"/>
+      <!-- angled joint across the driveway -->
+      <line x1="183" y1="76"  x2="233" y2="118" stroke="#6b7280" stroke-width="1.25" stroke-dasharray="5 3" opacity="0.45"/>
+      <line x1="270" y1="76"  x2="320" y2="118" stroke="#6b7280" stroke-width="1.25" stroke-dasharray="5 3" opacity="0.45"/>
+
+      <!-- Front face (thickness visible) -->
+      <polygon points="100,76 100,230 150,230 150,118"
+        fill="url(#driveFront)" stroke="#475569" stroke-width="1.5"/>
+      <polygon points="100,76 100,230 150,230 150,118"
+        fill="url(#concTex)" opacity="0.4"/>
+
+      <!-- Right face (depth/length visible) -->
+      <polygon points="150,118 390,118 390,230 150,230"
+        fill="url(#driveRight)" stroke="#475569" stroke-width="1.5"/>
+      <polygon points="150,118 390,118 390,230 150,230"
+        fill="url(#concTex)" opacity="0.35"/>
+
+      <!-- ── GRASS STRIPS beside driveway ──────────────────── -->
+      <polygon points="60,100 100,76 100,230 60,252"
+        fill="url(#grassGrad)" opacity="0.35"/>
+      <polygon points="390,118 430,96 430,210 390,230"
+        fill="url(#grassGrad)" opacity="0.3"/>
+
+      <!-- ── LENGTH annotation (top, horizontal) ──────────── -->
+      <line x1="100" y1="76" x2="100" y2="52" stroke="#0070f3" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="340" y1="76" x2="340" y2="52" stroke="#0070f3" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="100" y1="60" x2="340" y2="60" stroke="#0070f3" stroke-width="1.75"/>
+      <polygon points="100,60 112,55 112,65" fill="#0070f3"/>
+      <polygon points="340,60 328,55 328,65" fill="#0070f3"/>
+      <text x="220" y="48" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="13" font-weight="700" fill="#0070f3" letter-spacing="-0.3">Length</text>
+
+      <!-- ── WIDTH annotation (right side, diagonal) ─────── -->
+      <line x1="340" y1="76"  x2="418" y2="54"  stroke="#16a34a" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="390" y1="118" x2="418" y2="136" stroke="#16a34a" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="418" y1="54"  x2="418" y2="136" stroke="#16a34a" stroke-width="1.75"/>
+      <polygon points="418,54  413,66  423,66"  fill="#16a34a"/>
+      <polygon points="418,136 413,124 423,124" fill="#16a34a"/>
+      <text x="435" y="100" text-anchor="start" font-family="Inter,system-ui,sans-serif"
+        font-size="13" font-weight="700" fill="#16a34a" letter-spacing="-0.3">Width</text>
+
+      <!-- ── THICKNESS annotation (left, vertical) ───────── -->
+      <line x1="100" y1="76"  x2="62" y2="76"  stroke="#d97706" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="100" y1="230" x2="62" y2="230" stroke="#d97706" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="70"  y1="76"  x2="70" y2="230" stroke="#d97706" stroke-width="1.75"/>
+      <polygon points="70,76  65,88  75,88"  fill="#d97706"/>
+      <polygon points="70,230 65,218 75,218" fill="#d97706"/>
+      <text x="56" y="158" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="13" font-weight="700" fill="#d97706" letter-spacing="-0.3"
+        transform="rotate(-90 56 158)">Thickness</text>
+
+      <!-- ── EXPANSION JOINT label ─────────────────────────── -->
+      <line x1="270" y1="76" x2="296" y2="46" stroke="#6b7280" stroke-width="1" stroke-dasharray="3 2" opacity="0.55"/>
+      <rect x="252" y="30" width="108" height="18" rx="5" fill="#f9fafb" stroke="#d1d5db" stroke-width="1"/>
+      <text x="306" y="43" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="600" fill="#4b5563">Expansion joints</text>
+
+      <!-- ── THICKNESS callout ─────────────────────────────── -->
+      <rect x="10" y="242" width="102" height="28" rx="6" fill="#fffbeb" stroke="#d97706" stroke-width="1.25"/>
+      <text x="61" y="254" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="700" fill="#b45309">4 in residential</text>
+      <text x="61" y="265" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8.5" font-weight="500" fill="#92400e">6 in for heavy vehicles</text>
+
+      <!-- ── FORMULA REMINDER ─────────────────────────────── -->
+      <rect x="296" y="242" width="120" height="28" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+      <text x="356" y="254" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" fill="#1d4ed8">V = L × W × T</text>
+      <text x="356" y="265" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8.5" fill="#1e40af" opacity="0.85">÷ 27 = cubic yards</text>
+    </svg>
+  </div>
+  <figcaption class="diagram-caption">
+    Concrete driveway: length × width × thickness. Standard residential thickness is 4 in (100 mm); increase to 6 in for heavy vehicles.
+  </figcaption>
+</figure>
+
+<style>
+  .diagram-figure { margin-top: 3.5rem; }
+
+  .diagram-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .diagram-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--surface-page);
+    border: 1px solid var(--border-default);
+    color: var(--color-text-secondary);
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .diagram-title {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+  }
+
+  .diagram-box {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+
+  .diagram-svg {
+    max-width: 480px;
+    height: auto;
+    aspect-ratio: 480 / 300;
+    display: block;
+  }
+
+  .diagram-caption {
+    margin-top: 0.875rem;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    text-align: center;
+    line-height: 1.5;
+  }
+</style>

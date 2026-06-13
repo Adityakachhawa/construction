@@ -1,0 +1,234 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<figure class={`diagram-figure ${className}`} aria-labelledby="stair-diagram-caption">
+  <div class="diagram-header">
+    <span class="diagram-badge">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <polyline points="1,13 1,9 5,9 5,5 9,5 9,1 13,1" stroke="currentColor" stroke-width="1.25" fill="none" stroke-linejoin="round"/>
+        <line x1="1" y1="13" x2="13" y2="13" stroke="currentColor" stroke-width="1.25"/>
+      </svg>
+    </span>
+    <h2 id="stair-diagram-caption" class="diagram-title">Stair Framing Diagram</h2>
+  </div>
+  <div class="diagram-box">
+    <svg
+      viewBox="0 0 480 300"
+      width="100%"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      focusable="false"
+      class="diagram-svg"
+    >
+      <defs>
+        <linearGradient id="treadGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#fef3c7"/>
+          <stop offset="100%" stop-color="#fde68a"/>
+        </linearGradient>
+        <linearGradient id="riserGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"   stop-color="#fde68a"/>
+          <stop offset="100%" stop-color="#fbbf24"/>
+        </linearGradient>
+        <linearGradient id="stringerGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%"   stop-color="#fef9ee"/>
+          <stop offset="100%" stop-color="#fde68a"/>
+        </linearGradient>
+        <pattern id="woodGrainT" x="0" y="0" width="50" height="8" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="3" x2="50" y2="3" stroke="#d97706" stroke-width="0.4" opacity="0.25"/>
+          <line x1="0" y1="6" x2="50" y2="6" stroke="#b45309" stroke-width="0.3" opacity="0.18"/>
+        </pattern>
+      </defs>
+
+      <!--
+        4-step staircase, side view.
+        Ground level: y=248
+        Total rise: 4 steps × 40px each = 160px  (top y=88)
+        Total run:  4 treads × 72px each = 288px  (x: 72..360)
+
+        Step coords (bottom-left of each tread, built bottom-up):
+          Step 1: tread y=208, x=72..144  riser x=72, y=208..248
+          Step 2: tread y=168, x=144..216  riser x=144, y=168..208
+          Step 3: tread y=128, x=216..288  riser x=216, y=128..168
+          Step 4: tread y=88,  x=288..360  riser x=288, y=88..128
+        Top landing: y=88, x=288..380
+      -->
+
+      <!-- ── STRINGER (diagonal board behind steps) ──────────── -->
+      <!-- Stringer outline: polygon from (72,248) up to (360,88) with ~14px width -->
+      <polygon points="72,248 360,88 368,96 80,256"
+        fill="url(#stringerGrad)" stroke="#d97706" stroke-width="1.5"/>
+      <polygon points="72,248 360,88 368,96 80,256"
+        fill="url(#woodGrainT)" opacity="0.5"/>
+
+      <!-- ── GROUND / FLOOR LINE ─────────────────────────────── -->
+      <line x1="40" y1="248" x2="430" y2="248" stroke="#6b7280" stroke-width="1.5" stroke-dasharray="6 3" opacity="0.5"/>
+      <text x="430" y="252" text-anchor="start" font-family="Inter,system-ui,sans-serif"
+        font-size="7.5" font-weight="600" fill="#6b7280">Floor</text>
+
+      <!-- ── TOP LANDING LINE ────────────────────────────────── -->
+      <line x1="288" y1="88" x2="430" y2="88" stroke="#6b7280" stroke-width="1.5" stroke-dasharray="6 3" opacity="0.5"/>
+      <text x="430" y="92" text-anchor="start" font-family="Inter,system-ui,sans-serif"
+        font-size="7.5" font-weight="600" fill="#6b7280">Landing</text>
+
+      <!-- ── TREADS & RISERS ─────────────────────────────────── -->
+      <!-- Step 1 -->
+      <rect x="72"  y="208" width="72" height="10"
+        fill="url(#treadGrad)" stroke="#d97706" stroke-width="1.25"/>
+      <rect x="72"  y="208" width="72" height="10" fill="url(#woodGrainT)" opacity="0.6"/>
+      <rect x="72"  y="208" width="8"  height="40"
+        fill="url(#riserGrad)" stroke="#d97706" stroke-width="1.25"/>
+
+      <!-- Step 2 -->
+      <rect x="144" y="168" width="72" height="10"
+        fill="url(#treadGrad)" stroke="#d97706" stroke-width="1.25"/>
+      <rect x="144" y="168" width="72" height="10" fill="url(#woodGrainT)" opacity="0.6"/>
+      <rect x="144" y="168" width="8"  height="40"
+        fill="url(#riserGrad)" stroke="#d97706" stroke-width="1.25"/>
+
+      <!-- Step 3 -->
+      <rect x="216" y="128" width="72" height="10"
+        fill="url(#treadGrad)" stroke="#d97706" stroke-width="1.25"/>
+      <rect x="216" y="128" width="72" height="10" fill="url(#woodGrainT)" opacity="0.6"/>
+      <rect x="216" y="128" width="8"  height="40"
+        fill="url(#riserGrad)" stroke="#d97706" stroke-width="1.25"/>
+
+      <!-- Step 4 (top) -->
+      <rect x="288" y="88"  width="72" height="10"
+        fill="url(#treadGrad)" stroke="#d97706" stroke-width="1.25"/>
+      <rect x="288" y="88"  width="72" height="10" fill="url(#woodGrainT)" opacity="0.6"/>
+      <rect x="288" y="88"  width="8"  height="40"
+        fill="url(#riserGrad)" stroke="#d97706" stroke-width="1.25"/>
+
+      <!-- ── STEP NUMBERS ────────────────────────────────────── -->
+      <text x="108" y="205" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="700" fill="#92400e" opacity="0.8">1</text>
+      <text x="180" y="165" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="700" fill="#92400e" opacity="0.8">2</text>
+      <text x="252" y="125" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="700" fill="#92400e" opacity="0.8">3</text>
+      <text x="324" y="85"  text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="700" fill="#92400e" opacity="0.8">4</text>
+
+      <!-- ── SINGLE RISER ANNOTATION (left side, step 1) ──────── -->
+      <line x1="56" y1="208" x2="56" y2="248" stroke="#16a34a" stroke-width="1.5"/>
+      <line x1="48" y1="208" x2="64" y2="208" stroke="#16a34a" stroke-width="1.25"/>
+      <line x1="48" y1="248" x2="64" y2="248" stroke="#16a34a" stroke-width="1.25"/>
+      <polygon points="56,208 51,219 61,219" fill="#16a34a"/>
+      <polygon points="56,248 51,237 61,237" fill="#16a34a"/>
+      <text x="40" y="232" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8.5" font-weight="700" fill="#16a34a"
+        transform="rotate(-90 40 232)">Rise</text>
+
+      <!-- ── SINGLE TREAD ANNOTATION (bottom, step 1) ─────────── -->
+      <line x1="72"  y1="264" x2="144" y2="264" stroke="#0070f3" stroke-width="1.5"/>
+      <line x1="72"  y1="256" x2="72"  y2="272" stroke="#0070f3" stroke-width="1.25"/>
+      <line x1="144" y1="256" x2="144" y2="272" stroke="#0070f3" stroke-width="1.25"/>
+      <polygon points="72,264  85,259  85,269"  fill="#0070f3"/>
+      <polygon points="144,264 131,259 131,269" fill="#0070f3"/>
+      <text x="108" y="282" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8.5" font-weight="700" fill="#0070f3">Run (tread depth)</text>
+
+      <!-- ── TOTAL RISE annotation (far right, full height) ───── -->
+      <line x1="400" y1="88"  x2="400" y2="248" stroke="#16a34a" stroke-width="1.75"/>
+      <line x1="392" y1="88"  x2="408" y2="88"  stroke="#16a34a" stroke-width="1.25"/>
+      <line x1="392" y1="248" x2="408" y2="248" stroke="#16a34a" stroke-width="1.25"/>
+      <polygon points="400,88  395,101 405,101" fill="#16a34a"/>
+      <polygon points="400,248 395,235 405,235" fill="#16a34a"/>
+      <text x="422" y="172" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="12" font-weight="700" fill="#16a34a" letter-spacing="-0.3"
+        transform="rotate(90 422 172)">Total Rise</text>
+
+      <!-- ── TOTAL RUN annotation (bottom, full width) ─────────── -->
+      <line x1="72"  y1="295" x2="360" y2="295" stroke="#0070f3" stroke-width="1.75"/>
+      <line x1="72"  y1="287" x2="72"  y2="300" stroke="#0070f3" stroke-width="1.25"/>
+      <line x1="360" y1="287" x2="360" y2="300" stroke="#0070f3" stroke-width="1.25"/>
+      <polygon points="72,295  85,290  85,300"  fill="#0070f3"/>
+      <polygon points="360,295 347,290 347,300" fill="#0070f3"/>
+      <text x="216" y="300" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="700" fill="#0070f3">Total Run</text>
+
+      <!-- ── STRINGER LENGTH annotation (along stringer diagonal) ─ -->
+      <text x="182" y="168" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8.5" font-weight="700" fill="#92400e"
+        transform="rotate(-33.7 182 168)">Stringer length</text>
+
+      <!-- ── STAIR ANGLE arc ────────────────────────────────────── -->
+      <!-- arc at bottom-left corner (72,248), from horizontal toward stringer -->
+      <!-- stringer angle ≈ 33.7°; arc radius 44px -->
+      <path d="M 116,248 A 44,44 0 0,0 108.6,223.6"
+        fill="none" stroke="#7c3aed" stroke-width="1.75"/>
+      <text x="128" y="242" text-anchor="start" font-family="Inter,system-ui,sans-serif"
+        font-size="9.5" font-weight="700" fill="#7c3aed">Angle °</text>
+
+      <!-- ── TREAD / RISER labels ───────────────────────────────── -->
+      <text x="225" y="123" text-anchor="start" font-family="Inter,system-ui,sans-serif"
+        font-size="7.5" font-weight="600" fill="#b45309">Tread</text>
+      <text x="205" y="150" text-anchor="start" font-family="Inter,system-ui,sans-serif"
+        font-size="7.5" font-weight="600" fill="#b45309">Riser</text>
+    </svg>
+  </div>
+  <figcaption class="diagram-caption">
+    Side-view stair framing: each step has a riser (vertical) and tread (horizontal). The stringer is the diagonal board calculated with the Pythagorean theorem from total rise and total run.
+  </figcaption>
+</figure>
+
+<style>
+  .diagram-figure { margin-top: 3.5rem; }
+
+  .diagram-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .diagram-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--surface-page);
+    border: 1px solid var(--border-default);
+    color: var(--color-text-secondary);
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .diagram-title {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+  }
+
+  .diagram-box {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+
+  .diagram-svg {
+    max-width: 480px;
+    height: auto;
+    aspect-ratio: 480 / 300;
+    display: block;
+  }
+
+  .diagram-caption {
+    margin-top: 0.875rem;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    text-align: center;
+    line-height: 1.5;
+  }
+</style>

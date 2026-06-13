@@ -1,0 +1,233 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<figure class={`diagram-figure ${className}`} aria-labelledby="insulation-diagram-caption">
+  <div class="diagram-header">
+    <span class="diagram-badge">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <rect x="1" y="2" width="2.5" height="10" rx="0.5" fill="currentColor" opacity="0.85"/>
+        <rect x="4.5" y="2" width="5" height="10" rx="0.5" fill="currentColor" opacity="0.4"/>
+        <rect x="10.5" y="2" width="2.5" height="10" rx="0.5" fill="currentColor" opacity="0.85"/>
+      </svg>
+    </span>
+    <h2 id="insulation-diagram-caption" class="diagram-title">Insulation Diagram</h2>
+  </div>
+  <div class="diagram-box">
+    <svg
+      viewBox="0 0 520 300"
+      width="100%"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      focusable="false"
+      class="diagram-svg"
+    >
+      <defs>
+        <!-- Fiberglass batt fill — light pink -->
+        <linearGradient id="insBatt" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#fce7f3"/>
+          <stop offset="100%" stop-color="#fbcfe8"/>
+        </linearGradient>
+        <!-- Stud fill — dark brown wood -->
+        <linearGradient id="insStud" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"   stop-color="#92400e"/>
+          <stop offset="100%" stop-color="#78350f"/>
+        </linearGradient>
+        <!-- Top/bottom plate fill -->
+        <linearGradient id="insPlate" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#a16207"/>
+          <stop offset="100%" stop-color="#92400e"/>
+        </linearGradient>
+        <!-- Wavy fiberglass texture pattern -->
+        <pattern id="insWave" x="0" y="0" width="16" height="20" patternUnits="userSpaceOnUse">
+          <path d="M0,5 Q4,2 8,5 Q12,8 16,5"  fill="none" stroke="#f9a8d4" stroke-width="0.9" opacity="0.7"/>
+          <path d="M0,10 Q4,7 8,10 Q12,13 16,10" fill="none" stroke="#f472b6" stroke-width="0.8" opacity="0.5"/>
+          <path d="M0,15 Q4,12 8,15 Q12,18 16,15" fill="none" stroke="#f9a8d4" stroke-width="0.9" opacity="0.6"/>
+        </pattern>
+      </defs>
+
+      <!-- ══ TOP PLATE ═══════════════════════════════════════════ -->
+      <rect x="44" y="22" width="333" height="16" rx="2"
+        fill="url(#insPlate)" stroke="#78350f" stroke-width="1.25"/>
+
+      <!-- ══ BOTTOM PLATE ════════════════════════════════════════ -->
+      <rect x="44" y="250" width="333" height="16" rx="2"
+        fill="url(#insPlate)" stroke="#78350f" stroke-width="1.25"/>
+
+      <!-- ══ STUDS (4 vertical, 16px wide) ══════════════════════ -->
+      <!-- Stud 1: x=60 -->
+      <rect x="60" y="38" width="16" height="212" rx="1"
+        fill="url(#insStud)" stroke="#78350f" stroke-width="1"/>
+      <!-- Stud 2: x=155 -->
+      <rect x="155" y="38" width="16" height="212" rx="1"
+        fill="url(#insStud)" stroke="#78350f" stroke-width="1"/>
+      <!-- Stud 3: x=250 -->
+      <rect x="250" y="38" width="16" height="212" rx="1"
+        fill="url(#insStud)" stroke="#78350f" stroke-width="1"/>
+      <!-- Stud 4: x=345 -->
+      <rect x="345" y="38" width="16" height="212" rx="1"
+        fill="url(#insStud)" stroke="#78350f" stroke-width="1"/>
+
+      <!-- ══ INSULATION BATTS (3 bays) ══════════════════════════ -->
+      <!-- Bay 1: x=76 to 155 -->
+      <rect x="76" y="38" width="79" height="212"
+        fill="url(#insBatt)" stroke="#d97706" stroke-width="1"/>
+      <rect x="76" y="38" width="79" height="212"
+        fill="url(#insWave)" opacity="0.9"/>
+
+      <!-- Bay 2: x=171 to 250 -->
+      <rect x="171" y="38" width="79" height="212"
+        fill="url(#insBatt)" stroke="#d97706" stroke-width="1"/>
+      <rect x="171" y="38" width="79" height="212"
+        fill="url(#insWave)" opacity="0.9"/>
+
+      <!-- Bay 3: x=266 to 345 -->
+      <rect x="266" y="38" width="79" height="212"
+        fill="url(#insBatt)" stroke="#d97706" stroke-width="1"/>
+      <rect x="266" y="38" width="79" height="212"
+        fill="url(#insWave)" opacity="0.9"/>
+
+      <!-- ══ ANNOTATIONS ══════════════════════════════════════════ -->
+
+      <!-- 16″ OC spacing — double arrow above wall between stud 1 and stud 2 centres -->
+      <!-- Stud 1 centre: x=68, Stud 2 centre: x=163 -->
+      <line x1="68" y1="12" x2="163" y2="12" stroke="#0070f3" stroke-width="1.75"/>
+      <line x1="68" y1="6"  x2="68"  y2="18" stroke="#0070f3" stroke-width="1.25"/>
+      <line x1="163" y1="6" x2="163" y2="18" stroke="#0070f3" stroke-width="1.25"/>
+      <polygon points="68,12 80,7 80,17"   fill="#0070f3"/>
+      <polygon points="163,12 151,7 151,17" fill="#0070f3"/>
+      <text x="116" y="9" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="700" fill="#0070f3">16″ OC spacing</text>
+
+      <!-- Batt width — horizontal double arrow inside middle batt (bay 2) -->
+      <!-- Bay 2: x=171 to 250, mid y=144 -->
+      <line x1="176" y1="144" x2="245" y2="144" stroke="#16a34a" stroke-width="1.5"/>
+      <polygon points="176,144 188,139 188,149" fill="#16a34a"/>
+      <polygon points="245,144 233,139 233,149" fill="#16a34a"/>
+      <text x="210" y="138" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="700" fill="#16a34a">Batt width</text>
+
+      <!-- Wall height — vertical double arrow on left side -->
+      <!-- From top plate bottom (y=38) to bottom plate top (y=250), x=46 -->
+      <line x1="46" y1="38" x2="46" y2="250" stroke="#7c3aed" stroke-width="1.75"/>
+      <line x1="40" y1="38" x2="52" y2="38" stroke="#7c3aed" stroke-width="1.25"/>
+      <line x1="40" y1="250" x2="52" y2="250" stroke="#7c3aed" stroke-width="1.25"/>
+      <polygon points="46,38  41,50  51,50"  fill="#7c3aed"/>
+      <polygon points="46,250 41,238 51,238" fill="#7c3aed"/>
+      <text x="36" y="148" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="700" fill="#7c3aed"
+        transform="rotate(-90, 36, 148)">Wall height</text>
+
+      <!-- R-value callout box inside batt 1 (bay 1) -->
+      <!-- Bay 1 centre: x=115, y=144 -->
+      <rect x="82" y="128" width="67" height="32" rx="5"
+        fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+      <text x="115" y="141" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="11" font-weight="800" fill="#92400e">R-13</text>
+      <text x="115" y="153" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8" font-weight="600" fill="#b45309">R-value</text>
+
+      <!-- ══ RIGHT SIDE LEGEND ════════════════════════════════════ -->
+      <!-- x=400–510 -->
+
+      <!-- Stud symbol -->
+      <rect x="400" y="38" width="14" height="28" rx="1"
+        fill="url(#insStud)" stroke="#78350f" stroke-width="1"/>
+      <text x="420" y="49" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="700" fill="#78350f">Stud (2×4)</text>
+      <text x="420" y="60" font-family="Inter,system-ui,sans-serif"
+        font-size="8" fill="#92400e" opacity="0.85">Douglas fir / SPF</text>
+
+      <!-- Batt symbol -->
+      <rect x="400" y="80" width="14" height="28" rx="1"
+        fill="url(#insBatt)" stroke="#d97706" stroke-width="1"/>
+      <rect x="400" y="80" width="14" height="28" rx="1"
+        fill="url(#insWave)" opacity="0.9"/>
+      <text x="420" y="91" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="700" fill="#be185d">Insulation batt</text>
+      <text x="420" y="102" font-family="Inter,system-ui,sans-serif"
+        font-size="8" fill="#9d174d" opacity="0.85">Fiberglass / mineral wool</text>
+
+      <!-- Area formula box -->
+      <rect x="398" y="128" width="114" height="28" rx="5"
+        fill="#eff6ff" stroke="#0070f3" stroke-width="1.25"/>
+      <text x="455" y="140" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8.5" font-weight="700" fill="#1d4ed8">Area = L × H</text>
+      <text x="455" y="150" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="7.5" font-weight="600" fill="#3b82f6" opacity="0.9">(length × wall height)</text>
+
+      <!-- Rolls formula box -->
+      <rect x="398" y="168" width="114" height="36" rx="5"
+        fill="#f0fdf4" stroke="#16a34a" stroke-width="1.25"/>
+      <text x="455" y="181" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8" font-weight="700" fill="#15803d">Rolls = ⌈Area ÷ Coverage⌉</text>
+      <text x="455" y="192" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="7.5" font-weight="600" fill="#16a34a" opacity="0.9">adjusted for waste factor</text>
+      <text x="455" y="199" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="7" fill="#15803d" opacity="0.8">always round up ⌈ ⌉</text>
+    </svg>
+  </div>
+  <figcaption class="diagram-caption">
+    Wall cross-section showing insulation batts between studs at 16″ on centre. Area = Length × Wall Height. Rolls or batts required = ⌈Adjusted Area ÷ Coverage per Roll⌉.
+  </figcaption>
+</figure>
+
+<style>
+  .diagram-figure { margin-top: 3.5rem; }
+
+  .diagram-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .diagram-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--surface-page);
+    border: 1px solid var(--border-default);
+    color: var(--color-text-secondary);
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .diagram-title {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+  }
+
+  .diagram-box {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+
+  .diagram-svg {
+    max-width: 520px;
+    height: auto;
+    aspect-ratio: 520 / 300;
+    display: block;
+  }
+
+  .diagram-caption {
+    margin-top: 0.875rem;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    text-align: center;
+    line-height: 1.5;
+  }
+</style>

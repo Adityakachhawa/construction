@@ -1,0 +1,252 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<figure class={`diagram-figure ${className}`} aria-labelledby="sqft-diagram-caption">
+  <div class="diagram-header">
+    <span class="diagram-badge">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <rect x="1" y="1" width="12" height="12" rx="1" stroke="currentColor" stroke-width="1.25"/>
+        <line x1="1" y1="7" x2="13" y2="7" stroke="currentColor" stroke-width="1.25"/>
+        <line x1="7" y1="1" x2="7" y2="13" stroke="currentColor" stroke-width="1.25"/>
+      </svg>
+    </span>
+    <h2 id="sqft-diagram-caption" class="diagram-title">Shape Reference</h2>
+  </div>
+  <div class="diagram-box">
+    <svg
+      viewBox="0 0 540 340"
+      width="100%"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      focusable="false"
+      class="diagram-svg"
+    >
+      <defs>
+        <!-- Arrowhead markers -->
+        <marker id="arr-blue"   markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L6,3 Z" fill="#0070f3"/>
+        </marker>
+        <marker id="arr-blue-r" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto-start-reverse">
+          <path d="M0,0 L0,6 L6,3 Z" fill="#0070f3"/>
+        </marker>
+        <marker id="arr-green"   markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L6,3 Z" fill="#16a34a"/>
+        </marker>
+        <marker id="arr-green-r" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto-start-reverse">
+          <path d="M0,0 L0,6 L6,3 Z" fill="#16a34a"/>
+        </marker>
+        <marker id="arr-amber"   markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L6,3 Z" fill="#d97706"/>
+        </marker>
+        <marker id="arr-amber-r" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto-start-reverse">
+          <path d="M0,0 L0,6 L6,3 Z" fill="#d97706"/>
+        </marker>
+        <marker id="arr-purple"   markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L6,3 Z" fill="#9333ea"/>
+        </marker>
+        <marker id="arr-purple-r" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto-start-reverse">
+          <path d="M0,0 L0,6 L6,3 Z" fill="#9333ea"/>
+        </marker>
+      </defs>
+
+      <!-- ═══════════════════════════════════════════════════════════
+           TOP-LEFT: Rectangle
+           Shape area: x=30..180  y=28..118  (150×90)
+      ════════════════════════════════════════════════════════════ -->
+      <rect x="30" y="28" width="150" height="90"
+        fill="#eff6ff" stroke="#0070f3" stroke-width="2" rx="2"/>
+
+      <!-- Length annotation (top, horizontal) -->
+      <line x1="30" y1="16" x2="180" y2="16"
+        stroke="#0070f3" stroke-width="1.5"
+        marker-start="url(#arr-blue-r)" marker-end="url(#arr-blue)"/>
+      <text x="105" y="11" text-anchor="middle"
+        font-family="Inter,system-ui,sans-serif" font-size="9" font-weight="700" fill="#0070f3">Length</text>
+
+      <!-- Width annotation (left, vertical) -->
+      <line x1="18" y1="28" x2="18" y2="118"
+        stroke="#0070f3" stroke-width="1.5"
+        marker-start="url(#arr-blue-r)" marker-end="url(#arr-blue)"/>
+      <text x="10" y="73" text-anchor="middle"
+        font-family="Inter,system-ui,sans-serif" font-size="9" font-weight="700" fill="#0070f3"
+        transform="rotate(-90 10 73)">Width</text>
+
+      <!-- Formula callout -->
+      <rect x="38" y="60" width="134" height="20" rx="4"
+        fill="white" stroke="#0070f3" stroke-width="1"/>
+      <text x="105" y="73" text-anchor="middle"
+        font-family="Inter,system-ui,sans-serif" font-size="9" font-weight="700" fill="#1d4ed8">Area = L × W</text>
+
+      <!-- Shape label -->
+      <text x="105" y="108" text-anchor="middle"
+        font-family="Inter,system-ui,sans-serif" font-size="9" font-weight="600" fill="#3b82f6" opacity="0.8">Rectangle</text>
+
+      <!-- ═══════════════════════════════════════════════════════════
+           TOP-RIGHT: Square
+           Shape area: x=305..415  y=28..138  (110×110)
+      ════════════════════════════════════════════════════════════ -->
+      <rect x="305" y="28" width="110" height="110"
+        fill="#f0fdf4" stroke="#16a34a" stroke-width="2" rx="2"/>
+
+      <!-- Side annotation (top, horizontal) -->
+      <line x1="305" y1="16" x2="415" y2="16"
+        stroke="#16a34a" stroke-width="1.5"
+        marker-start="url(#arr-green-r)" marker-end="url(#arr-green)"/>
+      <text x="360" y="11" text-anchor="middle"
+        font-family="Inter,system-ui,sans-serif" font-size="9" font-weight="700" fill="#16a34a">Side</text>
+
+      <!-- Side annotation (right, vertical) -->
+      <line x1="427" y1="28" x2="427" y2="138"
+        stroke="#16a34a" stroke-width="1.5"
+        marker-start="url(#arr-green-r)" marker-end="url(#arr-green)"/>
+      <text x="436" y="83" text-anchor="middle"
+        font-family="Inter,system-ui,sans-serif" font-size="9" font-weight="700" fill="#16a34a"
+        transform="rotate(90 436 83)">Side</text>
+
+      <!-- Formula callout -->
+      <rect x="313" y="72" width="94" height="20" rx="4"
+        fill="white" stroke="#16a34a" stroke-width="1"/>
+      <text x="360" y="85" text-anchor="middle"
+        font-family="Inter,system-ui,sans-serif" font-size="9" font-weight="700" fill="#15803d">Area = S²</text>
+
+      <!-- Shape label -->
+      <text x="360" y="128" text-anchor="middle"
+        font-family="Inter,system-ui,sans-serif" font-size="9" font-weight="600" fill="#22c55e" opacity="0.8">Square</text>
+
+      <!-- ═══════════════════════════════════════════════════════════
+           BOTTOM-LEFT: Triangle (isosceles)
+           Apex: (105, 178)   Base-left: (40, 268)   Base-right: (170, 268)
+           Base = 130px, Height = 90px
+      ════════════════════════════════════════════════════════════ -->
+      <polygon points="105,178 40,268 170,268"
+        fill="#fef9ee" stroke="#d97706" stroke-width="2"/>
+
+      <!-- Height annotation (vertical, from apex to base) -->
+      <line x1="105" y1="178" x2="105" y2="268"
+        stroke="#d97706" stroke-width="1.25" stroke-dasharray="4 3"/>
+
+      <!-- Height dim line (offset left) -->
+      <line x1="20" y1="178" x2="20" y2="268"
+        stroke="#d97706" stroke-width="1.5"
+        marker-start="url(#arr-amber-r)" marker-end="url(#arr-amber)"/>
+      <text x="12" y="223" text-anchor="middle"
+        font-family="Inter,system-ui,sans-serif" font-size="9" font-weight="700" fill="#d97706"
+        transform="rotate(-90 12 223)">Height</text>
+
+      <!-- Base annotation (bottom, horizontal) -->
+      <line x1="40" y1="281" x2="170" y2="281"
+        stroke="#d97706" stroke-width="1.5"
+        marker-start="url(#arr-amber-r)" marker-end="url(#arr-amber)"/>
+      <text x="105" y="294" text-anchor="middle"
+        font-family="Inter,system-ui,sans-serif" font-size="9" font-weight="700" fill="#d97706">Base</text>
+
+      <!-- Formula callout -->
+      <rect x="34" y="215" width="142" height="20" rx="4"
+        fill="white" stroke="#d97706" stroke-width="1"/>
+      <text x="105" y="228" text-anchor="middle"
+        font-family="Inter,system-ui,sans-serif" font-size="9" font-weight="700" fill="#b45309">Area = ½ × B × H</text>
+
+      <!-- Shape label -->
+      <text x="105" y="310" text-anchor="middle"
+        font-family="Inter,system-ui,sans-serif" font-size="9" font-weight="600" fill="#f59e0b" opacity="0.8">Triangle</text>
+
+      <!-- ═══════════════════════════════════════════════════════════
+           BOTTOM-RIGHT: Circle
+           Center: (360, 223)   Radius: 55px
+      ════════════════════════════════════════════════════════════ -->
+      <circle cx="360" cy="223" r="55"
+        fill="#fdf4ff" stroke="#9333ea" stroke-width="2"/>
+
+      <!-- Center dot -->
+      <circle cx="360" cy="223" r="2.5" fill="#9333ea"/>
+
+      <!-- Radius annotation line -->
+      <line x1="360" y1="223" x2="415" y2="223"
+        stroke="#9333ea" stroke-width="1.5"
+        marker-end="url(#arr-purple)"/>
+      <text x="388" y="216" text-anchor="middle"
+        font-family="Inter,system-ui,sans-serif" font-size="9" font-weight="700" fill="#9333ea">Radius</text>
+
+      <!-- Formula callout -->
+      <rect x="300" y="248" width="120" height="20" rx="4"
+        fill="white" stroke="#9333ea" stroke-width="1"/>
+      <text x="360" y="261" text-anchor="middle"
+        font-family="Inter,system-ui,sans-serif" font-size="9" font-weight="700" fill="#7e22ce">Area = π × R²</text>
+
+      <!-- Shape label -->
+      <text x="360" y="297" text-anchor="middle"
+        font-family="Inter,system-ui,sans-serif" font-size="9" font-weight="600" fill="#a855f7" opacity="0.8">Circle</text>
+
+      <!-- ── Divider lines between quadrants ── -->
+      <line x1="265" y1="10" x2="265" y2="330"
+        stroke="#e2e8f0" stroke-width="1" stroke-dasharray="6 4"/>
+      <line x1="10" y1="160" x2="520" y2="160"
+        stroke="#e2e8f0" stroke-width="1" stroke-dasharray="6 4"/>
+
+    </svg>
+  </div>
+  <figcaption class="diagram-caption">
+    Four shape reference diagrams. Top-left: rectangle with Length and Width labels (Area = L × W). Top-right: square with Side labels (Area = S²). Bottom-left: isosceles triangle with Base and perpendicular Height labels (Area = ½ × B × H). Bottom-right: circle with Radius label (Area = π × R²).
+  </figcaption>
+</figure>
+
+<style>
+  .diagram-figure { margin-top: 3.5rem; }
+
+  .diagram-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .diagram-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--surface-page);
+    border: 1px solid var(--border-default);
+    color: var(--color-text-secondary);
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .diagram-title {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+  }
+
+  .diagram-box {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+
+  .diagram-svg {
+    max-width: 540px;
+    height: auto;
+    aspect-ratio: 540 / 340;
+    display: block;
+  }
+
+  .diagram-caption {
+    margin-top: 0.875rem;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    text-align: center;
+    line-height: 1.5;
+  }
+</style>

@@ -1,12 +1,14 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { buildPageTitle } from '../../utils/seo';
+import { DEFAULT_OG_IMAGE } from '../../utils/constants';
 
 const meta = {
   title: buildPageTitle('Blog'),
   description: 'Construction tips, guides, and project planning advice from the ConstructCalc team.',
   canonical: 'https://constructcalc.com/blog/',
   ogType: 'website' as const,
+  ogImage: DEFAULT_OG_IMAGE,
 };
 ---
 

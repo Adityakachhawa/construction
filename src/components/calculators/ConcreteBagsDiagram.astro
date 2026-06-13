@@ -1,0 +1,265 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<figure class={`diagram-figure ${className}`} aria-labelledby="concrete-bags-diagram-caption">
+  <div class="diagram-header">
+    <span class="diagram-badge">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <rect x="1" y="4" width="12" height="8" rx="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+        <path d="M4 4 V2.5 Q7 1 10 2.5 V4" stroke="currentColor" stroke-width="1" fill="none"/>
+      </svg>
+    </span>
+    <h2 id="concrete-bags-diagram-caption" class="diagram-title">Concrete Bags Diagram</h2>
+  </div>
+  <div class="diagram-box">
+    <svg
+      viewBox="0 0 520 300"
+      width="100%"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      focusable="false"
+      class="diagram-svg"
+    >
+      <defs>
+        <!-- Concrete fill gradient -->
+        <linearGradient id="cbConcrete" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#d1d5db"/>
+          <stop offset="100%" stop-color="#9ca3af"/>
+        </linearGradient>
+        <!-- Concrete top face -->
+        <linearGradient id="cbConcreteTop" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#e5e7eb"/>
+          <stop offset="100%" stop-color="#d1d5db"/>
+        </linearGradient>
+        <!-- Concrete right face (darker) -->
+        <linearGradient id="cbConcreteRight" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"   stop-color="#9ca3af"/>
+          <stop offset="100%" stop-color="#6b7280"/>
+        </linearGradient>
+        <!-- Form board gradient (amber) -->
+        <linearGradient id="cbForm" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#fcd34d"/>
+          <stop offset="100%" stop-color="#d97706"/>
+        </linearGradient>
+        <!-- Bag body gradient -->
+        <linearGradient id="cbBag" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#f3f4f6"/>
+          <stop offset="100%" stop-color="#e5e7eb"/>
+        </linearGradient>
+        <!-- Concrete texture pattern -->
+        <pattern id="cbTexture" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+          <circle cx="2"  cy="2"  r="0.8" fill="#6b7280" opacity="0.15"/>
+          <circle cx="7"  cy="6"  r="0.6" fill="#6b7280" opacity="0.12"/>
+          <circle cx="5"  cy="9"  r="0.5" fill="#6b7280" opacity="0.1"/>
+        </pattern>
+      </defs>
+
+      <!--
+        Layout:
+          Left section (x 0–310): isometric slab being poured with annotations
+          Right section (x 320–520): bag stack with formula callout
+
+        Isometric slab projection:
+          Front-left  (50, 190)
+          Front-right (250, 190)
+          Back-right  (270, 140)   [+20 right, -50 up]
+          Back-left   ( 70, 140)
+
+          Slab depth visual: 40px
+          Front-bottom-left  (50, 230)
+          Front-bottom-right (250, 230)
+          Back-bottom-right  (270, 180)
+      -->
+
+      <!-- ══ FORM BOARDS ════════════════════════════════════════ -->
+      <!-- Front form board -->
+      <rect x="48" y="188" width="204" height="44" rx="2"
+        fill="url(#cbForm)" stroke="#b45309" stroke-width="1.25"/>
+      <!-- Right form board (isometric right side) -->
+      <polygon points="250,188 270,138 270,182 250,232"
+        fill="url(#cbForm)" stroke="#b45309" stroke-width="1.25"/>
+      <!-- Left form board (isometric left side) -->
+      <polygon points="50,188 70,138 70,182 50,232"
+        fill="#fbbf24" stroke="#b45309" stroke-width="1"/>
+
+      <!-- ══ CONCRETE SLAB ═══════════════════════════════════════ -->
+      <!-- Right face of slab -->
+      <polygon points="250,190 270,140 270,182 250,222"
+        fill="url(#cbConcreteRight)" stroke="#6b7280" stroke-width="1"/>
+      <polygon points="250,190 270,140 270,182 250,222"
+        fill="url(#cbTexture)" opacity="0.4"/>
+      <!-- Front face of slab -->
+      <rect x="50" y="190" width="200" height="32"
+        fill="url(#cbConcrete)" stroke="#6b7280" stroke-width="1"/>
+      <rect x="50" y="190" width="200" height="32"
+        fill="url(#cbTexture)" opacity="0.5"/>
+      <!-- Top face of slab (isometric parallelogram) -->
+      <polygon points="50,190 70,140 270,140 250,190"
+        fill="url(#cbConcreteTop)" stroke="#6b7280" stroke-width="1.25"/>
+      <polygon points="50,190 70,140 270,140 250,190"
+        fill="url(#cbTexture)" opacity="0.35"/>
+
+      <!-- Pour stream (concrete being poured from top) -->
+      <path d="M 155,80 Q 158,110 160,140"
+        fill="none" stroke="#9ca3af" stroke-width="6" stroke-linecap="round" opacity="0.7"/>
+      <path d="M 155,80 Q 158,110 160,140"
+        fill="none" stroke="#d1d5db" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
+      <!-- Pour nozzle hint -->
+      <rect x="148" y="68" width="16" height="14" rx="3"
+        fill="#6b7280" stroke="#4b5563" stroke-width="1"/>
+
+      <!-- ══ ANNOTATIONS ══════════════════════════════════════════ -->
+
+      <!-- LENGTH — top front edge of slab -->
+      <line x1="50"  y1="127" x2="250" y2="127" stroke="#0070f3" stroke-width="1.75"/>
+      <line x1="50"  y1="119" x2="50"  y2="135" stroke="#0070f3" stroke-width="1.25"/>
+      <line x1="250" y1="119" x2="250" y2="135" stroke="#0070f3" stroke-width="1.25"/>
+      <polygon points="50,127 63,122 63,132"  fill="#0070f3"/>
+      <polygon points="250,127 237,122 237,132" fill="#0070f3"/>
+      <text x="150" y="120" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="11" font-weight="700" fill="#0070f3" letter-spacing="-0.3">Length</text>
+
+      <!-- WIDTH — right isometric edge -->
+      <line x1="262" y1="143" x2="282" y2="193" stroke="#16a34a" stroke-width="1.75"/>
+      <line x1="254" y1="140" x2="270" y2="146" stroke="#16a34a" stroke-width="1.25"/>
+      <line x1="274" y1="190" x2="290" y2="196" stroke="#16a34a" stroke-width="1.25"/>
+      <polygon points="262,143 256,156 266,155" fill="#16a34a"/>
+      <polygon points="282,193 276,180 286,181" fill="#16a34a"/>
+      <text x="296" y="170" text-anchor="start" font-family="Inter,system-ui,sans-serif"
+        font-size="11" font-weight="700" fill="#16a34a">Width</text>
+
+      <!-- DEPTH — right front corner -->
+      <line x1="258" y1="193" x2="258" y2="228" stroke="#7c3aed" stroke-width="1.75"/>
+      <line x1="250" y1="193" x2="266" y2="193" stroke="#7c3aed" stroke-width="1.25"/>
+      <line x1="250" y1="228" x2="266" y2="228" stroke="#7c3aed" stroke-width="1.25"/>
+      <polygon points="258,193 253,206 263,206" fill="#7c3aed"/>
+      <polygon points="258,228 253,215 263,215" fill="#7c3aed"/>
+      <text x="272" y="216" text-anchor="start" font-family="Inter,system-ui,sans-serif"
+        font-size="11" font-weight="700" fill="#7c3aed">Depth</text>
+
+      <!-- VOLUME callout box (inside slab top) -->
+      <rect x="76" y="152" width="168" height="22" rx="5"
+        fill="#eff6ff" stroke="#0070f3" stroke-width="1.25"/>
+      <text x="160" y="163" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8.5" font-weight="700" fill="#1d4ed8">Volume = L × W × D</text>
+      <text x="160" y="171" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="7.5" font-weight="600" fill="#3b82f6" opacity="0.9">(cubic feet / cubic yards)</text>
+
+      <!-- ══ CONCRETE BAGS (right side) ════════════════════════════ -->
+
+      <!-- Bag 1 (bottom) -->
+      <rect x="352" y="208" width="88" height="52" rx="6"
+        fill="url(#cbBag)" stroke="#9ca3af" stroke-width="1.5"/>
+      <rect x="358" y="213" width="76" height="42" rx="4"
+        fill="none" stroke="#d1d5db" stroke-width="1"/>
+      <text x="396" y="233" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="10" font-weight="800" fill="#374151">60 lb</text>
+      <text x="396" y="246" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8" font-weight="600" fill="#6b7280">CONCRETE MIX</text>
+
+      <!-- Bag 2 (middle) -->
+      <rect x="352" y="152" width="88" height="52" rx="6"
+        fill="url(#cbBag)" stroke="#9ca3af" stroke-width="1.5"/>
+      <rect x="358" y="157" width="76" height="42" rx="4"
+        fill="none" stroke="#d1d5db" stroke-width="1"/>
+      <text x="396" y="177" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="10" font-weight="800" fill="#374151">60 lb</text>
+      <text x="396" y="190" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8" font-weight="600" fill="#6b7280">CONCRETE MIX</text>
+
+      <!-- Bag 3 (top) -->
+      <rect x="352" y="96" width="88" height="52" rx="6"
+        fill="url(#cbBag)" stroke="#9ca3af" stroke-width="1.5"/>
+      <rect x="358" y="101" width="76" height="42" rx="4"
+        fill="none" stroke="#d1d5db" stroke-width="1"/>
+      <text x="396" y="121" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="10" font-weight="800" fill="#374151">60 lb</text>
+      <text x="396" y="134" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8" font-weight="600" fill="#6b7280">CONCRETE MIX</text>
+
+      <!-- Yield annotation below stack -->
+      <text x="396" y="274" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="700" fill="#4b5563">0.45 ft³ each</text>
+
+      <!-- Formula callout: Bags = Volume ÷ Yield -->
+      <rect x="330" y="40" width="172" height="38" rx="6"
+        fill="#fef3c7" stroke="#d97706" stroke-width="1.25"/>
+      <text x="416" y="55" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8.5" font-weight="700" fill="#92400e">Bags = Volume ÷ Yield</text>
+      <text x="416" y="68" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8" font-weight="600" fill="#b45309">Always round UP (⌈ ⌉)</text>
+
+      <!-- Arrow from callout down toward bags -->
+      <line x1="396" y1="78" x2="396" y2="92" stroke="#d97706" stroke-width="1.5" stroke-dasharray="3 2"/>
+      <polygon points="396,96 391,86 401,86" fill="#d97706"/>
+
+      <!-- Divider line between slab and bag sections -->
+      <line x1="318" y1="50" x2="318" y2="270" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="4 3"/>
+
+    </svg>
+  </div>
+  <figcaption class="diagram-caption">
+    Concrete volume = Length × Width × Depth. Bags required = ⌈Volume ÷ Yield per bag⌉. Always round up — you cannot use a partial bag.
+  </figcaption>
+</figure>
+
+<style>
+  .diagram-figure { margin-top: 3.5rem; }
+
+  .diagram-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .diagram-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--surface-page);
+    border: 1px solid var(--border-default);
+    color: var(--color-text-secondary);
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .diagram-title {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+  }
+
+  .diagram-box {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+
+  .diagram-svg {
+    max-width: 520px;
+    height: auto;
+    aspect-ratio: 520 / 300;
+    display: block;
+  }
+
+  .diagram-caption {
+    margin-top: 0.875rem;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    text-align: center;
+    line-height: 1.5;
+  }
+</style>

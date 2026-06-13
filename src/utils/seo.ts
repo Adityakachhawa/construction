@@ -18,7 +18,7 @@ export function buildCalculatorMeta(opts: {
   ogImage?: string;
 }): MetaProps {
   return {
-    title: `${opts.title} | Free Calculator — ${SITE_NAME}`,
+    title: `${opts.title} — Free | ${SITE_NAME}`,
     description: opts.description,
     canonical: buildCanonical(`/calculators/${opts.slug}/`),
     ogImage: opts.ogImage ?? DEFAULT_OG_IMAGE,
@@ -30,7 +30,7 @@ export function buildCalculatorsIndexMeta(): MetaProps {
   return {
     title: `All Construction Calculators — ${SITE_NAME}`,
     description:
-      'Free online construction calculators for concrete, framing, decking, fencing, excavation, and more. Accurate estimates for every project.',
+      'Browse free construction calculators for concrete, gravel, drywall, flooring, fencing, and more. Instant material quantities and cost estimates across every trade.',
     canonical: buildCanonical('/calculators/'),
     ogImage: DEFAULT_OG_IMAGE,
     ogType: 'website',
@@ -75,7 +75,7 @@ export function buildHomeMeta(): MetaProps {
   return {
     title: `Free Construction Calculators — ${SITE_NAME}`,
     description:
-      'Free online construction calculators for concrete, framing, decking, fencing, and more. Accurate estimates for DIY and professional projects.',
+      'Accurate material estimates for concrete, framing, decking, fencing, and more. Free tools built for contractors and serious DIYers — no signup required.',
     canonical: buildCanonical('/'),
     ogImage: DEFAULT_OG_IMAGE,
     ogType: 'website',

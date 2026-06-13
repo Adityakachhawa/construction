@@ -1,0 +1,224 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<figure class={`diagram-figure ${className}`} aria-labelledby="block-diagram-caption">
+  <div class="diagram-header">
+    <span class="diagram-badge">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <rect x="1" y="4" width="5" height="3" rx="0.5" stroke="currentColor" stroke-width="1.25"/>
+        <rect x="8" y="4" width="5" height="3" rx="0.5" stroke="currentColor" stroke-width="1.25"/>
+        <rect x="4" y="8" width="5" height="3" rx="0.5" stroke="currentColor" stroke-width="1.25"/>
+        <rect x="1" y="1" width="5" height="3" rx="0.5" stroke="currentColor" stroke-width="1.25" opacity=".45"/>
+        <rect x="8" y="1" width="5" height="3" rx="0.5" stroke="currentColor" stroke-width="1.25" opacity=".45"/>
+      </svg>
+    </span>
+    <h2 id="block-diagram-caption" class="diagram-title">CMU Block Wall Diagram</h2>
+  </div>
+  <div class="diagram-box">
+    <svg
+      viewBox="0 0 480 300"
+      width="100%"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      focusable="false"
+      class="diagram-svg"
+    >
+      <defs>
+        <linearGradient id="blockFace" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#e2e8f0"/>
+          <stop offset="100%" stop-color="#cbd5e1"/>
+        </linearGradient>
+        <linearGradient id="blockSide" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"   stop-color="#94a3b8"/>
+          <stop offset="100%" stop-color="#7c8fa3"/>
+        </linearGradient>
+        <linearGradient id="blockTop" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#cbd5e1"/>
+          <stop offset="100%" stop-color="#b0bec5"/>
+        </linearGradient>
+        <!-- Subtle aggregate texture -->
+        <pattern id="blockTex" x="0" y="0" width="16" height="16" patternUnits="userSpaceOnUse">
+          <circle cx="4"  cy="5"  r="1.1" fill="#94a3b8" opacity="0.3"/>
+          <circle cx="11" cy="10" r="0.9" fill="#64748b" opacity="0.25"/>
+          <circle cx="7"  cy="13" r="1"   fill="#94a3b8" opacity="0.2"/>
+        </pattern>
+      </defs>
+
+      <!-- ── WALL FACE (running bond, 4 wide × 4 courses) ────── -->
+      <!--
+        Block face: 96px wide × 44px tall (nominal 8"×16" scaled)
+        Mortar joint: 4px
+        Course pitch: 48px  (44 block + 4 mortar)
+        Wall origin: x=68, y=34
+        4 blocks × (96+4) = 400px wide → use 3.5 blocks + clip
+        Show 4 courses → wall height = 4 × 48 = 192px  (y 34–226)
+      -->
+
+      <!-- ── Course 4 (top) — offset 0  y=34 ────────────────── -->
+      <rect x="68"  y="34"  width="96" height="44" fill="url(#blockFace)" stroke="#94a3b8" stroke-width="1"/>
+      <rect x="68"  y="34"  width="96" height="44" fill="url(#blockTex)" opacity="0.6"/>
+      <rect x="168" y="34"  width="96" height="44" fill="url(#blockFace)" stroke="#94a3b8" stroke-width="1"/>
+      <rect x="168" y="34"  width="96" height="44" fill="url(#blockTex)" opacity="0.6"/>
+      <rect x="268" y="34"  width="96" height="44" fill="url(#blockFace)" stroke="#94a3b8" stroke-width="1"/>
+      <rect x="268" y="34"  width="96" height="44" fill="url(#blockTex)" opacity="0.6"/>
+      <!-- partial 4th block clipped by wall edge -->
+      <rect x="368" y="34"  width="44" height="44" fill="url(#blockFace)" stroke="#94a3b8" stroke-width="1"/>
+      <rect x="368" y="34"  width="44" height="44" fill="url(#blockTex)" opacity="0.6"/>
+
+      <!-- ── Course 3 — offset 48px (running bond offset 48px) ─ -->
+      <rect x="20"  y="82"  width="48" height="44" fill="url(#blockFace)" stroke="#94a3b8" stroke-width="1"/>
+      <rect x="20"  y="82"  width="48" height="44" fill="url(#blockTex)" opacity="0.6"/>
+      <rect x="68"  y="82"  width="96" height="44" fill="url(#blockFace)" stroke="#94a3b8" stroke-width="1"/>
+      <rect x="68"  y="82"  width="96" height="44" fill="url(#blockTex)" opacity="0.6"/>
+      <rect x="168" y="82"  width="96" height="44" fill="url(#blockFace)" stroke="#94a3b8" stroke-width="1"/>
+      <rect x="168" y="82"  width="96" height="44" fill="url(#blockTex)" opacity="0.6"/>
+      <rect x="268" y="82"  width="96" height="44" fill="url(#blockFace)" stroke="#94a3b8" stroke-width="1"/>
+      <rect x="268" y="82"  width="96" height="44" fill="url(#blockTex)" opacity="0.6"/>
+      <rect x="368" y="82"  width="44" height="44" fill="url(#blockFace)" stroke="#94a3b8" stroke-width="1"/>
+      <rect x="368" y="82"  width="44" height="44" fill="url(#blockTex)" opacity="0.6"/>
+
+      <!-- ── Course 2 — offset 0 ────────────────────────────── -->
+      <rect x="68"  y="130" width="96" height="44" fill="url(#blockFace)" stroke="#94a3b8" stroke-width="1"/>
+      <rect x="68"  y="130" width="96" height="44" fill="url(#blockTex)" opacity="0.6"/>
+      <rect x="168" y="130" width="96" height="44" fill="url(#blockFace)" stroke="#94a3b8" stroke-width="1"/>
+      <rect x="168" y="130" width="96" height="44" fill="url(#blockTex)" opacity="0.6"/>
+      <rect x="268" y="130" width="96" height="44" fill="url(#blockFace)" stroke="#94a3b8" stroke-width="1"/>
+      <rect x="268" y="130" width="96" height="44" fill="url(#blockTex)" opacity="0.6"/>
+      <rect x="368" y="130" width="44" height="44" fill="url(#blockFace)" stroke="#94a3b8" stroke-width="1"/>
+      <rect x="368" y="130" width="44" height="44" fill="url(#blockTex)" opacity="0.6"/>
+
+      <!-- ── Course 1 (bottom) — offset 48px ───────────────── -->
+      <rect x="20"  y="178" width="48" height="44" fill="url(#blockFace)" stroke="#94a3b8" stroke-width="1"/>
+      <rect x="20"  y="178" width="48" height="44" fill="url(#blockTex)" opacity="0.6"/>
+      <rect x="68"  y="178" width="96" height="44" fill="url(#blockFace)" stroke="#94a3b8" stroke-width="1"/>
+      <rect x="68"  y="178" width="96" height="44" fill="url(#blockTex)" opacity="0.6"/>
+      <rect x="168" y="178" width="96" height="44" fill="url(#blockFace)" stroke="#94a3b8" stroke-width="1"/>
+      <rect x="168" y="178" width="96" height="44" fill="url(#blockTex)" opacity="0.6"/>
+      <rect x="268" y="178" width="96" height="44" fill="url(#blockFace)" stroke="#94a3b8" stroke-width="1"/>
+      <rect x="268" y="178" width="96" height="44" fill="url(#blockTex)" opacity="0.6"/>
+      <rect x="368" y="178" width="44" height="44" fill="url(#blockFace)" stroke="#94a3b8" stroke-width="1"/>
+      <rect x="368" y="178" width="44" height="44" fill="url(#blockTex)" opacity="0.6"/>
+
+      <!-- Wall outline -->
+      <rect x="68" y="34" width="344" height="188" fill="none" stroke="#475569" stroke-width="2"/>
+
+      <!-- ── 3D corner peek (right side, isometric) ─────────── -->
+      <!-- top face of wall at top-right corner -->
+      <polygon points="412,34 448,22 448,38 412,50"
+        fill="url(#blockTop)" stroke="#64748b" stroke-width="1" opacity="0.85"/>
+      <!-- side face -->
+      <polygon points="412,34 412,222 448,210 448,22"
+        fill="url(#blockSide)" stroke="#64748b" stroke-width="1" opacity="0.85"/>
+      <!-- depth label -->
+      <text x="440" y="122" font-family="Inter,system-ui,sans-serif" font-size="9"
+        font-weight="600" fill="#475569" text-anchor="middle"
+        transform="rotate(-90 440 122)">Width</text>
+
+      <!-- ── LENGTH annotation (below wall) ───────────────── -->
+      <line x1="68"  y1="230" x2="68"  y2="242" stroke="#0070f3" stroke-width="1.25"/>
+      <line x1="412" y1="230" x2="412" y2="242" stroke="#0070f3" stroke-width="1.25"/>
+      <line x1="68"  y1="236" x2="412" y2="236" stroke="#0070f3" stroke-width="1.75"/>
+      <polygon points="68,236  80,231  80,241"  fill="#0070f3"/>
+      <polygon points="412,236 400,231 400,241" fill="#0070f3"/>
+      <text x="240" y="256" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="13" font-weight="700" fill="#0070f3" letter-spacing="-0.3">Wall Length</text>
+
+      <!-- ── HEIGHT annotation (left of wall) ─────────────── -->
+      <line x1="60" y1="34"  x2="42" y2="34"  stroke="#16a34a" stroke-width="1.25"/>
+      <line x1="60" y1="222" x2="42" y2="222" stroke="#16a34a" stroke-width="1.25"/>
+      <line x1="50" y1="34"  x2="50" y2="222" stroke="#16a34a" stroke-width="1.75"/>
+      <polygon points="50,34  45,46  55,46"  fill="#16a34a"/>
+      <polygon points="50,222 45,210 55,210" fill="#16a34a"/>
+      <text x="36" y="128" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="13" font-weight="700" fill="#16a34a" letter-spacing="-0.3"
+        transform="rotate(-90 36 128)">Wall Height</text>
+
+      <!-- ── BLOCK SIZE callout ─────────────────────────── -->
+      <!-- Highlight one block in course 2 -->
+      <rect x="168" y="130" width="96" height="44" fill="none"
+        stroke="#d97706" stroke-width="2" rx="1"/>
+      <line x1="264" y1="152" x2="310" y2="105" stroke="#d97706" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <!-- callout box -->
+      <rect x="312" y="86" width="100" height="32" rx="6" fill="#fffbeb" stroke="#d97706" stroke-width="1.25"/>
+      <text x="362" y="99"  text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9.5" font-weight="700" fill="#b45309">8" × 16" nominal</text>
+      <text x="362" y="111" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8.5" font-weight="500" fill="#92400e">= 1.125 blocks / ft²</text>
+
+      <!-- ── MORTAR JOINT callout ────────────────────────── -->
+      <!-- Point to the horizontal mortar joint between course 2 and 3 -->
+      <line x1="168" y1="130" x2="140" y2="108" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3 2" opacity="0.6"/>
+      <rect x="30" y="92" width="106" height="22" rx="5" fill="#f8fafc" stroke="#94a3b8" stroke-width="1"/>
+      <text x="83" y="107" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="600" fill="#475569">3/8" mortar joint</text>
+
+      <!-- ── RUNNING BOND label ──────────────────────────── -->
+      <text x="240" y="275" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="500" fill="#6b7280">Running bond pattern — every course offset by half a block</text>
+    </svg>
+  </div>
+  <figcaption class="diagram-caption">
+    CMU block wall: length × height determines wall area. At 1.125 blocks per sq ft (8×16 in nominal), add 5–10% waste for cuts and corners.
+  </figcaption>
+</figure>
+
+<style>
+  .diagram-figure { margin-top: 3.5rem; }
+
+  .diagram-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .diagram-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--surface-page);
+    border: 1px solid var(--border-default);
+    color: var(--color-text-secondary);
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .diagram-title {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+  }
+
+  .diagram-box {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+
+  .diagram-svg {
+    max-width: 480px;
+    height: auto;
+    aspect-ratio: 480 / 300;
+    display: block;
+  }
+
+  .diagram-caption {
+    margin-top: 0.875rem;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    text-align: center;
+    line-height: 1.5;
+  }
+</style>

@@ -22,6 +22,26 @@ import FlooringDiagram from '../../components/calculators/FlooringDiagram.astro'
 import ConcreteColumnDiagram from '../../components/calculators/ConcreteColumnDiagram.astro';
 import TopsoilDiagram from '../../components/calculators/TopsoilDiagram.astro';
 import AggregateDiagram from '../../components/calculators/AggregateDiagram.astro';
+import ConcreteBlockDiagram from '../../components/calculators/ConcreteBlockDiagram.astro';
+import ConcreteDrivewayDiagram from '../../components/calculators/ConcreteDrivewayDiagram.astro';
+import ConcreteFootingDiagram from '../../components/calculators/ConcreteFootingDiagram.astro';
+import PlywoodDiagram from '../../components/calculators/PlywoodDiagram.astro';
+import StudDiagram from '../../components/calculators/StudDiagram.astro';
+import RoofPitchDiagram from '../../components/calculators/RoofPitchDiagram.astro';
+import RoofingDiagram from '../../components/calculators/RoofingDiagram.astro';
+import RafterDiagram from '../../components/calculators/RafterDiagram.astro';
+import MetalRoofingDiagram from '../../components/calculators/MetalRoofingDiagram.astro';
+import LumberDiagram from '../../components/calculators/LumberDiagram.astro';
+import StairDiagram from '../../components/calculators/StairDiagram.astro';
+import SidingDiagram from '../../components/calculators/SidingDiagram.astro';
+import BoardFootDiagram from '../../components/calculators/BoardFootDiagram.astro';
+import ExcavationDiagram from '../../components/calculators/ExcavationDiagram.astro';
+import SquareFootageDiagram from '../../components/calculators/SquareFootageDiagram.astro';
+import FrenchDrainDiagram from '../../components/calculators/FrenchDrainDiagram.astro';
+import ConcreteBagsDiagram from '../../components/calculators/ConcreteBagsDiagram.astro';
+import InsulationDiagram from '../../components/calculators/InsulationDiagram.astro';
+import MortarDiagram from '../../components/calculators/MortarDiagram.astro';
+import GroutDiagram from '../../components/calculators/GroutDiagram.astro';
 import Card from '../../components/ui/Card.astro';
 import type { GetStaticPaths } from 'astro';
 
@@ -82,6 +102,26 @@ const isFlooringCalc      = calc.slug === 'flooring-calculator';
 const isConcreteColumnCalc = calc.slug === 'concrete-column-calculator';
 const isTopsoilCalc        = calc.slug === 'topsoil-calculator';
 const isAggregateCalc      = calc.slug === 'aggregate-calculator';
+const isConcreteBlockCalc    = calc.slug === 'concrete-block-calculator';
+const isConcreteDrivewayCalc  = calc.slug === 'concrete-driveway-calculator';
+const isConcreteFootingCalc   = calc.slug === 'concrete-footing-calculator';
+const isPlywoodCalc           = calc.slug === 'plywood-calculator';
+const isStudCalc              = calc.slug === 'stud-calculator';
+const isRoofPitchCalc         = calc.slug === 'roof-pitch-calculator';
+const isRoofingCalc           = calc.slug === 'roofing-calculator';
+const isRafterCalc            = calc.slug === 'rafter-calculator';
+const isMetalRoofingCalc      = calc.slug === 'metal-roofing-calculator';
+const isLumberCalc            = calc.slug === 'lumber-calculator';
+const isStairCalc             = calc.slug === 'stair-calculator';
+const isSidingCalc            = calc.slug === 'siding-calculator';
+const isBoardFootCalc         = calc.slug === 'board-foot-calculator';
+const isExcavationCalc        = calc.slug === 'excavation-calculator';
+const isSquareFootageCalc     = calc.slug === 'square-footage-calculator';
+const isFrenchDrainCalc       = calc.slug === 'french-drain-calculator';
+const isConcreteBagsCalc      = calc.slug === 'concrete-bags-calculator';
+const isInsulationCalc        = calc.slug === 'insulation-calculator';
+const isMortarCalc            = calc.slug === 'mortar-calculator';
+const isGroutCalc             = calc.slug === 'grout-calculator';
 ---
 
 <CalculatorLayout
@@ -108,6 +148,26 @@ const isAggregateCalc      = calc.slug === 'aggregate-calculator';
   {isConcreteColumnCalc && <ConcreteColumnDiagram slot="diagram" />}
   {isTopsoilCalc        && <TopsoilDiagram        slot="diagram" />}
   {isAggregateCalc      && <AggregateDiagram      slot="diagram" />}
+  {isConcreteBlockCalc    && <ConcreteBlockDiagram    slot="diagram" />}
+  {isConcreteDrivewayCalc  && <ConcreteDrivewayDiagram slot="diagram" />}
+  {isConcreteFootingCalc   && <ConcreteFootingDiagram  slot="diagram" />}
+  {isPlywoodCalc           && <PlywoodDiagram           slot="diagram" />}
+  {isStudCalc              && <StudDiagram              slot="diagram" />}
+  {isRoofPitchCalc         && <RoofPitchDiagram         slot="diagram" />}
+  {isRoofingCalc           && <RoofingDiagram           slot="diagram" />}
+  {isRafterCalc            && <RafterDiagram            slot="diagram" />}
+  {isMetalRoofingCalc      && <MetalRoofingDiagram      slot="diagram" />}
+  {isLumberCalc            && <LumberDiagram            slot="diagram" />}
+  {isStairCalc             && <StairDiagram             slot="diagram" />}
+  {isSidingCalc            && <SidingDiagram            slot="diagram" />}
+  {isBoardFootCalc         && <BoardFootDiagram         slot="diagram" />}
+  {isExcavationCalc        && <ExcavationDiagram        slot="diagram" />}
+  {isSquareFootageCalc     && <SquareFootageDiagram     slot="diagram" />}
+  {isFrenchDrainCalc       && <FrenchDrainDiagram       slot="diagram" />}
+  {isConcreteBagsCalc      && <ConcreteBagsDiagram      slot="diagram" />}
+  {isInsulationCalc        && <InsulationDiagram        slot="diagram" />}
+  {isMortarCalc            && <MortarDiagram            slot="diagram" />}
+  {isGroutCalc             && <GroutDiagram             slot="diagram" />}
 
   {calc.formulaSteps?.length && (
     <FormulaDisplay slot="explainer" steps={calc.formulaSteps} />

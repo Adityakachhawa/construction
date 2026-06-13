@@ -1,4 +1,4 @@
----
+﻿---
 interface Props {
   class?: string;
 }
@@ -40,7 +40,7 @@ const { class: className = '' } = Astro.props;
         </filter>
       </defs>
 
-      <!-- ── WALL FRAME ─────────────────────────────────────── -->
+      <!-- â”€â”€ WALL FRAME â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
       <!-- Wall background / stud cavity -->
       <rect x="48" y="32" width="380" height="240" fill="#e7e5e4" rx="2" opacity="0.5"/>
 
@@ -57,7 +57,7 @@ const { class: className = '' } = Astro.props;
       <!-- Bottom plate -->
       <rect x="42" y="268" width="392" height="8" fill="#a8a29e" opacity="0.7" rx="1"/>
 
-      <!-- ── DRYWALL SHEETS ──────────────────────────────────── -->
+      <!-- â”€â”€ DRYWALL SHEETS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
 
       <!-- Row 1: 3 full sheets + 1 partial -->
       <!-- Sheet 1,1 -->
@@ -85,11 +85,11 @@ const { class: className = '' } = Astro.props;
       <!-- Sheet 2,5 (partial) -->
       <rect x="372" y="188" width="48" height="84" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.25" stroke-dasharray="4 3" filter="url(#sheetShadow)" opacity="0.85"/>
 
-      <!-- ── SEAM TAPE indicator (horizontal seam, row boundary) ── -->
+      <!-- â”€â”€ SEAM TAPE indicator (horizontal seam, row boundary) â”€â”€ -->
       <line x1="54" y1="188" x2="420" y2="188" stroke="#0070f3" stroke-width="2" stroke-dasharray="6 3" opacity="0.55"/>
       <text x="440" y="192" font-family="Inter,system-ui,sans-serif" font-size="9" font-weight="600" fill="#0070f3" opacity="0.8">seam</text>
 
-      <!-- ── SHEET NUMBER labels ──────────────────────────────── -->
+      <!-- â”€â”€ SHEET NUMBER labels â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
       <text x="90"  y="114" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" font-weight="700" fill="#475569">1</text>
       <text x="168" y="114" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" font-weight="700" fill="#475569">2</text>
       <text x="248" y="114" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" font-weight="700" fill="#475569">3</text>
@@ -99,7 +99,7 @@ const { class: className = '' } = Astro.props;
       <text x="248" y="234" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" font-weight="700" fill="#475569">7</text>
       <text x="328" y="234" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" font-weight="700" fill="#475569">8</text>
 
-      <!-- ── HEIGHT annotation (left, green) ────────────────── -->
+      <!-- â”€â”€ HEIGHT annotation (left, green) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
       <line x1="34" y1="32"  x2="44" y2="32"  stroke="#16a34a" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
       <line x1="34" y1="272" x2="44" y2="272" stroke="#16a34a" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
       <line x1="38" y1="32"  x2="38" y2="272" stroke="#16a34a" stroke-width="1.75"/>
@@ -109,7 +109,7 @@ const { class: className = '' } = Astro.props;
         font-size="11" font-weight="700" fill="#16a34a" letter-spacing="-0.3"
         transform="rotate(-90 24 158)">Wall Height</text>
 
-      <!-- ── WIDTH annotation (top, blue) ───────────────────── -->
+      <!-- â”€â”€ WIDTH annotation (top, blue) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
       <line x1="54"  y1="16" x2="54"  y2="26" stroke="#0070f3" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
       <line x1="420" y1="16" x2="420" y2="26" stroke="#0070f3" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
       <line x1="54"  y1="20" x2="420" y2="20" stroke="#0070f3" stroke-width="1.75"/>
@@ -118,7 +118,7 @@ const { class: className = '' } = Astro.props;
       <text x="237" y="10" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
         font-size="11" font-weight="700" fill="#0070f3" letter-spacing="-0.3">Wall Width</text>
 
-      <!-- ── SHEET WIDTH annotation (between sheets 1 & 2, bottom) ── -->
+      <!-- â”€â”€ SHEET WIDTH annotation (between sheets 1 & 2, bottom) â”€â”€ -->
       <line x1="54"  y1="282" x2="54"  y2="274" stroke="#7c3aed" stroke-width="1" stroke-dasharray="3 2" opacity="0.6"/>
       <line x1="126" y1="282" x2="126" y2="274" stroke="#7c3aed" stroke-width="1" stroke-dasharray="3 2" opacity="0.6"/>
       <line x1="54"  y1="286" x2="126" y2="286" stroke="#7c3aed" stroke-width="1.5"/>
@@ -127,7 +127,7 @@ const { class: className = '' } = Astro.props;
       <text x="90" y="298" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
         font-size="9" font-weight="700" fill="#7c3aed">4 ft sheet</text>
 
-      <!-- ── LEGEND ─────────────────────────────────────────── -->
+      <!-- â”€â”€ LEGEND â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
       <rect x="334" y="258" width="14" height="10" fill="url(#drywallGrad)" stroke="#94a3b8" stroke-width="1" rx="1"/>
       <text x="352" y="267" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#4b5563">Full sheet</text>
       <rect x="334" y="274" width="14" height="10" fill="#fef3c7" stroke="#f59e0b" stroke-width="1" stroke-dasharray="3 2" rx="1"/>
@@ -135,7 +135,7 @@ const { class: className = '' } = Astro.props;
     </svg>
   </div>
   <figcaption class="diagram-caption">
-    Drywall sheets laid out horizontally across wall studs. Cut pieces at edges contribute to the 10% waste factor — order sheets accordingly.
+    Drywall sheets laid out horizontally across wall studs. Cut pieces at edges contribute to the 10% waste factor â€” order sheets accordingly.
   </figcaption>
 </figure>
 
@@ -183,6 +183,7 @@ const { class: className = '' } = Astro.props;
   .diagram-svg {
     max-width: 480px;
     height: auto;
+  aspect-ratio: 480 / 300;
     display: block;
   }
 

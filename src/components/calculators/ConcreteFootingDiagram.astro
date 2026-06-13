@@ -1,0 +1,222 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<figure class={`diagram-figure ${className}`} aria-labelledby="footing-diagram-caption">
+  <div class="diagram-header">
+    <span class="diagram-badge">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <rect x="1" y="8" width="12" height="5" rx="1" stroke="currentColor" stroke-width="1.25"/>
+        <rect x="3" y="3" width="8" height="5" rx="0.75" stroke="currentColor" stroke-width="1.25"/>
+        <line x1="5" y1="1" x2="5" y2="3" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/>
+        <line x1="9" y1="1" x2="9" y2="3" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/>
+      </svg>
+    </span>
+    <h2 id="footing-diagram-caption" class="diagram-title">Concrete Footing Diagram</h2>
+  </div>
+  <div class="diagram-box">
+    <svg
+      viewBox="0 0 480 300"
+      width="100%"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      focusable="false"
+      class="diagram-svg"
+    >
+      <defs>
+        <linearGradient id="ftTopFace" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#d1d5db"/>
+          <stop offset="100%" stop-color="#9ca3af"/>
+        </linearGradient>
+        <linearGradient id="ftFrontFace" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#9ca3af"/>
+          <stop offset="100%" stop-color="#64748b"/>
+        </linearGradient>
+        <linearGradient id="ftRightFace" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"   stop-color="#7c8fa3"/>
+          <stop offset="100%" stop-color="#64748b"/>
+        </linearGradient>
+        <linearGradient id="soilGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#c8a96e"/>
+          <stop offset="100%" stop-color="#8b6840"/>
+        </linearGradient>
+        <linearGradient id="wallGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"   stop-color="#e2e8f0"/>
+          <stop offset="100%" stop-color="#cbd5e1"/>
+        </linearGradient>
+        <!-- Aggregate texture -->
+        <pattern id="ftTex" x="0" y="0" width="16" height="16" patternUnits="userSpaceOnUse">
+          <circle cx="4"  cy="5"  r="1.1" fill="#94a3b8" opacity="0.32"/>
+          <circle cx="11" cy="9"  r="0.9" fill="#6b7280" opacity="0.25"/>
+          <circle cx="7"  cy="13" r="1"   fill="#94a3b8" opacity="0.28"/>
+        </pattern>
+        <!-- Soil hatch -->
+        <pattern id="soilHatch" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="10" x2="10" y2="0" stroke="#92400e" stroke-width="0.7" opacity="0.28"/>
+        </pattern>
+      </defs>
+
+      <!-- ── SOIL / GROUND ─────────────────────────────────── -->
+      <rect x="0" y="0" width="480" height="300" fill="#fef9f0" opacity="0.6"/>
+      <!-- Below-grade soil zone -->
+      <rect x="0" y="148" width="480" height="152" fill="url(#soilGrad)" opacity="0.22"/>
+      <rect x="0" y="148" width="480" height="152" fill="url(#soilHatch)"/>
+      <!-- Grade line -->
+      <line x1="0" y1="148" x2="480" y2="148"
+        stroke="#92400e" stroke-width="1.5" stroke-dasharray="8 4" opacity="0.5"/>
+      <text x="460" y="144" text-anchor="end" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="600" fill="#92400e" opacity="0.7">grade</text>
+      <text x="460" y="157" text-anchor="end" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="500" fill="#92400e" opacity="0.55">↓ below grade</text>
+
+      <!-- ── WALL / POST above footing (isometric) ─────────── -->
+      <!-- wall front face -->
+      <rect x="166" y="44" width="56" height="104" fill="url(#wallGrad)" stroke="#94a3b8" stroke-width="1.25"/>
+      <!-- wall right face -->
+      <polygon points="222,44 248,28 248,132 222,148"
+        fill="#cbd5e1" stroke="#94a3b8" stroke-width="1.25" opacity="0.85"/>
+      <!-- wall top face -->
+      <polygon points="166,44 222,44 248,28 192,28"
+        fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.25"/>
+      <!-- rebar dowels (red lines emerging from top of footing) -->
+      <line x1="185" y1="30" x2="185" y2="148" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" opacity="0.75"/>
+      <line x1="207" y1="30" x2="207" y2="148" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" opacity="0.75"/>
+      <!-- rebar label -->
+      <line x1="207" y1="70" x2="258" y2="56" stroke="#ef4444" stroke-width="1" opacity="0.5"/>
+      <text x="260" y="55" font-family="Inter,system-ui,sans-serif" font-size="9.5"
+        font-weight="600" fill="#ef4444">Rebar dowels</text>
+
+      <!-- ── FOOTING SLAB (isometric) ───────────────────────── -->
+      <!-- Top face -->
+      <polygon points="100,148 300,148 340,120 140,120"
+        fill="url(#ftTopFace)" stroke="#475569" stroke-width="1.5"/>
+      <polygon points="100,148 300,148 340,120 140,120"
+        fill="url(#ftTex)" opacity="0.5"/>
+      <!-- Front face -->
+      <polygon points="100,148 100,232 140,232 140,120"
+        fill="url(#ftFrontFace)" stroke="#475569" stroke-width="1.5"/>
+      <polygon points="100,148 100,232 140,232 140,120"
+        fill="url(#ftTex)" opacity="0.38"/>
+      <!-- Right face -->
+      <polygon points="140,120 340,120 340,232 140,232"
+        fill="url(#ftRightFace)" stroke="#475569" stroke-width="1.5"/>
+      <polygon points="140,120 340,120 340,232 140,232"
+        fill="url(#ftTex)" opacity="0.32"/>
+
+      <!-- Horizontal rebar in footing (two red lines on front face) -->
+      <line x1="100" y1="168" x2="140" y2="140" stroke="#ef4444" stroke-width="2" opacity="0.6"/>
+      <line x1="100" y1="210" x2="140" y2="182" stroke="#ef4444" stroke-width="2" opacity="0.6"/>
+      <!-- Matching lines on right face -->
+      <line x1="140" y1="140" x2="340" y2="140" stroke="#ef4444" stroke-width="2" opacity="0.45"/>
+      <line x1="140" y1="182" x2="340" y2="182" stroke="#ef4444" stroke-width="2" opacity="0.45"/>
+
+      <!-- ── LENGTH annotation (top) ───────────────────────── -->
+      <line x1="100" y1="148" x2="100" y2="102" stroke="#0070f3" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="300" y1="148" x2="300" y2="102" stroke="#0070f3" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="100" y1="110" x2="300" y2="110" stroke="#0070f3" stroke-width="1.75"/>
+      <polygon points="100,110 113,105 113,115" fill="#0070f3"/>
+      <polygon points="300,110 287,105 287,115" fill="#0070f3"/>
+      <text x="200" y="99" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="13" font-weight="700" fill="#0070f3" letter-spacing="-0.3">Length</text>
+
+      <!-- ── WIDTH annotation (right side, diagonal) ─────── -->
+      <line x1="300" y1="148" x2="366" y2="122" stroke="#16a34a" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="340" y1="120" x2="366" y2="106" stroke="#16a34a" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="366" y1="106" x2="366" y2="122" stroke="#16a34a" stroke-width="1.75"/>
+      <polygon points="366,106 361,118 371,118" fill="#16a34a"/>
+      <polygon points="366,122 361,110 371,110" fill="#16a34a"/>
+      <text x="380" y="118" text-anchor="start" font-family="Inter,system-ui,sans-serif"
+        font-size="13" font-weight="700" fill="#16a34a" letter-spacing="-0.3">Width</text>
+
+      <!-- ── DEPTH annotation (left, vertical) ─────────────── -->
+      <line x1="100" y1="148" x2="62" y2="148" stroke="#d97706" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="100" y1="232" x2="62" y2="232" stroke="#d97706" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="70"  y1="148" x2="70" y2="232" stroke="#d97706" stroke-width="1.75"/>
+      <polygon points="70,148 65,161 75,161" fill="#d97706"/>
+      <polygon points="70,232 65,219 75,219" fill="#d97706"/>
+      <text x="56" y="193" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="13" font-weight="700" fill="#d97706" letter-spacing="-0.3"
+        transform="rotate(-90 56 193)">Depth</text>
+
+      <!-- ── FORMULA REMINDER ─────────────────────────────── -->
+      <rect x="286" y="248" width="140" height="30" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+      <text x="356" y="260" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" fill="#1d4ed8">V = L × W × D × Count</text>
+      <text x="356" y="272" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8.5" fill="#1e40af" opacity="0.85">÷ 27 = cubic yards</text>
+
+      <!-- ── GHOST second footing ─────────────────────────── -->
+      <polygon points="350,165 430,165 456,148 376,148"
+        fill="#d1d5db" stroke="#94a3b8" stroke-width="1" stroke-dasharray="5 3" opacity="0.4"/>
+      <polygon points="350,165 350,216 376,216 376,148"
+        fill="#9ca3af" stroke="#94a3b8" stroke-width="1" stroke-dasharray="5 3" opacity="0.3"/>
+      <polygon points="376,148 456,148 456,216 376,216"
+        fill="#7c8fa3" stroke="#94a3b8" stroke-width="1" stroke-dasharray="5 3" opacity="0.28"/>
+      <text x="403" y="188" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8.5" font-weight="600" fill="#6b7280" opacity="0.6">footing 2…</text>
+    </svg>
+  </div>
+  <figcaption class="diagram-caption">
+    Rectangular spread footing: length × width × depth per footing, multiplied by the number of footings, gives total concrete volume.
+  </figcaption>
+</figure>
+
+<style>
+  .diagram-figure { margin-top: 3.5rem; }
+
+  .diagram-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .diagram-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--surface-page);
+    border: 1px solid var(--border-default);
+    color: var(--color-text-secondary);
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .diagram-title {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+  }
+
+  .diagram-box {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+
+  .diagram-svg {
+    max-width: 480px;
+    height: auto;
+    aspect-ratio: 480 / 300;
+    display: block;
+  }
+
+  .diagram-caption {
+    margin-top: 0.875rem;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    text-align: center;
+    line-height: 1.5;
+  }
+</style>

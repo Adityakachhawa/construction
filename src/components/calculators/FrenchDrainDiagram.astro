@@ -1,0 +1,382 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<figure class={`diagram-figure ${className}`} aria-labelledby="french-drain-diagram-caption">
+  <div class="diagram-header">
+    <span class="diagram-badge">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <rect x="1" y="6" width="12" height="7" rx="1" stroke="currentColor" stroke-width="1.2" fill="none"/>
+        <path d="M3 6 V4 Q7 1 11 4 V6" stroke="currentColor" stroke-width="1.2" fill="none"/>
+        <circle cx="7" cy="9" r="1.5" stroke="currentColor" stroke-width="0.9" fill="none"/>
+      </svg>
+    </span>
+    <h2 id="french-drain-diagram-caption" class="diagram-title">French Drain Diagram</h2>
+  </div>
+  <div class="diagram-box">
+    <svg
+      viewBox="0 0 520 300"
+      width="100%"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      focusable="false"
+      class="diagram-svg"
+    >
+      <defs>
+        <!-- Ground surface gradient -->
+        <linearGradient id="fdGround" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#86efac"/>
+          <stop offset="100%" stop-color="#4ade80"/>
+        </linearGradient>
+        <!-- Soil wall gradient -->
+        <linearGradient id="fdSoil" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#d4a96a"/>
+          <stop offset="100%" stop-color="#b8864e"/>
+        </linearGradient>
+        <!-- Soil wall side gradient (darker) -->
+        <linearGradient id="fdSoilSide" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"   stop-color="#a87040"/>
+          <stop offset="100%" stop-color="#8a5a30"/>
+        </linearGradient>
+        <!-- Gravel gradient -->
+        <linearGradient id="fdGravel" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#d1d5db"/>
+          <stop offset="100%" stop-color="#9ca3af"/>
+        </linearGradient>
+        <!-- Gravel isometric top -->
+        <linearGradient id="fdGravelTop" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#e5e7eb"/>
+          <stop offset="100%" stop-color="#d1d5db"/>
+        </linearGradient>
+        <!-- Gravel dot pattern -->
+        <pattern id="fdGravelDots" x="0" y="0" width="10" height="8" patternUnits="userSpaceOnUse">
+          <circle cx="2"  cy="2"  r="1.1" fill="#6b7280" opacity="0.35"/>
+          <circle cx="7"  cy="5"  r="1.2" fill="#4b5563" opacity="0.3"/>
+          <circle cx="4"  cy="6"  r="0.9" fill="#6b7280" opacity="0.25"/>
+          <circle cx="9"  cy="1"  r="0.8" fill="#9ca3af" opacity="0.3"/>
+          <circle cx="1"  cy="7"  r="0.7" fill="#4b5563" opacity="0.2"/>
+        </pattern>
+        <!-- Soil dirt texture -->
+        <pattern id="fdDirt" x="0" y="0" width="16" height="8" patternUnits="userSpaceOnUse">
+          <circle cx="4"  cy="3"  r="1"   fill="#92400e" opacity="0.15"/>
+          <circle cx="12" cy="6"  r="0.8" fill="#92400e" opacity="0.12"/>
+          <circle cx="8"  cy="1"  r="0.6" fill="#92400e" opacity="0.10"/>
+        </pattern>
+        <!-- Grass texture -->
+        <pattern id="fdGrass" x="0" y="0" width="12" height="6" patternUnits="userSpaceOnUse">
+          <line x1="3"  y1="6" x2="3"  y2="3" stroke="#15803d" stroke-width="0.8" opacity="0.3"/>
+          <line x1="7"  y1="6" x2="7"  y2="2" stroke="#166534" stroke-width="0.7" opacity="0.25"/>
+          <line x1="10" y1="6" x2="10" y2="4" stroke="#15803d" stroke-width="0.6" opacity="0.2"/>
+        </pattern>
+      </defs>
+
+      <!--
+        Layout overview (520 × 300):
+          Left cross-section block  : x 0–330  (isometric trench cut-away)
+          Right legend panel        : x 340–516
+
+        Isometric trench:
+          Ground level y = 80
+          Trench opening front-left  : (60,  140)
+          Trench opening front-right : (280, 140)
+          Trench opening back-left   : (80,  80)   [+20 right, -60 up]
+          Trench opening back-right  : (300, 80)
+          Trench floor front-left    : (60,  240)
+          Trench floor front-right   : (280, 240)
+          Trench floor back-left     : (80,  180)
+          Trench floor back-right    : (300, 180)
+      -->
+
+      <!-- ══ GROUND SURFACE ══════════════════════════════════════ -->
+      <!-- Left ground panel -->
+      <polygon points="0,60 80,60 60,140 0,140"
+        fill="url(#fdGround)" stroke="#16a34a" stroke-width="1"/>
+      <polygon points="0,60 80,60 60,140 0,140"
+        fill="url(#fdGrass)" opacity="0.5"/>
+      <!-- Right ground panel -->
+      <polygon points="300,80 330,60 330,140 280,140"
+        fill="url(#fdGround)" stroke="#16a34a" stroke-width="1"/>
+      <polygon points="300,80 330,60 330,140 280,140"
+        fill="url(#fdGrass)" opacity="0.5"/>
+      <!-- Back ground strip (behind trench opening) -->
+      <polygon points="80,60 300,60 300,80 80,80"
+        fill="url(#fdGround)" stroke="#16a34a" stroke-width="1"/>
+      <polygon points="80,60 300,60 300,80 80,80"
+        fill="url(#fdGrass)" opacity="0.45"/>
+      <!-- Trench opening top face (shadow) -->
+      <polygon points="60,140 80,80 300,80 280,140"
+        fill="rgba(0,0,0,0.07)" stroke="#166534" stroke-width="1.2" stroke-dasharray="4 3"/>
+
+      <!-- ══ TRENCH WALLS (soil) ════════════════════════════════ -->
+      <!-- Right wall (side face) -->
+      <polygon points="280,140 300,80 300,180 280,240"
+        fill="url(#fdSoilSide)" stroke="#92400e" stroke-width="0.5"/>
+      <polygon points="280,140 300,80 300,180 280,240"
+        fill="url(#fdDirt)" opacity="0.4"/>
+      <!-- Left wall (side face) -->
+      <polygon points="60,140 80,80 80,180 60,240"
+        fill="url(#fdSoil)" stroke="#92400e" stroke-width="0.5"/>
+      <polygon points="60,140 80,80 80,180 60,240"
+        fill="url(#fdDirt)" opacity="0.3"/>
+
+      <!-- ══ FILTER FABRIC (dashed lines inside walls) ══════════ -->
+      <!-- Front fabric line — left wall inner edge -->
+      <line x1="68" y1="143" x2="68" y2="237"
+        stroke="#93c5fd" stroke-width="2" stroke-dasharray="5 3" opacity="0.9"/>
+      <!-- Front fabric line — right wall inner edge -->
+      <line x1="272" y1="143" x2="272" y2="237"
+        stroke="#93c5fd" stroke-width="2" stroke-dasharray="5 3" opacity="0.9"/>
+      <!-- Front fabric line — floor -->
+      <line x1="68" y1="237" x2="272" y2="237"
+        stroke="#93c5fd" stroke-width="2" stroke-dasharray="5 3" opacity="0.9"/>
+      <!-- Iso top fabric lines — back of trench -->
+      <line x1="88" y1="83" x2="88" y2="177"
+        stroke="#93c5fd" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="292" y1="83" x2="292" y2="177"
+        stroke="#93c5fd" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="88" y1="177" x2="292" y2="177"
+        stroke="#93c5fd" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.7"/>
+
+      <!-- ══ GRAVEL FILL ════════════════════════════════════════ -->
+      <!-- Front face gravel -->
+      <rect x="68" y="145" width="204" height="92"
+        fill="url(#fdGravel)"/>
+      <rect x="68" y="145" width="204" height="92"
+        fill="url(#fdGravelDots)" opacity="0.9"/>
+      <!-- Iso top gravel surface -->
+      <polygon points="68,145 88,85 292,85 272,145"
+        fill="url(#fdGravelTop)"/>
+      <polygon points="68,145 88,85 292,85 272,145"
+        fill="url(#fdGravelDots)" opacity="0.6"/>
+      <!-- Right gravel side -->
+      <polygon points="272,145 292,85 292,177 272,237"
+        fill="#b0b7c0"/>
+      <polygon points="272,145 292,85 292,177 272,237"
+        fill="url(#fdGravelDots)" opacity="0.5"/>
+
+      <!-- ══ PERFORATED PIPE ════════════════════════════════════ -->
+      <!-- Pipe body (front face — ellipse cross-section) -->
+      <ellipse cx="170" cy="218" rx="22" ry="22"
+        fill="#374151" stroke="#1f2937" stroke-width="1.5"/>
+      <ellipse cx="170" cy="218" rx="16" ry="16"
+        fill="#6b7280" stroke="#4b5563" stroke-width="1"/>
+      <!-- Pipe hollow interior -->
+      <ellipse cx="170" cy="218" rx="10" ry="10"
+        fill="#111827"/>
+      <!-- Perforation holes around pipe -->
+      <circle cx="170" cy="203" r="1.8" fill="#1f2937"/>
+      <circle cx="183" cy="207" r="1.8" fill="#1f2937"/>
+      <circle cx="188" cy="218" r="1.8" fill="#1f2937"/>
+      <circle cx="183" cy="229" r="1.8" fill="#1f2937"/>
+      <circle cx="170" cy="233" r="1.8" fill="#1f2937"/>
+      <circle cx="157" cy="229" r="1.8" fill="#1f2937"/>
+      <circle cx="152" cy="218" r="1.8" fill="#1f2937"/>
+      <circle cx="157" cy="207" r="1.8" fill="#1f2937"/>
+      <!-- Pipe isometric depth tube (top side) -->
+      <polygon points="148,196 168,136 192,136 212,196"
+        fill="#4b5563" stroke="#374151" stroke-width="1" opacity="0.85"/>
+      <!-- Pipe end circle at back -->
+      <ellipse cx="180" cy="136" rx="22" ry="8"
+        fill="#374151" stroke="#1f2937" stroke-width="1"/>
+      <ellipse cx="180" cy="136" rx="16" ry="5.5"
+        fill="#6b7280"/>
+      <ellipse cx="180" cy="136" rx="10" ry="3.5"
+        fill="#111827"/>
+
+      <!-- ══ WATER FLOW ARROWS ══════════════════════════════════ -->
+      <!-- Downward arrows into gravel (left zone) -->
+      <line x1="105" y1="60" x2="105" y2="138"
+        stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="4 2" opacity="0.8"/>
+      <polygon points="105,142 100,130 110,130" fill="#3b82f6" opacity="0.8"/>
+      <!-- Downward arrows into gravel (right zone) -->
+      <line x1="235" y1="60" x2="235" y2="138"
+        stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="4 2" opacity="0.8"/>
+      <polygon points="235,142 230,130 240,130" fill="#3b82f6" opacity="0.8"/>
+      <!-- Horizontal arrow toward pipe (from left) -->
+      <line x1="90" y1="218" x2="143" y2="218"
+        stroke="#3b82f6" stroke-width="1.5" opacity="0.75"/>
+      <polygon points="147,218 136,213 136,223" fill="#3b82f6" opacity="0.75"/>
+      <!-- Horizontal arrow toward pipe (from right) -->
+      <line x1="250" y1="218" x2="197" y2="218"
+        stroke="#3b82f6" stroke-width="1.5" opacity="0.75"/>
+      <polygon points="193,218 204,213 204,223" fill="#3b82f6" opacity="0.75"/>
+
+      <!-- ══ DIMENSION ANNOTATIONS ══════════════════════════════ -->
+
+      <!-- LENGTH — along isometric back top edge -->
+      <line x1="80" y1="67" x2="300" y2="67" stroke="#0070f3" stroke-width="1.75"/>
+      <line x1="80"  y1="60" x2="80"  y2="74" stroke="#0070f3" stroke-width="1.25"/>
+      <line x1="300" y1="60" x2="300" y2="74" stroke="#0070f3" stroke-width="1.25"/>
+      <polygon points="80,67  93,62  93,72"  fill="#0070f3"/>
+      <polygon points="300,67 287,62 287,72" fill="#0070f3"/>
+      <text x="190" y="58" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="12" font-weight="700" fill="#0070f3" letter-spacing="-0.3">Length</text>
+
+      <!-- WIDTH — double-headed across the front opening -->
+      <line x1="62" y1="156" x2="270" y2="156" stroke="#16a34a" stroke-width="1.75"/>
+      <line x1="62"  y1="149" x2="62"  y2="163" stroke="#16a34a" stroke-width="1.25"/>
+      <line x1="270" y1="149" x2="270" y2="163" stroke="#16a34a" stroke-width="1.25"/>
+      <polygon points="62,156  75,151  75,161"  fill="#16a34a"/>
+      <polygon points="270,156 257,151 257,161" fill="#16a34a"/>
+      <text x="166" y="152" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="11" font-weight="700" fill="#16a34a">Width</text>
+
+      <!-- DEPTH — down the left wall -->
+      <line x1="45" y1="143" x2="45" y2="237" stroke="#7c3aed" stroke-width="1.75"/>
+      <line x1="38" y1="143" x2="52" y2="143" stroke="#7c3aed" stroke-width="1.25"/>
+      <line x1="38" y1="237" x2="52" y2="237" stroke="#7c3aed" stroke-width="1.25"/>
+      <polygon points="45,143 40,156 50,156" fill="#7c3aed"/>
+      <polygon points="45,237 40,224 50,224" fill="#7c3aed"/>
+      <text x="34" y="196" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="11" font-weight="700" fill="#7c3aed"
+        transform="rotate(-90 34 196)">Depth</text>
+
+      <!-- PIPE Ø — amber label with leader line -->
+      <line x1="192" y1="211" x2="218" y2="196"
+        stroke="#d97706" stroke-width="1.25"/>
+      <circle cx="192" cy="211" r="2" fill="#d97706"/>
+      <rect x="218" y="184" width="52" height="18" rx="4"
+        fill="#fef3c7" stroke="#d97706" stroke-width="1.1"/>
+      <text x="244" y="196" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="700" fill="#92400e">Pipe Ø 4″</text>
+
+      <!-- ══ LEGEND / CALLOUT BOXES (right side) ════════════════ -->
+
+      <!-- Legend title -->
+      <text x="355" y="50" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="11" font-weight="800" fill="#374151" letter-spacing="-0.2">Legend</text>
+      <line x1="330" y1="55" x2="380" y2="55" stroke="#e5e7eb" stroke-width="1"/>
+
+      <!-- Gravel envelope -->
+      <rect x="332" y="62" width="22" height="22" rx="3"
+        fill="url(#fdGravel)" stroke="#9ca3af" stroke-width="1.25"/>
+      <rect x="332" y="62" width="22" height="22" rx="3"
+        fill="url(#fdGravelDots)" opacity="0.8"/>
+      <text x="360" y="71" text-anchor="start" font-family="Inter,system-ui,sans-serif"
+        font-size="10" font-weight="700" fill="#374151">Gravel envelope</text>
+      <text x="360" y="82" text-anchor="start" font-family="Inter,system-ui,sans-serif"
+        font-size="8.5" font-weight="400" fill="#6b7280">3/4″ clean crushed stone</text>
+
+      <!-- Filter fabric -->
+      <rect x="332" y="98" width="22" height="22" rx="3"
+        fill="#eff6ff" stroke="#93c5fd" stroke-width="2" stroke-dasharray="4 2"/>
+      <text x="360" y="107" text-anchor="start" font-family="Inter,system-ui,sans-serif"
+        font-size="10" font-weight="700" fill="#374151">Filter fabric</text>
+      <text x="360" y="118" text-anchor="start" font-family="Inter,system-ui,sans-serif"
+        font-size="8.5" font-weight="400" fill="#6b7280">Non-woven geotextile</text>
+
+      <!-- Perforated pipe -->
+      <circle cx="343" cy="145" r="11"
+        fill="#374151" stroke="#1f2937" stroke-width="1.2"/>
+      <circle cx="343" cy="145" r="7"
+        fill="#6b7280" stroke="#4b5563" stroke-width="0.8"/>
+      <circle cx="343" cy="145" r="4"
+        fill="#111827"/>
+      <circle cx="343" cy="135" r="1.4" fill="#1f2937"/>
+      <circle cx="350" cy="138" r="1.4" fill="#1f2937"/>
+      <circle cx="353" cy="145" r="1.4" fill="#1f2937"/>
+      <circle cx="350" cy="152" r="1.4" fill="#1f2937"/>
+      <circle cx="343" cy="155" r="1.4" fill="#1f2937"/>
+      <circle cx="336" cy="152" r="1.4" fill="#1f2937"/>
+      <circle cx="333" cy="145" r="1.4" fill="#1f2937"/>
+      <circle cx="336" cy="138" r="1.4" fill="#1f2937"/>
+      <text x="360" y="142" text-anchor="start" font-family="Inter,system-ui,sans-serif"
+        font-size="10" font-weight="700" fill="#374151">Perforated pipe</text>
+      <text x="360" y="153" text-anchor="start" font-family="Inter,system-ui,sans-serif"
+        font-size="8.5" font-weight="400" fill="#6b7280">4″ corrugated HDPE</text>
+
+      <!-- Water flow -->
+      <line x1="332" y1="181" x2="354" y2="181"
+        stroke="#3b82f6" stroke-width="2" stroke-dasharray="4 2"/>
+      <polygon points="354,181 344,176 344,186" fill="#3b82f6"/>
+      <text x="360" y="178" text-anchor="start" font-family="Inter,system-ui,sans-serif"
+        font-size="10" font-weight="700" fill="#374151">Water flow</text>
+      <text x="360" y="189" text-anchor="start" font-family="Inter,system-ui,sans-serif"
+        font-size="8.5" font-weight="400" fill="#6b7280">Into gravel → into pipe</text>
+
+      <!-- Waste / coverage note box -->
+      <rect x="330" y="206" width="182" height="48" rx="6"
+        fill="#f0fdf4" stroke="#16a34a" stroke-width="1.1"/>
+      <text x="421" y="220" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8.5" font-weight="700" fill="#166534">Gravel = Trench × Coverage% × (1+Waste%)</text>
+      <text x="421" y="231" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8" font-weight="600" fill="#15803d">Fabric = (W + 2D) × L × (1+Waste%)</text>
+      <text x="421" y="242" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8" font-weight="600" fill="#15803d">Pipe = Length × (1+Waste%)</text>
+      <line x1="330" y1="248" x2="512" y2="248" stroke="#bbf7d0" stroke-width="0.75"/>
+      <text x="421" y="259" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="7.5" font-weight="600" fill="#4ade80" opacity="0.9">Default: 90% coverage, 10% waste</text>
+
+      <!-- Slope reminder -->
+      <rect x="330" y="268" width="182" height="22" rx="5"
+        fill="#fef3c7" stroke="#d97706" stroke-width="1"/>
+      <text x="421" y="278" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8" font-weight="700" fill="#92400e">Minimum slope: 1% grade (1″ per 8 ft)</text>
+      <text x="421" y="288" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="7.5" font-weight="600" fill="#b45309">Outlet must daylight or reach dry well</text>
+    </svg>
+  </div>
+  <figcaption class="diagram-caption">
+    Cross-section of a French drain. Perforated pipe sits in a gravel envelope wrapped in filter fabric. Water infiltrates through gravel, enters the pipe, and flows to the outlet.
+  </figcaption>
+</figure>
+
+<style>
+  .diagram-figure { margin-top: 3.5rem; }
+
+  .diagram-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .diagram-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--surface-page);
+    border: 1px solid var(--border-default);
+    color: var(--color-text-secondary);
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .diagram-title {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+  }
+
+  .diagram-box {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+
+  .diagram-svg {
+    max-width: 520px;
+    height: auto;
+    aspect-ratio: 520 / 300;
+    display: block;
+  }
+
+  .diagram-caption {
+    margin-top: 0.875rem;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    text-align: center;
+    line-height: 1.5;
+  }
+</style>

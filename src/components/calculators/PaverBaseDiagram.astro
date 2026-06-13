@@ -1,4 +1,4 @@
----
+﻿---
 interface Props {
   class?: string;
 }
@@ -59,7 +59,7 @@ const { class: className = '' } = Astro.props;
         </pattern>
       </defs>
 
-      <!-- ── CROSS-SECTION (left 55%) ──────────────────────── -->
+      <!-- â”€â”€ CROSS-SECTION (left 55%) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
 
       <!-- Native soil -->
       <rect x="50" y="240" width="220" height="42" fill="url(#nativeSoilGrad)" opacity="0.55" rx="1"/>
@@ -88,14 +88,14 @@ const { class: className = '' } = Astro.props;
       <line x1="270" y1="207" x2="277" y2="207" stroke="#8b6914" stroke-width="1" opacity="0.4"/>
       <line x1="270" y1="252" x2="277" y2="252" stroke="#92400e" stroke-width="1" opacity="0.35"/>
 
-      <!-- ── SAND DEPTH annotation (left, orange) ─────────── -->
+      <!-- â”€â”€ SAND DEPTH annotation (left, orange) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
       <line x1="38" y1="158" x2="48" y2="158" stroke="#d97706" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
       <line x1="38" y1="175" x2="48" y2="175" stroke="#d97706" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
       <line x1="42" y1="158" x2="42" y2="175" stroke="#d97706" stroke-width="1.75"/>
       <polygon points="42,158 37,166 47,166" fill="#d97706"/>
       <polygon points="42,175 37,167 47,167" fill="#d97706"/>
 
-      <!-- ── GRAVEL BASE DEPTH annotation (left, green) ────── -->
+      <!-- â”€â”€ GRAVEL BASE DEPTH annotation (left, green) â”€â”€â”€â”€â”€â”€ -->
       <line x1="26" y1="175" x2="48" y2="175" stroke="#16a34a" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
       <line x1="26" y1="240" x2="48" y2="240" stroke="#16a34a" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
       <line x1="30" y1="175" x2="30" y2="240" stroke="#16a34a" stroke-width="1.75"/>
@@ -109,7 +109,7 @@ const { class: className = '' } = Astro.props;
       <text x="8" y="170" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
         font-size="9" font-weight="600" fill="#d97706">Sand</text>
 
-      <!-- ── LENGTH annotation (top, blue) ─────────────────── -->
+      <!-- â”€â”€ LENGTH annotation (top, blue) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
       <line x1="50"  y1="104" x2="50"  y2="114" stroke="#0070f3" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
       <line x1="270" y1="104" x2="270" y2="114" stroke="#0070f3" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
       <line x1="50"  y1="108" x2="270" y2="108" stroke="#0070f3" stroke-width="1.75"/>
@@ -118,7 +118,7 @@ const { class: className = '' } = Astro.props;
       <text x="160" y="96" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
         font-size="12" font-weight="700" fill="#0070f3" letter-spacing="-0.3">Length</text>
 
-      <!-- ── 3D PAVER PLAN VIEW (right 40%) ─────────────────── -->
+      <!-- â”€â”€ 3D PAVER PLAN VIEW (right 40%) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
       <text x="390" y="96" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
         font-size="10" font-weight="600" fill="#6b7280" letter-spacing="0.05em">PLAN VIEW</text>
 
@@ -136,11 +136,11 @@ const { class: className = '' } = Astro.props;
         font-size="11" font-weight="700" fill="#16a34a" letter-spacing="-0.3"
         transform="rotate(90 471 155)">Width</text>
 
-      <!-- ── LEGEND ───────────────────────────────────────── -->
+      <!-- â”€â”€ LEGEND â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
       <rect x="330" y="218" width="160" height="60" rx="8"
         fill="#f8fafc" stroke="#e2e4e8" stroke-width="1"/>
       <rect x="342" y="230" width="14" height="10" fill="url(#gravelLayerGrad)" rx="1"/>
-      <text x="360" y="239" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#4b5563">Gravel base (4–6 in)</text>
+      <text x="360" y="239" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#4b5563">Gravel base (4â€“6 in)</text>
       <rect x="342" y="248" width="14" height="10" fill="url(#sandLayerGrad)" rx="1"/>
       <text x="360" y="257" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#4b5563">Sand bedding (1 in)</text>
       <rect x="342" y="266" width="14" height="8" fill="url(#paverGrad)" rx="1"/>
@@ -148,7 +148,7 @@ const { class: className = '' } = Astro.props;
     </svg>
   </div>
   <figcaption class="diagram-caption">
-    Paver base cross-section: native soil → compacted gravel base → sand bedding → pavers. Enter length, width, and depths above.
+    Paver base cross-section: native soil â†’ compacted gravel base â†’ sand bedding â†’ pavers. Enter length, width, and depths above.
   </figcaption>
 </figure>
 
@@ -198,6 +198,7 @@ const { class: className = '' } = Astro.props;
   .diagram-svg {
     max-width: 480px;
     height: auto;
+  aspect-ratio: 480 / 300;
     display: block;
   }
 

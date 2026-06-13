@@ -1,4 +1,4 @@
----
+﻿---
 interface Props {
   class?: string;
 }
@@ -39,15 +39,15 @@ const { class: className = '' } = Astro.props;
       <rect x="60" y="60" width="360" height="200" rx="4"
         fill="url(#concreteBase)" stroke="#64748b" stroke-width="1.5" opacity="0.55"/>
 
-      <!-- ── REBAR GRID ──────────────────────────────────── -->
+      <!-- â”€â”€ REBAR GRID â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
 
-      <!-- Horizontal bars (rows — run along width) -->
+      <!-- Horizontal bars (rows â€” run along width) -->
       <line x1="60"  y1="100" x2="420" y2="100" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/>
       <line x1="60"  y1="140" x2="420" y2="140" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/>
       <line x1="60"  y1="180" x2="420" y2="180" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/>
       <line x1="60"  y1="220" x2="420" y2="220" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/>
 
-      <!-- Vertical bars (columns — run along length) -->
+      <!-- Vertical bars (columns â€” run along length) -->
       <line x1="108" y1="60" x2="108" y2="260" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
       <line x1="192" y1="60" x2="192" y2="260" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
       <line x1="276" y1="60" x2="276" y2="260" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
@@ -71,7 +71,7 @@ const { class: className = '' } = Astro.props;
       <circle cx="276" cy="220" r="4" fill="#dc2626"/>
       <circle cx="360" cy="220" r="4" fill="#dc2626"/>
 
-      <!-- ── SPACING annotation (top between first two vertical bars, blue) ── -->
+      <!-- â”€â”€ SPACING annotation (top between first two vertical bars, blue) â”€â”€ -->
       <line x1="108" y1="46" x2="108" y2="62" stroke="#0070f3" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
       <line x1="192" y1="46" x2="192" y2="62" stroke="#0070f3" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
       <line x1="108" y1="50" x2="192" y2="50" stroke="#0070f3" stroke-width="1.75"/>
@@ -80,7 +80,7 @@ const { class: className = '' } = Astro.props;
       <text x="150" y="38" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
         font-size="12" font-weight="700" fill="#0070f3" letter-spacing="-0.3">Spacing</text>
 
-      <!-- ── LENGTH annotation (bottom, blue) ─────────────── -->
+      <!-- â”€â”€ LENGTH annotation (bottom, blue) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
       <line x1="60"  y1="272" x2="60"  y2="262" stroke="#0070f3" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
       <line x1="420" y1="272" x2="420" y2="262" stroke="#0070f3" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
       <line x1="60"  y1="276" x2="420" y2="276" stroke="#0070f3" stroke-width="1.75"/>
@@ -89,7 +89,7 @@ const { class: className = '' } = Astro.props;
       <text x="240" y="292" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
         font-size="12" font-weight="700" fill="#0070f3" letter-spacing="-0.3">Slab Length</text>
 
-      <!-- ── WIDTH annotation (right, green) ──────────────── -->
+      <!-- â”€â”€ WIDTH annotation (right, green) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
       <line x1="432" y1="60"  x2="422" y2="60"  stroke="#16a34a" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
       <line x1="432" y1="260" x2="422" y2="260" stroke="#16a34a" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
       <line x1="436" y1="60"  x2="436" y2="260" stroke="#16a34a" stroke-width="1.75"/>
@@ -99,13 +99,13 @@ const { class: className = '' } = Astro.props;
         font-size="12" font-weight="700" fill="#16a34a" letter-spacing="-0.3"
         transform="rotate(90 452 163)">Slab Width</text>
 
-      <!-- ── LEGEND ─────────────────────────────────────── -->
+      <!-- â”€â”€ LEGEND â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
       <line x1="62" y1="288" x2="82" y2="288" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/>
       <text x="86" y="292" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#4b5563">#4 Rebar grid (both directions)</text>
     </svg>
   </div>
   <figcaption class="diagram-caption">
-    Bidirectional rebar grid: bars run along both length and width at equal spacing — enter slab dimensions and spacing above.
+    Bidirectional rebar grid: bars run along both length and width at equal spacing â€” enter slab dimensions and spacing above.
   </figcaption>
 </figure>
 
@@ -153,6 +153,7 @@ const { class: className = '' } = Astro.props;
   .diagram-svg {
     max-width: 480px;
     height: auto;
+  aspect-ratio: 480 / 300;
     display: block;
   }
 

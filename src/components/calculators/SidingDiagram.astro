@@ -1,0 +1,206 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<figure class={`diagram-figure ${className}`} aria-labelledby="siding-diagram-caption">
+  <div class="diagram-header">
+    <span class="diagram-badge">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <rect x="1" y="3" width="12" height="10" rx="1" stroke="currentColor" stroke-width="1.25"/>
+        <rect x="4" y="5" width="2.5" height="3" rx="0.3" stroke="currentColor" stroke-width="1"/>
+        <rect x="7.5" y="5" width="2.5" height="3" rx="0.3" stroke="currentColor" stroke-width="1"/>
+        <line x1="1" y1="6"  x2="13" y2="6"  stroke="currentColor" stroke-width="0.75" opacity="0.5"/>
+        <line x1="1" y1="9"  x2="13" y2="9"  stroke="currentColor" stroke-width="0.75" opacity="0.5"/>
+      </svg>
+    </span>
+    <h2 id="siding-diagram-caption" class="diagram-title">Siding Area Diagram</h2>
+  </div>
+  <div class="diagram-box">
+    <svg
+      viewBox="0 0 480 300"
+      width="100%"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      focusable="false"
+      class="diagram-svg"
+    >
+      <defs>
+        <linearGradient id="sidingGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#fef3c7"/>
+          <stop offset="100%" stop-color="#fde68a"/>
+        </linearGradient>
+        <linearGradient id="sidingGrad2" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#fef9ee"/>
+          <stop offset="100%" stop-color="#fef3c7"/>
+        </linearGradient>
+        <linearGradient id="windowGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%"   stop-color="#e0f2fe"/>
+          <stop offset="100%" stop-color="#bae6fd"/>
+        </linearGradient>
+        <linearGradient id="doorGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#d1fae5"/>
+          <stop offset="100%" stop-color="#a7f3d0"/>
+        </linearGradient>
+        <!-- Horizontal lap siding courses -->
+        <pattern id="lapSiding" x="0" y="0" width="480" height="18" patternUnits="userSpaceOnUse">
+          <rect x="0" y="0" width="480" height="18" fill="none"/>
+          <line x1="0" y1="17" x2="480" y2="17" stroke="#d97706" stroke-width="1.5" opacity="0.3"/>
+          <line x1="0" y1="0"  x2="480" y2="0"  stroke="#fbbf24" stroke-width="0.5" opacity="0.2"/>
+        </pattern>
+      </defs>
+
+      <!--
+        Front wall elevation diagram.
+        Wall: x=52..428, y=36..248  (376×212)
+        Window 1: x=96..176, y=90..158  (80×68)
+        Window 2: x=202..282, y=90..158  (80×68)
+        Door:     x=318..378, y=140..248 (60×108)
+      -->
+
+      <!-- ── GROSS WALL (siding area + openings) ──────────────── -->
+      <rect x="52" y="36" width="376" height="212"
+        fill="url(#sidingGrad)" stroke="#d97706" stroke-width="2"/>
+      <!-- Lap siding course lines over full wall -->
+      <rect x="52" y="36" width="376" height="212"
+        fill="url(#lapSiding)" opacity="0.9"/>
+
+      <!-- ── WINDOW 1 ────────────────────────────────────────────── -->
+      <rect x="96" y="90" width="80" height="68"
+        fill="url(#windowGrad)" stroke="#0284c7" stroke-width="1.5"/>
+      <!-- Window panes -->
+      <line x1="136" y1="90"  x2="136" y2="158" stroke="#0284c7" stroke-width="0.75" opacity="0.6"/>
+      <line x1="96"  y1="124" x2="176" y2="124" stroke="#0284c7" stroke-width="0.75" opacity="0.6"/>
+      <text x="136" y="108" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="7.5" font-weight="600" fill="#0369a1">Window</text>
+
+      <!-- ── WINDOW 2 ────────────────────────────────────────────── -->
+      <rect x="202" y="90" width="80" height="68"
+        fill="url(#windowGrad)" stroke="#0284c7" stroke-width="1.5"/>
+      <line x1="242" y1="90"  x2="242" y2="158" stroke="#0284c7" stroke-width="0.75" opacity="0.6"/>
+      <line x1="202" y1="124" x2="282" y2="124" stroke="#0284c7" stroke-width="0.75" opacity="0.6"/>
+      <text x="242" y="108" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="7.5" font-weight="600" fill="#0369a1">Window</text>
+
+      <!-- ── DOOR ───────────────────────────────────────────────── -->
+      <rect x="318" y="140" width="60" height="108"
+        fill="url(#doorGrad)" stroke="#059669" stroke-width="1.5"/>
+      <!-- Door frame detail -->
+      <rect x="323" y="145" width="50" height="98" rx="1"
+        fill="none" stroke="#059669" stroke-width="0.75" opacity="0.5"/>
+      <!-- Door knob -->
+      <circle cx="362" cy="197" r="3" fill="#059669" opacity="0.7"/>
+      <text x="348" y="162" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="7.5" font-weight="600" fill="#065f46">Door</text>
+
+      <!-- ── SIDING AREA LABEL (net area, hatched region callout) ── -->
+      <text x="70" y="60" text-anchor="start" font-family="Inter,system-ui,sans-serif"
+        font-size="7.5" font-weight="700" fill="#92400e">Siding (net area)</text>
+
+      <!-- ── OPENING DEDUCTION callout ───────────────────────────── -->
+      <rect x="96" y="172" width="80" height="18" rx="4"
+        fill="#fff1f2" stroke="#ef4444" stroke-width="1"/>
+      <text x="136" y="184" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="7" font-weight="600" fill="#dc2626">deducted</text>
+      <rect x="202" y="172" width="80" height="18" rx="4"
+        fill="#fff1f2" stroke="#ef4444" stroke-width="1"/>
+      <text x="242" y="184" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="7" font-weight="600" fill="#dc2626">deducted</text>
+
+      <!-- ── WASTE CALLOUT ──────────────────────────────────────── -->
+      <rect x="52" y="200" width="90" height="26" rx="5"
+        fill="#fffbeb" stroke="#d97706" stroke-width="1.25"/>
+      <text x="97" y="211" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="7.5" font-weight="700" fill="#b45309">Add 10% waste</text>
+      <text x="97" y="221" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="7" font-weight="500" fill="#92400e">for cuts &amp; corners</text>
+
+      <!-- ── WALL WIDTH annotation (bottom) ──────────────────────── -->
+      <line x1="52"  y1="268" x2="428" y2="268" stroke="#0070f3" stroke-width="1.75"/>
+      <line x1="52"  y1="260" x2="52"  y2="276" stroke="#0070f3" stroke-width="1.25"/>
+      <line x1="428" y1="260" x2="428" y2="276" stroke="#0070f3" stroke-width="1.25"/>
+      <polygon points="52,268  65,263  65,273"  fill="#0070f3"/>
+      <polygon points="428,268 415,263 415,273" fill="#0070f3"/>
+      <text x="240" y="290" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="12" font-weight="700" fill="#0070f3" letter-spacing="-0.3">Wall Width</text>
+
+      <!-- ── WALL HEIGHT annotation (right) ──────────────────────── -->
+      <line x1="444" y1="36"  x2="444" y2="248" stroke="#16a34a" stroke-width="1.75"/>
+      <line x1="436" y1="36"  x2="452" y2="36"  stroke="#16a34a" stroke-width="1.25"/>
+      <line x1="436" y1="248" x2="452" y2="248" stroke="#16a34a" stroke-width="1.25"/>
+      <polygon points="444,36  439,49  449,49"  fill="#16a34a"/>
+      <polygon points="444,248 439,235 449,235" fill="#16a34a"/>
+      <text x="464" y="146" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="12" font-weight="700" fill="#16a34a" letter-spacing="-0.3"
+        transform="rotate(90 464 146)">Wall Height</text>
+
+      <!-- ── NET AREA formula label ────────────────────────────── -->
+      <text x="240" y="22" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8.5" font-weight="700" fill="#475569">
+        Net Area = Gross Area − Windows − Doors
+      </text>
+    </svg>
+  </div>
+  <figcaption class="diagram-caption">
+    Wall elevation showing gross area (full wall), window and door deductions, and the net siding area. Required material = net area × (1 + waste %).
+  </figcaption>
+</figure>
+
+<style>
+  .diagram-figure { margin-top: 3.5rem; }
+
+  .diagram-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .diagram-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--surface-page);
+    border: 1px solid var(--border-default);
+    color: var(--color-text-secondary);
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .diagram-title {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+  }
+
+  .diagram-box {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+
+  .diagram-svg {
+    max-width: 480px;
+    height: auto;
+    aspect-ratio: 480 / 300;
+    display: block;
+  }
+
+  .diagram-caption {
+    margin-top: 0.875rem;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    text-align: center;
+    line-height: 1.5;
+  }
+</style>

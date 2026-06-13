@@ -14,6 +14,26 @@ import { flooringCalculator } from '../calculators/flooring-calculator';
 import { concreteColumnCalculator } from '../calculators/concrete-column-calculator';
 import { topsoilCalculator } from '../calculators/topsoil-calculator';
 import { aggregateCalculator } from '../calculators/aggregate-calculator';
+import { concreteBlockCalculator } from '../calculators/concrete-block-calculator';
+import { concreteDrivewayCalculator } from '../calculators/concrete-driveway-calculator';
+import { concreteFootingCalculator } from '../calculators/concrete-footing-calculator';
+import { plywoodCalculator } from '../calculators/plywood-calculator';
+import { studCalculator } from '../calculators/stud-calculator';
+import { roofPitchCalculator } from '../calculators/roof-pitch-calculator';
+import { roofingCalculator } from '../calculators/roofing-calculator';
+import { rafterCalculator } from '../calculators/rafter-calculator';
+import { metalRoofingCalculator } from '../calculators/metal-roofing-calculator';
+import { lumberCalculator } from '../calculators/lumber-calculator';
+import { stairCalculator } from '../calculators/stair-calculator';
+import { sidingCalculator } from '../calculators/siding-calculator';
+import { boardFootCalculator } from '../calculators/board-foot-calculator';
+import { excavationCalculator } from '../calculators/excavation-calculator';
+import { squareFootageCalculator } from '../calculators/square-footage-calculator';
+import { frenchDrainCalculator } from '../calculators/french-drain-calculator';
+import { concreteBagsCalculator } from '../calculators/concrete-bags-calculator';
+import { insulationCalculator } from '../calculators/insulation-calculator';
+import { mortarCalculator } from '../calculators/mortar-calculator';
+import { groutCalculator } from '../calculators/grout-calculator';
 
 export const calculatorRegistry: CalculatorConfig[] = [
   concreteSlab,
@@ -31,6 +51,26 @@ export const calculatorRegistry: CalculatorConfig[] = [
   concreteColumnCalculator,
   topsoilCalculator,
   aggregateCalculator,
+  concreteBlockCalculator,
+  concreteDrivewayCalculator,
+  concreteFootingCalculator,
+  plywoodCalculator,
+  studCalculator,
+  roofPitchCalculator,
+  roofingCalculator,
+  rafterCalculator,
+  metalRoofingCalculator,
+  lumberCalculator,
+  stairCalculator,
+  sidingCalculator,
+  boardFootCalculator,
+  excavationCalculator,
+  squareFootageCalculator,
+  frenchDrainCalculator,
+  concreteBagsCalculator,
+  insulationCalculator,
+  mortarCalculator,
+  groutCalculator,
 ];
 
 export function getCalculatorBySlug(slug: string): CalculatorConfig | undefined {

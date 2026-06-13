@@ -1,0 +1,214 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<figure class={`diagram-figure ${className}`} aria-labelledby="lumber-diagram-caption">
+  <div class="diagram-header">
+    <span class="diagram-badge">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <rect x="1" y="4" width="12" height="3" rx="0.5" stroke="currentColor" stroke-width="1.25"/>
+        <rect x="1" y="8" width="12" height="3" rx="0.5" stroke="currentColor" stroke-width="1.25"/>
+        <line x1="3" y1="1" x2="3" y2="4"  stroke="currentColor" stroke-width="1.25"/>
+        <line x1="11" y1="1" x2="11" y2="4" stroke="currentColor" stroke-width="1.25"/>
+      </svg>
+    </span>
+    <h2 id="lumber-diagram-caption" class="diagram-title">Lumber Diagram</h2>
+  </div>
+  <div class="diagram-box">
+    <svg
+      viewBox="0 0 480 300"
+      width="100%"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      focusable="false"
+      class="diagram-svg"
+    >
+      <defs>
+        <linearGradient id="boardFace" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#fef9ee"/>
+          <stop offset="100%" stop-color="#fde68a"/>
+        </linearGradient>
+        <linearGradient id="boardTop" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#fef3c7"/>
+          <stop offset="100%" stop-color="#fde68a"/>
+        </linearGradient>
+        <linearGradient id="boardSide" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"   stop-color="#d97706"/>
+          <stop offset="100%" stop-color="#b45309"/>
+        </linearGradient>
+        <pattern id="grain1" x="0" y="0" width="40" height="10" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="3"  x2="40" y2="3"  stroke="#d97706" stroke-width="0.4" opacity="0.28"/>
+          <line x1="0" y1="7"  x2="40" y2="7"  stroke="#b45309" stroke-width="0.3" opacity="0.2"/>
+        </pattern>
+        <pattern id="grain2" x="0" y="8" width="40" height="10" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="3"  x2="40" y2="3"  stroke="#d97706" stroke-width="0.4" opacity="0.24"/>
+          <line x1="0" y1="8"  x2="40" y2="8"  stroke="#b45309" stroke-width="0.3" opacity="0.18"/>
+        </pattern>
+        <pattern id="grain3" x="0" y="16" width="40" height="10" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="3"  x2="40" y2="3"  stroke="#d97706" stroke-width="0.4" opacity="0.22"/>
+          <line x1="0" y1="7"  x2="40" y2="7"  stroke="#b45309" stroke-width="0.3" opacity="0.16"/>
+        </pattern>
+      </defs>
+
+      <!--
+        Isometric stacked board visualization — 3 boards shown as a stack.
+        Each board: face (front), top surface, and right end face.
+
+        Stack layout (front face of each board visible, slight Y offset between boards):
+          Board 1 (bottom): face y=200, board 2: y=172, board 3 (top): y=144
+          Face: x=60..380, y = boardY .. boardY+28
+          Top:  parallelogram from (60,boardY) → (80,boardY-16) → (380,boardY-16) → (360,boardY)  [only top board]
+          End:  (380,boardY) → (400,boardY-16) → (400,boardY+12) → (380,boardY+28)   [right end, each board]
+      -->
+
+      <!-- ══ BOARD 3 — bottom of stack ══════════════════════════ -->
+      <!-- Face -->
+      <rect x="60" y="202" width="320" height="28"
+        fill="url(#boardFace)" stroke="#d97706" stroke-width="1.25"/>
+      <rect x="60" y="202" width="320" height="28" fill="url(#grain3)" opacity="0.65"/>
+      <!-- Right end face -->
+      <polygon points="380,202 400,186 400,214 380,230"
+        fill="url(#boardSide)" stroke="#b45309" stroke-width="1.25"/>
+
+      <!-- ══ BOARD 2 — middle ════════════════════════════════════ -->
+      <!-- Face -->
+      <rect x="60" y="170" width="320" height="28"
+        fill="url(#boardFace)" stroke="#d97706" stroke-width="1.25"/>
+      <rect x="60" y="170" width="320" height="28" fill="url(#grain2)" opacity="0.65"/>
+      <!-- Right end face -->
+      <polygon points="380,170 400,154 400,182 380,198"
+        fill="url(#boardSide)" stroke="#b45309" stroke-width="1.25"/>
+
+      <!-- ══ BOARD 1 — top of stack ══════════════════════════════ -->
+      <!-- Top surface (parallelogram) — only visible on topmost board -->
+      <polygon points="60,138 80,122 400,122 380,138"
+        fill="url(#boardTop)" stroke="#d97706" stroke-width="1.25"/>
+      <polygon points="60,138 80,122 400,122 380,138"
+        fill="url(#grain1)" opacity="0.45"/>
+      <!-- Face -->
+      <rect x="60" y="138" width="320" height="28"
+        fill="url(#boardFace)" stroke="#d97706" stroke-width="1.5"/>
+      <rect x="60" y="138" width="320" height="28" fill="url(#grain1)" opacity="0.65"/>
+      <!-- Right end face -->
+      <polygon points="380,138 400,122 400,150 380,166"
+        fill="url(#boardSide)" stroke="#b45309" stroke-width="1.5"/>
+
+      <!-- End-grain rings on right face of top board -->
+      <ellipse cx="390" cy="136" rx="5" ry="7" fill="none" stroke="#92400e" stroke-width="0.75" opacity="0.4"
+        transform="rotate(-30 390 136)"/>
+      <ellipse cx="390" cy="136" rx="2.5" ry="4" fill="none" stroke="#92400e" stroke-width="0.6" opacity="0.3"
+        transform="rotate(-30 390 136)"/>
+
+      <!-- ── THICKNESS annotation (right side, between top and end) ── -->
+      <line x1="416" y1="122" x2="416" y2="150" stroke="#7c3aed" stroke-width="1.5"/>
+      <line x1="408" y1="122" x2="424" y2="122" stroke="#7c3aed" stroke-width="1.25"/>
+      <line x1="408" y1="150" x2="424" y2="150" stroke="#7c3aed" stroke-width="1.25"/>
+      <polygon points="416,122 411,133 421,133" fill="#7c3aed"/>
+      <polygon points="416,150 411,139 421,139" fill="#7c3aed"/>
+      <text x="436" y="140" text-anchor="start" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="700" fill="#7c3aed">Thickness</text>
+
+      <!-- ── WIDTH annotation (left side, face height) ──────────── -->
+      <line x1="38" y1="138" x2="38" y2="166" stroke="#16a34a" stroke-width="1.5"/>
+      <line x1="30" y1="138" x2="46" y2="138" stroke="#16a34a" stroke-width="1.25"/>
+      <line x1="30" y1="166" x2="46" y2="166" stroke="#16a34a" stroke-width="1.25"/>
+      <polygon points="38,138 33,149 43,149" fill="#16a34a"/>
+      <polygon points="38,166 33,155 43,155" fill="#16a34a"/>
+      <text x="26" y="153" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="700" fill="#16a34a"
+        transform="rotate(-90 26 153)">Width</text>
+
+      <!-- ── LENGTH annotation (top, along top surface) ─────────── -->
+      <line x1="60"  y1="108" x2="380" y2="108" stroke="#0070f3" stroke-width="1.75"/>
+      <line x1="60"  y1="100" x2="60"  y2="116" stroke="#0070f3" stroke-width="1.25"/>
+      <line x1="380" y1="100" x2="380" y2="116" stroke="#0070f3" stroke-width="1.25"/>
+      <polygon points="60,108  73,103  73,113"  fill="#0070f3"/>
+      <polygon points="380,108 367,103 367,113" fill="#0070f3"/>
+      <text x="220" y="99" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="13" font-weight="700" fill="#0070f3" letter-spacing="-0.3">Board Length</text>
+
+      <!-- ── LINEAR FEET callout ─────────────────────────────────── -->
+      <line x1="60" y1="248" x2="380" y2="248" stroke="#0070f3" stroke-width="1.25" stroke-dasharray="5 3" opacity="0.6"/>
+      <text x="220" y="268" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="600" fill="#0370f3" opacity="0.85">← Linear feet = boards × length →</text>
+
+      <!-- ── BOARD FEET callout box ──────────────────────────────── -->
+      <rect x="84" y="144" width="170" height="22" rx="5"
+        fill="#fffbeb" stroke="#d97706" stroke-width="1.25"/>
+      <text x="169" y="155" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8.5" font-weight="700" fill="#b45309">Board Feet = T″ × W″ × L′ × qty ÷ 12</text>
+
+      <!-- ── STACK label ─────────────────────────────────────────── -->
+      <text x="14" y="180" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8.5" font-weight="700" fill="#92400e"
+        transform="rotate(-90 14 180)">Stack</text>
+      <!-- Stack bracket -->
+      <line x1="56" y1="138" x2="52" y2="138" stroke="#92400e" stroke-width="1" opacity="0.5"/>
+      <line x1="52" y1="138" x2="52" y2="230" stroke="#92400e" stroke-width="1" opacity="0.5"/>
+      <line x1="52" y1="230" x2="56" y2="230" stroke="#92400e" stroke-width="1" opacity="0.5"/>
+    </svg>
+  </div>
+  <figcaption class="diagram-caption">
+    Lumber stack showing three boards. Board feet = (Thickness ″ × Width ″ × Length ′ × Count) ÷ 12. Linear feet = board count × length. Actual dimensions (not nominal) are used in all calculations.
+  </figcaption>
+</figure>
+
+<style>
+  .diagram-figure { margin-top: 3.5rem; }
+
+  .diagram-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .diagram-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--surface-page);
+    border: 1px solid var(--border-default);
+    color: var(--color-text-secondary);
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .diagram-title {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+  }
+
+  .diagram-box {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+
+  .diagram-svg {
+    max-width: 480px;
+    height: auto;
+    aspect-ratio: 480 / 300;
+    display: block;
+  }
+
+  .diagram-caption {
+    margin-top: 0.875rem;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    text-align: center;
+    line-height: 1.5;
+  }
+</style>

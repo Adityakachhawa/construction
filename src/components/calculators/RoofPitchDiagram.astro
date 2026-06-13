@@ -1,0 +1,183 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<figure class={`diagram-figure ${className}`} aria-labelledby="roof-pitch-diagram-caption">
+  <div class="diagram-header">
+    <span class="diagram-badge">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <polygon points="7,1 13,12 1,12" stroke="currentColor" stroke-width="1.25" fill="none"/>
+        <line x1="10" y1="12" x2="10" y2="7" stroke="currentColor" stroke-width="1.25"/>
+      </svg>
+    </span>
+    <h2 id="roof-pitch-diagram-caption" class="diagram-title">Roof Pitch Diagram</h2>
+  </div>
+  <div class="diagram-box">
+    <svg
+      viewBox="0 0 480 300"
+      width="100%"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      focusable="false"
+      class="diagram-svg"
+    >
+      <defs>
+        <linearGradient id="roofSurfGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#fef3c7"/>
+          <stop offset="100%" stop-color="#fde68a"/>
+        </linearGradient>
+        <linearGradient id="wallGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"   stop-color="#fef9ee"/>
+          <stop offset="100%" stop-color="#fde68a"/>
+        </linearGradient>
+        <linearGradient id="ridgeGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#d97706"/>
+          <stop offset="100%" stop-color="#b45309"/>
+        </linearGradient>
+        <!-- Shingle row texture -->
+        <pattern id="shinglePat" x="0" y="0" width="24" height="14" patternUnits="userSpaceOnUse">
+          <line x1="0"  y1="7"  x2="24" y2="7"  stroke="#d97706" stroke-width="0.55" opacity="0.28"/>
+          <line x1="12" y1="0"  x2="12" y2="7"  stroke="#b45309" stroke-width="0.4"  opacity="0.2"/>
+          <line x1="0"  y1="0"  x2="0"  y2="7"  stroke="#b45309" stroke-width="0.4"  opacity="0.2"/>
+        </pattern>
+      </defs>
+
+      <!-- ── ROOF SURFACE TRIANGLE ──────────────────────────── -->
+      <!-- A (eave/wall plate) = (72, 240)                      -->
+      <!-- B (base below ridge) = (388, 240)                    -->
+      <!-- C (ridge)            = (388, 60)                     -->
+      <polygon points="72,240 388,240 388,60"
+        fill="url(#roofSurfGrad)" stroke="#d97706" stroke-width="1.75"/>
+      <polygon points="72,240 388,240 388,60"
+        fill="url(#shinglePat)" opacity="0.55"/>
+
+      <!-- ── WALL STUB (left/eave end) ─────────────────────── -->
+      <rect x="60" y="200" width="14" height="48"
+        fill="url(#wallGrad)" stroke="#d97706" stroke-width="1.25"/>
+      <text x="48" y="230" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="7.5" font-weight="600" fill="#92400e"
+        transform="rotate(-90 48 230)">Wall plate</text>
+
+      <!-- ── RIDGE BOARD (top right) ───────────────────────── -->
+      <rect x="378" y="52" width="20" height="14"
+        fill="url(#ridgeGrad)" stroke="#92400e" stroke-width="1.25"/>
+      <text x="388" y="43" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8" font-weight="600" fill="#92400e">Ridge</text>
+
+      <!-- ── RIGHT-ANGLE MARKER at B (388, 240) ───────────── -->
+      <path d="M 388 220 L 368 220 L 368 240"
+        fill="none" stroke="#d97706" stroke-width="1.5"/>
+
+      <!-- ── RAFTER (hypotenuse, highlighted) ─────────────── -->
+      <line x1="72" y1="240" x2="388" y2="60"
+        stroke="#b45309" stroke-width="2.5" stroke-linecap="round"/>
+
+      <!-- Rafter label, rotated along its angle (~-29.7°) -->
+      <text x="216" y="133" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="600" fill="#92400e"
+        transform="rotate(-29.7 216 133)">Rafter length</text>
+
+      <!-- ── ANGLE ARC at A (72, 240) ─────────────────────── -->
+      <!-- Arc radius=50; horizontal→rafter, sweep CCW in SVG (visually CW, opening upward) -->
+      <!-- Horizontal end: (122, 240)                           -->
+      <!-- Rafter end at 50 px from A: unit(316,-180)=(0.869,-0.495) → (72+43.4, 240-24.7)=(115,215) -->
+      <path d="M 122,240 A 50,50 0 0,0 115,215"
+        fill="none" stroke="#7c3aed" stroke-width="2"/>
+      <text x="145" y="226" text-anchor="start" font-family="Inter,system-ui,sans-serif"
+        font-size="9.5" font-weight="700" fill="#7c3aed">Angle (°)</text>
+
+      <!-- ── PITCH RATIO CALLOUT (top-left) ───────────────── -->
+      <rect x="16" y="18" width="116" height="42" rx="6"
+        fill="#fffbeb" stroke="#d97706" stroke-width="1.25"/>
+      <text x="74" y="34" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8.5" font-weight="700" fill="#b45309">Pitch Ratio (X:12)</text>
+      <text x="74" y="50" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9.5" font-weight="800" fill="#92400e">Rise ÷ Run × 12</text>
+      <!-- leader line to rafter midpoint (230, 150) -->
+      <line x1="132" y1="39" x2="185" y2="118"
+        stroke="#d97706" stroke-width="1" stroke-dasharray="3 2" opacity="0.6"/>
+
+      <!-- ── RUN ANNOTATION (blue, bottom) ─────────────────── -->
+      <line x1="72"  y1="262" x2="388" y2="262" stroke="#0070f3" stroke-width="1.75"/>
+      <line x1="72"  y1="254" x2="72"  y2="270" stroke="#0070f3" stroke-width="1.25"/>
+      <line x1="388" y1="254" x2="388" y2="270" stroke="#0070f3" stroke-width="1.25"/>
+      <polygon points="72,262  85,257  85,267"  fill="#0070f3"/>
+      <polygon points="388,262 375,257 375,267" fill="#0070f3"/>
+      <text x="230" y="284" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="13" font-weight="700" fill="#0070f3" letter-spacing="-0.3">Run</text>
+
+      <!-- ── RISE ANNOTATION (green, right) ────────────────── -->
+      <line x1="412" y1="60"  x2="412" y2="240" stroke="#16a34a" stroke-width="1.75"/>
+      <line x1="404" y1="60"  x2="420" y2="60"  stroke="#16a34a" stroke-width="1.25"/>
+      <line x1="404" y1="240" x2="420" y2="240" stroke="#16a34a" stroke-width="1.25"/>
+      <polygon points="412,60  407,73  417,73"  fill="#16a34a"/>
+      <polygon points="412,240 407,227 417,227" fill="#16a34a"/>
+      <text x="442" y="154" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="13" font-weight="700" fill="#16a34a" letter-spacing="-0.3"
+        transform="rotate(90 442 154)">Rise</text>
+    </svg>
+  </div>
+  <figcaption class="diagram-caption">
+    Roof pitch right triangle: rise (vertical height from top plate to ridge), run (horizontal distance to below the ridge), and rafter (hypotenuse). Pitch ratio = rise per 12 inches of run.
+  </figcaption>
+</figure>
+
+<style>
+  .diagram-figure { margin-top: 3.5rem; }
+
+  .diagram-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .diagram-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--surface-page);
+    border: 1px solid var(--border-default);
+    color: var(--color-text-secondary);
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .diagram-title {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+  }
+
+  .diagram-box {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+
+  .diagram-svg {
+    max-width: 480px;
+    height: auto;
+    aspect-ratio: 480 / 300;
+    display: block;
+  }
+
+  .diagram-caption {
+    margin-top: 0.875rem;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    text-align: center;
+    line-height: 1.5;
+  }
+</style>
