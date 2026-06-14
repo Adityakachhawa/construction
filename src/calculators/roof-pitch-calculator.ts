@@ -28,7 +28,7 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const runFt   = Number(inputs.run_ft   ?? 12) + Number(inputs.run_in  ?? 0) / 12;
 
     if (runFt <= 0) {
-      return { pitch_ratio: 0, angle_deg: 0, slope_pct: 0, rafter_length_ft: 0 };
+      return { pitch_ratio: 0, angle_deg: 0, slope_pct: 0, rafter_length_ft: 0, rafter_length_m: 0 };
     }
 
     const pitchDecimal   = riseFt / runFt;
@@ -38,13 +38,13 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     // Rafter length = √(rise² + run²), in feet
     const rafter_length_ft = Math.round(Math.sqrt(riseFt ** 2 + runFt ** 2) * 100) / 100;
 
-    return { pitch_ratio, angle_deg, slope_pct, rafter_length_ft };
+    return { pitch_ratio, angle_deg, slope_pct, rafter_length_ft, rafter_length_m: Math.round(rafter_length_ft * 0.3048 * 100) / 100 };
   } else {
     const riseM  = Number(inputs.rise_m  ?? 1.8);
     const runM   = Number(inputs.run_m   ?? 3.6);
 
     if (runM <= 0) {
-      return { pitch_ratio: 0, angle_deg: 0, slope_pct: 0, rafter_length_m: 0 };
+      return { pitch_ratio: 0, angle_deg: 0, slope_pct: 0, rafter_length_ft: 0, rafter_length_m: 0 };
     }
 
     const pitchDecimal   = riseM / runM;
@@ -53,7 +53,7 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const slope_pct      = Math.round(pitchDecimal * 100 * 10) / 10;
     const rafter_length_m = Math.round(Math.sqrt(riseM ** 2 + runM ** 2) * 100) / 100;
 
-    return { pitch_ratio, angle_deg, slope_pct, rafter_length_m };
+    return { pitch_ratio, angle_deg, slope_pct, rafter_length_m, rafter_length_ft: Math.round(rafter_length_m / 0.3048 * 100) / 100 };
   }
 }
 

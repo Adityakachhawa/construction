@@ -32,7 +32,7 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const quantity     = Math.max(1, Math.round(Number(inputs.quantity ?? 10)));
 
     if (lengthFt <= 0) {
-      return { total_boards: 0, linear_feet: 0, board_feet: 0, volume_cuft: 0, cost: 0 };
+      return { total_boards: 0, linear_feet: 0, linear_m: 0, board_feet: 0, volume_cuft: 0, volume_m3: 0, cost: 0 };
     }
 
     const total_boards    = Math.ceil(quantity * (1 + wastePct));
@@ -42,7 +42,15 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const volume_cuft     = Math.round(board_feet / 12 * 1000) / 1000;
     const cost            = costPerBoard > 0 ? Math.round(total_boards * costPerBoard * 100) / 100 : 0;
 
-    return { total_boards, linear_feet, board_feet, volume_cuft, cost };
+    return {
+      total_boards,
+      linear_feet,
+      linear_m: Math.round(linear_feet * 0.3048 * 10) / 10,
+      board_feet,
+      volume_cuft,
+      volume_m3: Math.round(volume_cuft * 0.0283168 * 10000) / 10000,
+      cost,
+    };
   } else {
     const widthMm      = Number(inputs.width_mm ?? 89);   // 2×4 actual
     const thicknessMm  = Number(inputs.thickness_mm ?? 38);
@@ -50,7 +58,7 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const quantity     = Math.max(1, Math.round(Number(inputs.quantity ?? 10)));
 
     if (lengthM <= 0) {
-      return { total_boards: 0, linear_m: 0, board_feet: 0, volume_m3: 0, cost: 0 };
+      return { total_boards: 0, linear_feet: 0, linear_m: 0, board_feet: 0, volume_cuft: 0, volume_m3: 0, cost: 0 };
     }
 
     const total_boards = Math.ceil(quantity * (1 + wastePct));
@@ -63,7 +71,15 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const volume_m3    = Math.round((widthMm / 1000) * (thicknessMm / 1000) * lengthM * total_boards * 10000) / 10000;
     const cost         = costPerBoard > 0 ? Math.round(total_boards * costPerBoard * 100) / 100 : 0;
 
-    return { total_boards, linear_m, board_feet, volume_m3, cost };
+    return {
+      total_boards,
+      linear_m,
+      linear_feet: Math.round(linear_m / 0.3048 * 10) / 10,
+      board_feet,
+      volume_m3,
+      volume_cuft: Math.round(volume_m3 / 0.0283168 * 1000) / 1000,
+      cost,
+    };
   }
 }
 

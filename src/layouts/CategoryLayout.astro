@@ -16,7 +16,7 @@ interface Props {
   categoryIcon?: string;
 }
 
-const { meta, schemas = [], breadcrumbs, name, description, calculatorCount, categoryColor = '#0070f3', categoryIcon = 'concrete' } = Astro.props;
+const { meta, schemas = [], breadcrumbs, name, description, calculatorCount, categoryColor = '#ea580c', categoryIcon = 'concrete' } = Astro.props;
 ---
 
 <BaseLayout meta={meta} schemas={schemas}>
@@ -78,7 +78,7 @@ const { meta, schemas = [], breadcrumbs, name, description, calculatorCount, cat
     width: 56px;
     height: 56px;
     border-radius: 14px;
-    background: color-mix(in srgb, var(--accent, #0070f3) 12%, transparent);
+    background: color-mix(in srgb, var(--accent, #ea580c) 12%, transparent);
     display: flex;
     align-items: center;
     justify-content: center;

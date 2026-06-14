@@ -25,10 +25,15 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
 
     return {
       gross_area_sqft,
+      gross_area_sqm: Math.round(gross_area_sqft * 0.092903 * 100) / 100,
       opening_area_sqft,
+      opening_area_sqm: Math.round(opening_area_sqft * 0.092903 * 100) / 100,
       net_area_sqft,
+      net_area_sqm: Math.round(net_area_sqft * 0.092903 * 100) / 100,
       required_area_sqft,
+      required_area_sqm: Math.round(required_area_sqft * 0.092903 * 100) / 100,
       waste_area_sqft,
+      waste_area_sqm: Math.round(waste_area_sqft * 0.092903 * 100) / 100,
       panels,
     };
   } else {
@@ -48,10 +53,15 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
 
     return {
       gross_area_sqm,
+      gross_area_sqft: Math.round(gross_area_sqm * 10.7639 * 10) / 10,
       opening_area_sqm,
+      opening_area_sqft: Math.round(opening_area_sqm * 10.7639 * 10) / 10,
       net_area_sqm,
+      net_area_sqft: Math.round(net_area_sqm * 10.7639 * 10) / 10,
       required_area_sqm,
+      required_area_sqft: Math.round(required_area_sqm * 10.7639 * 10) / 10,
       waste_area_sqm,
+      waste_area_sqft: Math.round(waste_area_sqm * 10.7639 * 10) / 10,
       panels,
     };
   }

@@ -1,0 +1,248 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/layout/Breadcrumbs.astro';
+import { buildBlogTagMeta } from '../../../utils/seo';
+import { buildBreadcrumbList } from '../../../utils/schema';
+import { getCollection } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  const tagMap = new Map<string, typeof posts>();
+  for (const post of posts) {
+    for (const tag of (post.data.tags as string[]) ?? []) {
+      if (!tagMap.has(tag)) tagMap.set(tag, []);
+      tagMap.get(tag)!.push(post);
+    }
+  }
+  return Array.from(tagMap.entries()).map(([tag, tagPosts]) => ({
+    params: { tag },
+    props: { tag, posts: tagPosts },
+  }));
+};
+
+const { tag, posts } = Astro.props;
+posts.sort((a: any, b: any) => b.data.publishedAt.localeCompare(a.data.publishedAt));
+
+const meta = buildBlogTagMeta(tag, posts.length);
+
+const schemas = [
+  buildBreadcrumbList([
+    { name: 'Home', href: '/' },
+    { name: 'Blog', href: '/blog/' },
+    { name: tag, href: `/blog/tag/${tag}/` },
+  ]),
+];
+
+const breadcrumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Blog', href: '/blog/' },
+  { name: tag, href: `/blog/tag/${tag}/` },
+];
+
+const label = tag.charAt(0).toUpperCase() + tag.slice(1);
+---
+
+<BaseLayout meta={meta} schemas={schemas}>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbs} />
+      <div class="tag-chip">#{tag}</div>
+      <h1 class="page-title">{label} Articles</h1>
+      <p class="page-sub">{posts.length} article{posts.length !== 1 ? 's' : ''} tagged "{tag}"</p>
+    </div>
+  </div>
+
+  <div class="page-body">
+    <div class="container">
+      <div class="posts-grid">
+        {posts.map((post: any) => {
+          const slug = post.id.replace(/\.[^.]+$/, '');
+          const date = new Date(post.data.publishedAt).toLocaleDateString('en-US', {
+            year: 'numeric', month: 'long', day: 'numeric',
+          });
+          const wordCount = (post.body ?? '').trim().split(/\s+/).length;
+          const readingTime = Math.max(1, Math.ceil(wordCount / 200));
+          return (
+            <a href={`/blog/${slug}/`} class="post-card">
+              {post.data.featuredImage && (
+                <div class="post-image">
+                  <img src={post.data.featuredImage} alt={post.data.title} width="400" height="210" loading="lazy" />
+                </div>
+              )}
+              <div class="post-body">
+                <div class="post-meta">
+                  <time datetime={post.data.publishedAt} class="post-date">{date}</time>
+                  <span class="post-read">{readingTime} min read</span>
+                </div>
+                <h2 class="post-title">{post.data.title}</h2>
+                <p class="post-desc">{post.data.description}</p>
+                <span class="post-cta">
+                  Read article
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                    <path d="M2.5 7h9M7.5 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+
+      <div class="back-link-row">
+        <a href="/blog/" class="back-link">← All articles</a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-header {
+    background: var(--surface-page);
+    border-bottom: 1px solid var(--border-default);
+    padding: 2rem 0 2.5rem;
+  }
+
+  .container {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .tag-chip {
+    display: inline-block;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    background: var(--color-primary-50);
+    color: var(--color-primary);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    border-radius: 9999px;
+    letter-spacing: 0.02em;
+  }
+
+  .page-title {
+    font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+    font-weight: 900;
+    color: var(--color-text-primary);
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+  }
+
+  .page-sub {
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+  }
+
+  .page-body {
+    padding: 3rem 0 5rem;
+  }
+
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1.25rem;
+  }
+  @media (min-width: 640px)  { .posts-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) { .posts-grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .post-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 16px;
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+    transition: box-shadow 150ms, transform 150ms;
+  }
+  .post-card:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-3px);
+  }
+
+  .post-image {
+    width: 100%;
+    aspect-ratio: 16 / 8.4;
+    overflow: hidden;
+    background: var(--border-subtle);
+  }
+  .post-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .post-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.25rem 1.5rem 1.5rem;
+    flex: 1;
+  }
+
+  .post-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .post-date {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    font-weight: 500;
+  }
+
+  .post-read {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    font-weight: 500;
+  }
+  .post-read::before { content: '·'; margin-right: 0.375rem; }
+
+  .post-title {
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1.35;
+  }
+
+  .post-desc {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .post-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    margin-top: 0.25rem;
+  }
+
+  .back-link-row {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-default);
+  }
+
+  .back-link {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    transition: color 150ms;
+  }
+  .back-link:hover { color: var(--color-primary); }
+</style>

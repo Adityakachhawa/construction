@@ -1,0 +1,305 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/layout/Breadcrumbs.astro';
+import { buildPageTitle, buildCanonical } from '../utils/seo';
+import { DEFAULT_OG_IMAGE } from '../utils/constants';
+import { buildBreadcrumbList } from '../utils/schema';
+
+const meta = {
+  title: buildPageTitle('Calculation Methodology'),
+  description: 'How ConstructCalc calculators work — formulas, assumptions, waste factors, and the industry standards behind every result.',
+  canonical: buildCanonical('/methodology/'),
+  ogType: 'website' as const,
+  ogImage: DEFAULT_OG_IMAGE,
+};
+
+const schemas = [
+  buildBreadcrumbList([
+    { name: 'Home', href: '/' },
+    { name: 'Methodology', href: '/methodology/' },
+  ]),
+];
+
+const breadcrumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Methodology', href: '/methodology/' },
+];
+---
+
+<BaseLayout meta={meta} schemas={schemas}>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbs} />
+      <h1 class="page-title">Calculation Methodology</h1>
+      <p class="page-sub">The formulas, assumptions, and industry standards behind every ConstructCalc result.</p>
+    </div>
+  </div>
+
+  <div class="page-body">
+    <div class="container-narrow">
+
+      <section class="content-section">
+        <h2>Core Calculation Principles</h2>
+        <p>Every calculator on ConstructCalc follows three principles:</p>
+        <ol class="numbered-list">
+          <li><strong>Industry-standard formulas.</strong> We use the same equations found in ACI, IRC, NRCA, and other reference standards — not simplified approximations.</li>
+          <li><strong>Transparent math.</strong> Every calculator shows the step-by-step formula breakdown so you can verify the result against your own calculations.</li>
+          <li><strong>Conservative waste factors.</strong> Where industry practice calls for a waste allowance, we include it by default. Our goal is that you never run short on a job.</li>
+        </ol>
+      </section>
+
+      <section class="content-section">
+        <h2>Concrete Calculations</h2>
+        <h3>Volume Formula</h3>
+        <p>Concrete volume is calculated as: <strong>V = Length × Width × Thickness</strong>, with thickness converted to the same unit as length and width.</p>
+        <p>For round columns and footings: <strong>V = π × r² × Height</strong>, where r is the radius of the form.</p>
+
+        <h3>Unit Conversions</h3>
+        <ul>
+          <li>1 cubic yard = 27 cubic feet</li>
+          <li>1 cubic foot = 0.0283168 cubic meters</li>
+          <li>Thickness is entered in inches, converted to feet for the calculation</li>
+        </ul>
+
+        <h3>Concrete Bags</h3>
+        <p>Bag yield assumptions (yield after mixing and shrinkage):</p>
+        <ul>
+          <li>80 lb bag → 0.60 cubic feet</li>
+          <li>60 lb bag → 0.45 cubic feet</li>
+          <li>50 lb bag → 0.375 cubic feet</li>
+          <li>40 lb bag → 0.30 cubic feet</li>
+        </ul>
+        <p>These yields match manufacturer specifications from Quikrete and Sakrete product data sheets.</p>
+      </section>
+
+      <section class="content-section">
+        <h2>Gravel and Fill Material</h2>
+        <p>Volume calculations follow the same length × width × depth formula as concrete. Material weight estimates use standard bulk densities:</p>
+        <ul>
+          <li>Crushed gravel/limestone: 1.4 tons per cubic yard</li>
+          <li>Sand (dry): 1.3 tons per cubic yard</li>
+          <li>Topsoil: 1.0 ton per cubic yard</li>
+          <li>Mulch (shredded): 0.5 tons per cubic yard</li>
+        </ul>
+        <p>These are typical values. Actual weights vary by moisture content and supplier. Always confirm weights with your material supplier before estimating haul loads.</p>
+      </section>
+
+      <section class="content-section">
+        <h2>Framing and Lumber</h2>
+        <h3>Stud Calculations</h3>
+        <p>Stud count formula: <strong>(Wall length in inches ÷ Stud spacing in inches) + 1</strong> for the end stud. Additional studs are added for corners (3 studs per corner) and door/window openings (2 trimmer studs per opening).</p>
+
+        <h3>Rafter Calculations</h3>
+        <p>Rafter length uses the Pythagorean theorem: <strong>Rafter = √(Run² + Rise²)</strong>, where Rise = Run × Pitch (rise per foot of run ÷ 12).</p>
+
+        <h3>Board Feet</h3>
+        <p><strong>Board feet = (Thickness (in) × Width (in) × Length (ft)) ÷ 12</strong></p>
+      </section>
+
+      <section class="content-section">
+        <h2>Roofing</h2>
+        <p>Roof surface area is calculated from the plan area multiplied by a slope factor derived from the pitch:</p>
+        <p><strong>Slope Factor = √(1 + (Pitch/12)²)</strong></p>
+        <p>Roofing material is ordered in <strong>squares</strong> (100 square feet). Shingle waste factor: 10–15% for simple gable roofs, 15–20% for complex hip or valley cuts.</p>
+      </section>
+
+      <section class="content-section">
+        <h2>Waste Factors by Category</h2>
+        <div class="waste-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Material</th>
+                <th>Default Waste Factor</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Concrete</td><td>5–10%</td><td>Applied to all slab/footing calcs</td></tr>
+              <tr><td>Drywall</td><td>10%</td><td>Standard for rectangular rooms</td></tr>
+              <tr><td>Flooring</td><td>10%</td><td>15% for diagonal installations</td></tr>
+              <tr><td>Shingles</td><td>10%</td><td>15–20% for complex roofs</td></tr>
+              <tr><td>Lumber</td><td>10–15%</td><td>Varies by complexity</td></tr>
+              <tr><td>Gravel/Sand</td><td>5%</td><td>Accounts for compaction</td></tr>
+              <tr><td>Brick/Block</td><td>5%</td><td>Cuts and breakage</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <h2>Limitations</h2>
+        <p>Our calculators are designed for standard rectangular and simple geometric shapes. For irregular shapes, complex roof profiles, or engineered structural systems, break the project into regular sections and combine results, or consult a professional estimator.</p>
+        <p>Material prices, where shown, are national averages and will vary by region and supplier. Always get current quotes from local suppliers.</p>
+      </section>
+
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-header {
+    background: var(--surface-page);
+    border-bottom: 1px solid var(--border-default);
+    padding: 2rem 0 2.5rem;
+  }
+
+  .container {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .container-narrow {
+    max-width: 52rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .page-title {
+    font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+    font-weight: 900;
+    color: var(--color-text-primary);
+    letter-spacing: -0.04em;
+    margin-top: 1rem;
+    line-height: 1.1;
+  }
+
+  .page-sub {
+    margin-top: 0.625rem;
+    font-size: 1.0625rem;
+    color: var(--color-text-secondary);
+    max-width: 44rem;
+    line-height: 1.6;
+  }
+
+  .page-body {
+    padding: 3rem 0 5rem;
+  }
+
+  .content-section {
+    margin-bottom: 3rem;
+  }
+
+  .content-section h2 {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+    margin-bottom: 1rem;
+    padding-bottom: 0.625rem;
+    border-bottom: 2px solid var(--border-default);
+  }
+
+  .content-section h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 1rem 0 0.375rem;
+  }
+
+  .content-section p {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    margin-bottom: 0.875rem;
+  }
+
+  .content-section strong {
+    color: var(--color-text-primary);
+    font-weight: 600;
+  }
+
+  .numbered-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    counter-reset: item;
+    margin-bottom: 1rem;
+  }
+
+  .numbered-list li {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+    padding-left: 2rem;
+    position: relative;
+    counter-increment: item;
+    line-height: 1.6;
+  }
+
+  .numbered-list li::before {
+    content: counter(item);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1.375rem;
+    height: 1.375rem;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .content-section ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .content-section ul li {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+    padding-left: 1.25rem;
+    position: relative;
+    line-height: 1.6;
+  }
+
+  .content-section ul li::before {
+    content: '·';
+    position: absolute;
+    left: 0.25rem;
+    color: var(--color-primary);
+    font-weight: 700;
+  }
+
+  .waste-table {
+    overflow-x: auto;
+    margin-top: 0.75rem;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+  }
+
+  th {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    padding: 0.625rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    font-size: 0.875rem;
+  }
+
+  td {
+    border: 1px solid var(--border-default);
+    padding: 0.625rem 1rem;
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+  }
+
+  tr:nth-child(even) td {
+    background: var(--border-subtle);
+  }
+</style>

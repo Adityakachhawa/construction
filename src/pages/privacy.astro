@@ -1,0 +1,137 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/layout/Breadcrumbs.astro';
+import { buildPageTitle, buildCanonical } from '../utils/seo';
+import { DEFAULT_OG_IMAGE } from '../utils/constants';
+import { buildBreadcrumbList } from '../utils/schema';
+
+const meta = {
+  title: buildPageTitle('Privacy Policy'),
+  description: 'ConstructCalc privacy policy. We collect minimal data, never sell your information, and require no account to use any calculator.',
+  canonical: buildCanonical('/privacy/'),
+  ogType: 'website' as const,
+  ogImage: DEFAULT_OG_IMAGE,
+  noindex: false,
+};
+
+const schemas = [
+  buildBreadcrumbList([
+    { name: 'Home', href: '/' },
+    { name: 'Privacy Policy', href: '/privacy/' },
+  ]),
+];
+
+const breadcrumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Privacy Policy', href: '/privacy/' },
+];
+---
+
+<BaseLayout meta={meta} schemas={schemas}>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbs} />
+      <h1 class="page-title">Privacy Policy</h1>
+      <p class="page-sub">Last updated: June 2026</p>
+    </div>
+  </div>
+
+  <div class="page-body">
+    <div class="container-narrow">
+
+      <section class="content-section">
+        <h2>The Short Version</h2>
+        <p>ConstructCalc calculators require no account, no email, and no personal information. We collect standard web analytics (page views, general location, device type) to understand how tools are used. We never sell your data.</p>
+      </section>
+
+      <section class="content-section">
+        <h2>Information We Collect</h2>
+        <h3>Calculator Inputs</h3>
+        <p>The numbers you enter into calculators (dimensions, quantities, prices) are processed entirely in your browser. We do not store, log, or transmit your calculation inputs to any server.</p>
+
+        <h3>Analytics Data</h3>
+        <p>We use standard web analytics to understand site usage. This data includes:</p>
+        <ul>
+          <li>Pages visited and time spent</li>
+          <li>General geographic region (country/state, not street address)</li>
+          <li>Browser type and device category</li>
+          <li>How you arrived at the site (search, direct, referral)</li>
+        </ul>
+        <p>This data is aggregated and anonymous. It does not identify you personally.</p>
+
+        <h3>Contact Form</h3>
+        <p>If you use our <a href="/contact/">Contact form</a>, we collect your name, email address, and message. This is used only to respond to your inquiry and is not used for marketing.</p>
+      </section>
+
+      <section class="content-section">
+        <h2>Cookies</h2>
+        <p>We use a single functional cookie to remember your preferred unit system (imperial vs. metric) between visits. This cookie contains no personal information and is stored only in your browser.</p>
+        <p>Analytics tools may set their own cookies per their respective privacy policies.</p>
+      </section>
+
+      <section class="content-section">
+        <h2>Third-Party Services</h2>
+        <p>ConstructCalc uses the following third-party services that may set cookies or collect data per their own policies:</p>
+        <ul>
+          <li>Google Fonts — for typography (font files served by Google)</li>
+          <li>Web analytics service — for aggregated usage statistics</li>
+        </ul>
+        <p>We do not use advertising networks, social media pixels, or remarketing tools.</p>
+      </section>
+
+      <section class="content-section">
+        <h2>Data Retention and Deletion</h2>
+        <p>We do not maintain a database of user accounts or calculation history. If you contacted us via our contact form, you may request deletion of that message by emailing us at the address on our <a href="/contact/">Contact page</a>.</p>
+      </section>
+
+      <section class="content-section">
+        <h2>Children's Privacy</h2>
+        <p>ConstructCalc is a professional tool site not directed at children under 13. We do not knowingly collect any personal information from children.</p>
+      </section>
+
+      <section class="content-section">
+        <h2>Changes to This Policy</h2>
+        <p>We may update this policy as our site evolves. The "last updated" date at the top of this page reflects the most recent revision. Continued use of the site after changes constitutes acceptance of the updated policy.</p>
+      </section>
+
+      <section class="content-section">
+        <h2>Contact</h2>
+        <p>Questions about this policy? <a href="/contact/">Contact us</a> and we'll respond within 2 business days.</p>
+      </section>
+
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-header {
+    background: var(--surface-page);
+    border-bottom: 1px solid var(--border-default);
+    padding: 2rem 0 2.5rem;
+  }
+  .container { max-width: 72rem; margin: 0 auto; padding: 0 1.5rem; }
+  .container-narrow { max-width: 52rem; margin: 0 auto; padding: 0 1.5rem; }
+  .page-title {
+    font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+    font-weight: 900;
+    color: var(--color-text-primary);
+    letter-spacing: -0.04em;
+    margin-top: 1rem;
+    line-height: 1.1;
+  }
+  .page-sub { margin-top: 0.5rem; font-size: 0.9375rem; color: var(--color-text-muted); }
+  .page-body { padding: 3rem 0 5rem; }
+  .content-section { margin-bottom: 2.5rem; }
+  .content-section h2 {
+    font-size: 1.25rem; font-weight: 800; color: var(--color-text-primary);
+    letter-spacing: -0.03em; margin-bottom: 0.875rem;
+    padding-bottom: 0.5rem; border-bottom: 2px solid var(--border-default);
+  }
+  .content-section h3 { font-size: 1rem; font-weight: 700; color: var(--color-text-primary); margin: 1rem 0 0.375rem; }
+  .content-section p { font-size: 1rem; color: var(--color-text-secondary); line-height: 1.7; margin-bottom: 0.875rem; }
+  .content-section a { color: var(--color-primary); font-weight: 500; }
+  .content-section a:hover { text-decoration: underline; }
+  .content-section ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; }
+  .content-section ul li { font-size: 1rem; color: var(--color-text-secondary); padding-left: 1.25rem; position: relative; line-height: 1.6; }
+  .content-section ul li::before { content: '·'; position: absolute; left: 0.25rem; color: var(--color-primary); font-weight: 700; }
+</style>

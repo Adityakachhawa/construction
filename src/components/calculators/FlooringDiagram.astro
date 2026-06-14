@@ -51,39 +51,39 @@ const { class: className = '' } = Astro.props;
       <rect x="50" y="40" width="340" height="220" fill="#f5f0e8" stroke="#92400e" stroke-width="2" rx="2"/>
 
       <!-- â”€â”€ PLANK GRID (staggered rows, 6 rows Ã— 4+ planks) â”€â”€ -->
-      <!-- Row 1 (y=40â€“76) â€” starts at x=50 -->
+      <!-- Row 1 (y=40–76) — starts at x=50 -->
       <rect x="50"  y="40" width="84" height="36" fill="url(#plankGrad1)" stroke="#8b6340" stroke-width="0.8"/>
       <rect x="134" y="40" width="84" height="36" fill="url(#plankGrad2)" stroke="#8b6340" stroke-width="0.8"/>
       <rect x="218" y="40" width="84" height="36" fill="url(#plankGrad3)" stroke="#8b6340" stroke-width="0.8"/>
       <rect x="302" y="40" width="84" height="36" fill="url(#plankGrad1)" stroke="#8b6340" stroke-width="0.8"/>
 
-      <!-- Row 2 (y=76â€“112) â€” staggered offset 42px -->
+      <!-- Row 2 (y=76–112) — staggered offset 42px -->
       <rect x="50"  y="76" width="42" height="36" fill="url(#plankGrad3)" stroke="#8b6340" stroke-width="0.8"/>
       <rect x="92"  y="76" width="84" height="36" fill="url(#plankGrad1)" stroke="#8b6340" stroke-width="0.8"/>
       <rect x="176" y="76" width="84" height="36" fill="url(#plankGrad2)" stroke="#8b6340" stroke-width="0.8"/>
       <rect x="260" y="76" width="84" height="36" fill="url(#plankGrad3)" stroke="#8b6340" stroke-width="0.8"/>
       <rect x="344" y="76" width="46" height="36" fill="url(#plankGrad1)" stroke="#8b6340" stroke-width="0.8"/>
 
-      <!-- Row 3 (y=112â€“148) â€” same as row 1 -->
+      <!-- Row 3 (y=112–148) — same as row 1 -->
       <rect x="50"  y="112" width="84" height="36" fill="url(#plankGrad2)" stroke="#8b6340" stroke-width="0.8"/>
       <rect x="134" y="112" width="84" height="36" fill="url(#plankGrad3)" stroke="#8b6340" stroke-width="0.8"/>
       <rect x="218" y="112" width="84" height="36" fill="url(#plankGrad1)" stroke="#8b6340" stroke-width="0.8"/>
       <rect x="302" y="112" width="84" height="36" fill="url(#plankGrad2)" stroke="#8b6340" stroke-width="0.8"/>
 
-      <!-- Row 4 (y=148â€“184) â€” staggered -->
+      <!-- Row 4 (y=148–184) — staggered -->
       <rect x="50"  y="148" width="42" height="36" fill="url(#plankGrad1)" stroke="#8b6340" stroke-width="0.8"/>
       <rect x="92"  y="148" width="84" height="36" fill="url(#plankGrad3)" stroke="#8b6340" stroke-width="0.8"/>
       <rect x="176" y="148" width="84" height="36" fill="url(#plankGrad1)" stroke="#8b6340" stroke-width="0.8"/>
       <rect x="260" y="148" width="84" height="36" fill="url(#plankGrad2)" stroke="#8b6340" stroke-width="0.8"/>
       <rect x="344" y="148" width="46" height="36" fill="url(#plankGrad3)" stroke="#8b6340" stroke-width="0.8"/>
 
-      <!-- Row 5 (y=184â€“220) â€” same as row 1 -->
+      <!-- Row 5 (y=184–220) — same as row 1 -->
       <rect x="50"  y="184" width="84" height="36" fill="url(#plankGrad3)" stroke="#8b6340" stroke-width="0.8"/>
       <rect x="134" y="184" width="84" height="36" fill="url(#plankGrad1)" stroke="#8b6340" stroke-width="0.8"/>
       <rect x="218" y="184" width="84" height="36" fill="url(#plankGrad2)" stroke="#8b6340" stroke-width="0.8"/>
       <rect x="302" y="184" width="84" height="36" fill="url(#plankGrad3)" stroke="#8b6340" stroke-width="0.8"/>
 
-      <!-- Row 6 (y=220â€“256) â€” staggered, partial height (last row) -->
+      <!-- Row 6 (y=220–256) — staggered, partial height (last row) -->
       <rect x="50"  y="220" width="42" height="40" fill="url(#plankGrad2)" stroke="#8b6340" stroke-width="0.8"/>
       <rect x="92"  y="220" width="84" height="40" fill="url(#plankGrad1)" stroke="#8b6340" stroke-width="0.8"/>
       <rect x="176" y="220" width="84" height="40" fill="url(#plankGrad3)" stroke="#8b6340" stroke-width="0.8"/>
@@ -141,10 +141,17 @@ const { class: className = '' } = Astro.props;
       <text x="178" y="283" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#4b5563">Flooring planks (staggered)</text>
       <rect x="282" y="274" width="14" height="10" fill="url(#wasteGrad)" stroke="#f59e0b" stroke-width="1" rx="1"/>
       <text x="300" y="283" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#4b5563">Waste / cuts</text>
+      <!-- ── FORMULA CALLOUT ─────────────────────────── -->
+      <rect x="30" y="258" width="200" height="34" rx="6"
+        fill="#fffbeb" stroke="#d97706" stroke-width="1"/>
+      <text x="130" y="271" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8" font-weight="700" fill="#92400e" letter-spacing="0.2">PLANK COUNT</text>
+      <text x="130" y="284" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="800" fill="#78350f">Planks = ⌈Area × (1 + Waste) ÷ Plank ft²⌉</text>
     </svg>
   </div>
   <figcaption class="diagram-caption">
-    Staggered plank layout: rows offset by half a plank for strength and appearance. Edge cuts (amber) contribute to the waste factor â€” add 10â€“15% when ordering.
+    Staggered plank layout: rows offset by half a plank for strength and appearance. Edge cuts (amber) contribute to the waste factor — add 10–15% when ordering.
   </figcaption>
 </figure>
 

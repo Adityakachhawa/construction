@@ -32,7 +32,13 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const sheets_waste   = Math.ceil(areaWithWaste / sheetSqFt);
     const covered_sqft   = sheets_waste * sheetSqFt;
 
-    return { area_sqft: areaSqFt, sheets_net, sheets_waste, covered_sqft };
+    return {
+      area_sqft: areaSqFt,
+      area_sqm: Math.round(areaSqFt * 0.092903 * 100) / 100,
+      sheets_net, sheets_waste,
+      covered_sqft,
+      covered_sqm: Math.round(covered_sqft * 0.092903 * 100) / 100,
+    };
   } else {
     const lengthM = Number(inputs.length_m ?? 3.6);
     const widthM  = Number(inputs.width_m  ?? 3);
@@ -44,7 +50,13 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const sheets_waste  = Math.ceil(areaWithWaste / sheetSqM);
     const covered_sqm   = Math.round(sheets_waste * sheetSqM * 100) / 100;
 
-    return { area_sqm: areaSqM, sheets_net, sheets_waste, covered_sqm };
+    return {
+      area_sqm: areaSqM,
+      area_sqft: Math.round(areaSqM * 10.7639 * 10) / 10,
+      sheets_net, sheets_waste,
+      covered_sqm,
+      covered_sqft: Math.round(covered_sqm * 10.7639 * 10) / 10,
+    };
   }
 }
 

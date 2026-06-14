@@ -18,6 +18,12 @@ const defaultOutputs = calc.formula(defaultInputs, defaultUnit);
 const primaryOutput = calc.outputs.find((o) => o.primary) ?? calc.outputs[0];
 const secondaryOutputs = calc.outputs.filter((o) => !o.primary);
 
+const showOrderCallout = !!calc.orderCallout;
+const orderHint = typeof calc.orderCallout === 'object' && calc.orderCallout.hint
+  ? calc.orderCallout.hint
+  : 'We recommend 10% extra to account for spillage and uneven subgrade.';
+const defaultPrice = calc.defaultPricePerUnit ?? 0;
+
 const outputsJson = JSON.stringify(
   calc.outputs.map((o) => ({
     id: o.id,
@@ -168,8 +174,8 @@ const outputsJson = JSON.stringify(
       </div>
     )}
 
-    <!-- Recommended order callout -->
-    {primaryOutput && (
+    <!-- Recommended order callout — only shown when calc.orderCallout is set -->
+    {showOrderCallout && primaryOutput && (
       <div class="result-callout" id="order-callout">
         <div class="callout-icon">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -181,7 +187,7 @@ const outputsJson = JSON.stringify(
           <p class="callout-title">
             Order at least <span id="order-qty">{formatNumber((defaultOutputs[primaryOutput.id] ?? 0) * 1.1, 2)}</span> {primaryOutput.unit}
           </p>
-          <p class="callout-body">We recommend 10% extra to account for spillage and uneven subgrade.</p>
+          <p class="callout-body">{orderHint}</p>
         </div>
       </div>
     )}
@@ -211,15 +217,15 @@ const outputsJson = JSON.stringify(
               class="cost-input"
               min="0"
               step="0.01"
-              value="150"
-              placeholder="150"
+              value={defaultPrice > 0 ? defaultPrice : undefined}
+              placeholder={defaultPrice > 0 ? String(defaultPrice) : 'Enter price'}
             />
           </div>
         </div>
         <div class="cost-result">
           <span class="cost-result-label">Estimated total</span>
           <span class="cost-result-value" id="cost-total">
-            ${((defaultOutputs[primaryOutput?.id ?? ''] ?? 0) * 150).toFixed(2)}
+            ${((defaultOutputs[primaryOutput?.id ?? ''] ?? 0) * defaultPrice).toFixed(2)}
           </span>
         </div>
       </div>
@@ -337,7 +343,7 @@ const outputsJson = JSON.stringify(
   .field-input:focus {
     outline: none;
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(0,112,243,0.12);
+    box-shadow: 0 0 0 3px rgba(194,65,12,0.18);
   }
 
   .field-unit {
@@ -380,7 +386,7 @@ const outputsJson = JSON.stringify(
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    box-shadow: 0 8px 32px rgba(0,112,243,0.35);
+    box-shadow: 0 8px 32px rgba(194,65,12,0.30);
   }
 
   .result-primary-label {
@@ -388,7 +394,7 @@ const outputsJson = JSON.stringify(
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.07em;
-    opacity: 0.75;
+    opacity: 0.92;
   }
 
   .result-primary-value-row {
@@ -414,7 +420,7 @@ const outputsJson = JSON.stringify(
 
   .result-primary-desc {
     font-size: 0.8125rem;
-    opacity: 0.65;
+    opacity: 0.88;
     line-height: 1.4;
   }
 
@@ -639,6 +645,7 @@ const outputsJson = JSON.stringify(
   }
 
   function fmt(n: number, decimals = 3): string {
+    if (!Number.isFinite(n)) n = 0;
     return n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: decimals });
   }
 
@@ -673,7 +680,8 @@ const outputsJson = JSON.stringify(
       val = primary ? (results[primary.id] ?? 0) : 0;
     }
     const total = val * price;
-    costTotal.textContent = `$${total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    const safeTotal = Number.isFinite(total) ? total : 0;
+    costTotal.textContent = `$${safeTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   }
 
   function syncVisibility() {

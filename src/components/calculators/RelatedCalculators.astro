@@ -1,0 +1,85 @@
+---
+import type { CalculatorConfig } from '../../calculators/_types';
+
+interface Props {
+  calcs: CalculatorConfig[];
+}
+
+const { calcs } = Astro.props;
+if (!calcs.length) return;
+---
+
+<div class="related-section">
+  <h2 class="related-title">Related Calculators</h2>
+  <div class="related-grid">
+    {calcs.map(calc => (
+      <a href={`/calculators/${calc.slug}/`} class="related-card">
+        <h3 class="related-card-title">{calc.name}</h3>
+        <p class="related-card-desc">{calc.description}</p>
+        <span class="related-card-cta">Open →</span>
+      </a>
+    ))}
+  </div>
+</div>
+
+<style>
+  .related-section {
+    margin-top: 3rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid var(--border-default);
+  }
+
+  .related-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+    margin-bottom: 1.25rem;
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1rem;
+  }
+  @media (min-width: 640px)  { .related-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) { .related-grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .related-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.25rem;
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 14px;
+    transition: box-shadow 150ms, transform 150ms;
+  }
+  .related-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+
+  .related-card-title {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+  }
+
+  .related-card-desc {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .related-card-cta {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    margin-top: 0.25rem;
+  }
+</style>

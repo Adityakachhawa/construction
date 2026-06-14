@@ -88,10 +88,20 @@ const { class: className = '' } = Astro.props;
       <text x="48" y="162" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
         font-size="13" font-weight="700" fill="#d97706" letter-spacing="-0.3"
         transform="rotate(-90 48 162)">Depth</text>
+
+      <!-- ── FORMULA CALLOUT ────────────────────────────────────── -->
+      <rect x="128" y="252" width="168" height="40" rx="6"
+        fill="#f0fdf4" stroke="#16a34a" stroke-width="1"/>
+      <text x="212" y="264" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8" font-weight="700" fill="#14532d" letter-spacing="0.2">VOLUME FORMULA</text>
+      <text x="212" y="277" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="10" font-weight="800" fill="#14532d">V = L × W × D</text>
+      <text x="212" y="288" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8" fill="#16a34a">÷ 27 = cu yd  ·  × 1.5 = tons (approx)</text>
     </svg>
   </div>
   <figcaption class="diagram-caption">
-    Gravel bed: length Ã— width Ã— depth â€” enter each dimension above to calculate volume and weight.
+    Gravel bed: length × width × depth — enter each dimension above to calculate volume and weight.
   </figcaption>
 </figure>
 

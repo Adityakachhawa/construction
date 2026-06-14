@@ -1,6 +1,7 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import Breadcrumbs from '../components/layout/Breadcrumbs.astro';
+import CategoryIcon from '../components/ui/CategoryIcon.astro';
 import type { MetaProps } from '../utils/seo';
 import type { BreadcrumbItem } from '../utils/schema';
 
@@ -10,42 +11,58 @@ interface Props {
   breadcrumbs: BreadcrumbItem[];
   h1: string;
   intro?: string;
+  categoryColor?: string;
+  categoryIcon?: string;
+  lastUpdated?: string;
 }
 
-const { meta, schemas = [], breadcrumbs, h1, intro } = Astro.props;
+const { meta, schemas = [], breadcrumbs, h1, intro, categoryColor = '#ea580c', categoryIcon, lastUpdated } = Astro.props;
+
+const updatedLabel = lastUpdated
+  ? new Date(lastUpdated).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+  : null;
 ---
 
 <BaseLayout meta={meta} schemas={schemas}>
-  <!-- Zone 1: Page header band -->
+  <!-- Page header -->
   <div class="calc-page-header">
     <div class="calc-container">
       <Breadcrumbs items={breadcrumbs} />
-      <h1 class="calc-h1">{h1}</h1>
-      {intro && <p class="calc-intro">{intro}</p>}
+      <div class="header-body">
+        {categoryIcon && (
+          <div class="header-icon" style={`--accent: ${categoryColor}`}>
+            <CategoryIcon name={categoryIcon} size={24} />
+          </div>
+        )}
+        <div class="header-text">
+          <div class="header-chips">
+            <span class="chip-free">Free</span>
+            <span class="chip-units">Imperial &amp; Metric</span>
+            {updatedLabel && <span class="chip-updated">Updated {updatedLabel}</span>}
+          </div>
+          <h1 class="calc-h1">{h1}</h1>
+          {intro && <p class="calc-intro">{intro}</p>}
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Zone 2: Calculator body — 40/60 two-column sticky layout -->
+  <!-- Calculator body -->
   <div class="calc-body">
     <div class="calc-container calc-body-grid">
-      <!-- Left: inputs -->
       <div class="calc-inputs-col">
         <slot name="calculator" />
       </div>
-      <!-- Right: results (sticky) — injected inside CalculatorWidget via slot="results" -->
-      <!-- results panel is rendered inside the widget, which occupies the inputs col -->
-      <!-- the widget itself outputs both columns via its own inner grid -->
     </div>
   </div>
 
-  <!-- Zone 3: Supporting content — narrow reading column -->
+  <!-- Supporting content -->
   <div class="calc-support">
     <div class="calc-container-narrow">
       <slot name="diagram" />
       <slot name="explainer" />
       <slot name="faq" />
     </div>
-    <!-- Related breaks back to full width -->
     <div class="calc-container">
       <slot name="related" />
     </div>
@@ -74,12 +91,65 @@ const { meta, schemas = [], breadcrumbs, h1, intro } = Astro.props;
     padding: 0 1.5rem;
   }
 
+  .header-body {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.25rem;
+    margin-top: 1.25rem;
+  }
+
+  .header-icon {
+    flex-shrink: 0;
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--accent, #ea580c) 12%, transparent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent, var(--color-primary));
+    margin-top: 4px;
+  }
+
+  .header-text { flex: 1; min-width: 0; }
+
+  .header-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    margin-bottom: 0.625rem;
+  }
+
+  .chip-free, .chip-units, .chip-updated {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.625rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  .chip-free {
+    background: #dcfce7;
+    color: #15803d;
+  }
+
+  .chip-units {
+    background: var(--color-primary-50);
+    color: var(--color-primary);
+  }
+
+  .chip-updated {
+    background: var(--border-subtle);
+    color: var(--color-text-muted);
+  }
+
   .calc-h1 {
     font-size: clamp(1.75rem, 3.5vw, 2.5rem);
     font-weight: 900;
     color: var(--color-text-primary);
     letter-spacing: -0.04em;
-    margin-top: 1rem;
     line-height: 1.1;
   }
 
@@ -96,14 +166,11 @@ const { meta, schemas = [], breadcrumbs, h1, intro } = Astro.props;
     padding: 2.5rem 0 3rem;
   }
 
-  /* The calculator widget fills the full container width —
-     it handles its own 40/60 internal grid */
-  .calc-body-grid {
-    width: 100%;
-  }
+  .calc-body-grid { width: 100%; }
 
   .calc-support {
     padding: 1rem 0 4rem;
     background: var(--surface-page);
   }
 </style>
+

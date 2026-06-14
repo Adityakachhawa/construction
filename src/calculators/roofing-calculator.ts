@@ -50,10 +50,13 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
 
     return {
       roof_area_sqft,
+      roof_area_sqm: Math.round(roof_area_sqft / SQFT_PER_SQM * 100) / 100,
       material_area_sqft,
+      material_area_sqm: Math.round(material_area_sqft / SQFT_PER_SQM * 100) / 100,
       squares,
       bundles,
       underlayment_sqft,
+      underlayment_sqm: Math.round(underlayment_sqft / SQFT_PER_SQM * 100) / 100,
       pitch_factor: Math.round(pitchFactor * 1000) / 1000,
     };
   } else {
@@ -71,10 +74,13 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
 
     return {
       roof_area_sqm,
+      roof_area_sqft: Math.round(roof_area_sqm * SQFT_PER_SQM * 10) / 10,
       material_area_sqm,
+      material_area_sqft: Math.round(material_area_sqm * SQFT_PER_SQM * 10) / 10,
       squares,
       bundles,
       underlayment_sqm,
+      underlayment_sqft: Math.round(underlayment_sqm * SQFT_PER_SQM * 10) / 10,
       pitch_factor: Math.round(pitchFactor * 1000) / 1000,
     };
   }

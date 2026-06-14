@@ -40,6 +40,8 @@ export interface OutputField {
 export interface SeoConfig {
   title: string;
   description: string;
+  /** Longer on-page intro paragraph — falls back to description if absent */
+  intro?: string;
   h1: string;
   focusKeyword: string;
   ogImage?: string;
@@ -92,4 +94,10 @@ export interface CalculatorConfig {
   formulaSteps?: FormulaStep[];
   faq?: CalculatorFaqItem[];
   programmatic?: ProgrammaticConfig;
+  /** Show the "order extra" callout on the results panel. Omit or false to hide. */
+  orderCallout?: { hint?: string } | true;
+  /** Default price per primary unit shown in the cost estimate widget. 0 = empty. */
+  defaultPricePerUnit?: number;
+  /** ISO date string — when the calculator was last reviewed/updated */
+  lastUpdated?: string;
 }

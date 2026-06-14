@@ -22,10 +22,31 @@ const { meta, schemas = [], currentPath = Astro.url.pathname } = Astro.props;
     {schemas.length > 0 && <SchemaOrg schema={schemas} />}
   </head>
   <body>
+    <a href="#main-content" class="skip-link">Skip to content</a>
     <Header currentPath={currentPath} />
     <main id="main-content">
       <slot />
     </main>
     <Footer />
+    <style>
+      .skip-link {
+        position: absolute;
+        left: 0.5rem;
+        top: -3rem;
+        z-index: 200;
+        padding: 0.625rem 1rem;
+        background: var(--color-primary);
+        color: #fff;
+        font-size: 0.875rem;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: top 150ms ease;
+      }
+      .skip-link:focus {
+        top: 0.5rem;
+        outline: 2px solid #fff;
+        outline-offset: 2px;
+      }
+    </style>
   </body>
 </html>

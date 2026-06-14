@@ -45,10 +45,13 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
 
     return {
       total_area_sqft:     Math.round(totalAreaSqFt * 10) / 10,
+      total_area_sqm:      Math.round(totalAreaSqFt * 0.092903 * 10) / 10,
       sheets_net:          Math.ceil(sheetsNet),
       sheets_with_waste:   sheetsWithWaste,
       compound_gallons:    compoundGal,
+      compound_liters:     Math.round(compoundGal * 3.78541 * 10) / 10,
       tape_linear_ft:      tapeLf,
+      tape_linear_m:       Math.round(tapeLf * 0.3048),
     };
   } else {
     const wallHeightM = Number(inputs.wall_height_m ?? 2.7);
@@ -68,10 +71,13 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
 
     return {
       total_area_sqm:      Math.round(totalAreaM2 * 10) / 10,
+      total_area_sqft:     Math.round(totalAreaM2 * 10.7639 * 10) / 10,
       sheets_net:          Math.ceil(sheetsNet),
       sheets_with_waste:   sheetsWithWaste,
       compound_liters:     compoundL,
+      compound_gallons:    Math.round(compoundL / 3.78541 * 10) / 10,
       tape_linear_m:       tapeM,
+      tape_linear_ft:      Math.round(tapeM / 0.3048),
     };
   }
 }
@@ -222,7 +228,6 @@ export const drywallCalculator: CalculatorConfig = {
       id: 'total_area_sqft',
       label: 'Total Wall Area',
       unit: 'ft²',
-      unitMetric: 'm²',
       format: 'area',
       description: 'Combined area of all walls entered',
     },
@@ -236,7 +241,6 @@ export const drywallCalculator: CalculatorConfig = {
       id: 'compound_gallons',
       label: 'Joint Compound',
       unit: 'gal',
-      unitMetric: 'L',
       format: 'volume',
       description: 'Estimate for tape coat + 3 finish coats',
     },
@@ -250,7 +254,6 @@ export const drywallCalculator: CalculatorConfig = {
       id: 'tape_linear_ft',
       label: 'Drywall Tape',
       unit: 'lf',
-      unitMetric: 'm',
       format: 'length',
       description: 'Paper or mesh tape for all seams',
     },

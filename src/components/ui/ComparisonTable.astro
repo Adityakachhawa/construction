@@ -1,0 +1,140 @@
+---
+// Reusable comparison table component for SEO-friendly material comparisons
+interface ComparisonRow {
+  label: string;
+  values: (string | number)[];
+  highlight?: boolean;
+}
+
+interface Props {
+  title: string;
+  headers: string[];
+  rows: ComparisonRow[];
+  caption?: string;
+}
+
+const { title, headers, rows, caption } = Astro.props;
+---
+
+<div class="comparison-wrap">
+  <h3 class="comparison-title">{title}</h3>
+  <div class="comparison-scroll">
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          {headers.map((h, i) => (
+            <th scope="col" class={i === 0 ? 'th-label' : ''}>{h}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map(row => (
+          <tr class={row.highlight ? 'row-highlight' : ''}>
+            <th scope="row" class="td-label">{row.label}</th>
+            {row.values.map(v => (
+              <td>{v}</td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+      {caption && (
+        <caption class="comparison-caption">{caption}</caption>
+      )}
+    </table>
+  </div>
+</div>
+
+<style>
+  .comparison-wrap {
+    margin: 2rem 0;
+  }
+
+  .comparison-title {
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.75rem;
+  }
+
+  .comparison-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 12px;
+    border: 1px solid var(--border-default);
+  }
+
+  .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    caption-side: bottom;
+  }
+
+  thead tr {
+    background: var(--surface-card);
+    border-bottom: 2px solid var(--border-default);
+  }
+
+  th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+  .th-label { min-width: 140px; }
+
+  td, th.td-label {
+    padding: 0.625rem 1rem;
+    border-bottom: 1px solid var(--border-subtle);
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    text-align: left;
+    font-weight: 400;
+  }
+
+  th.td-label {
+    font-weight: 600;
+    color: var(--color-text-primary);
+    background: var(--surface-card);
+  }
+
+  tbody tr:last-child td,
+  tbody tr:last-child th {
+    border-bottom: none;
+  }
+
+  tbody tr:nth-child(even) td {
+    background: var(--border-subtle);
+  }
+
+  .row-highlight td,
+  .row-highlight th.td-label {
+    background: var(--color-primary-50) !important;
+    color: var(--color-text-primary);
+  }
+
+  .row-highlight th.td-label {
+    color: var(--color-primary);
+  }
+
+  .comparison-caption {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    padding: 0.5rem 1rem;
+    text-align: left;
+    font-style: italic;
+  }
+
+  @media (max-width: 480px) {
+    th, td, th.td-label {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.8125rem;
+    }
+  }
+</style>

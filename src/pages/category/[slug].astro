@@ -1,11 +1,13 @@
 ---
-import CategoryLayout from '../../layouts/CategoryLayout.astro';
+import BaseLayout from '../../layouts/CategoryLayout.astro';
 import { buildCategoryMeta } from '../../utils/seo';
-import { buildCollectionPageSchema, buildBreadcrumbList } from '../../utils/schema';
-import { categories } from '../../data/categories';
-import { getCalculatorsByCategory } from '../../data/registry';
+import { buildCollectionPageSchema, buildBreadcrumbList, buildFaqSchema } from '../../utils/schema';
+import { categories, getCategoryBySlug } from '../../data/categories';
+import { getCalculatorsByCategory, getCalculatorBySlug } from '../../data/registry';
 import { getCollection, render } from 'astro:content';
 import Card from '../../components/ui/Card.astro';
+import CategoryIcon from '../../components/ui/CategoryIcon.astro';
+import FaqSection from '../../components/calculators/FaqSection.astro';
 import type { GetStaticPaths } from 'astro';
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -17,30 +19,113 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 const { cat } = Astro.props;
 const calcs = getCalculatorsByCategory(cat.slug);
+const relatedCategories = categories.filter(c => c.slug !== cat.slug);
 
-// Fetch MDX content for this category if it exists
+// Featured calculators (Start Here)
+const featuredCalcs = cat.featuredCalculators
+  .map(slug => getCalculatorBySlug(slug))
+  .filter(Boolean);
+
+// Non-featured calculators for the main grid
+const featuredSlugs = new Set(cat.featuredCalculators);
+const gridCalcs = calcs.filter(c => !featuredSlugs.has(c.slug));
+
+// Blog posts tagged with this category
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const relatedPosts = allPosts
+  .filter(p => p.data.tags.includes(cat.slug))
+  .sort((a, b) => b.data.publishedAt.localeCompare(a.data.publishedAt))
+  .slice(0, 3);
+
+// MDX content for this category
 const allCategoryContent = await getCollection('categories');
 const categoryContent = allCategoryContent.find(
   (entry) => entry.id.replace(/\.[^.]+$/, '') === cat.slug
 );
 const { Content } = categoryContent ? await render(categoryContent) : { Content: null };
 
+// Per-category FAQs (structured, plain text for JSON-LD)
+const categoryFaqs: Record<string, Array<{ q: string; a: string }>> = {
+  concrete: [
+    { q: 'How much concrete do I need for a 10×10 slab?', a: 'A 10×10 slab at 4 inches thick requires about 1.23 cubic yards. Add 10% waste and order 1.35 yards — roughly 25 bags of 80 lb mix.' },
+    { q: 'How many bags of concrete per post hole?', a: 'A 10-inch diameter hole 2.5 feet deep takes about 2 bags of 80 lb concrete mix per post. Use the Post Hole Calculator for exact volumes.' },
+    { q: 'Should I use ready-mix or bag concrete?', a: 'For pours over 1 cubic yard, ready-mix is cheaper and more consistent. Under 1 yard, bags are practical. Ready-mix typically costs $125–$175 per cubic yard delivered.' },
+    { q: 'How thick should a concrete slab be?', a: 'Residential slabs: 4 inches. Driveways: 4–6 inches. Garage floors for heavy vehicles: 5–6 inches. Structural slabs follow engineered specs.' },
+    { q: 'How long does concrete take to cure?', a: 'Concrete reaches ~70% strength at 7 days and full design strength at 28 days. Foot traffic is safe after 24–48 hours, vehicles after 7 days.' },
+  ],
+  framing: [
+    { q: 'How many studs do I need for a 20-foot wall?', a: 'A 20-foot wall at 16" OC needs about 16 studs for the field plus extras for corners and any openings. The Stud Calculator handles the exact count including king and jack studs.' },
+    { q: 'What is a board foot?', a: 'A board foot is 144 cubic inches of lumber — equivalent to a 1" × 12" × 12" piece. It is the standard unit for pricing hardwoods and large lumber orders.' },
+    { q: 'What roof pitch is most common for residential homes?', a: 'Most residential roofs fall between 4:12 and 8:12 — 4 inches of rise per 12 inches of run. Shingles require a minimum 2:12 pitch.' },
+    { q: 'How much waste should I add to a framing lumber order?', a: 'Add 10–15% for standard cuts. For complex roof framing with many angle cuts, add 15–20%. It is cheaper to return extra lumber than to make an emergency run.' },
+    { q: 'What is the actual size of a 2×4?', a: 'A nominal 2×4 is actually 1.5 inches × 3.5 inches. Always use actual dimensions for structural calculations and load capacity checks.' },
+  ],
+  decking: [
+    { q: 'How far apart should deck footings be?', a: 'Footing spacing depends on your beam span. With doubled 2×10 beams, typical spacing is 8–10 feet. Verify against span tables in your local building code.' },
+    { q: 'How deep do deck footings need to be?', a: 'Footings must extend below the frost line: 12–18 inches in the deep South, 36–42 inches in the northern US, up to 60 inches in Minnesota. Check your local frost depth.' },
+    { q: 'Do I need a permit for a deck?', a: 'Most jurisdictions require a permit for decks over 200 sq ft or attached to the house. Always check local code before starting.' },
+    { q: 'How much concrete does a 12-inch sonotube hold?', a: 'A 12-inch diameter sonotube holds about 0.785 cubic feet per linear foot. At 42 inches deep that is 0.327 cubic feet — roughly half an 80 lb bag per footing.' },
+    { q: 'Can I use fast-setting concrete for deck footings?', a: 'Yes — Quikrete Fast-Setting can be poured dry and watered in. It reaches 50 psi in 20–40 minutes, which works well for post holes.' },
+  ],
+  fencing: [
+    { q: 'How many bags of concrete per fence post?', a: 'A standard 4×4 post in a 10-inch diameter, 2.5-foot deep hole needs about 2 bags of 80 lb concrete mix. The Fence Post Calculator totals this across your entire fence run.' },
+    { q: 'How far apart should fence posts be?', a: 'Wood privacy fences: 6–8 feet on center. Chain link: 10 feet. Rail fences: 8–10 feet. Closer spacing improves rigidity in high-wind areas.' },
+    { q: 'How deep should fence posts be set?', a: 'Posts should be buried 1/3 of their total length, minimum 2 feet in frost-free areas. In frost zones, extend to the local frost depth (often 36–42 inches in the northern US).' },
+    { q: 'Should every fence post have concrete?', a: 'For wood fence posts, concrete anchors are strongly recommended. Metal T-posts (farm/ranch fencing) are driven directly with no concrete needed. Vinyl fencing always requires concrete per manufacturer specs.' },
+    { q: 'How long before I can attach fence panels after setting posts?', a: 'Wait 24–48 hours with standard concrete mix. Fast-setting concrete (Quikrete Fast-Setting) allows panel attachment after 4 hours.' },
+  ],
+  excavation: [
+    { q: 'How many cubic yards in a ton of gravel?', a: 'Gravel weighs approximately 1.4 tons per cubic yard. To convert tons to cubic yards, divide by 1.4. Check your supplier\'s product spec for exact weight.' },
+    { q: 'How much gravel do I need for a driveway?', a: 'A new gravel driveway needs 4 inches of compacted base plus 2 inches of surface stone — 6 inches total. High-traffic areas benefit from 8 inches.' },
+    { q: 'How much topsoil coverage per cubic yard?', a: 'One cubic yard covers about 100 sq ft at 3 inches deep, or 162 sq ft at 2 inches deep.' },
+    { q: 'What is the difference between fill dirt and topsoil?', a: 'Fill dirt is subsoil used to raise grades and fill voids. Topsoil is the upper organic-rich layer used only for planting. Never use topsoil as structural fill — it compresses and settles.' },
+    { q: 'How wide and deep should a French drain trench be?', a: 'A typical French drain trench is 12–18 inches wide and 18–24 inches deep, filled with 3/4" crushed stone around perforated pipe.' },
+  ],
+  masonry: [
+    { q: 'How many CMU blocks per square foot of wall?', a: 'Standard 8×8×16 CMU blocks cover approximately 0.889 sq ft per block. That is about 1.125 blocks per square foot of wall face.' },
+    { q: 'How much mortar do I need per concrete block?', a: 'Plan on 0.02–0.03 cubic feet of mortar per standard CMU block. For 100 blocks, that is roughly 3–4 bags of premix mortar.' },
+    { q: 'What base depth do pavers require?', a: 'Patios need 4–6 inches of compacted gravel base plus 1 inch of bedding sand. Driveways need 6–8 inches of base. Total depth depends on expected load.' },
+    { q: 'What size gravel should go behind a retaining wall?', a: 'Use 3/4" clean crushed stone (no fines) at least 12 inches wide behind the wall. Install perforated pipe at the base wrapped in filter fabric to relieve hydrostatic pressure.' },
+    { q: 'Do retaining walls under 4 feet need engineered design?', a: 'Walls under 4 feet typically do not require engineered design. For walls 4–6 feet, check local codes. Over 6 feet always requires a structural engineer.' },
+  ],
+};
+
+const faqs = categoryFaqs[cat.slug] ?? [];
+
+// Build top calculator keyword labels for the title tag
+const topKeywords = (cat.featuredCalculators.length ? cat.featuredCalculators : calcs.slice(0, 3).map(c => c.slug))
+  .map(slug => getCalculatorBySlug(slug)?.name.replace(' Calculator', '') ?? '')
+  .filter(Boolean)
+  .slice(0, 3);
+
+// Rich meta description with calculator count
+const metaDescription = `${calcs.length} free ${cat.name.toLowerCase()} calculators — ${topKeywords.join(', ')}. Instant material estimates with imperial and metric support. No signup required.`;
+
 const meta = buildCategoryMeta({
   name: cat.name,
   description: cat.description,
   slug: cat.slug,
+  keywords: topKeywords,
+  metaDescription,
 });
 
+const SITE_URL = 'https://constructcalc.com';
 const schemas = [
   buildCollectionPageSchema({
     name: `${cat.name} Calculators`,
     description: cat.description,
     url: meta.canonical,
+    parts: calcs.map(c => ({
+      name: c.name,
+      url: `${SITE_URL}/calculators/${c.slug}/`,
+      description: c.description,
+    })),
   }),
   buildBreadcrumbList([
     { name: 'Home', href: '/' },
     { name: `${cat.name} Calculators`, href: `/category/${cat.slug}/` },
   ]),
+  ...(faqs.length ? [buildFaqSchema(faqs.map(f => ({ question: f.q, answer: f.a })))] : []),
 ];
 
 const breadcrumbs = [
@@ -49,7 +134,7 @@ const breadcrumbs = [
 ];
 ---
 
-<CategoryLayout
+<BaseLayout
   meta={meta}
   schemas={schemas}
   breadcrumbs={breadcrumbs}
@@ -59,30 +144,303 @@ const breadcrumbs = [
   categoryColor={cat.color}
   categoryIcon={cat.icon}
 >
+  <!-- Start Here: featured calculators -->
+  {featuredCalcs.length > 0 && (
+    <div slot="featured" class="featured-section">
+      <h2 class="featured-heading">Start here</h2>
+      <div class="featured-grid">
+        {featuredCalcs.map((calc, i) => (
+          <a href={`/calculators/${calc!.slug}/`} class="featured-card" style={`--accent: ${cat.color}`}>
+            <div class="featured-card-top">
+              <div class="featured-icon">
+                <CategoryIcon name={cat.icon} size={20} />
+              </div>
+              {i === 0 && <span class="featured-badge">Most popular</span>}
+            </div>
+            <h3 class="featured-card-title">{calc!.name}</h3>
+            <p class="featured-card-desc">{calc!.description}</p>
+            <span class="featured-card-cta">
+              Open calculator →
+            </span>
+          </a>
+        ))}
+      </div>
+    </div>
+  )}
+
+  <!-- Full calculator grid -->
   <div slot="grid">
-    {calcs.length === 0 ? (
-      <p class="text-[var(--color-text-muted)] text-sm py-8">No calculators in this category yet. Check back soon.</p>
-    ) : (
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {calcs.map(calc => (
+    {gridCalcs.length === 0 && featuredCalcs.length === 0 ? (
+      <p class="no-calcs">No calculators in this category yet. Check back soon.</p>
+    ) : gridCalcs.length > 0 ? (
+      <div class="calc-grid">
+        {gridCalcs.map(calc => (
           <Card href={`/calculators/${calc.slug}/`} variant="bordered" padding="md">
-            <div class="flex flex-col gap-2">
-              <h3 class="font-semibold text-[var(--color-text-primary)]">{calc.name}</h3>
-              <p class="text-sm text-[var(--color-text-secondary)] leading-relaxed">{calc.description}</p>
-              <span class="text-sm font-medium text-[var(--color-primary)] mt-1">Open →</span>
+            <div class="calc-card-inner">
+              <h3 class="calc-name">{calc.name}</h3>
+              <p class="calc-desc">{calc.description}</p>
+              <span class="calc-cta">Open calculator →</span>
             </div>
           </Card>
         ))}
       </div>
-    )}
+    ) : null}
   </div>
 
+  <!-- Rich category content from markdown -->
   {Content && (
-    <div slot="content" class="mt-12 prose prose-neutral max-w-none
+    <div slot="content" class="cat-content prose prose-neutral max-w-none
       prose-headings:font-bold prose-headings:text-[var(--color-text-primary)]
       prose-p:text-[var(--color-text-secondary)] prose-p:leading-relaxed
-      prose-a:text-[var(--color-primary)] prose-a:no-underline hover:prose-a:underline">
+      prose-a:text-[var(--color-primary)] prose-a:no-underline hover:prose-a:underline
+      prose-table:w-full prose-th:text-left prose-th:font-semibold
+      prose-li:text-[var(--color-text-secondary)]">
       <Content />
     </div>
   )}
-</CategoryLayout>
+
+  <!-- Category FAQ — same data as the FAQPage schema, rendered visibly -->
+  {faqs.length > 0 && (
+    <div slot="faq">
+      <FaqSection items={faqs.map(f => ({ question: f.q, answer: f.a }))} />
+    </div>
+  )}
+
+  <!-- Related blog posts + category chips -->
+  <div slot="guides">
+    {relatedPosts.length > 0 && (
+      <div class="related-posts-section">
+        <h2 class="related-section-title">Related guides</h2>
+        <div class="related-posts-grid">
+          {relatedPosts.map(post => {
+            const slug = post.id.replace(/\.[^.]+$/, '');
+            return (
+              <a href={`/blog/${slug}/`} class="related-post-card">
+                {post.data.tags.slice(0,1).map(t => (
+                  <span class="post-tag">{t}</span>
+                ))}
+                <h3 class="related-post-title">{post.data.title}</h3>
+                <p class="related-post-desc">{post.data.description}</p>
+                <span class="related-post-cta">Read →</span>
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    )}
+
+    <div class="related-cats-section">
+      <h2 class="related-cats-title">Other Calculator Categories</h2>
+      <div class="related-cats-grid">
+        {relatedCategories.map(relCat => (
+          <a href={`/category/${relCat.slug}/`} class="related-cat-chip" style={`--accent: ${relCat.color}`}>
+            <span class="chip-name">{relCat.name}</span>
+            <span class="chip-count">{getCalculatorsByCategory(relCat.slug).length} calculators</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+
+</BaseLayout>
+
+<style>
+  /* Featured / Start Here */
+  .featured-section {
+    margin-bottom: 2.5rem;
+  }
+
+  .featured-heading {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-muted);
+    margin-bottom: 0.875rem;
+  }
+
+  .featured-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1rem;
+  }
+  @media (min-width: 640px) {
+    .featured-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 1024px) {
+    .featured-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  .featured-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    padding: 1.375rem;
+    background: color-mix(in srgb, var(--accent, var(--color-primary)) 6%, var(--surface-card));
+    border: 1.5px solid color-mix(in srgb, var(--accent, var(--color-primary)) 30%, var(--border-default));
+    border-radius: 16px;
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 150ms, transform 150ms;
+    cursor: pointer;
+  }
+  .featured-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-3px); }
+
+  .featured-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .featured-icon {
+    width: 36px; height: 36px;
+    border-radius: 9px;
+    background: color-mix(in srgb, var(--accent, var(--color-primary)) 15%, transparent);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent, var(--color-primary));
+    flex-shrink: 0;
+  }
+
+  .featured-badge {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.2rem 0.5rem;
+    background: color-mix(in srgb, var(--accent, var(--color-primary)) 15%, transparent);
+    color: var(--accent, var(--color-primary));
+    border-radius: 9999px;
+    white-space: nowrap;
+  }
+
+  .featured-card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+  }
+
+  .featured-card-desc {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .featured-card-cta {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--accent, var(--color-primary));
+    margin-top: 0.25rem;
+  }
+
+  /* Calculator grid */
+  .no-calcs {
+    color: var(--color-text-muted);
+    font-size: 0.9375rem;
+    padding: 2rem 0;
+  }
+
+  .calc-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1rem;
+  }
+  @media (min-width: 640px)  { .calc-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) { .calc-grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .calc-card-inner { display: flex; flex-direction: column; gap: 0.5rem; }
+  .calc-name { font-weight: 700; font-size: 0.9375rem; color: var(--color-text-primary); line-height: 1.3; }
+  .calc-desc { font-size: 0.875rem; color: var(--color-text-secondary); line-height: 1.55; flex: 1; }
+  .calc-cta { font-size: 0.8125rem; font-weight: 600; color: var(--color-primary); margin-top: 0.25rem; }
+
+  /* Markdown content */
+  .cat-content {
+    margin-top: 3rem;
+    padding-top: 3rem;
+    border-top: 1px solid var(--border-default);
+  }
+
+  /* Related posts */
+  .related-posts-section {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-default);
+  }
+
+  .related-section-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+  }
+
+  .related-posts-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+  @media (min-width: 640px)  { .related-posts-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) { .related-posts-grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .related-post-card {
+    display: flex; flex-direction: column; gap: 0.5rem;
+    padding: 1.25rem;
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 14px;
+    transition: box-shadow 150ms, transform 150ms;
+  }
+  .related-post-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+
+  .post-tag { font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; padding: 0.1875rem 0.5rem; background: var(--color-primary-50); color: var(--color-primary); border-radius: 9999px; width: fit-content; }
+  .related-post-title { font-size: 0.9375rem; font-weight: 700; color: var(--color-text-primary); letter-spacing: -0.02em; line-height: 1.35; }
+  .related-post-desc { font-size: 0.8125rem; color: var(--color-text-secondary); line-height: 1.55; flex: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .related-post-cta { font-size: 0.8125rem; font-weight: 600; color: var(--color-primary); margin-top: 0.25rem; }
+
+  /* Related categories */
+  .related-cats-section {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-default);
+  }
+
+  .related-cats-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+  }
+
+  .related-cats-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.625rem;
+  }
+
+  .related-cat-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.5rem 1rem;
+    background: var(--surface-card);
+    border: 1.5px solid var(--border-default);
+    border-radius: 9999px;
+    transition: border-color 150ms, background 150ms;
+  }
+  .related-cat-chip:hover {
+    border-color: var(--accent, var(--color-primary));
+    background: color-mix(in srgb, var(--accent, var(--color-primary)) 6%, var(--surface-card));
+  }
+
+  .chip-name { font-size: 0.875rem; font-weight: 600; color: var(--color-text-primary); }
+  .chip-count { font-size: 0.75rem; color: var(--color-text-muted); }
+</style>

@@ -6,17 +6,17 @@
   --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', 'Menlo', 'Monaco', 'Courier New', monospace;
 
-  /* Brand blues */
-  --color-primary-50:  #eff6ff;
-  --color-primary-100: #dbeafe;
-  --color-primary-200: #bfdbfe;
-  --color-primary-300: #93c5fd;
-  --color-primary-400: #60a5fa;
-  --color-primary-500: #0070f3;
-  --color-primary-600: #0051bb;
-  --color-primary-700: #003d8f;
-  --color-primary-800: #002a63;
-  --color-primary-900: #001a3d;
+  /* Brand — construction amber */
+  --color-primary-50:  #fff7ed;
+  --color-primary-100: #ffedd5;
+  --color-primary-200: #fed7aa;
+  --color-primary-300: #fdba74;
+  --color-primary-400: #fb923c;
+  --color-primary-500: #f97316;
+  --color-primary-600: #ea580c;
+  --color-primary-700: #c2410c;
+  --color-primary-800: #9a3412;
+  --color-primary-900: #7c2d12;
 
   /* Neutral grays */
   --color-neutral-0:   #ffffff;
@@ -59,9 +59,9 @@
 
 /* ── Global design tokens ─────────────────────────────────────── */
 :root {
-  /* Core brand */
-  --color-primary:       #0070f3;
-  --color-primary-hover: #0051bb;
+  /* Core brand — amber-700 for AA contrast (white-on-amber ≈5.1:1, amber-on-white ≈4.8:1) */
+  --color-primary:       #c2410c;
+  --color-primary-hover: #9a3412;
 
   /* Surfaces — 3-layer depth model */
   --surface-page:    #f4f5f7;   /* body background */
@@ -79,10 +79,10 @@
   --color-border:           #e2e4e8;
   --color-text-primary:     #0f1117;
   --color-text-secondary:   #4b5563;
-  --color-text-muted:       #6b7280;
+  --color-text-muted:       #5b616e;
 
   /* Result card */
-  --result-primary-bg:     #0070f3;
+  --result-primary-bg:     #c2410c;
   --result-primary-text:   #ffffff;
 
   /* Ink (dark sections) */

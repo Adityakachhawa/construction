@@ -1,0 +1,299 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<figure class={`diagram-figure ${className}`} aria-labelledby="post-hole-diagram-caption">
+  <div class="diagram-header">
+    <span class="diagram-badge">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <rect x="5" y="1" width="4" height="12" rx="0.5" stroke="currentColor" stroke-width="1.25"/>
+        <rect x="3" y="6" width="8" height="7" rx="0.5" stroke="currentColor" stroke-width="1.25" fill="none"/>
+      </svg>
+    </span>
+    <h2 id="post-hole-diagram-caption" class="diagram-title">Post Hole Diagram</h2>
+  </div>
+  <div class="diagram-box">
+    <svg
+      viewBox="0 0 520 320"
+      width="100%"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      focusable="false"
+      class="diagram-svg"
+    >
+      <defs>
+        <!-- Sky gradient -->
+        <linearGradient id="phSkyGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#eff6ff"/>
+          <stop offset="100%" stop-color="#dbeafe"/>
+        </linearGradient>
+        <!-- Soil gradient -->
+        <linearGradient id="phSoilGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#c8a96e"/>
+          <stop offset="100%" stop-color="#8b6840"/>
+        </linearGradient>
+        <!-- Concrete gradient -->
+        <linearGradient id="phConcreteGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#9ca3af"/>
+          <stop offset="50%" stop-color="#d1d5db"/>
+          <stop offset="100%" stop-color="#9ca3af"/>
+        </linearGradient>
+        <!-- Post wood gradient -->
+        <linearGradient id="phPostGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#78350f"/>
+          <stop offset="40%" stop-color="#b45309"/>
+          <stop offset="100%" stop-color="#92400e"/>
+        </linearGradient>
+        <!-- Gravel pattern -->
+        <pattern id="phGravelPattern" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
+          <circle cx="2" cy="2" r="1.2" fill="#9ca3af" opacity="0.7"/>
+          <circle cx="6" cy="5" r="1"   fill="#6b7280" opacity="0.6"/>
+          <circle cx="4" cy="7" r="0.9" fill="#d1d5db" opacity="0.5"/>
+        </pattern>
+        <!-- Soil hatch -->
+        <pattern id="phSoilPattern" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="10" x2="10" y2="0" stroke="#92400e" stroke-width="0.8" opacity="0.25"/>
+        </pattern>
+        <!-- Concrete aggregate texture -->
+        <pattern id="phConcreteTexture" x="0" y="0" width="14" height="14" patternUnits="userSpaceOnUse">
+          <circle cx="3"  cy="3"  r="1.2" fill="#9ca3af" opacity="0.4"/>
+          <circle cx="10" cy="7"  r="1"   fill="#6b7280" opacity="0.3"/>
+          <circle cx="6"  cy="11" r="1.1" fill="#9ca3af" opacity="0.35"/>
+          <circle cx="12" cy="2"  r="0.8" fill="#d1d5db" opacity="0.25"/>
+        </pattern>
+      </defs>
+
+      <!-- ── BACKGROUND ─────────────────────────────────────────── -->
+      <!-- Sky zone (above grade) -->
+      <rect x="0" y="0" width="520" height="60" fill="url(#phSkyGrad)" opacity="0.5"/>
+
+      <!-- Soil: left block -->
+      <rect x="60" y="60" width="70" height="220" fill="url(#phSoilGrad)" opacity="0.55"/>
+      <rect x="60" y="60" width="70" height="220" fill="url(#phSoilPattern)"/>
+
+      <!-- Soil: right block -->
+      <rect x="270" y="60" width="70" height="220" fill="url(#phSoilGrad)" opacity="0.55"/>
+      <rect x="270" y="60" width="70" height="220" fill="url(#phSoilPattern)"/>
+
+      <!-- Ground level indicator strips below soil blocks -->
+      <rect x="60"  y="270" width="70"  height="10" fill="#6b4c1e" opacity="0.35"/>
+      <rect x="270" y="270" width="70" height="10" fill="#6b4c1e" opacity="0.35"/>
+
+      <!-- Grass strip (ground surface, y=40–60) -->
+      <rect x="0" y="40" width="520" height="20" fill="#4ade80" opacity="0.35"/>
+      <rect x="0" y="55" width="520" height="5"  fill="#16a34a" opacity="0.3"/>
+
+      <!-- Ground / grade line -->
+      <line x1="0" y1="60" x2="520" y2="60" stroke="#92400e" stroke-width="1.5" stroke-dasharray="8 4" opacity="0.5"/>
+
+      <!-- ── HOLE (cross-section, x=130 to 270) ────────────────── -->
+
+      <!-- Gravel layer: y=250–280 -->
+      <rect x="130" y="250" width="140" height="30" fill="#d1d5db"/>
+      <rect x="130" y="250" width="140" height="30" fill="url(#phGravelPattern)"/>
+
+      <!-- Concrete fill: y=80–250 -->
+      <rect x="130" y="80"  width="140" height="170" fill="url(#phConcreteGrad)"/>
+      <rect x="130" y="80"  width="140" height="170" fill="url(#phConcreteTexture)" opacity="0.5"/>
+
+      <!-- Hole top zone (open between ground and top of concrete, y=60–80) -->
+      <rect x="130" y="60" width="140" height="20" fill="#e5e7eb" opacity="0.4"/>
+
+      <!-- Hole outline (sides) -->
+      <line x1="130" y1="60" x2="130" y2="280" stroke="#6b7280" stroke-width="1.25" opacity="0.7"/>
+      <line x1="270" y1="60" x2="270" y2="280" stroke="#6b7280" stroke-width="1.25" opacity="0.7"/>
+      <!-- Hole bottom -->
+      <line x1="130" y1="280" x2="270" y2="280" stroke="#6b7280" stroke-width="1.25" opacity="0.7"/>
+
+      <!-- ── WOODEN POST ─────────────────────────────────────────── -->
+      <!-- Post: x=195–225 (30px wide), from y=10 (above grade) to y=250 (rests on gravel) -->
+      <rect x="195" y="10" width="30" height="240" fill="url(#phPostGrad)" rx="1"/>
+      <rect x="195" y="10" width="30" height="240" fill="none" stroke="#78350f" stroke-width="1" rx="1"/>
+
+      <!-- Wood grain lines on post face -->
+      <line x1="201" y1="14"  x2="201" y2="246" stroke="#78350f" stroke-width="0.5" opacity="0.35"/>
+      <line x1="207" y1="14"  x2="207" y2="246" stroke="#78350f" stroke-width="0.5" opacity="0.25"/>
+      <line x1="213" y1="14"  x2="213" y2="246" stroke="#78350f" stroke-width="0.5" opacity="0.3"/>
+      <line x1="219" y1="14"  x2="219" y2="246" stroke="#78350f" stroke-width="0.5" opacity="0.2"/>
+
+      <!-- Grade line marker on post -->
+      <line x1="192" y1="60" x2="228" y2="60" stroke="#16a34a" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
+
+      <!-- ── DIAMETER ANNOTATION (blue double-arrow, y=48) ──────── -->
+      <line x1="130" y1="44" x2="130" y2="58" stroke="#2563eb" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
+      <line x1="270" y1="44" x2="270" y2="58" stroke="#2563eb" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
+      <line x1="130" y1="48" x2="270" y2="48" stroke="#2563eb" stroke-width="1.75"/>
+      <polygon points="130,48 142,43 142,53" fill="#2563eb"/>
+      <polygon points="270,48 258,43 258,53" fill="#2563eb"/>
+      <text x="200" y="38" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="11" font-weight="700" fill="#2563eb" letter-spacing="-0.3">Diameter</text>
+
+      <!-- ── DEPTH ANNOTATION (purple double-arrow, right side x=288) ── -->
+      <line x1="272" y1="60"  x2="286" y2="60"  stroke="#7c3aed" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
+      <line x1="272" y1="280" x2="286" y2="280" stroke="#7c3aed" stroke-width="1" stroke-dasharray="3 2" opacity="0.7"/>
+      <line x1="288" y1="60"  x2="288" y2="280" stroke="#7c3aed" stroke-width="1.75"/>
+      <polygon points="288,60  283,72  293,72"  fill="#7c3aed"/>
+      <polygon points="288,280 283,268 293,268" fill="#7c3aed"/>
+      <text x="302" y="174" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="11" font-weight="700" fill="#7c3aed" letter-spacing="-0.3"
+        transform="rotate(90 302 174)">Depth</text>
+
+      <!-- ── GRAVEL DEPTH BRACKET (left side) ──────────────────── -->
+      <line x1="128" y1="250" x2="114" y2="250" stroke="#16a34a" stroke-width="1.25" opacity="0.8"/>
+      <line x1="128" y1="280" x2="114" y2="280" stroke="#16a34a" stroke-width="1.25" opacity="0.8"/>
+      <line x1="116" y1="250" x2="116" y2="280" stroke="#16a34a" stroke-width="1.25" opacity="0.8"/>
+      <text x="112" y="261" text-anchor="end" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="600" fill="#16a34a">Gravel</text>
+      <text x="112" y="272" text-anchor="end" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="600" fill="#16a34a">Depth</text>
+
+      <!-- ── LABELS ─────────────────────────────────────────────── -->
+      <!-- Post label -->
+      <line x1="210" y1="30" x2="165" y2="22" stroke="#d97706" stroke-width="1" opacity="0.7"/>
+      <text x="162" y="20" text-anchor="end" font-family="Inter,system-ui,sans-serif"
+        font-size="10" font-weight="700" fill="#d97706">Post</text>
+
+      <!-- Concrete label (inside hole, right side) -->
+      <line x1="260" y1="160" x2="275" y2="152" stroke="#6b7280" stroke-width="1" opacity="0.5"/>
+      <text x="278" y="150" font-family="Inter,system-ui,sans-serif"
+        font-size="10" font-weight="600" fill="#4b5563">Concrete</text>
+
+      <!-- Gravel label (inside gravel layer) -->
+      <text x="200" y="269" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="700" fill="#374151" opacity="0.75">Gravel base</text>
+
+      <!-- Grade label -->
+      <text x="65" y="55" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="600" fill="#15803d" opacity="0.8">Grade</text>
+
+      <!-- ── RIGHT PANEL: formulas + bag stack ──────────────────── -->
+      <!-- Panel background -->
+      <rect x="345" y="18" width="165" height="264" rx="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+
+      <!-- Formula box 1: Hole Volume -->
+      <rect x="355" y="28" width="145" height="38" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+      <text x="427" y="42" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="700" fill="#1d4ed8">Hole Volume = π × r² × d</text>
+      <text x="427" y="56" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8" fill="#3b82f6" opacity="0.85">r = diameter ÷ 2; d = depth</text>
+
+      <!-- Formula box 2: Concrete -->
+      <rect x="355" y="74" width="145" height="48" rx="6" fill="#f9fafb" stroke="#d1d5db" stroke-width="1"/>
+      <text x="427" y="89" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="700" fill="#374151">Concrete =</text>
+      <text x="427" y="102" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8.5" fill="#4b5563">Hole − Gravel − Post</text>
+      <text x="427" y="114" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8" fill="#6b7280">× (1 + Waste %)</text>
+
+      <!-- Divider -->
+      <line x1="360" y1="130" x2="505" y2="130" stroke="#e2e8f0" stroke-width="1"/>
+
+      <!-- Bag stack (2 bags) -->
+      <!-- Bag 1 (back) -->
+      <rect x="375" y="148" width="44" height="28" rx="4" fill="#e5e7eb" stroke="#9ca3af" stroke-width="1"/>
+      <text x="397" y="158" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="7" font-weight="700" fill="#374151">80 lb</text>
+      <text x="397" y="168" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="6.5" fill="#6b7280">CONCRETE</text>
+      <!-- Bag 2 (front, offset) -->
+      <rect x="380" y="138" width="44" height="28" rx="4" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1.25"/>
+      <text x="402" y="148" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="7" font-weight="700" fill="#374151">80 lb</text>
+      <text x="402" y="158" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="6.5" fill="#6b7280">CONCRETE</text>
+
+      <!-- Bag yield label -->
+      <text x="432" y="145" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="700" fill="#374151">0.60 ft³ each</text>
+      <text x="432" y="158" font-family="Inter,system-ui,sans-serif"
+        font-size="8" fill="#6b7280">per 80 lb bag</text>
+
+      <!-- Divider -->
+      <line x1="360" y1="178" x2="505" y2="178" stroke="#e2e8f0" stroke-width="1"/>
+
+      <!-- Bags formula -->
+      <rect x="355" y="186" width="145" height="38" rx="6" fill="#fefce8" stroke="#fde68a" stroke-width="1"/>
+      <text x="427" y="200" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="700" fill="#854d0e">Bags = ⌈Concrete ÷ Yield⌉</text>
+      <text x="427" y="214" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8" fill="#a16207">always round up</text>
+
+      <!-- Divider -->
+      <line x1="360" y1="232" x2="505" y2="232" stroke="#e2e8f0" stroke-width="1"/>
+
+      <!-- Bag size legend -->
+      <text x="362" y="246" font-family="Inter,system-ui,sans-serif"
+        font-size="8" font-weight="600" fill="#6b7280">40 lb = 0.30 ft³</text>
+      <text x="362" y="257" font-family="Inter,system-ui,sans-serif"
+        font-size="8" font-weight="600" fill="#6b7280">50 lb = 0.375 ft³</text>
+      <text x="362" y="268" font-family="Inter,system-ui,sans-serif"
+        font-size="8" font-weight="600" fill="#6b7280">60 lb = 0.45 ft³</text>
+      <text x="362" y="279" font-family="Inter,system-ui,sans-serif"
+        font-size="8" font-weight="600" fill="#374151">80 lb = 0.60 ft³</text>
+    </svg>
+  </div>
+  <figcaption class="diagram-caption">
+    Post hole cross-section showing wooden post, concrete fill, and gravel drainage base. Concrete volume = Hole Volume &minus; Gravel Volume &minus; Post Displacement. Bags = &lceil;Concrete &divide; Yield per Bag&rceil;.
+  </figcaption>
+</figure>
+
+<style>
+  .diagram-figure { margin-top: 3.5rem; }
+
+  .diagram-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .diagram-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--surface-page);
+    border: 1px solid var(--border-default);
+    color: var(--color-text-secondary);
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .diagram-title {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+  }
+
+  .diagram-box {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+
+  .diagram-svg {
+    max-width: 520px;
+    height: auto;
+    aspect-ratio: 520 / 320;
+    display: block;
+  }
+
+  .diagram-caption {
+    margin-top: 0.875rem;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    text-align: center;
+    line-height: 1.5;
+  }
+</style>

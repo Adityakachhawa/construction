@@ -18,7 +18,7 @@ export function buildCalculatorMeta(opts: {
   ogImage?: string;
 }): MetaProps {
   return {
-    title: `${opts.title} — Free | ${SITE_NAME}`,
+    title: `Free ${opts.title} | ${SITE_NAME}`,
     description: opts.description,
     canonical: buildCanonical(`/calculators/${opts.slug}/`),
     ogImage: opts.ogImage ?? DEFAULT_OG_IMAGE,
@@ -28,10 +28,32 @@ export function buildCalculatorMeta(opts: {
 
 export function buildCalculatorsIndexMeta(): MetaProps {
   return {
-    title: `All Construction Calculators — ${SITE_NAME}`,
+    title: `Free Construction Calculators — Concrete, Framing, Fencing & More | ${SITE_NAME}`,
     description:
       'Browse free construction calculators for concrete, gravel, drywall, flooring, fencing, and more. Instant material quantities and cost estimates across every trade.',
     canonical: buildCanonical('/calculators/'),
+    ogImage: DEFAULT_OG_IMAGE,
+    ogType: 'website',
+  };
+}
+
+export function buildBlogIndexMeta(): MetaProps {
+  return {
+    title: `Construction Blog — Guides, Tips & Material Calculators | ${SITE_NAME}`,
+    description:
+      'Construction tips, material guides, cost breakdowns, and project planning advice for contractors and DIYers.',
+    canonical: buildCanonical('/blog/'),
+    ogImage: DEFAULT_OG_IMAGE,
+    ogType: 'website',
+  };
+}
+
+export function buildBlogTagMeta(tag: string, postCount: number): MetaProps {
+  const label = tag.charAt(0).toUpperCase() + tag.slice(1);
+  return {
+    title: `${label} Articles (${postCount}) — ${SITE_NAME}`,
+    description: `Browse ${postCount} construction article${postCount !== 1 ? 's' : ''} tagged "${tag}" — guides, tips, and material calculators.`,
+    canonical: buildCanonical(`/blog/tag/${tag}/`),
     ogImage: DEFAULT_OG_IMAGE,
     ogType: 'website',
   };
@@ -61,10 +83,15 @@ export function buildCategoryMeta(opts: {
   name: string;
   description: string;
   slug: string;
+  keywords?: string[];
+  metaDescription?: string;
 }): MetaProps {
+  const keywordSuffix = opts.keywords?.length
+    ? ` — ${opts.keywords.slice(0, 3).join(', ')}`
+    : '';
   return {
-    title: `${opts.name} Calculators — ${SITE_NAME}`,
-    description: opts.description,
+    title: `Free ${opts.name} Calculators${keywordSuffix} | ${SITE_NAME}`,
+    description: opts.metaDescription ?? opts.description,
     canonical: buildCanonical(`/category/${opts.slug}/`),
     ogImage: DEFAULT_OG_IMAGE,
     ogType: 'website',

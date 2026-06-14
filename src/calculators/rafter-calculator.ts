@@ -12,7 +12,7 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const overhangFt = Number(inputs.overhang_ft ?? 0) + Number(inputs.overhang_in ?? 0) / 12;
 
     if (runFt <= 0) {
-      return { rafter_length_ft: 0, total_rafter_ft: 0, angle_deg: 0, slope_pct: 0, pitch_ratio: 0 };
+      return { rafter_length_ft: 0, rafter_length_m: 0, total_rafter_ft: 0, total_rafter_m: 0, overhang_rafter_ft: 0, overhang_rafter_m: 0, angle_deg: 0, slope_pct: 0, pitch_ratio: 0 };
     }
 
     const pitchDecimal   = riseFt / runFt;
@@ -28,14 +28,22 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
       : 0;
     const total_rafter_ft = Math.round((rafter_length_ft + overhang_rafter_ft) * 100) / 100;
 
-    return { rafter_length_ft, total_rafter_ft, overhang_rafter_ft, angle_deg, slope_pct, pitch_ratio };
+    return {
+      rafter_length_ft,
+      rafter_length_m: Math.round(rafter_length_ft * 0.3048 * 100) / 100,
+      total_rafter_ft,
+      total_rafter_m: Math.round(total_rafter_ft * 0.3048 * 100) / 100,
+      overhang_rafter_ft,
+      overhang_rafter_m: Math.round(overhang_rafter_ft * 0.3048 * 100) / 100,
+      angle_deg, slope_pct, pitch_ratio,
+    };
   } else {
     const riseM     = Number(inputs.rise_m  ?? 1.8);
     const runM      = Number(inputs.run_m   ?? 3.6);
     const overhangM = Number(inputs.overhang_m ?? 0);
 
     if (runM <= 0) {
-      return { rafter_length_m: 0, total_rafter_m: 0, angle_deg: 0, slope_pct: 0, pitch_ratio: 0 };
+      return { rafter_length_ft: 0, rafter_length_m: 0, total_rafter_ft: 0, total_rafter_m: 0, overhang_rafter_ft: 0, overhang_rafter_m: 0, angle_deg: 0, slope_pct: 0, pitch_ratio: 0 };
     }
 
     const pitchDecimal   = riseM / runM;
@@ -50,7 +58,15 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
       : 0;
     const total_rafter_m  = Math.round((rafter_length_m + overhang_rafter_m) * 100) / 100;
 
-    return { rafter_length_m, total_rafter_m, overhang_rafter_m, angle_deg, slope_pct, pitch_ratio };
+    return {
+      rafter_length_m,
+      rafter_length_ft: Math.round(rafter_length_m / 0.3048 * 100) / 100,
+      total_rafter_m,
+      total_rafter_ft: Math.round(total_rafter_m / 0.3048 * 100) / 100,
+      overhang_rafter_m,
+      overhang_rafter_ft: Math.round(overhang_rafter_m / 0.3048 * 100) / 100,
+      angle_deg, slope_pct, pitch_ratio,
+    };
   }
 }
 

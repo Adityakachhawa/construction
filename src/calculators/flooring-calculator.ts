@@ -14,10 +14,11 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
 
     const areaSqFt        = Math.round(lengthFt * widthFt * 10) / 10;
     const areaWithWaste   = Math.round(areaSqFt * (1 + wastePct) * 10) / 10;
-    const boxes           = Math.ceil(areaWithWaste / boxSqFt);
+    const boxes           = boxSqFt > 0 ? Math.ceil(areaWithWaste / boxSqFt) : 0;
 
     return {
       area_sqft:        areaSqFt,
+      area_sqm:         Math.round(areaSqFt * 0.092903 * 100) / 100,
       area_with_waste:  areaWithWaste,
       boxes,
     };
@@ -29,10 +30,11 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
 
     const areaSqM        = Math.round(lengthM * widthM * 100) / 100;
     const areaWithWaste  = Math.round(areaSqM * (1 + wastePct) * 100) / 100;
-    const boxes          = Math.ceil(areaWithWaste / boxSqM);
+    const boxes          = boxSqM > 0 ? Math.ceil(areaWithWaste / boxSqM) : 0;
 
     return {
       area_sqm:         areaSqM,
+      area_sqft:        Math.round(areaSqM * 10.7639 * 10) / 10,
       area_with_waste:  areaWithWaste,
       boxes,
     };
@@ -198,7 +200,6 @@ export const flooringCalculator: CalculatorConfig = {
       id: 'area_sqft',
       label: 'Room Area',
       unit: 'ft²',
-      unitMetric: 'm²',
       format: 'area',
       description: 'Net floor area before waste',
     },

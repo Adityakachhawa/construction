@@ -1,0 +1,277 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/layout/Breadcrumbs.astro';
+import { buildPageTitle, buildCanonical } from '../utils/seo';
+import { DEFAULT_OG_IMAGE } from '../utils/constants';
+import { buildBreadcrumbList } from '../utils/schema';
+
+const meta = {
+  title: buildPageTitle('Contact ConstructCalc'),
+  description: 'Contact the ConstructCalc team. Report formula errors, suggest new calculators, or ask questions about any tool.',
+  canonical: buildCanonical('/contact/'),
+  ogType: 'website' as const,
+  ogImage: DEFAULT_OG_IMAGE,
+};
+
+const schemas = [
+  buildBreadcrumbList([
+    { name: 'Home', href: '/' },
+    { name: 'Contact', href: '/contact/' },
+  ]),
+];
+
+const breadcrumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Contact', href: '/contact/' },
+];
+---
+
+<BaseLayout meta={meta} schemas={schemas}>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbs} />
+      <h1 class="page-title">Contact Us</h1>
+      <p class="page-sub">Questions, formula corrections, or calculator suggestions — we read every message.</p>
+    </div>
+  </div>
+
+  <div class="page-body">
+    <div class="container-narrow">
+
+      <div class="contact-grid">
+        <div class="contact-reasons">
+          <h2>How Can We Help?</h2>
+
+          <div class="reason-card">
+            <div class="reason-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 2v20M2 12h20"/>
+              </svg>
+            </div>
+            <div>
+              <h3>Suggest a Calculator</h3>
+              <p>We're always adding new tools. If there's a calculation you need that we don't have, let us know — we prioritize based on user demand.</p>
+            </div>
+          </div>
+
+          <div class="reason-card">
+            <div class="reason-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+            </div>
+            <div>
+              <h3>Report a Formula Error</h3>
+              <p>If you've found a result that doesn't match your hand calculations or industry references, please report it. Formula accuracy is our top priority.</p>
+            </div>
+          </div>
+
+          <div class="reason-card">
+            <div class="reason-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+              </svg>
+            </div>
+            <div>
+              <h3>General Questions</h3>
+              <p>Questions about a specific calculation, unit conversions, or how to apply a result to your project.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-form-wrap">
+          <h2>Send a Message</h2>
+          <form class="contact-form" name="contact" method="POST" action="/contact-success/">
+            <div class="form-group">
+              <label for="name" class="form-label">Your Name</label>
+              <input type="text" id="name" name="name" class="form-input" placeholder="John Smith" required />
+            </div>
+
+            <div class="form-group">
+              <label for="email" class="form-label">Email Address</label>
+              <input type="email" id="email" name="email" class="form-input" placeholder="you@example.com" required />
+            </div>
+
+            <div class="form-group">
+              <label for="subject" class="form-label">Subject</label>
+              <select id="subject" name="subject" class="form-input">
+                <option value="formula-error">Report a formula error</option>
+                <option value="suggest-calculator">Suggest a calculator</option>
+                <option value="general">General question</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="message" class="form-label">Message</label>
+              <textarea id="message" name="message" class="form-input form-textarea" placeholder="Describe your question or issue..." rows="5" required></textarea>
+            </div>
+
+            <button type="submit" class="form-submit">Send Message</button>
+          </form>
+
+          <p class="form-note">We typically respond within 1–2 business days. For urgent formula issues, please include the calculator name and the inputs you used.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-header {
+    background: var(--surface-page);
+    border-bottom: 1px solid var(--border-default);
+    padding: 2rem 0 2.5rem;
+  }
+
+  .container {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .container-narrow {
+    max-width: 60rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .page-title {
+    font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+    font-weight: 900;
+    color: var(--color-text-primary);
+    letter-spacing: -0.04em;
+    margin-top: 1rem;
+    line-height: 1.1;
+  }
+
+  .page-sub {
+    margin-top: 0.625rem;
+    font-size: 1.0625rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  .page-body {
+    padding: 3rem 0 5rem;
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+  @media (min-width: 768px) {
+    .contact-grid { grid-template-columns: 1fr 1fr; align-items: start; }
+  }
+
+  .contact-reasons h2,
+  .contact-form-wrap h2 {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+  }
+
+  .reason-card {
+    display: flex;
+    gap: 1rem;
+    padding: 1.25rem;
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 12px;
+    margin-bottom: 0.875rem;
+  }
+
+  .reason-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--color-primary-50);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary);
+    flex-shrink: 0;
+  }
+
+  .reason-card h3 {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: 0.25rem;
+  }
+
+  .reason-card p {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  .form-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 0.625rem 0.875rem;
+    background: var(--surface-card);
+    border: 1.5px solid var(--border-strong);
+    border-radius: 8px;
+    font-size: 0.9375rem;
+    color: var(--color-text-primary);
+    transition: border-color 150ms;
+    appearance: none;
+  }
+
+  .form-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-50);
+  }
+
+  .form-textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+
+  .form-submit {
+    padding: 0.75rem 1.5rem;
+    background: var(--color-primary);
+    color: #fff;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: background 150ms, transform 150ms;
+    align-self: flex-start;
+  }
+  .form-submit:hover {
+    background: var(--color-primary-hover);
+    transform: translateY(-1px);
+  }
+
+  .form-note {
+    margin-top: 1rem;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+  }
+</style>

@@ -14,11 +14,11 @@ const { items, title = 'Frequently Asked Questions' } = Astro.props;
 
   <div class="faq-list" id="faq-list">
     {items.map((item, i) => (
-      <div class="faq-item" data-faq-item>
+      <div class={`faq-item${i === 0 ? ' is-open' : ''}`} data-faq-item>
         <button
           type="button"
           class="faq-question"
-          aria-expanded="false"
+          aria-expanded={i === 0 ? 'true' : 'false'}
           aria-controls={`faq-answer-${i}`}
           id={`faq-btn-${i}`}
         >
@@ -33,7 +33,7 @@ const { items, title = 'Frequently Asked Questions' } = Astro.props;
           role="region"
           aria-labelledby={`faq-btn-${i}`}
           class="faq-answer"
-          style="max-height: 0; overflow: hidden;"
+          style={i === 0 ? 'max-height: 600px; overflow: hidden;' : 'max-height: 0; overflow: hidden;'}
         >
           <p class="faq-answer-text">{item.answer}</p>
         </div>

@@ -1,0 +1,220 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/layout/Breadcrumbs.astro';
+import { buildPageTitle, buildCanonical } from '../utils/seo';
+import { DEFAULT_OG_IMAGE } from '../utils/constants';
+import { buildBreadcrumbList } from '../utils/schema';
+
+const meta = {
+  title: buildPageTitle('About ConstructCalc'),
+  description: 'ConstructCalc provides free, accurate construction calculators built on industry-standard formulas. Learn about our methodology and commitment to accuracy.',
+  canonical: buildCanonical('/about/'),
+  ogType: 'website' as const,
+  ogImage: DEFAULT_OG_IMAGE,
+};
+
+const schemas = [
+  buildBreadcrumbList([
+    { name: 'Home', href: '/' },
+    { name: 'About', href: '/about/' },
+  ]),
+];
+
+const breadcrumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'About', href: '/about/' },
+];
+---
+
+<BaseLayout meta={meta} schemas={schemas}>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbs} />
+      <h1 class="page-title">About ConstructCalc</h1>
+      <p class="page-sub">Free, accurate construction calculators built for professionals and serious DIYers.</p>
+    </div>
+  </div>
+
+  <div class="page-body">
+    <div class="container-narrow">
+
+      <section class="content-section">
+        <h2>What We Build</h2>
+        <p>ConstructCalc is a free library of construction material calculators. We cover concrete, framing, roofing, excavation, masonry, fencing, and decking — every trade where accurate material estimates save money and prevent project delays.</p>
+        <p>Every calculator on this site uses the same formulas professional estimators use. We add waste factors where industry practice calls for them, support both imperial and metric unit systems, and show you the step-by-step math so you can verify the result yourself.</p>
+      </section>
+
+      <section class="content-section">
+        <h2>Who Uses ConstructCalc</h2>
+        <div class="use-cases">
+          <div class="use-case">
+            <h3>General Contractors</h3>
+            <p>Quick material estimates for bids and project planning without pulling up a spreadsheet or waiting for a takeoff.</p>
+          </div>
+          <div class="use-case">
+            <h3>Subcontractors</h3>
+            <p>Concrete, framing, roofing, and masonry subs use our calculators to verify scope quantities against GC estimates.</p>
+          </div>
+          <div class="use-case">
+            <h3>Serious DIYers</h3>
+            <p>Homeowners tackling projects that require accurate material orders — driveways, patios, decks, room additions, and fencing.</p>
+          </div>
+          <div class="use-case">
+            <h3>Building Inspectors & Estimators</h3>
+            <p>A fast sanity check against hand calculations and takeoff software results.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <h2>Our Formula Sources</h2>
+        <p>Our calculators are based on formulas from established industry references:</p>
+        <ul class="source-list">
+          <li>American Concrete Institute (ACI) — concrete volume and mix design</li>
+          <li>International Residential Code (IRC) — stud spacing, footing depth, rafter spans</li>
+          <li>National Roofing Contractors Association (NRCA) — roofing material estimating</li>
+          <li>Portland Cement Association (PCA) — concrete mix ratios and curing standards</li>
+          <li>ASTM International — material weight and density standards</li>
+          <li>Western Wood Products Association (WWPA) — lumber sizing and span tables</li>
+        </ul>
+        <p>For full details on our calculation methodology, see our <a href="/methodology/">Methodology page</a>.</p>
+      </section>
+
+      <section class="content-section">
+        <h2>Accuracy Disclaimer</h2>
+        <p>Our calculators produce estimates based on standard industry formulas and typical material densities. Actual quantities will vary based on:</p>
+        <ul>
+          <li>Site conditions and subgrade variation</li>
+          <li>Supplier-specific material densities</li>
+          <li>Local code requirements that may differ from national standards</li>
+          <li>Project complexity and waste factors beyond standard assumptions</li>
+        </ul>
+        <p>Always verify critical quantities with a licensed contractor, structural engineer, or your material supplier before ordering. ConstructCalc results are planning tools, not substitutes for professional engineering judgment.</p>
+      </section>
+
+      <section class="content-section">
+        <h2>Contact Us</h2>
+        <p>Have a question about a formula, found an error, or want to suggest a new calculator? <a href="/contact/">Contact our team</a> — we respond to every message.</p>
+      </section>
+
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-header {
+    background: var(--surface-page);
+    border-bottom: 1px solid var(--border-default);
+    padding: 2rem 0 2.5rem;
+  }
+
+  .container {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .container-narrow {
+    max-width: 52rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .page-title {
+    font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+    font-weight: 900;
+    color: var(--color-text-primary);
+    letter-spacing: -0.04em;
+    margin-top: 1rem;
+    line-height: 1.1;
+  }
+
+  .page-sub {
+    margin-top: 0.625rem;
+    font-size: 1.0625rem;
+    color: var(--color-text-secondary);
+    max-width: 44rem;
+    line-height: 1.6;
+  }
+
+  .page-body {
+    padding: 3rem 0 5rem;
+  }
+
+  .content-section {
+    margin-bottom: 3rem;
+  }
+
+  .content-section h2 {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+    margin-bottom: 1rem;
+    padding-bottom: 0.625rem;
+    border-bottom: 2px solid var(--border-default);
+  }
+
+  .content-section h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: 0.375rem;
+  }
+
+  .content-section p {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+  }
+
+  .content-section ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .content-section ul li {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+    padding-left: 1.25rem;
+    position: relative;
+    line-height: 1.6;
+  }
+
+  .content-section ul li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--color-primary);
+    font-size: 0.875rem;
+  }
+
+  .content-section a {
+    color: var(--color-primary);
+    font-weight: 500;
+  }
+  .content-section a:hover { text-decoration: underline; }
+
+  .use-cases {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  @media (min-width: 640px) { .use-cases { grid-template-columns: repeat(2, 1fr); } }
+
+  .use-case {
+    padding: 1.25rem;
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 12px;
+  }
+
+  .source-list {
+    margin: 0.75rem 0 1rem;
+  }
+</style>

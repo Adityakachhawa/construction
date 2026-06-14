@@ -1,23 +1,39 @@
 ---
 import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import RelatedCalculators from '../../components/calculators/RelatedCalculators.astro';
 import { buildArticleMeta } from '../../utils/seo';
 import { buildArticleSchema, buildBreadcrumbList } from '../../utils/schema';
 import { getCollection, render } from 'astro:content';
+import { calculatorRegistry } from '../../data/registry';
+import { categories } from '../../data/categories';
+import type { CalculatorConfig } from '../../calculators/_types';
 import type { GetStaticPaths } from 'astro';
+
+const CATEGORY_SLUGS = new Set(categories.map(c => c.slug));
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const posts = await getCollection('blog', ({ data }) => !data.draft);
-  return posts.map((post) => {
+  posts.sort((a, b) => b.data.publishedAt.localeCompare(a.data.publishedAt));
+  return posts.map((post, i) => {
     const slug = post.id.replace(/\.[^.]+$/, '');
+    const prevPost = posts[i + 1]
+      ? { title: posts[i + 1].data.title, slug: posts[i + 1].id.replace(/\.[^.]+$/, '') }
+      : undefined;
+    const nextPost = posts[i - 1]
+      ? { title: posts[i - 1].data.title, slug: posts[i - 1].id.replace(/\.[^.]+$/, '') }
+      : undefined;
     return {
       params: { slug },
-      props: { post, slug },
+      props: { post, slug, prevPost, nextPost },
     };
   });
 };
 
-const { post, slug } = Astro.props;
+const { post, slug, prevPost, nextPost } = Astro.props;
 const { Content } = await render(post);
+
+const wordCount = (post.body ?? '').trim().split(/\s+/).length;
+const readingTime = Math.max(1, Math.ceil(wordCount / 200));
 
 const meta = buildArticleMeta({
   title: post.data.title,
@@ -52,6 +68,18 @@ const breadcrumbs = [
   { name: 'Blog', href: '/blog/' },
   { name: post.data.title, href: `/blog/${slug}/` },
 ];
+
+const relatedCalcSlugs: string[] = (post.data.relatedCalculators as string[]) ?? [];
+const relatedCalcs = relatedCalcSlugs
+  .map(s => calculatorRegistry.find(c => c.slug === s))
+  .filter((c): c is CalculatorConfig => c !== undefined);
+
+const categoryLinks = ((post.data.tags as string[]) ?? [])
+  .filter(t => CATEGORY_SLUGS.has(t))
+  .map(t => {
+    const cat = categories.find(c => c.slug === t)!;
+    return { name: cat.name, slug: cat.slug };
+  });
 ---
 
 <ArticleLayout
@@ -64,8 +92,15 @@ const breadcrumbs = [
   publishedAt={post.data.publishedAt}
   updatedAt={post.data.updatedAt}
   author={post.data.author}
+  readingTime={readingTime}
   featuredImage={post.data.featuredImage}
   tags={post.data.tags}
+  categoryLinks={categoryLinks}
+  prevPost={prevPost}
+  nextPost={nextPost}
 >
   <Content />
+  {relatedCalcs.length > 0 && (
+    <RelatedCalculators slot="related" calcs={relatedCalcs} />
+  )}
 </ArticleLayout>

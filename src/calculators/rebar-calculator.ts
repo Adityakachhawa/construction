@@ -18,6 +18,9 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const wastePct   = Number(inputs.waste_pct  ?? 10) / 100;
 
     const spacingFt  = spacingIn / 12;
+    if (spacingFt <= 0 || lengthFt <= 0 || widthFt <= 0) {
+      return { pieces: 0, linear_ft: 0, linear_m: 0, weight_lbs: 0, weight_kg: 0 };
+    }
     // Rows run along width, spaced along length; columns run along length, spaced along width
     const rowCount  = Math.floor(lengthFt / spacingFt) + 1;
     const colCount  = Math.floor(widthFt  / spacingFt) + 1;
@@ -25,7 +28,13 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const linearFt  = Math.round((rowCount * widthFt + colCount * lengthFt) * (1 + wastePct) * 10) / 10;
     const weightLbs = Math.round(linearFt * REBAR_LBS_PER_FT * 10) / 10;
 
-    return { pieces, linear_ft: linearFt, weight_lbs: weightLbs };
+    return {
+      pieces,
+      linear_ft: linearFt,
+      linear_m: Math.round(linearFt * 0.3048 * 10) / 10,
+      weight_lbs: weightLbs,
+      weight_kg: Math.round(weightLbs * 0.453592 * 10) / 10,
+    };
   } else {
     const lengthM   = Number(inputs.length_m   ?? 3);
     const widthM    = Number(inputs.width_m    ?? 3);
@@ -33,13 +42,22 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const wastePct  = Number(inputs.waste_pct  ?? 10) / 100;
 
     const spacingM  = spacingMm / 1000;
+    if (spacingM <= 0 || lengthM <= 0 || widthM <= 0) {
+      return { pieces: 0, linear_ft: 0, linear_m: 0, weight_lbs: 0, weight_kg: 0 };
+    }
     const rowCount  = Math.floor(lengthM / spacingM) + 1;
     const colCount  = Math.floor(widthM  / spacingM) + 1;
     const pieces    = rowCount + colCount;
     const linearM   = Math.round((rowCount * widthM + colCount * lengthM) * (1 + wastePct) * 10) / 10;
     const weightKg  = Math.round(linearM * REBAR_KG_PER_M * 10) / 10;
 
-    return { pieces, linear_m: linearM, weight_kg: weightKg };
+    return {
+      pieces,
+      linear_m: linearM,
+      linear_ft: Math.round(linearM / 0.3048 * 10) / 10,
+      weight_kg: weightKg,
+      weight_lbs: Math.round(weightKg / 0.453592 * 10) / 10,
+    };
   }
 }
 
@@ -183,7 +201,6 @@ export const rebarCalculator: CalculatorConfig = {
       id: 'linear_ft',
       label: 'Total Linear Feet',
       unit: 'ft',
-      unitMetric: 'm',
       format: 'length',
       primary: true,
       description: 'Includes waste factor — order this amount',
@@ -205,7 +222,6 @@ export const rebarCalculator: CalculatorConfig = {
       id: 'weight_lbs',
       label: 'Estimated Weight',
       unit: 'lbs',
-      unitMetric: 'kg',
       format: 'weight',
       description: 'Based on #4 rebar (1/2 in, 0.668 lbs/ft)',
     },

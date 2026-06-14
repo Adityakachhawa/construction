@@ -42,7 +42,7 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const panelLengthFt  = Number(inputs.panel_length_ft ?? 12) + Number(inputs.panel_length_in ?? 0) / 12;
 
     if (lengthFt <= 0 || widthFt <= 0 || panelCoverIn <= 0 || panelLengthFt <= 0) {
-      return { panels: 0, roof_area_sqft: 0, material_area_sqft: 0, fasteners: 0, pitch_factor: pitchFactor };
+      return { panels: 0, panel_cols: 0, panel_rows: 0, roof_area_sqft: 0, roof_area_sqm: 0, material_area_sqft: 0, material_area_sqm: 0, fasteners: 0, pitch_factor: pitchFactor };
     }
 
     const footprint_sqft    = lengthFt * widthFt;
@@ -64,7 +64,9 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
       panel_cols: panelCols,
       panel_rows: panelRows,
       roof_area_sqft,
+      roof_area_sqm: Math.round(roof_area_sqft * 0.092903 * 100) / 100,
       material_area_sqft,
+      material_area_sqm: Math.round(material_area_sqft * 0.092903 * 100) / 100,
       fasteners,
       pitch_factor: Math.round(pitchFactor * 1000) / 1000,
     };
@@ -75,7 +77,7 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const panelLengthM  = Number(inputs.panel_length_m ?? 3.6);
 
     if (lengthM <= 0 || widthM <= 0 || panelCoverMm <= 0 || panelLengthM <= 0) {
-      return { panels: 0, roof_area_sqm: 0, material_area_sqm: 0, fasteners: 0, pitch_factor: pitchFactor };
+      return { panels: 0, panel_cols: 0, panel_rows: 0, roof_area_sqft: 0, roof_area_sqm: 0, material_area_sqft: 0, material_area_sqm: 0, fasteners: 0, pitch_factor: pitchFactor };
     }
 
     const footprint_sqm    = lengthM * widthM;
@@ -95,7 +97,9 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
       panel_cols: panelCols,
       panel_rows: panelRows,
       roof_area_sqm,
+      roof_area_sqft: Math.round(roof_area_sqm * 10.7639 * 10) / 10,
       material_area_sqm,
+      material_area_sqft: Math.round(material_area_sqm * 10.7639 * 10) / 10,
       fasteners,
       pitch_factor: Math.round(pitchFactor * 1000) / 1000,
     };

@@ -17,7 +17,7 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     if (lengthFt <= 0 || widthFt <= 0 || depthFt <= 0) {
       return {
         gravel_cuyd: 0, gravel_cuft: 0, gravel_cum: 0,
-        pipe_length_ft: 0,
+        pipe_length_ft: 0, pipe_length_m: 0,
         fabric_sqft: 0, fabric_sqm: 0,
         excavation_cuyd: 0, excavation_cuft: 0, trench_cuyd: 0,
       };
@@ -49,6 +49,7 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
       gravel_cuft,
       gravel_cum,
       pipe_length_ft,
+      pipe_length_m: Math.round(pipe_length_ft * 0.3048 * 10) / 10,
       fabric_sqft,
       fabric_sqm,
       excavation_cuyd,
@@ -63,7 +64,7 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     if (lengthM <= 0 || widthM <= 0 || depthM <= 0) {
       return {
         gravel_cuyd: 0, gravel_cuft: 0, gravel_cum: 0,
-        pipe_length_m: 0,
+        pipe_length_ft: 0, pipe_length_m: 0,
         fabric_sqft: 0, fabric_sqm: 0,
         excavation_cuyd: 0, excavation_cuft: 0, trench_cuyd: 0,
       };
@@ -96,6 +97,7 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
       gravel_cuft,
       gravel_cum,
       pipe_length_m,
+      pipe_length_ft: Math.round(pipe_length_m / 0.3048 * 10) / 10,
       fabric_sqft,
       fabric_sqm,
       excavation_cuyd,

@@ -1,5 +1,11 @@
 ---
 import { categories } from '../../data/categories';
+import { getCollection } from 'astro:content';
+
+// Only link /guides/ once at least one non-draft guide exists, so we never
+// surface an empty "coming soon" section to crawlers or users.
+const publishedGuides = await getCollection('guides', ({ data }) => !data.draft);
+const hasGuides = publishedGuides.length > 0;
 ---
 
 <footer class="site-footer">
@@ -42,7 +48,8 @@ import { categories } from '../../data/categories';
       <h3 class="footer-col-heading">Resources</h3>
       <ul class="footer-links">
         <li><a href="/blog/" class="footer-link">Blog</a></li>
-        <li><a href="/guides/" class="footer-link">Guides</a></li>
+        {hasGuides && <li><a href="/guides/" class="footer-link">Guides</a></li>}
+        <li><a href="/methodology/" class="footer-link">Methodology</a></li>
       </ul>
     </div>
 
@@ -136,7 +143,7 @@ import { categories } from '../../data/categories';
 
   .footer-link {
     font-size: 0.875rem;
-    color: #71717a;
+    color: #a1a1aa;
     transition: color 150ms;
   }
   .footer-link:hover { color: #fff; }
@@ -161,12 +168,12 @@ import { categories } from '../../data/categories';
 
   .footer-copy {
     font-size: 0.75rem;
-    color: #52525b;
+    color: #8b8b93;
   }
 
   .footer-disclaimer {
     font-size: 0.75rem;
-    color: #52525b;
+    color: #8b8b93;
     font-style: italic;
   }
 </style>

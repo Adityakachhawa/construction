@@ -12,7 +12,7 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const treadDepthIn  = Number(inputs.tread_depth_in ?? 10);
 
     if (totalRiseFt <= 0 || desiredRiserIn <= 0 || treadDepthIn <= 0) {
-      return { risers: 0, treads: 0, actual_riser_in: 0, total_run_ft: 0, stair_angle_deg: 0, stringer_length_ft: 0 };
+      return { risers: 0, treads: 0, actual_riser_in: 0, actual_riser_mm: 0, total_run_ft: 0, total_run_m: 0, stair_angle_deg: 0, stringer_length_ft: 0, stringer_length_m: 0 };
     }
 
     const totalRiseIn    = totalRiseFt * 12;
@@ -21,18 +21,27 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const treads         = risers - 1;
     const total_run_in   = treads * treadDepthIn;
     const total_run_ft   = Math.round(total_run_in / 12 * 100) / 100;
-    const stair_angle_deg = Math.round(Math.atan(totalRiseIn / total_run_in) * (180 / Math.PI) * 100) / 100;
+    const stair_angle_deg = total_run_in > 0 ? Math.round(Math.atan(totalRiseIn / total_run_in) * (180 / Math.PI) * 100) / 100 : 90;
     // Stringer = √(total_rise² + total_run²) in inches, then convert to ft
     const stringer_length_ft = Math.round(Math.sqrt(totalRiseIn ** 2 + total_run_in ** 2) / 12 * 100) / 100;
 
-    return { risers, treads, actual_riser_in, total_run_ft, stair_angle_deg, stringer_length_ft };
+    return {
+      risers, treads,
+      actual_riser_in,
+      actual_riser_mm: Math.round(actual_riser_in * 25.4),
+      total_run_ft,
+      total_run_m: Math.round(total_run_ft * 0.3048 * 100) / 100,
+      stair_angle_deg,
+      stringer_length_ft,
+      stringer_length_m: Math.round(stringer_length_ft * 0.3048 * 100) / 100,
+    };
   } else {
     const totalRiseM    = Number(inputs.total_rise_m ?? 2.7);
     const desiredRiserMm = Number(inputs.riser_height_mm ?? 190);
     const treadDepthMm  = Number(inputs.tread_depth_mm ?? 250);
 
     if (totalRiseM <= 0 || desiredRiserMm <= 0 || treadDepthMm <= 0) {
-      return { risers: 0, treads: 0, actual_riser_mm: 0, total_run_m: 0, stair_angle_deg: 0, stringer_length_m: 0 };
+      return { risers: 0, treads: 0, actual_riser_in: 0, actual_riser_mm: 0, total_run_ft: 0, total_run_m: 0, stair_angle_deg: 0, stringer_length_ft: 0, stringer_length_m: 0 };
     }
 
     const totalRiseMm    = totalRiseM * 1000;
@@ -41,10 +50,19 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const treads         = risers - 1;
     const total_run_mm   = treads * treadDepthMm;
     const total_run_m    = Math.round(total_run_mm / 1000 * 100) / 100;
-    const stair_angle_deg = Math.round(Math.atan(totalRiseMm / total_run_mm) * (180 / Math.PI) * 100) / 100;
+    const stair_angle_deg = total_run_mm > 0 ? Math.round(Math.atan(totalRiseMm / total_run_mm) * (180 / Math.PI) * 100) / 100 : 90;
     const stringer_length_m = Math.round(Math.sqrt(totalRiseMm ** 2 + total_run_mm ** 2) / 1000 * 100) / 100;
 
-    return { risers, treads, actual_riser_mm, total_run_m, stair_angle_deg, stringer_length_m };
+    return {
+      risers, treads,
+      actual_riser_mm,
+      actual_riser_in: Math.round(actual_riser_mm / 25.4 * 1000) / 1000,
+      total_run_m,
+      total_run_ft: Math.round(total_run_m / 0.3048 * 100) / 100,
+      stair_angle_deg,
+      stringer_length_m,
+      stringer_length_ft: Math.round(stringer_length_m / 0.3048 * 100) / 100,
+    };
   }
 }
 

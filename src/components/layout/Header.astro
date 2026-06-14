@@ -1,5 +1,6 @@
 ---
 import { categories } from '../../data/categories';
+import { calculatorRegistry } from '../../data/registry';
 
 interface Props {
   currentPath?: string;
@@ -9,9 +10,15 @@ const { currentPath = '' } = Astro.props;
 
 const navLinks = [
   { href: '/calculators/', label: 'Calculators' },
-  { href: '/guides/', label: 'Guides' },
   { href: '/blog/', label: 'Blog' },
 ];
+
+// Search index — inlined into the page so search works without a network request
+const searchIndex = calculatorRegistry.map(c => ({
+  slug: c.slug,
+  name: c.name,
+  description: c.description,
+}));
 ---
 
 <header class="site-header">
@@ -41,6 +48,28 @@ const navLinks = [
         </a>
       ))}
     </nav>
+
+    <!-- Desktop search -->
+    <div class="header-search" data-search-root>
+      <div class="header-search-box">
+        <svg class="header-search-icon" width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <circle cx="8.5" cy="8.5" r="5.75" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M13 13l3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <input
+          type="search"
+          placeholder="Search calculators…"
+          class="header-search-input"
+          autocomplete="off"
+          aria-label="Search calculators"
+          role="combobox"
+          aria-expanded="false"
+          aria-controls="header-search-results"
+          aria-autocomplete="list"
+        />
+      </div>
+      <div id="header-search-results" class="header-search-results" role="listbox" aria-label="Search results"></div>
+    </div>
 
     <!-- Desktop CTA -->
     <a href="/calculators/" class="header-cta" aria-label="Browse all calculators">
@@ -93,6 +122,28 @@ const navLinks = [
         <a href={link.href} class="mobile-nav-link">{link.label}</a>
       ))}
     </nav>
+
+    <!-- Mobile search -->
+    <div class="mobile-search" data-search-root>
+      <div class="mobile-search-box">
+        <svg class="header-search-icon" width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <circle cx="8.5" cy="8.5" r="5.75" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M13 13l3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <input
+          type="search"
+          placeholder="Search calculators…"
+          class="header-search-input"
+          autocomplete="off"
+          aria-label="Search calculators"
+          role="combobox"
+          aria-expanded="false"
+          aria-controls="mobile-search-results"
+          aria-autocomplete="list"
+        />
+      </div>
+      <div id="mobile-search-results" class="mobile-search-results" role="listbox" aria-label="Search results"></div>
+    </div>
 
     <div class="mobile-categories">
       <p class="mobile-categories-label">Categories</p>
@@ -208,10 +259,13 @@ const navLinks = [
     z-index: 100;
     background: #fff;
     transform: translateX(100%);
-    transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    visibility: hidden;
+    transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 250ms;
   }
   .mobile-overlay.is-open {
     transform: translateX(0);
+    visibility: visible;
+    transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0s;
   }
 
   .mobile-overlay-inner {
@@ -299,6 +353,116 @@ const navLinks = [
     font-weight: 600;
     border-radius: 12px;
   }
+
+  /* ── Desktop search ───────────────────────────────────────── */
+  .header-search {
+    display: none;
+    position: relative;
+    margin-left: auto;
+    width: 15rem;
+    flex-shrink: 1;
+    min-width: 9rem;
+  }
+  @media (min-width: 768px) { .header-search { display: block; } }
+
+  .header-search-box {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0 0.75rem;
+    height: 38px;
+    background: var(--surface-page);
+    border: 1px solid var(--border-default);
+    border-radius: 9999px;
+    transition: border-color 150ms, background 150ms;
+  }
+  .header-search-box:focus-within {
+    border-color: var(--color-primary);
+    background: var(--surface-card);
+  }
+
+  .header-search-icon { color: var(--color-text-muted); flex-shrink: 0; }
+
+  .header-search-input {
+    flex: 1;
+    min-width: 0;
+    background: none;
+    border: none;
+    outline: none;
+    font-size: 0.875rem;
+    color: var(--color-text-primary);
+  }
+  .header-search-input::placeholder { color: var(--color-text-muted); }
+  .header-search-input::-webkit-search-cancel-button { -webkit-appearance: none; }
+
+  .header-search-results,
+  .mobile-search-results {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 22rem;
+    max-width: min(22rem, calc(100vw - 3rem));
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 12px;
+    box-shadow: var(--shadow-widget);
+    overflow: hidden;
+    z-index: 60;
+  }
+  .header-search-results[data-open],
+  .mobile-search-results[data-open] { display: block; }
+
+  .header-search-results :global(.hs-item),
+  .mobile-search-results :global(.hs-item) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    padding: 0.625rem 0.875rem;
+    border-bottom: 1px solid var(--border-subtle);
+    transition: background 100ms;
+  }
+  .header-search-results :global(.hs-item:last-child),
+  .mobile-search-results :global(.hs-item:last-child) { border-bottom: none; }
+  .header-search-results :global(.hs-item:hover),
+  .header-search-results :global(.hs-item[aria-selected="true"]),
+  .mobile-search-results :global(.hs-item:hover),
+  .mobile-search-results :global(.hs-item[aria-selected="true"]) {
+    background: var(--color-primary-50);
+  }
+  .header-search-results :global(.hs-item strong),
+  .mobile-search-results :global(.hs-item strong) { font-size: 0.875rem; font-weight: 600; color: var(--color-text-primary); }
+  .header-search-results :global(.hs-item span),
+  .mobile-search-results :global(.hs-item span) {
+    font-size: 0.8125rem; color: var(--color-text-muted);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .header-search-results :global(.hs-empty),
+  .mobile-search-results :global(.hs-empty) { padding: 1rem; text-align: center; font-size: 0.875rem; color: var(--color-text-muted); }
+
+  /* ── Mobile search ────────────────────────────────────────── */
+  .mobile-search { position: relative; padding: 1.5rem 0; border-bottom: 1px solid var(--border-default); }
+
+  .mobile-search-box {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0 1rem;
+    height: 48px;
+    background: var(--surface-page);
+    border: 1px solid var(--border-default);
+    border-radius: 12px;
+  }
+  .mobile-search-box:focus-within { border-color: var(--color-primary); }
+  .mobile-search-box .header-search-input { font-size: 1rem; }
+
+  .mobile-search-results {
+    position: static;
+    width: 100%;
+    max-width: none;
+    margin-top: 0.5rem;
+    box-shadow: none;
+  }
 </style>
 
 <script>
@@ -308,6 +472,14 @@ const navLinks = [
   const iconOpen = document.getElementById('icon-open');
   const iconClose = document.getElementById('icon-close');
 
+  const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+  function getFocusable(): HTMLElement[] {
+    if (!overlay) return [];
+    return Array.from(overlay.querySelectorAll<HTMLElement>(FOCUSABLE))
+      .filter((el) => el.offsetParent !== null);
+  }
+
   function openMenu() {
     overlay?.classList.add('is-open');
     overlay?.removeAttribute('aria-hidden');
@@ -315,15 +487,20 @@ const navLinks = [
     if (iconOpen) iconOpen.style.display = 'none';
     if (iconClose) iconClose.style.display = 'block';
     document.body.style.overflow = 'hidden';
+    // Move focus into the overlay (the close button) so keyboard users land inside it.
+    close?.focus();
   }
 
   function closeMenu() {
+    if (!overlay?.classList.contains('is-open')) return;
     overlay?.classList.remove('is-open');
     overlay?.setAttribute('aria-hidden', 'true');
     toggle?.setAttribute('aria-expanded', 'false');
     if (iconOpen) iconOpen.style.display = 'block';
     if (iconClose) iconClose.style.display = 'none';
     document.body.style.overflow = '';
+    // Restore focus to the control that opened the menu.
+    toggle?.focus();
   }
 
   toggle?.addEventListener('click', openMenu);
@@ -334,6 +511,95 @@ const navLinks = [
   });
 
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeMenu();
+    if (e.key === 'Escape') { closeMenu(); return; }
+    // Trap Tab within the open overlay.
+    if (e.key === 'Tab' && overlay?.classList.contains('is-open')) {
+      const focusable = getFocusable();
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement as HTMLElement;
+      if (e.shiftKey && (active === first || !overlay.contains(active))) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
   });
+</script>
+
+<script define:vars={{ searchIndex }}>
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, c => (
+      { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+    ));
+  }
+
+  function wireSearch(root) {
+    const input = root.querySelector('input');
+    const results = root.querySelector('[role="listbox"]');
+    if (!input || !results) return;
+
+    let items = [];
+    let active = -1;
+
+    function clear() {
+      results.innerHTML = '';
+      results.removeAttribute('data-open');
+      input.setAttribute('aria-expanded', 'false');
+      items = [];
+      active = -1;
+    }
+
+    function setActive(i) {
+      items.forEach((el, idx) => el.setAttribute('aria-selected', idx === i ? 'true' : 'false'));
+      active = i;
+      if (items[i]) items[i].scrollIntoView({ block: 'nearest' });
+    }
+
+    function render() {
+      const q = input.value.trim().toLowerCase();
+      if (q.length < 2) { clear(); return; }
+      const matches = searchIndex.filter(c =>
+        c.name.toLowerCase().includes(q) || c.description.toLowerCase().includes(q)
+      ).slice(0, 6);
+
+      if (!matches.length) {
+        results.innerHTML = '<p class="hs-empty">No calculators found</p>';
+        results.setAttribute('data-open', '');
+        input.setAttribute('aria-expanded', 'true');
+        items = [];
+        active = -1;
+        return;
+      }
+
+      results.innerHTML = matches.map(c =>
+        `<a href="/calculators/${c.slug}/" class="hs-item" role="option" aria-selected="false"><strong>${escapeHtml(c.name)}</strong><span>${escapeHtml(c.description)}</span></a>`
+      ).join('');
+      results.setAttribute('data-open', '');
+      input.setAttribute('aria-expanded', 'true');
+      items = Array.from(results.querySelectorAll('.hs-item'));
+      active = -1;
+    }
+
+    input.addEventListener('input', render);
+
+    input.addEventListener('keydown', (e) => {
+      if (!items.length) return;
+      if (e.key === 'ArrowDown') { e.preventDefault(); setActive((active + 1) % items.length); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); setActive((active - 1 + items.length) % items.length); }
+      else if (e.key === 'Enter') {
+        const target = active >= 0 ? items[active] : items[0];
+        if (target) { e.preventDefault(); window.location.href = target.getAttribute('href'); }
+      } else if (e.key === 'Escape') { clear(); input.blur(); }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!root.contains(e.target)) clear();
+    });
+  }
+
+  document.querySelectorAll('[data-search-root]').forEach(wireSearch);
 </script>

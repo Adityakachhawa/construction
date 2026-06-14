@@ -132,10 +132,17 @@ const { class: className = '' } = Astro.props;
       <text x="352" y="267" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#4b5563">Full sheet</text>
       <rect x="334" y="274" width="14" height="10" fill="#fef3c7" stroke="#f59e0b" stroke-width="1" stroke-dasharray="3 2" rx="1"/>
       <text x="352" y="283" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#4b5563">Cut piece (waste)</text>
+      <!-- ── FORMULA CALLOUT ─────────────────────────── -->
+      <rect x="30" y="258" width="200" height="34" rx="6"
+        fill="#eff6ff" stroke="#0070f3" stroke-width="1"/>
+      <text x="130" y="271" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8" font-weight="700" fill="#1d4ed8" letter-spacing="0.2">SHEET COUNT</text>
+      <text x="130" y="284" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="800" fill="#1e3a8a">Sheets = ⌈Area ÷ 32 ft²⌉ × (1 + Waste)</text>
     </svg>
   </div>
   <figcaption class="diagram-caption">
-    Drywall sheets laid out horizontally across wall studs. Cut pieces at edges contribute to the 10% waste factor â€” order sheets accordingly.
+    Drywall sheets laid out horizontally across wall studs. Cut pieces at edges contribute to the 10% waste factor — order sheets accordingly.
   </figcaption>
 </figure>
 

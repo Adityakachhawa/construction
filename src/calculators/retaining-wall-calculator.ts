@@ -18,8 +18,8 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const gravelDepIn = Number(inputs.gravel_depth   ?? 6);
     const backfillIn  = Number(inputs.backfill_depth ?? 12);
 
-    const courses        = Math.ceil((wallHtFt * 12) / blockHtIn);
-    const blocksPerCourse = Math.ceil((wallLenFt * 12) / blockLenIn);
+    const courses        = blockHtIn > 0 ? Math.ceil((wallHtFt * 12) / blockHtIn) : 0;
+    const blocksPerCourse = blockLenIn > 0 ? Math.ceil((wallLenFt * 12) / blockLenIn) : 0;
     const blocksNet      = courses * blocksPerCourse;
     const blocks         = Math.ceil(blocksNet * WASTE_FACTOR);
 
@@ -45,8 +45,8 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const gravelDepMm = Number(inputs.gravel_depth_mm ?? 150);
     const backfillMm  = Number(inputs.backfill_depth_mm ?? 300);
 
-    const courses        = Math.ceil((wallHtM * 1000) / blockHtMm);
-    const blocksPerCourse = Math.ceil((wallLenM * 1000) / blockLenMm);
+    const courses        = blockHtMm > 0 ? Math.ceil((wallHtM * 1000) / blockHtMm) : 0;
+    const blocksPerCourse = blockLenMm > 0 ? Math.ceil((wallLenM * 1000) / blockLenMm) : 0;
     const blocksNet      = courses * blocksPerCourse;
     const blocks         = Math.ceil(blocksNet * WASTE_FACTOR);
 

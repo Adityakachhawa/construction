@@ -7,6 +7,7 @@ import { getCategoryBySlug } from '../../data/categories';
 import CalculatorWidget from '../../components/calculators/CalculatorWidget.astro';
 import FormulaDisplay from '../../components/calculators/FormulaDisplay.astro';
 import FaqSection from '../../components/calculators/FaqSection.astro';
+import RelatedCalculators from '../../components/calculators/RelatedCalculators.astro';
 import SlabDiagram from '../../components/calculators/SlabDiagram.astro';
 import GravelDiagram from '../../components/calculators/GravelDiagram.astro';
 import MulchDiagram from '../../components/calculators/MulchDiagram.astro';
@@ -42,8 +43,48 @@ import ConcreteBagsDiagram from '../../components/calculators/ConcreteBagsDiagra
 import InsulationDiagram from '../../components/calculators/InsulationDiagram.astro';
 import MortarDiagram from '../../components/calculators/MortarDiagram.astro';
 import GroutDiagram from '../../components/calculators/GroutDiagram.astro';
-import Card from '../../components/ui/Card.astro';
+import PostHoleDiagram from '../../components/calculators/PostHoleDiagram.astro';
 import type { GetStaticPaths } from 'astro';
+
+// Diagram lookup — add new slugs here instead of adding more booleans
+const diagramMap: Record<string, any> = {
+  'concrete-slab-calculator':      SlabDiagram,
+  'gravel-calculator':             GravelDiagram,
+  'mulch-calculator':              MulchDiagram,
+  'sand-calculator':               SandDiagram,
+  'fence-post-calculator':         FencePostDiagram,
+  'deck-footing-calculator':       DeckFootingDiagram,
+  'retaining-wall-calculator':     RetainingWallDiagram,
+  'paver-base-calculator':         PaverBaseDiagram,
+  'rebar-calculator':              RebarDiagram,
+  'drywall-calculator':            DrywallDiagram,
+  'asphalt-calculator':            AsphaltDiagram,
+  'flooring-calculator':           FlooringDiagram,
+  'concrete-column-calculator':    ConcreteColumnDiagram,
+  'topsoil-calculator':            TopsoilDiagram,
+  'aggregate-calculator':          AggregateDiagram,
+  'concrete-block-calculator':     ConcreteBlockDiagram,
+  'concrete-driveway-calculator':  ConcreteDrivewayDiagram,
+  'concrete-footing-calculator':   ConcreteFootingDiagram,
+  'plywood-calculator':            PlywoodDiagram,
+  'stud-calculator':               StudDiagram,
+  'roof-pitch-calculator':         RoofPitchDiagram,
+  'roofing-calculator':            RoofingDiagram,
+  'rafter-calculator':             RafterDiagram,
+  'metal-roofing-calculator':      MetalRoofingDiagram,
+  'lumber-calculator':             LumberDiagram,
+  'stair-calculator':              StairDiagram,
+  'siding-calculator':             SidingDiagram,
+  'board-foot-calculator':         BoardFootDiagram,
+  'excavation-calculator':         ExcavationDiagram,
+  'square-footage-calculator':     SquareFootageDiagram,
+  'french-drain-calculator':       FrenchDrainDiagram,
+  'concrete-bags-calculator':      ConcreteBagsDiagram,
+  'insulation-calculator':         InsulationDiagram,
+  'mortar-calculator':             MortarDiagram,
+  'grout-calculator':              GroutDiagram,
+  'post-hole-calculator':          PostHoleDiagram,
+};
 
 export const getStaticPaths: GetStaticPaths = async () => {
   return calculatorRegistry.map((calc) => ({
@@ -87,41 +128,8 @@ const breadcrumbs = [
 ];
 
 const relatedCalcs = getRelatedCalculators(calc.relatedCalculators);
-const isSlabCalc          = calc.slug === 'concrete-slab-calculator';
-const isGravelCalc        = calc.slug === 'gravel-calculator';
-const isMulchCalc         = calc.slug === 'mulch-calculator';
-const isSandCalc          = calc.slug === 'sand-calculator';
-const isFencePostCalc     = calc.slug === 'fence-post-calculator';
-const isDeckFootingCalc   = calc.slug === 'deck-footing-calculator';
-const isRetainingWallCalc = calc.slug === 'retaining-wall-calculator';
-const isPaverBaseCalc     = calc.slug === 'paver-base-calculator';
-const isRebarCalc         = calc.slug === 'rebar-calculator';
-const isDrywallCalc       = calc.slug === 'drywall-calculator';
-const isAsphaltCalc       = calc.slug === 'asphalt-calculator';
-const isFlooringCalc      = calc.slug === 'flooring-calculator';
-const isConcreteColumnCalc = calc.slug === 'concrete-column-calculator';
-const isTopsoilCalc        = calc.slug === 'topsoil-calculator';
-const isAggregateCalc      = calc.slug === 'aggregate-calculator';
-const isConcreteBlockCalc    = calc.slug === 'concrete-block-calculator';
-const isConcreteDrivewayCalc  = calc.slug === 'concrete-driveway-calculator';
-const isConcreteFootingCalc   = calc.slug === 'concrete-footing-calculator';
-const isPlywoodCalc           = calc.slug === 'plywood-calculator';
-const isStudCalc              = calc.slug === 'stud-calculator';
-const isRoofPitchCalc         = calc.slug === 'roof-pitch-calculator';
-const isRoofingCalc           = calc.slug === 'roofing-calculator';
-const isRafterCalc            = calc.slug === 'rafter-calculator';
-const isMetalRoofingCalc      = calc.slug === 'metal-roofing-calculator';
-const isLumberCalc            = calc.slug === 'lumber-calculator';
-const isStairCalc             = calc.slug === 'stair-calculator';
-const isSidingCalc            = calc.slug === 'siding-calculator';
-const isBoardFootCalc         = calc.slug === 'board-foot-calculator';
-const isExcavationCalc        = calc.slug === 'excavation-calculator';
-const isSquareFootageCalc     = calc.slug === 'square-footage-calculator';
-const isFrenchDrainCalc       = calc.slug === 'french-drain-calculator';
-const isConcreteBagsCalc      = calc.slug === 'concrete-bags-calculator';
-const isInsulationCalc        = calc.slug === 'insulation-calculator';
-const isMortarCalc            = calc.slug === 'mortar-calculator';
-const isGroutCalc             = calc.slug === 'grout-calculator';
+const Diagram = diagramMap[calc.slug];
+const intro = calc.seo.intro ?? calc.seo.description;
 ---
 
 <CalculatorLayout
@@ -129,45 +137,14 @@ const isGroutCalc             = calc.slug === 'grout-calculator';
   schemas={schemas}
   breadcrumbs={breadcrumbs}
   h1={calc.seo.h1}
-  intro={calc.seo.description}
+  intro={intro}
+  categoryColor={category?.color}
+  categoryIcon={category?.icon}
+  lastUpdated={calc.lastUpdated}
 >
   <CalculatorWidget slot="calculator" calc={calc} />
 
-  {isSlabCalc          && <SlabDiagram          slot="diagram" />}
-  {isGravelCalc        && <GravelDiagram        slot="diagram" />}
-  {isMulchCalc         && <MulchDiagram         slot="diagram" />}
-  {isSandCalc          && <SandDiagram          slot="diagram" />}
-  {isFencePostCalc     && <FencePostDiagram     slot="diagram" />}
-  {isDeckFootingCalc   && <DeckFootingDiagram   slot="diagram" />}
-  {isRetainingWallCalc && <RetainingWallDiagram slot="diagram" />}
-  {isPaverBaseCalc     && <PaverBaseDiagram     slot="diagram" />}
-  {isRebarCalc         && <RebarDiagram         slot="diagram" />}
-  {isDrywallCalc       && <DrywallDiagram       slot="diagram" />}
-  {isAsphaltCalc       && <AsphaltDiagram       slot="diagram" />}
-  {isFlooringCalc      && <FlooringDiagram      slot="diagram" />}
-  {isConcreteColumnCalc && <ConcreteColumnDiagram slot="diagram" />}
-  {isTopsoilCalc        && <TopsoilDiagram        slot="diagram" />}
-  {isAggregateCalc      && <AggregateDiagram      slot="diagram" />}
-  {isConcreteBlockCalc    && <ConcreteBlockDiagram    slot="diagram" />}
-  {isConcreteDrivewayCalc  && <ConcreteDrivewayDiagram slot="diagram" />}
-  {isConcreteFootingCalc   && <ConcreteFootingDiagram  slot="diagram" />}
-  {isPlywoodCalc           && <PlywoodDiagram           slot="diagram" />}
-  {isStudCalc              && <StudDiagram              slot="diagram" />}
-  {isRoofPitchCalc         && <RoofPitchDiagram         slot="diagram" />}
-  {isRoofingCalc           && <RoofingDiagram           slot="diagram" />}
-  {isRafterCalc            && <RafterDiagram            slot="diagram" />}
-  {isMetalRoofingCalc      && <MetalRoofingDiagram      slot="diagram" />}
-  {isLumberCalc            && <LumberDiagram            slot="diagram" />}
-  {isStairCalc             && <StairDiagram             slot="diagram" />}
-  {isSidingCalc            && <SidingDiagram            slot="diagram" />}
-  {isBoardFootCalc         && <BoardFootDiagram         slot="diagram" />}
-  {isExcavationCalc        && <ExcavationDiagram        slot="diagram" />}
-  {isSquareFootageCalc     && <SquareFootageDiagram     slot="diagram" />}
-  {isFrenchDrainCalc       && <FrenchDrainDiagram       slot="diagram" />}
-  {isConcreteBagsCalc      && <ConcreteBagsDiagram      slot="diagram" />}
-  {isInsulationCalc        && <InsulationDiagram        slot="diagram" />}
-  {isMortarCalc            && <MortarDiagram            slot="diagram" />}
-  {isGroutCalc             && <GroutDiagram             slot="diagram" />}
+  {Diagram && <Diagram slot="diagram" />}
 
   {calc.formulaSteps?.length && (
     <FormulaDisplay slot="explainer" steps={calc.formulaSteps} />
@@ -178,19 +155,6 @@ const isGroutCalc             = calc.slug === 'grout-calculator';
   )}
 
   {relatedCalcs.length > 0 && (
-    <div slot="related" class="mt-12">
-      <h2 class="text-lg font-semibold text-[var(--color-text-primary)] mb-4">Related Calculators</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {relatedCalcs.map(related => (
-          <Card href={`/calculators/${related.slug}/`} variant="bordered" padding="md">
-            <div class="flex flex-col gap-2">
-              <h3 class="font-semibold text-[var(--color-text-primary)] leading-snug">{related.name}</h3>
-              <p class="text-sm text-[var(--color-text-secondary)] leading-relaxed">{related.description}</p>
-              <span class="text-sm font-medium text-[var(--color-primary)] mt-1">Open →</span>
-            </div>
-          </Card>
-        ))}
-      </div>
-    </div>
+    <RelatedCalculators slot="related" calcs={relatedCalcs} />
   )}
 </CalculatorLayout>

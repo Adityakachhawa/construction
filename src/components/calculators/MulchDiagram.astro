@@ -94,10 +94,20 @@ const { class: className = '' } = Astro.props;
       <text x="48" y="157" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
         font-size="13" font-weight="700" fill="#d97706" letter-spacing="-0.3"
         transform="rotate(-90 48 157)">Depth</text>
+
+      <!-- ── FORMULA CALLOUT ────────────────────────────────────── -->
+      <rect x="128" y="252" width="168" height="40" rx="6"
+        fill="#fff7ed" stroke="#d97706" stroke-width="1"/>
+      <text x="212" y="264" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8" font-weight="700" fill="#92400e" letter-spacing="0.2">VOLUME FORMULA</text>
+      <text x="212" y="277" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="10" font-weight="800" fill="#7c2d12">V = L × W × D</text>
+      <text x="212" y="288" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8" fill="#b45309">÷ 27 = cu yd  ·  × 0.037 = cu m</text>
     </svg>
   </div>
   <figcaption class="diagram-caption">
-    Mulch bed: length Ã— width Ã— depth â€” enter each dimension above to calculate volume and bags needed.
+    Mulch bed: length Ã— width Ã— depth — enter each dimension above to calculate volume and bags needed.
   </figcaption>
 </figure>
 

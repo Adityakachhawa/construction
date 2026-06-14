@@ -142,10 +142,17 @@ const { class: className = '' } = Astro.props;
         font-size="9" font-weight="600" fill="#64748b">Block: Length Ã— Height Ã— Depth</text>
       <text x="380" y="276" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
         font-size="9" fill="#94a3b8">Standard: 12 Ã— 6 Ã— 6 in</text>
+      <!-- ── FORMULA CALLOUT ─────────────────────────── -->
+      <rect x="30" y="258" width="210" height="34" rx="6"
+        fill="#eff6ff" stroke="#0070f3" stroke-width="1"/>
+      <text x="135" y="271" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8" font-weight="700" fill="#1d4ed8" letter-spacing="0.2">BLOCK COUNT</text>
+      <text x="135" y="284" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="800" fill="#1e3a8a">Blocks = ⌈L ÷ 1.33 ft⌉ × ⌈H ÷ 0.67 ft⌉</text>
     </svg>
   </div>
   <figcaption class="diagram-caption">
-    Cross-section showing wall height, length, gravel base, and backfill zone â€” enter dimensions above to calculate blocks and material volumes.
+    Cross-section showing wall height, length, gravel base, and backfill zone — enter dimensions above to calculate blocks and material volumes.
   </figcaption>
 </figure>
 

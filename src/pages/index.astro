@@ -1,15 +1,96 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { buildHomeMeta } from '../utils/seo';
-import { buildWebSiteSchema, buildOrganizationSchema } from '../utils/schema';
+import { buildWebSiteSchema, buildOrganizationSchema, buildFaqSchema } from '../utils/schema';
 import { categories } from '../data/categories';
-import { getFeaturedCalculators, calculatorRegistry } from '../data/registry';
+import { getFeaturedCalculators, calculatorRegistry, getCalculatorsByCategory } from '../data/registry';
 import CategoryIcon from '../components/ui/CategoryIcon.astro';
+import { getCollection } from 'astro:content';
 
 const meta = buildHomeMeta();
-const schemas = [buildWebSiteSchema(), buildOrganizationSchema()];
-const featuredCalcs = getFeaturedCalculators(6);
 const totalCalcs = calculatorRegistry.length;
+const featuredCalcs = getFeaturedCalculators(6);
+
+// Search index — inlined into the page so search works without a network request
+const searchIndex = calculatorRegistry.map(c => ({
+  slug: c.slug,
+  name: c.name,
+  description: c.description,
+  category: c.category,
+}));
+
+// Fetch recent blog posts
+const posts = await getCollection('blog', ({ data }) => !data.draft);
+posts.sort((a, b) => b.data.publishedAt.localeCompare(a.data.publishedAt));
+const recentPosts = posts.slice(0, 6);
+
+const formulas = [
+  {
+    name: 'Concrete Volume',
+    formula: 'L × W × T ÷ 27',
+    desc: 'Cubic yards for any slab',
+    href: '/calculators/concrete-slab-calculator/',
+  },
+  {
+    name: 'Rafter Length',
+    formula: '√(Run² + Rise²)',
+    desc: 'Pythagorean method',
+    href: '/calculators/rafter-calculator/',
+  },
+  {
+    name: 'Roof Pitch',
+    formula: 'Rise ÷ Run × 12',
+    desc: 'X:12 slope ratio',
+    href: '/calculators/roof-pitch-calculator/',
+  },
+  {
+    name: 'Stud Count',
+    formula: '(Wall ÷ Spacing) + 1',
+    desc: 'Field studs per wall',
+    href: '/calculators/stud-calculator/',
+  },
+  {
+    name: 'Gravel Volume',
+    formula: 'L × W × D ÷ 27',
+    desc: 'Cubic yards of fill',
+    href: '/calculators/gravel-calculator/',
+  },
+  {
+    name: 'Board Feet',
+    formula: 'T × W × L ÷ 12',
+    desc: 'Lumber pricing unit',
+    href: '/calculators/board-foot-calculator/',
+  },
+];
+
+const faqs = [
+  {
+    q: 'How much concrete do I need for a 10×10 slab at 4 inches thick?',
+    a: 'A 10×10 slab at 4 inches thick requires about 1.23 cubic yards. Add a 10% waste factor and you need roughly 1.35 yards — around 25 bags of 80 lb concrete mix. Use the concrete slab calculator to adjust for any dimensions.',
+  },
+  {
+    q: 'How many bags of concrete do I need per post hole?',
+    a: 'A standard 10-inch diameter hole 3 feet deep takes about half an 80 lb bag. For a 6-inch diameter hole at 2 feet deep, one 40 lb bag per hole is usually sufficient. Hole diameter and depth are the main variables — the post hole calculator handles both.',
+  },
+  {
+    q: 'What waste factor should I use for roofing shingles?',
+    a: 'Use 10% for simple gable roofs and 15% for hip roofs, multi-valley roofs, or pitches above 8:12. Always round up to whole squares when ordering — a partial square costs the same to deliver.',
+  },
+  {
+    q: 'How do I calculate the number of studs for a wall?',
+    a: 'Divide wall length in inches by stud spacing (16 or 24 inches) and add 1 for the end stud. Add 3 studs per corner assembly and 4 studs per opening (2 king + 2 jack studs). The stud calculator handles all of this automatically.',
+  },
+  {
+    q: 'Are these calculators accurate enough for contractor use?',
+    a: 'Yes. Our formulas follow ACI, IRC, and NRCA industry standards — the same references used by engineers and estimators. Results are material estimates; always verify critical quantities with your supplier and add appropriate waste factors for your specific conditions.',
+  },
+];
+
+const schemas = [
+  buildWebSiteSchema(),
+  buildOrganizationSchema(),
+  buildFaqSchema(faqs.map(f => ({ question: f.q, answer: f.a }))),
+];
 ---
 
 <BaseLayout meta={meta} schemas={schemas}>
@@ -18,76 +99,97 @@ const totalCalcs = calculatorRegistry.length;
   <section class="hero">
     <div class="hero-glow"></div>
     <div class="hero-inner">
-      <div class="hero-badge">
-        <span class="hero-badge-dot"></span>
-        Free &nbsp;·&nbsp; No signup required &nbsp;·&nbsp; Works on any device
-      </div>
-
       <h1 class="hero-headline">
-        Calculate exactly how<br/>much material you need.
+        Construction calculators<br/>that actually work on site.
       </h1>
 
       <p class="hero-sub">
-        Accurate, instant estimates for concrete, framing, decking,
-        fencing, and more. Built for contractors and serious DIYers.
+        Accurate material estimates for concrete, framing, roofing, excavation,
+        masonry, and more. Built for contractors and serious DIYers.
       </p>
+
+      <!-- Category pills — visible without scroll on mobile -->
+      <div class="hero-cats">
+        {categories.map(cat => (
+          <a href={`/category/${cat.slug}/`} class="hero-cat-pill" style={`--accent: ${cat.color}`}>
+            {cat.name}
+          </a>
+        ))}
+      </div>
+
+      <!-- Search bar -->
+      <div class="hero-search-wrap">
+        <div class="hero-search">
+          <svg class="hero-search-icon" width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <circle cx="8.5" cy="8.5" r="5.75" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M13 13l3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <input
+            id="hero-search-input"
+            type="search"
+            placeholder="Search calculators — concrete, rebar, roof pitch…"
+            class="hero-search-input"
+            autocomplete="off"
+            aria-label="Search calculators"
+          />
+        </div>
+        <div id="hero-search-results" class="hero-search-results" aria-live="polite"></div>
+      </div>
 
       <div class="hero-actions">
         <a href="/calculators/" class="hero-btn-primary">
-          Browse Calculators
+          Browse All {totalCalcs} Calculators
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
             <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </a>
-        <a href="/guides/" class="hero-btn-ghost">View Guides</a>
+        <a href="/blog/" class="hero-btn-ghost">Read the Guides</a>
       </div>
 
       <div class="hero-proof">
-        <span>{totalCalcs > 0 ? `${totalCalcs} calculators` : '12+ calculators'}</span>
+        <span>{totalCalcs}+ calculators</span>
         <span class="hero-proof-sep">·</span>
         <span>{categories.length} categories</span>
         <span class="hero-proof-sep">·</span>
-        <span>Always free</span>
+        <span>Imperial &amp; metric</span>
+        <span class="hero-proof-sep">·</span>
+        <span>No signup</span>
       </div>
     </div>
   </section>
 
-  <!-- ── Featured Calculators ──────────────────────────────────── -->
-  {featuredCalcs.length > 0 && (
-    <section class="section">
-      <div class="container">
-        <div class="section-header">
-          <div>
-            <h2 class="section-title">Popular Calculators</h2>
-            <p class="section-sub">Most-used tools by contractors and DIYers</p>
-          </div>
-          <a href="/calculators/" class="section-link">
-            View all {totalCalcs > 0 ? totalCalcs : ''} →
-          </a>
+  <!-- ── Popular Calculators ──────────────────────────────────── -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Popular Calculators</h2>
+          <p class="section-sub">Most-used tools by contractors and DIYers</p>
         </div>
-        <div class="calc-grid">
-          {featuredCalcs.map(calc => {
-            const cat = categories.find(c => c.slug === calc.category);
-            return (
-              <a href={`/calculators/${calc.slug}/`} class="calc-card" style={`--accent: ${cat?.color ?? '#0070f3'}`}>
-                <div class="calc-card-icon">
-                  <CategoryIcon name={calc.category} size={22} />
-                </div>
-                <h3 class="calc-card-title">{calc.name}</h3>
-                <p class="calc-card-desc">{calc.description}</p>
-                <span class="calc-card-cta">
-                  Open calculator
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                    <path d="M2.5 7h9M7.5 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </span>
-              </a>
-            );
-          })}
-        </div>
+        <a href="/calculators/" class="section-link">View all {totalCalcs} →</a>
       </div>
-    </section>
-  )}
+      <div class="calc-grid">
+        {featuredCalcs.map(calc => {
+          const cat = categories.find(c => c.slug === calc.category);
+          return (
+            <a href={`/calculators/${calc.slug}/`} class="calc-card" style={`--accent: ${cat?.color ?? '#ea580c'}`}>
+              <div class="calc-card-icon">
+                <CategoryIcon name={calc.category} size={22} />
+              </div>
+              <h3 class="calc-card-title">{calc.name}</h3>
+              <p class="calc-card-desc">{calc.description}</p>
+              <span class="calc-card-cta">
+                Open calculator
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                  <path d="M2.5 7h9M7.5 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  </section>
 
   <!-- ── Category Grid ─────────────────────────────────────────── -->
   <section class="section section--alt">
@@ -99,13 +201,38 @@ const totalCalcs = calculatorRegistry.length;
         </div>
       </div>
       <div class="cat-grid">
-        {categories.map(cat => (
-          <a href={`/category/${cat.slug}/`} class="cat-card" style={`--accent: ${cat.color}`}>
-            <div class="cat-card-icon">
-              <CategoryIcon name={cat.icon} size={28} />
-            </div>
-            <span class="cat-card-name">{cat.name}</span>
-            <span class="cat-card-desc">{cat.shortDescription}</span>
+        {categories.map(cat => {
+          const count = getCalculatorsByCategory(cat.slug).length;
+          return (
+            <a href={`/category/${cat.slug}/`} class="cat-card" style={`--accent: ${cat.color}`}>
+              <div class="cat-card-icon">
+                <CategoryIcon name={cat.icon} size={28} />
+              </div>
+              <span class="cat-card-name">{cat.name}</span>
+              <span class="cat-card-count">{count} calculator{count !== 1 ? 's' : ''}</span>
+              <span class="cat-card-desc">{cat.shortDescription}</span>
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Common Formulas ───────────────────────────────────────── -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header section-header--center">
+        <div>
+          <h2 class="section-title">Construction Formula Reference</h2>
+          <p class="section-sub">The six most common calculations — click any to open the full calculator</p>
+        </div>
+      </div>
+      <div class="formula-grid">
+        {formulas.map(f => (
+          <a href={f.href} class="formula-card">
+            <span class="formula-name">{f.name}</span>
+            <code class="formula-eq">{f.formula}</code>
+            <span class="formula-desc">{f.desc}</span>
           </a>
         ))}
       </div>
@@ -113,47 +240,47 @@ const totalCalcs = calculatorRegistry.length;
   </section>
 
   <!-- ── Why section ───────────────────────────────────────────── -->
-  <section class="section">
+  <section class="section section--alt">
     <div class="container">
       <div class="section-header section-header--center">
         <div>
           <h2 class="section-title">Why professionals use ConstructCalc</h2>
-          <p class="section-sub">Everything you need, nothing you don't</p>
+          <p class="section-sub">Built for the job site, not the classroom</p>
         </div>
       </div>
       <div class="features-grid">
-        {([
+        {[
           {
-            icon: `<path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 12a9 9 0 1018 0A9 9 0 003 12" stroke="currentColor" stroke-width="1.5" fill="none"/>`,
+            icon: `<path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/>`,
             title: 'Contractor-grade formulas',
-            body: 'Industry-standard calculations with built-in waste factors used by professionals on every project.',
+            body: 'Industry-standard calculations with built-in waste factors. Same math used by professionals on every project.',
           },
           {
             icon: `<path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M9 2v20M15 2v20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".4"/>`,
             title: 'Imperial & metric, one click',
-            body: 'Switch between unit systems without re-entering a single number. Results update instantly.',
+            body: 'Switch unit systems without re-entering a single number. Results update instantly.',
           },
           {
-            icon: `<path d="M12 2v20M2 12h20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".4"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/>`,
-            title: 'No account required',
-            body: 'Open a calculator, enter your dimensions, get your answer. No email, no signup, no friction.',
+            icon: `<circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M12 8v4l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`,
+            title: 'No account, no waiting',
+            body: 'Open a calculator, enter dimensions, get your answer. No email, no signup, no friction.',
           },
           {
             icon: `<rect x="2" y="5" width="20" height="14" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M2 10h20" stroke="currentColor" stroke-width="1.5"/><path d="M6 15h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`,
             title: 'Cost estimates built in',
-            body: 'Enter your local material price and get a budget estimate alongside your volume calculation.',
+            body: 'Enter your local material price to get a budget estimate alongside every volume calculation.',
           },
           {
             icon: `<path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" fill="none"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>`,
             title: 'Step-by-step formulas',
-            body: 'Every calculator shows exactly how the math works — so you can verify the result yourself.',
+            body: 'Every calculator shows exactly how the math works — verify any result against your own calculations.',
           },
           {
             icon: `<rect x="5" y="2" width="14" height="20" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M9 7h6M9 11h6M9 15h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`,
-            title: 'FAQ on every page',
-            body: 'Common project questions answered alongside each calculator — thickness standards, bag counts, and more.',
+            title: 'Formulas explained',
+            body: 'Common project questions answered alongside each calculator — standards, bag counts, and code requirements.',
           },
-        ] as const).map((f) => (
+        ].map(f => (
           <div class="feature-card">
             <div class="feature-icon">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true" set:html={f.icon}></svg>
@@ -164,18 +291,103 @@ const totalCalcs = calculatorRegistry.length;
         ))}
       </div>
 
-      <!-- Stats row -->
       <div class="stats-row">
-        {([
-          { value: totalCalcs > 0 ? `${totalCalcs}+` : '12+', label: 'Calculators' },
-          { value: `${categories.length}`, label: 'Categories' },
-          { value: '2', label: 'Unit systems' },
-          { value: '$0', label: 'Cost' },
-        ] as const).map(stat => (
+        {[
+          { value: `${totalCalcs}+`, label: 'Calculators' },
+          { value: `${categories.length}`, label: 'Trade categories' },
+          { value: 'ACI/IRC', label: 'Formula standards' },
+          { value: '$0', label: 'Always free' },
+        ].map(stat => (
           <div class="stat-block">
             <span class="stat-value">{stat.value}</span>
             <span class="stat-label">{stat.label}</span>
           </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Blog / Guides ─────────────────────────────────────────── -->
+  {recentPosts.length > 0 && (
+    <section class="section">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Construction Guides &amp; Articles</h2>
+            <p class="section-sub">How-to guides, cost breakdowns, and formula walkthroughs</p>
+          </div>
+          <a href="/blog/" class="section-link">View all →</a>
+        </div>
+        <div class="post-grid">
+          {recentPosts.map(post => {
+            const slug = post.id.replace(/\.[^.]+$/, '');
+            return (
+              <a href={`/blog/${slug}/`} class="post-card">
+                {post.data.tags.slice(0,1).map(t => (
+                  <span class="post-tag">{t}</span>
+                ))}
+                <h3 class="post-title">{post.data.title}</h3>
+                <p class="post-desc">{post.data.description}</p>
+                <span class="post-cta">Read →</span>
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- ── Trust / EEAT ──────────────────────────────────────────── -->
+  <section class="section section--alt trust-section">
+    <div class="container">
+      <div class="section-header section-header--center">
+        <div>
+          <h2 class="section-title">Built on industry standards</h2>
+          <p class="section-sub">Our formulas follow the same references used by engineers and contractors</p>
+        </div>
+      </div>
+      <div class="trust-grid">
+        {[
+          { label: 'ACI', desc: 'American Concrete Institute — concrete volume and mix design' },
+          { label: 'IRC', desc: 'International Residential Code — footing depth, stud spacing, rafter spans' },
+          { label: 'NRCA', desc: 'National Roofing Contractors Association — roofing material estimating' },
+          { label: 'PCA', desc: 'Portland Cement Association — concrete mix ratios and curing standards' },
+          { label: 'ASTM', desc: 'ASTM International — material weight and density standards' },
+          { label: 'WWPA', desc: 'Western Wood Products Association — lumber sizing and span tables' },
+        ].map(ref => (
+          <div class="trust-card">
+            <span class="trust-badge">{ref.label}</span>
+            <p class="trust-desc">{ref.desc}</p>
+          </div>
+        ))}
+      </div>
+      <div class="trust-links">
+        <a href="/methodology/">How our calculations work</a>
+        <a href="/about/">About ConstructCalc</a>
+        <a href="/contact/">Report an error</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FAQ ───────────────────────────────────────────────────── -->
+  <section class="section">
+    <div class="container-narrow">
+      <div class="section-header section-header--center">
+        <div>
+          <h2 class="section-title">Frequently Asked Questions</h2>
+        </div>
+      </div>
+      <div class="faq-list">
+        {faqs.map((item, i) => (
+          <details class="faq-item" open={i === 0}>
+            <summary class="faq-question">
+              {item.q}
+              <svg class="faq-chevron" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                <path d="M4.5 6.75L9 11.25l4.5-4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </summary>
+            <p class="faq-answer">{item.a}</p>
+          </details>
         ))}
       </div>
     </div>
@@ -187,16 +399,49 @@ const totalCalcs = calculatorRegistry.length;
     <div class="container cta-inner">
       <h2 class="cta-headline">Start calculating your project today.</h2>
       <p class="cta-sub">
-        All calculators are free, work on any device, and require no sign-up.
+        {totalCalcs}+ free calculators. No signup required. Works on any device.
       </p>
       <div class="cta-actions">
         <a href="/calculators/" class="cta-btn-primary">Browse Calculators</a>
-        <a href="/guides/" class="cta-btn-ghost">Read Guides</a>
+        <a href="/blog/" class="cta-btn-ghost">Read the Guides</a>
       </div>
     </div>
   </section>
 
 </BaseLayout>
+
+<script define:vars={{ searchIndex }}>
+  const input = document.getElementById('hero-search-input');
+  const resultsBox = document.getElementById('hero-search-results');
+
+  if (input && resultsBox) {
+    const calcs = searchIndex;
+
+    const escapeHtml = (s) => s.replace(/[&<>"']/g, c => (
+      { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+    ));
+
+    input.addEventListener('input', () => {
+      const q = input.value.trim().toLowerCase();
+      if (!q || q.length < 2) { resultsBox.innerHTML = ''; resultsBox.removeAttribute('data-open'); return; }
+      const matches = calcs.filter(c =>
+        c.name.toLowerCase().includes(q) || c.description.toLowerCase().includes(q)
+      ).slice(0, 6);
+      if (!matches.length) { resultsBox.innerHTML = '<p class="sr-empty">No calculators found</p>'; resultsBox.setAttribute('data-open', ''); return; }
+      resultsBox.innerHTML = matches.map(c =>
+        `<a href="/calculators/${c.slug}/" class="sr-item"><strong>${escapeHtml(c.name)}</strong><span>${escapeHtml(c.description)}</span></a>`
+      ).join('');
+      resultsBox.setAttribute('data-open', '');
+    });
+
+    document.addEventListener('click', e => {
+      if (!input.contains(e.target) && !resultsBox.contains(e.target)) {
+        resultsBox.innerHTML = '';
+        resultsBox.removeAttribute('data-open');
+      }
+    });
+  }
+</script>
 
 <style>
   /* ── Hero ─────────────────────────────────────────────────── */
@@ -204,62 +449,141 @@ const totalCalcs = calculatorRegistry.length;
     position: relative;
     background: var(--ink);
     overflow: hidden;
-    padding: 7rem 1.5rem 6rem;
+    padding: 5.5rem 1.5rem 5rem;
     text-align: center;
   }
 
   .hero-glow {
     position: absolute;
     inset: 0;
-    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,112,243,0.18) 0%, transparent 70%);
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(249,115,22,0.18) 0%, transparent 70%);
     pointer-events: none;
   }
 
   .hero-inner {
     position: relative;
-    max-width: 52rem;
+    max-width: 56rem;
     margin: 0 auto;
   }
 
-  .hero-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.375rem 1rem;
-    border: 1px solid rgba(255,255,255,0.12);
-    background: rgba(255,255,255,0.06);
-    border-radius: 9999px;
-    font-size: 0.8125rem;
-    font-weight: 500;
-    color: #9ca3af;
-    letter-spacing: 0.01em;
-    margin-bottom: 2rem;
-  }
-
-  .hero-badge-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #22c55e;
-    flex-shrink: 0;
-  }
-
   .hero-headline {
-    font-size: clamp(2.5rem, 5.5vw, 4.25rem);
+    font-size: clamp(2.25rem, 5vw, 4rem);
     font-weight: 900;
     color: #fff;
     line-height: 1.08;
     letter-spacing: -0.04em;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
   }
 
   .hero-sub {
-    font-size: clamp(1rem, 2vw, 1.25rem);
+    font-size: clamp(1rem, 2vw, 1.1875rem);
     color: #9ca3af;
     line-height: 1.7;
-    max-width: 38rem;
-    margin: 0 auto 2.5rem;
+    max-width: 40rem;
+    margin: 0 auto 1.75rem;
   }
+
+  /* Category pills */
+  .hero-cats {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 0 auto 2rem;
+    max-width: 42rem;
+  }
+
+  @media (max-width: 639px) {
+    .hero-cats {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      justify-content: flex-start;
+      padding-bottom: 0.375rem;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .hero-cats::-webkit-scrollbar { display: none; }
+  }
+
+  .hero-cat-pill {
+    flex-shrink: 0;
+    padding: 0.375rem 0.875rem;
+    background: color-mix(in srgb, var(--accent, #6b7280) 15%, rgba(255,255,255,0.04));
+    border: 1px solid color-mix(in srgb, var(--accent, #6b7280) 30%, rgba(255,255,255,0.08));
+    color: color-mix(in srgb, var(--accent, #9ca3af) 70%, #d1d5db);
+    border-radius: 9999px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: background 150ms, border-color 150ms;
+  }
+  .hero-cat-pill:hover {
+    background: color-mix(in srgb, var(--accent, #6b7280) 25%, rgba(255,255,255,0.08));
+    border-color: color-mix(in srgb, var(--accent, #6b7280) 50%, rgba(255,255,255,0.15));
+  }
+
+  /* Search */
+  .hero-search-wrap {
+    position: relative;
+    max-width: 42rem;
+    margin: 0 auto 2rem;
+  }
+
+  .hero-search {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0 1.125rem;
+    background: rgba(255,255,255,0.07);
+    border: 1.5px solid rgba(255,255,255,0.14);
+    border-radius: 9999px;
+    transition: border-color 150ms, background 150ms;
+  }
+  .hero-search:focus-within {
+    border-color: rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.10);
+  }
+
+  .hero-search-icon { color: #6b7280; flex-shrink: 0; }
+
+  .hero-search-input {
+    flex: 1;
+    padding: 0.875rem 0;
+    background: none;
+    border: none;
+    outline: none;
+    font-size: 0.9375rem;
+    color: #fff;
+  }
+  .hero-search-input::placeholder { color: #6b7280; }
+
+  .hero-search-results {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0; right: 0;
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 14px;
+    box-shadow: var(--shadow-widget);
+    overflow: hidden;
+    z-index: 50;
+  }
+  .hero-search-results[data-open] { display: block; }
+
+  .hero-search-results :global(.sr-item) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    padding: 0.75rem 1.125rem;
+    border-bottom: 1px solid var(--border-subtle);
+    transition: background 100ms;
+  }
+  .hero-search-results :global(.sr-item:last-child) { border-bottom: none; }
+  .hero-search-results :global(.sr-item:hover) { background: var(--border-subtle); }
+  .hero-search-results :global(.sr-item strong) { font-size: 0.9rem; color: var(--color-text-primary); }
+  .hero-search-results :global(.sr-item span) { font-size: 0.8rem; color: var(--color-text-muted); }
+  .hero-search-results :global(.sr-empty) { padding: 1rem; text-align: center; font-size: 0.875rem; color: var(--color-text-muted); }
 
   .hero-actions {
     display: flex;
@@ -267,7 +591,7 @@ const totalCalcs = calculatorRegistry.length;
     justify-content: center;
     flex-wrap: wrap;
     gap: 0.875rem;
-    margin-bottom: 2.5rem;
+    margin-bottom: 2.25rem;
   }
 
   .hero-btn-primary {
@@ -282,11 +606,9 @@ const totalCalcs = calculatorRegistry.length;
     border-radius: 9999px;
     transition: background 150ms, transform 150ms;
     letter-spacing: -0.01em;
+    white-space: nowrap;
   }
-  .hero-btn-primary:hover {
-    background: var(--color-primary-50);
-    transform: translateY(-2px);
-  }
+  .hero-btn-primary:hover { background: var(--color-primary-50); transform: translateY(-2px); }
 
   .hero-btn-ghost {
     display: inline-flex;
@@ -299,39 +621,28 @@ const totalCalcs = calculatorRegistry.length;
     font-weight: 600;
     border-radius: 9999px;
     transition: border-color 150ms, background 150ms;
+    white-space: nowrap;
   }
-  .hero-btn-ghost:hover {
-    border-color: rgba(255,255,255,0.35);
-    background: rgba(255,255,255,0.06);
-  }
+  .hero-btn-ghost:hover { border-color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.06); }
 
   .hero-proof {
     display: flex;
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 0.75rem;
+    gap: 0.625rem;
     font-size: 0.8125rem;
-    color: #6b7280;
+    color: #9ca3af;
     font-weight: 500;
   }
-
   .hero-proof-sep { opacity: 0.4; }
 
   /* ── Sections ─────────────────────────────────────────────── */
-  .section {
-    padding: 5rem 0;
-  }
-  .section--alt {
-    background: var(--ink);
-    padding: 5rem 0;
-  }
+  .section { padding: 5rem 0; }
+  .section--alt { background: var(--ink); padding: 5rem 0; }
 
-  .container {
-    max-width: 72rem;
-    margin: 0 auto;
-    padding: 0 1.5rem;
-  }
+  .container { max-width: 72rem; margin: 0 auto; padding: 0 1.5rem; }
+  .container-narrow { max-width: 52rem; margin: 0 auto; padding: 0 1.5rem; }
 
   .section-header {
     display: flex;
@@ -340,121 +651,53 @@ const totalCalcs = calculatorRegistry.length;
     gap: 1rem;
     margin-bottom: 2.5rem;
   }
-  .section-header--center {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
+  .section-header--center { flex-direction: column; align-items: center; text-align: center; }
 
-  .section-title {
-    font-size: 1.625rem;
-    font-weight: 800;
-    color: var(--color-text-primary);
-    letter-spacing: -0.03em;
-    line-height: 1.2;
-  }
+  .section-title { font-size: 1.625rem; font-weight: 800; color: var(--color-text-primary); letter-spacing: -0.03em; line-height: 1.2; }
   .section--alt .section-title { color: #fff; }
 
-  .section-sub {
-    margin-top: 0.375rem;
-    font-size: 0.9375rem;
-    color: var(--color-text-muted);
-  }
-  .section--alt .section-sub { color: #6b7280; }
+  .section-sub { margin-top: 0.375rem; font-size: 0.9375rem; color: var(--color-text-muted); }
+  .section--alt .section-sub { color: #9ca3af; }
 
-  .section-link {
-    flex-shrink: 0;
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--color-primary);
-    transition: opacity 150ms;
-  }
+  .section-link { flex-shrink: 0; font-size: 0.875rem; font-weight: 600; color: var(--color-primary); transition: opacity 150ms; }
   .section-link:hover { opacity: 0.7; }
 
   /* ── Calculator cards ─────────────────────────────────────── */
-  .calc-grid {
-    display: grid;
-    grid-template-columns: repeat(1, 1fr);
-    gap: 1rem;
-  }
+  .calc-grid { display: grid; grid-template-columns: repeat(1, 1fr); gap: 1rem; }
   @media (min-width: 640px)  { .calc-grid { grid-template-columns: repeat(2, 1fr); } }
   @media (min-width: 1024px) { .calc-grid { grid-template-columns: repeat(3, 1fr); } }
 
   .calc-card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+    display: flex; flex-direction: column; gap: 0.75rem;
     padding: 1.375rem;
     background: var(--surface-card);
     border: 1px solid var(--border-default);
     border-left: 3px solid var(--accent, var(--color-primary));
     border-radius: 16px;
     box-shadow: var(--shadow-card);
-    transition: box-shadow 150ms, transform 150ms, border-color 150ms;
+    transition: box-shadow 150ms, transform 150ms;
     cursor: pointer;
   }
-  .calc-card:hover {
-    box-shadow: var(--shadow-hover);
-    transform: translateY(-3px);
-    border-color: var(--accent, var(--color-primary));
-  }
+  .calc-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-3px); }
 
   .calc-card-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 10px;
+    width: 42px; height: 42px; border-radius: 10px;
     background: color-mix(in srgb, var(--accent, var(--color-primary)) 12%, transparent);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--accent, var(--color-primary));
-    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent, var(--color-primary)); flex-shrink: 0;
   }
 
-  .calc-card-title {
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--color-text-primary);
-    letter-spacing: -0.02em;
-    line-height: 1.3;
-  }
-
-  .calc-card-desc {
-    font-size: 0.875rem;
-    color: var(--color-text-secondary);
-    line-height: 1.55;
-    flex: 1;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .calc-card-cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    font-size: 0.8125rem;
-    font-weight: 600;
-    color: var(--color-primary);
-    margin-top: 0.25rem;
-  }
+  .calc-card-title { font-size: 1rem; font-weight: 700; color: var(--color-text-primary); letter-spacing: -0.02em; line-height: 1.3; }
+  .calc-card-desc { font-size: 0.875rem; color: var(--color-text-secondary); line-height: 1.55; flex: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .calc-card-cta { display: inline-flex; align-items: center; gap: 0.375rem; font-size: 0.8125rem; font-weight: 600; color: var(--color-primary); margin-top: 0.25rem; }
 
   /* ── Category cards ───────────────────────────────────────── */
-  .cat-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.875rem;
-  }
+  .cat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.875rem; }
   @media (min-width: 640px)  { .cat-grid { grid-template-columns: repeat(3, 1fr); } }
   @media (min-width: 1024px) { .cat-grid { grid-template-columns: repeat(6, 1fr); } }
 
   .cat-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 0.625rem;
+    display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.5rem;
     padding: 1.5rem 1rem;
     background: rgba(255,255,255,0.04);
     border: 1px solid rgba(255,255,255,0.08);
@@ -462,189 +705,131 @@ const totalCalcs = calculatorRegistry.length;
     transition: background 150ms, border-color 150ms, transform 150ms;
     cursor: pointer;
   }
-  .cat-card:hover {
-    background: rgba(255,255,255,0.07);
-    border-color: color-mix(in srgb, var(--accent, #fff) 40%, transparent);
-    transform: scale(1.03);
-  }
+  .cat-card:hover { background: rgba(255,255,255,0.07); border-color: color-mix(in srgb, var(--accent, #fff) 40%, transparent); transform: scale(1.03); }
 
-  .cat-card-icon {
-    width: 52px;
-    height: 52px;
+  .cat-card-icon { width: 52px; height: 52px; border-radius: 14px; background: color-mix(in srgb, var(--accent, #6b7280) 15%, rgba(255,255,255,0.04)); display: flex; align-items: center; justify-content: center; color: var(--accent, #9ca3af); }
+  .cat-card-name { font-size: 0.9375rem; font-weight: 700; color: #fff; letter-spacing: -0.01em; }
+  .cat-card-count { font-size: 0.75rem; font-weight: 600; color: color-mix(in srgb, var(--accent, #6b7280) 70%, #9ca3af); }
+  .cat-card-desc { font-size: 0.75rem; color: #9ca3af; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+  /* ── Formula cards ────────────────────────────────────────── */
+  .formula-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+  @media (min-width: 768px)  { .formula-grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .formula-card {
+    display: flex; flex-direction: column; gap: 0.5rem;
+    padding: 1.25rem;
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
     border-radius: 14px;
-    background: color-mix(in srgb, var(--accent, #6b7280) 15%, rgba(255,255,255,0.04));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--accent, #9ca3af);
+    transition: box-shadow 150ms, transform 150ms;
+    cursor: pointer;
   }
+  .formula-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
 
-  .cat-card-name {
-    font-size: 0.9375rem;
-    font-weight: 700;
-    color: #fff;
-    letter-spacing: -0.01em;
-  }
+  .formula-name { font-size: 0.8125rem; font-weight: 600; color: var(--color-primary); text-transform: uppercase; letter-spacing: 0.04em; }
+  .formula-eq { font-family: var(--font-mono); font-size: 1rem; color: var(--color-text-primary); background: var(--border-subtle); padding: 0.375rem 0.625rem; border-radius: 6px; width: fit-content; }
+  .formula-desc { font-size: 0.8125rem; color: var(--color-text-muted); }
 
-  .cat-card-desc {
-    font-size: 0.75rem;
-    color: #6b7280;
-    line-height: 1.4;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
+  /* ── Blog posts ───────────────────────────────────────────── */
+  .post-grid { display: grid; grid-template-columns: repeat(1, 1fr); gap: 1rem; }
+  @media (min-width: 640px)  { .post-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) { .post-grid { grid-template-columns: repeat(3, 1fr); } }
 
-  /* ── Features grid ────────────────────────────────────────── */
-  .features-grid {
-    display: grid;
-    grid-template-columns: repeat(1, 1fr);
-    gap: 1rem;
-    margin-bottom: 3rem;
+  .post-card {
+    display: flex; flex-direction: column; gap: 0.625rem;
+    padding: 1.375rem;
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 16px;
+    transition: box-shadow 150ms, transform 150ms;
   }
+  .post-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+
+  .post-tag { font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; padding: 0.1875rem 0.5rem; background: var(--color-primary-50); color: var(--color-primary); border-radius: 9999px; width: fit-content; }
+  .post-title { font-size: 1rem; font-weight: 700; color: var(--color-text-primary); letter-spacing: -0.02em; line-height: 1.35; }
+  .post-desc { font-size: 0.875rem; color: var(--color-text-secondary); line-height: 1.6; flex: 1; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .post-cta { font-size: 0.8125rem; font-weight: 600; color: var(--color-primary); margin-top: 0.25rem; }
+
+  /* ── Trust section ────────────────────────────────────────── */
+  .trust-section { background: var(--surface-page); }
+
+  .trust-grid { display: grid; grid-template-columns: repeat(1, 1fr); gap: 1rem; margin-bottom: 2rem; }
+  @media (min-width: 640px)  { .trust-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) { .trust-grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .trust-card { display: flex; align-items: flex-start; gap: 0.875rem; padding: 1.125rem; background: var(--surface-card); border: 1px solid var(--border-default); border-radius: 12px; }
+  .trust-badge { flex-shrink: 0; padding: 0.25rem 0.625rem; background: var(--color-primary-50); color: var(--color-primary); font-size: 0.75rem; font-weight: 700; border-radius: 6px; letter-spacing: 0.02em; margin-top: 1px; }
+  .trust-desc { font-size: 0.875rem; color: var(--color-text-secondary); line-height: 1.55; }
+
+  .trust-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; }
+  .trust-links a { font-size: 0.875rem; font-weight: 500; color: var(--color-primary); transition: opacity 150ms; }
+  .trust-links a:hover { opacity: 0.7; }
+
+  /* ── Features ─────────────────────────────────────────────── */
+  .features-grid { display: grid; grid-template-columns: repeat(1, 1fr); gap: 1rem; margin-bottom: 3rem; }
   @media (min-width: 640px)  { .features-grid { grid-template-columns: repeat(2, 1fr); } }
   @media (min-width: 1024px) { .features-grid { grid-template-columns: repeat(3, 1fr); } }
 
-  .feature-card {
-    padding: 1.5rem;
-    background: var(--surface-page);
-    border: 1px solid var(--border-default);
-    border-radius: 16px;
-  }
-
-  .feature-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    background: var(--color-primary-50);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--color-primary);
-    margin-bottom: 1rem;
-  }
-
-  .feature-title {
-    font-size: 0.9375rem;
-    font-weight: 700;
-    color: var(--color-text-primary);
-    letter-spacing: -0.02em;
-    margin-bottom: 0.5rem;
-  }
-
-  .feature-body {
-    font-size: 0.875rem;
-    color: var(--color-text-secondary);
-    line-height: 1.6;
-  }
+  .feature-card { padding: 1.5rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; }
+  .feature-icon { width: 40px; height: 40px; border-radius: 10px; background: rgba(249,115,22,0.15); display: flex; align-items: center; justify-content: center; color: #fb923c; margin-bottom: 1rem; }
+  .feature-title { font-size: 0.9375rem; font-weight: 700; color: #fff; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+  .feature-body { font-size: 0.875rem; color: #9ca3af; line-height: 1.6; }
 
   /* ── Stats ────────────────────────────────────────────────── */
-  .stats-row {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-  }
+  .stats-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
   @media (min-width: 640px) { .stats-row { grid-template-columns: repeat(4, 1fr); } }
 
-  .stat-block {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 2rem 1rem;
-    background: var(--surface-page);
+  .stat-block { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 2rem 1rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; }
+  .stat-value { font-size: 2.5rem; font-weight: 900; color: #fb923c; letter-spacing: -0.04em; line-height: 1; }
+  .stat-label { margin-top: 0.5rem; font-size: 0.875rem; font-weight: 500; color: #9ca3af; }
+
+  /* ── FAQ ──────────────────────────────────────────────────── */
+  .faq-list { display: flex; flex-direction: column; gap: 0.5rem; }
+
+  .faq-item {
+    background: var(--surface-card);
     border: 1px solid var(--border-default);
-    border-radius: 16px;
+    border-radius: 12px;
+    overflow: hidden;
   }
 
-  .stat-value {
-    font-size: 3rem;
-    font-weight: 900;
-    color: var(--color-primary);
-    letter-spacing: -0.04em;
-    line-height: 1;
+  .faq-question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.125rem 1.25rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
   }
+  .faq-question::-webkit-details-marker { display: none; }
+  .faq-question:hover { background: var(--border-subtle); }
 
-  .stat-label {
-    margin-top: 0.5rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--color-text-muted);
+  .faq-chevron { transition: transform 200ms; flex-shrink: 0; color: var(--color-text-muted); }
+  details[open] .faq-chevron { transform: rotate(180deg); }
+
+  .faq-answer {
+    padding: 0 1.25rem 1.125rem;
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
   }
 
   /* ── CTA ──────────────────────────────────────────────────── */
-  .cta-section {
-    position: relative;
-    background: var(--ink);
-    overflow: hidden;
-    padding: 6rem 1.5rem;
-    text-align: center;
-  }
+  .cta-section { position: relative; background: var(--ink); overflow: hidden; padding: 6rem 1.5rem; text-align: center; }
+  .cta-glow { position: absolute; inset: 0; background: radial-gradient(ellipse 70% 80% at 50% 50%, rgba(249,115,22,0.14) 0%, transparent 70%); pointer-events: none; }
+  .cta-inner { position: relative; max-width: 42rem; margin: 0 auto; }
+  .cta-headline { font-size: clamp(1.75rem, 4vw, 2.75rem); font-weight: 900; color: #fff; letter-spacing: -0.04em; margin-bottom: 1rem; }
+  .cta-sub { font-size: 1.0625rem; color: #9ca3af; line-height: 1.6; margin-bottom: 2.5rem; }
+  .cta-actions { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0.875rem; }
 
-  .cta-glow {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse 70% 80% at 50% 50%, rgba(0,112,243,0.14) 0%, transparent 70%);
-    pointer-events: none;
-  }
-
-  .cta-inner {
-    position: relative;
-    max-width: 42rem;
-    margin: 0 auto;
-  }
-
-  .cta-headline {
-    font-size: clamp(1.75rem, 4vw, 2.75rem);
-    font-weight: 900;
-    color: #fff;
-    letter-spacing: -0.04em;
-    margin-bottom: 1rem;
-  }
-
-  .cta-sub {
-    font-size: 1.0625rem;
-    color: #9ca3af;
-    line-height: 1.6;
-    margin-bottom: 2.5rem;
-  }
-
-  .cta-actions {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 0.875rem;
-  }
-
-  .cta-btn-primary {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.875rem 2rem;
-    background: #fff;
-    color: #0a0a0a;
-    font-size: 0.9375rem;
-    font-weight: 700;
-    border-radius: 9999px;
-    letter-spacing: -0.01em;
-    transition: background 150ms, transform 150ms;
-  }
-  .cta-btn-primary:hover {
-    background: var(--color-primary-50);
-    transform: translateY(-2px);
-  }
-
-  .cta-btn-ghost {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.875rem 2rem;
-    border: 1px solid rgba(255,255,255,0.18);
-    color: #e5e7eb;
-    font-size: 0.9375rem;
-    font-weight: 600;
-    border-radius: 9999px;
-    transition: border-color 150ms;
-  }
+  .cta-btn-primary { display: inline-flex; align-items: center; padding: 0.875rem 2rem; background: #fff; color: #0a0a0a; font-size: 0.9375rem; font-weight: 700; border-radius: 9999px; letter-spacing: -0.01em; transition: background 150ms, transform 150ms; white-space: nowrap; }
+  .cta-btn-primary:hover { background: var(--color-primary-50); transform: translateY(-2px); }
+  .cta-btn-ghost { display: inline-flex; align-items: center; padding: 0.875rem 2rem; border: 1px solid rgba(255,255,255,0.18); color: #e5e7eb; font-size: 0.9375rem; font-weight: 600; border-radius: 9999px; transition: border-color 150ms; white-space: nowrap; }
   .cta-btn-ghost:hover { border-color: rgba(255,255,255,0.35); }
 </style>

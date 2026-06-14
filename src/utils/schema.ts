@@ -31,6 +31,14 @@ export function buildWebSiteSchema() {
     '@type': 'WebSite',
     name: SITE_NAME,
     url: SITE_URL,
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: `${SITE_URL}/calculators/?q={search_term_string}`,
+      },
+      'query-input': 'required name=search_term_string',
+    },
   };
 }
 
@@ -134,6 +142,7 @@ export function buildCollectionPageSchema(opts: {
   name: string;
   description: string;
   url: string;
+  parts?: Array<{ name: string; url: string; description?: string }>;
 }) {
   return {
     '@context': 'https://schema.org',
@@ -146,5 +155,15 @@ export function buildCollectionPageSchema(opts: {
       name: SITE_NAME,
       url: SITE_URL,
     },
+    ...(opts.parts?.length ? {
+      hasPart: opts.parts.map(p => ({
+        '@type': 'WebApplication',
+        name: p.name,
+        url: p.url,
+        ...(p.description ? { description: p.description } : {}),
+        applicationCategory: 'UtilitiesApplication',
+        isAccessibleForFree: true,
+      })),
+    } : {}),
   };
 }

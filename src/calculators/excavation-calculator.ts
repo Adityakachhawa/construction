@@ -17,7 +17,7 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const truckCapYd3 = Math.max(0.1, Number(inputs.truck_capacity ?? 10));
 
     if (lengthFt <= 0 || widthFt <= 0 || depthFt <= 0) {
-      return { cubic_yards: 0, cubic_feet: 0, cubic_meters: 0, expanded_yards: 0, truckloads: 0, cost: 0 };
+      return { cubic_yards: 0, cubic_feet: 0, cubic_meters: 0, expanded_yards: 0, expanded_m3: 0, truckloads: 0, cost: 0 };
     }
 
     const vol             = rectVolFt3(lengthFt, widthFt, depthFt);
@@ -25,7 +25,7 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const truckloads      = Math.ceil(expanded_yards / truckCapYd3);
     const cost            = costPerUnit > 0 ? Math.round(expanded_yards * costPerUnit * 100) / 100 : 0;
 
-    return { ...vol, expanded_yards, truckloads, cost };
+    return { ...vol, expanded_yards, expanded_m3: Math.round(expanded_yards * 0.764555 * 1000) / 1000, truckloads, cost };
   } else {
     const lengthM     = Number(inputs.length_m ?? 0);
     const widthM      = Number(inputs.width_m  ?? 0);
@@ -33,7 +33,7 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const truckCapM3  = Math.max(0.1, Number(inputs.truck_capacity ?? 7.6));
 
     if (lengthM <= 0 || widthM <= 0 || depthM <= 0) {
-      return { cubic_yards: 0, cubic_feet: 0, cubic_meters: 0, expanded_m3: 0, truckloads: 0, cost: 0 };
+      return { cubic_yards: 0, cubic_feet: 0, cubic_meters: 0, expanded_yards: 0, expanded_m3: 0, truckloads: 0, cost: 0 };
     }
 
     const vol         = rectVolM3(lengthM, widthM, depthM);
@@ -41,7 +41,7 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const truckloads  = Math.ceil(expanded_m3 / truckCapM3);
     const cost        = costPerUnit > 0 ? Math.round(expanded_m3 * costPerUnit * 100) / 100 : 0;
 
-    return { ...vol, expanded_m3, truckloads, cost };
+    return { ...vol, expanded_m3, expanded_yards: Math.round(expanded_m3 * 1.30795 * 100) / 100, truckloads, cost };
   }
 }
 
