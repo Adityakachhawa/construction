@@ -1,0 +1,662 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { buildArticleMeta } from '../../utils/seo';
+
+const meta = buildArticleMeta({
+  title: 'Compare Concrete Mixes: 3000 vs 3500 vs 4000 PSI Guide',
+  description: 'Interactive comparison of 3,000, 3,500, and 4,000 PSI concrete mixes. See bag counts, cost estimates, and recommended uses for any slab volume.',
+  slug: 'compare-concrete-mixes',
+  section: 'guides',
+  publishedAt: '2026-06-01',
+});
+
+const mixes = [
+  {
+    psi: '3,000 PSI',
+    id: 'mix-3000',
+    bestFor: ['Driveways', 'Sidewalks', 'Patios', 'Residential slabs'],
+    pros: ['Most widely available', 'Lowest cost', 'Suitable for most residential work'],
+    cons: ['Lower long-term durability', 'Not ideal for freeze-thaw cycles', 'Less abrasion resistant'],
+    yardBags: 45,
+    bagCubicFt: 0.6,
+    pricePerBag: 6.5,
+    color: '#2563eb',
+  },
+  {
+    psi: '3,500 PSI',
+    id: 'mix-3500',
+    bestFor: ['Commercial driveways', 'Exposed aggregate slabs', 'Cold climates', 'Pool decks'],
+    pros: ['Good freeze-thaw resistance', 'Durable for light traffic', 'Good balance of cost and strength'],
+    cons: ['5–10% more expensive than 3,000 PSI', 'Slightly shorter workability window'],
+    yardBags: 48,
+    bagCubicFt: 0.6,
+    pricePerBag: 7.25,
+    color: '#ea580c',
+  },
+  {
+    psi: '4,000 PSI',
+    id: 'mix-4000',
+    bestFor: ['Heavy truck traffic', 'Structural elements', 'Industrial floors', 'Retaining walls'],
+    pros: ['Highest residential strength', 'Excellent abrasion resistance', 'Superior freeze-thaw performance'],
+    cons: ['Most expensive', 'Requires precise water-cement ratio', 'Harder to work with'],
+    yardBags: 56,
+    bagCubicFt: 0.6,
+    pricePerBag: 8.0,
+    color: '#7c3aed',
+  },
+];
+
+const refTable = [
+  ['3,000 PSI', '0.68', '1 : 1¾ : 3', 'Residential', 'Most lumber yards', 'Standard'],
+  ['3,500 PSI', '0.60', '1 : 1½ : 2¾', 'Light commercial', 'Most lumber yards', 'Moderate'],
+  ['4,000 PSI', '0.53', '1 : 1¼ : 2½', 'Commercial/structural', 'Concrete suppliers', 'Harder to work'],
+  ['5,000 PSI', '0.45', 'Mix design required', 'Industrial/structural', 'Concrete suppliers only', 'Professional only'],
+];
+---
+
+<BaseLayout meta={meta}>
+
+  <!-- Hero -->
+  <section class="guide-hero">
+    <div class="guide-hero-inner">
+      <div class="guide-breadcrumb">
+        <a href="/">Home</a>
+        <span>›</span>
+        <a href="/guides/">Guides</a>
+        <span>›</span>
+        <span>Compare Concrete Mixes</span>
+      </div>
+      <h1 class="guide-title">Concrete Mix Comparison Guide</h1>
+      <p class="guide-lead">
+        Choosing the right PSI rating affects strength, cost, and workability. Enter your slab volume below to compare bag counts and costs across the three most common residential mixes.
+      </p>
+    </div>
+  </section>
+
+  <div class="guide-body">
+
+    <!-- Interactive comparison widget -->
+    <section class="compare-widget">
+      <div class="compare-input-row">
+        <label for="slab-volume" class="compare-input-label">Slab volume (cubic yards)</label>
+        <div class="compare-input-wrap">
+          <input
+            type="number"
+            id="slab-volume"
+            class="compare-input"
+            value="5"
+            min="0.1"
+            max="500"
+            step="0.1"
+          />
+          <span class="compare-input-unit">yd³</span>
+        </div>
+      </div>
+
+      <div class="compare-grid">
+        {mixes.map((mix) => (
+          <div class="compare-card" style={`--mix-color: ${mix.color}`}>
+            <div class="compare-card-header">
+              <span class="compare-psi">{mix.psi}</span>
+            </div>
+
+            <div class="compare-stat">
+              <span class="compare-stat-label">60 lb bags needed</span>
+              <span class="compare-stat-value" id={`${mix.id}-bags`} data-bags-per-yard={mix.yardBags}>—</span>
+            </div>
+
+            <div class="compare-stat">
+              <span class="compare-stat-label">Estimated material cost</span>
+              <span class="compare-stat-value" id={`${mix.id}-cost`} data-price-per-bag={mix.pricePerBag}>—</span>
+            </div>
+
+            <div class="compare-divider"></div>
+
+            <div class="compare-use-list">
+              <p class="compare-use-label">Best for</p>
+              <ul>
+                {mix.bestFor.map((use) => <li>{use}</li>)}
+              </ul>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <p class="compare-disclaimer">
+        Bag counts assume 60 lb bags (0.45 cu ft yield). Costs are estimates; actual prices vary by region and supplier. Ready-mix pricing will differ significantly.
+      </p>
+    </section>
+
+    <!-- Pros/Cons -->
+    <section class="guide-section">
+      <h2>Strengths and Trade-offs</h2>
+      <div class="pros-cons-grid">
+        {mixes.map((mix) => (
+          <div class="pros-cons-card" style={`--mix-color: ${mix.color}`}>
+            <h3 class="pros-cons-title">{mix.psi}</h3>
+            <div class="pros-list">
+              <p class="list-label list-label--pro">Pros</p>
+              <ul>
+                {mix.pros.map((p) => <li>{p}</li>)}
+              </ul>
+            </div>
+            <div class="cons-list">
+              <p class="list-label list-label--con">Cons</p>
+              <ul>
+                {mix.cons.map((c) => <li>{c}</li>)}
+              </ul>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Reference table -->
+    <section class="guide-section">
+      <h2>Technical Reference</h2>
+      <div class="guide-table-wrap">
+        <table class="guide-table">
+          <thead>
+            <tr>
+              <th>Strength</th>
+              <th>W/C Ratio</th>
+              <th>Mix Ratio (C:S:A)</th>
+              <th>Typical Use</th>
+              <th>Availability</th>
+              <th>Workability</th>
+            </tr>
+          </thead>
+          <tbody>
+            {refTable.map(([strength, wc, ratio, use, avail, work]) => (
+              <tr>
+                <th scope="row">{strength}</th>
+                <td>{wc}</td>
+                <td class="mono">{ratio}</td>
+                <td>{use}</td>
+                <td>{avail}</td>
+                <td>{work}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="guide-table-note">
+        W/C = water-to-cement ratio by weight. Lower ratio = stronger concrete. C:S:A = cement : sand : aggregate by volume.
+      </p>
+    </section>
+
+    <!-- When to choose each -->
+    <section class="guide-section">
+      <h2>Quick Decision Guide</h2>
+      <div class="decision-grid">
+        <div class="decision-card decision-card--a">
+          <h3>Choose 3,000 PSI when…</h3>
+          <ul>
+            <li>Building a standard residential driveway or patio</li>
+            <li>Working in a mild climate with few freeze-thaw cycles</li>
+            <li>Budget is the primary constraint</li>
+            <li>Foot traffic only (no vehicle loads on slabs under 4")</li>
+          </ul>
+        </div>
+        <div class="decision-card decision-card--b">
+          <h3>Choose 3,500 PSI when…</h3>
+          <ul>
+            <li>Building in a cold climate (USDA Zone 5 or colder)</li>
+            <li>Exposed aggregate or stamped concrete finish</li>
+            <li>Light vehicle loads or occasional heavy deliveries</li>
+            <li>Pool decks or areas exposed to de-icing salts</li>
+          </ul>
+        </div>
+        <div class="decision-card decision-card--c">
+          <h3>Choose 4,000 PSI when…</h3>
+          <ul>
+            <li>Heavy trucks, forklifts, or industrial equipment</li>
+            <li>Structural elements: beams, columns, foundations</li>
+            <li>Retaining walls over 3 feet</li>
+            <li>Commercial or industrial floor slabs</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <div class="guide-cta-row">
+      <a href="/calculators/concrete-slab-calculator/" class="guide-cta-primary">
+        Calculate concrete for my slab →
+      </a>
+      <a href="/guides/frost-depth/" class="guide-cta-secondary">
+        Frost depth reference →
+      </a>
+    </div>
+
+  </div>
+</BaseLayout>
+
+<style>
+  /* Hero */
+  .guide-hero {
+    background: var(--ink);
+    color: #fff;
+    padding: 4rem 0 3.5rem;
+  }
+  .guide-hero-inner {
+    max-width: 56rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+  .guide-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    color: var(--ink-dim);
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .guide-breadcrumb a { color: var(--ink-dim); transition: color 150ms; }
+  .guide-breadcrumb a:hover { color: #fff; }
+  .guide-title {
+    font-size: clamp(1.75rem, 4vw, 2.625rem);
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+    margin-bottom: 1.25rem;
+  }
+  .guide-lead {
+    font-size: 1.0625rem;
+    color: var(--ink-dim);
+    line-height: 1.65;
+    max-width: 52ch;
+  }
+
+  /* Body */
+  .guide-body {
+    max-width: 56rem;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  /* ── Interactive comparison widget ─────────────────────── */
+  .compare-widget {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 20px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    box-shadow: var(--shadow-card);
+  }
+
+  .compare-input-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .compare-input-label {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+  }
+
+  .compare-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    border: 1.5px solid var(--border-default);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--surface-page);
+    height: 42px;
+  }
+  .compare-input-wrap:focus-within { border-color: var(--color-primary); }
+
+  .compare-input {
+    width: 80px;
+    padding: 0 0.75rem;
+    border: none;
+    background: transparent;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    -moz-appearance: textfield;
+  }
+  .compare-input::-webkit-outer-spin-button,
+  .compare-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .compare-input:focus { outline: none; }
+
+  .compare-input-unit {
+    padding: 0 0.625rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    background: var(--border-subtle);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    border-left: 1.5px solid var(--border-default);
+  }
+
+  .compare-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1rem;
+  }
+  @media (min-width: 640px) { .compare-grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .compare-card {
+    border: 2px solid color-mix(in srgb, var(--mix-color) 30%, var(--border-default));
+    border-radius: 14px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    background: color-mix(in srgb, var(--mix-color) 4%, var(--surface-card));
+  }
+
+  .compare-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .compare-psi {
+    font-size: 1.125rem;
+    font-weight: 900;
+    color: var(--mix-color);
+    letter-spacing: -0.03em;
+  }
+
+  .compare-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  .compare-stat-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-text-muted);
+  }
+
+  .compare-stat-value {
+    font-size: 1.75rem;
+    font-weight: 900;
+    color: var(--color-text-primary);
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  .compare-divider {
+    height: 1px;
+    background: var(--border-default);
+  }
+
+  .compare-use-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-text-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .compare-use-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .compare-use-list li {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+    padding-left: 1rem;
+    position: relative;
+  }
+  .compare-use-list li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--mix-color);
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .compare-disclaimer {
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    line-height: 1.55;
+    font-style: italic;
+  }
+
+  /* ── Sections ───────────────────────────────────────────── */
+  .guide-section { display: flex; flex-direction: column; gap: 1.25rem; }
+  .guide-section h2 {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-default);
+  }
+
+  /* Pros/cons */
+  .pros-cons-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1rem;
+  }
+  @media (min-width: 640px) { .pros-cons-grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .pros-cons-card {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-top: 3px solid var(--mix-color);
+    border-radius: 12px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .pros-cons-title {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--mix-color);
+    letter-spacing: -0.02em;
+  }
+
+  .pros-list, .cons-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .list-label {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .list-label--pro { color: #15803d; }
+  .list-label--con { color: #b45309; }
+
+  .pros-list ul, .cons-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .pros-list li, .cons-list li {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    padding-left: 1rem;
+    position: relative;
+  }
+  .pros-list li::before { content: '+'; position: absolute; left: 0; color: #15803d; font-weight: 700; }
+  .cons-list li::before { content: '−'; position: absolute; left: 0; color: #b45309; font-weight: 700; }
+
+  /* Table */
+  .guide-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border-default);
+    border-radius: 14px;
+  }
+  .guide-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+  .guide-table thead tr { background: var(--border-subtle); }
+  .guide-table th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    white-space: nowrap;
+  }
+  .guide-table tbody th {
+    padding: 0.625rem 1rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    border-top: 1px solid var(--border-subtle);
+    white-space: nowrap;
+  }
+  .guide-table td {
+    padding: 0.625rem 1rem;
+    color: var(--color-text-secondary);
+    border-top: 1px solid var(--border-subtle);
+  }
+  .guide-table tbody tr:hover { background: var(--border-subtle); }
+  .mono { font-family: ui-monospace, monospace; font-size: 0.8125rem; }
+
+  .guide-table-note {
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    line-height: 1.55;
+    font-style: italic;
+  }
+
+  /* Decision cards */
+  .decision-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 0.875rem;
+  }
+  @media (min-width: 640px) { .decision-grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .decision-card {
+    padding: 1.25rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-default);
+  }
+  .decision-card--a { border-left: 3px solid #2563eb; }
+  .decision-card--b { border-left: 3px solid #ea580c; }
+  .decision-card--c { border-left: 3px solid #7c3aed; }
+
+  .decision-card h3 {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: 0.75rem;
+  }
+  .decision-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .decision-card li {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    padding-left: 1.125rem;
+    position: relative;
+  }
+  .decision-card li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    font-weight: 700;
+    color: var(--color-text-muted);
+  }
+
+  /* CTA row */
+  .guide-cta-row {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-default);
+  }
+
+  .guide-cta-primary {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    background: var(--color-primary);
+    color: #fff;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    border-radius: 9999px;
+    transition: background 150ms, transform 150ms;
+  }
+  .guide-cta-primary:hover { background: var(--color-primary-hover); transform: translateY(-1px); }
+
+  .guide-cta-secondary {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    transition: color 150ms;
+  }
+  .guide-cta-secondary:hover { color: var(--color-primary); }
+</style>
+
+<script>
+  const volumeInput = document.getElementById('slab-volume') as HTMLInputElement | null;
+
+  const mixes = [
+    { id: 'mix-3000', bagsPerYard: 45, pricePerBag: 6.50 },
+    { id: 'mix-3500', bagsPerYard: 48, pricePerBag: 7.25 },
+    { id: 'mix-4000', bagsPerYard: 56, pricePerBag: 8.00 },
+  ];
+
+  function fmt(n: number): string {
+    return n.toLocaleString('en-US', { maximumFractionDigits: 0 });
+  }
+
+  function fmtCost(n: number): string {
+    return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
+
+  function update() {
+    const volume = parseFloat(volumeInput?.value ?? '5') || 5;
+    mixes.forEach(({ id, bagsPerYard, pricePerBag }) => {
+      const bags = Math.ceil(volume * bagsPerYard * 1.05); // 5% waste
+      const cost = bags * pricePerBag;
+      const bagsEl = document.getElementById(`${id}-bags`);
+      const costEl = document.getElementById(`${id}-cost`);
+      if (bagsEl) bagsEl.textContent = fmt(bags);
+      if (costEl) costEl.textContent = fmtCost(cost);
+    });
+  }
+
+  volumeInput?.addEventListener('input', update);
+  update();
+</script>

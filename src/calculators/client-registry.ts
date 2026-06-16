@@ -35,6 +35,7 @@ import { insulationCalculator } from './insulation-calculator';
 import { mortarCalculator } from './mortar-calculator';
 import { groutCalculator } from './grout-calculator';
 import { postHoleCalculator } from './post-hole-calculator';
+import { concreteSlabRebarCalculator } from './concrete-slab-rebar-calculator';
 
 export type FormulaFn = (
   inputs: CalculatorInputMap,
@@ -81,6 +82,7 @@ const all: CalculatorConfig[] = [
   mortarCalculator,
   groutCalculator,
   postHoleCalculator,
+  concreteSlabRebarCalculator,
 ];
 
 export const formulaRegistry: Record<string, FormulaFn> = Object.fromEntries(

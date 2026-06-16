@@ -10,9 +10,10 @@ interface Props {
   meta: MetaProps;
   schemas?: Record<string, unknown>[];
   currentPath?: string;
+  heroPage?: boolean;
 }
 
-const { meta, schemas = [], currentPath = Astro.url.pathname } = Astro.props;
+const { meta, schemas = [], currentPath = Astro.url.pathname, heroPage = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -23,7 +24,7 @@ const { meta, schemas = [], currentPath = Astro.url.pathname } = Astro.props;
   </head>
   <body>
     <a href="#main-content" class="skip-link">Skip to content</a>
-    <Header currentPath={currentPath} />
+    <Header currentPath={currentPath} heroPage={heroPage} />
     <main id="main-content">
       <slot />
     </main>

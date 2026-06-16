@@ -1,0 +1,467 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { buildArticleMeta } from '../../utils/seo';
+
+const meta = buildArticleMeta({
+  title: 'US Frost Depth Reference by State',
+  description: 'IRC frost depth values for all 50 US states and DC. Use these minimums when sizing footings for decks, posts, fences, and foundations.',
+  slug: 'frost-depth',
+  section: 'guides',
+  publishedAt: '2026-06-01',
+});
+
+const frostData = [
+  ['Alabama', '6–12"', 'Birmingham, Mobile', 'Mild climate; some northern counties deeper'],
+  ['Alaska', '60–144"', 'Anchorage, Fairbanks', 'Permafrost zones may exceed 144"'],
+  ['Arizona', '0–12"', 'Phoenix, Flagstaff', 'Flagstaff at 7,000 ft can reach 24"'],
+  ['Arkansas', '6–18"', 'Little Rock, Fort Smith', 'Northern counties up to 24"'],
+  ['California', '0–24"', 'Los Angeles, Sacramento', 'Mountain areas can exceed 36"'],
+  ['Colorado', '36–48"', 'Denver, Colorado Springs', 'Mountains can exceed 60"'],
+  ['Connecticut', '36–48"', 'Hartford, Bridgeport', 'Coastal areas slightly less'],
+  ['Delaware', '18–24"', 'Wilmington, Dover', ''],
+  ['Florida', '0"', 'Miami, Orlando', 'No frost depth requirement'],
+  ['Georgia', '6–12"', 'Atlanta, Savannah', 'North Georgia mountains up to 18"'],
+  ['Hawaii', '0"', 'Honolulu, Maui', 'No frost depth requirement'],
+  ['Idaho', '36–60"', 'Boise, Idaho Falls', 'Northern panhandle can reach 72"'],
+  ['Illinois', '36–48"', 'Chicago, Springfield', 'Northern Illinois closer to 48"'],
+  ['Indiana', '36–48"', 'Indianapolis, Fort Wayne', ''],
+  ['Iowa', '42–60"', 'Des Moines, Sioux City', 'Northern Iowa often 60"'],
+  ['Kansas', '24–36"', 'Wichita, Kansas City', 'Northern border up to 42"'],
+  ['Kentucky', '18–24"', 'Louisville, Lexington', ''],
+  ['Louisiana', '0–6"', 'New Orleans, Baton Rouge', 'Rarely freezes'],
+  ['Maine', '48–72"', 'Portland, Bangor', 'Northern Maine up to 80"'],
+  ['Maryland', '18–24"', 'Baltimore, Annapolis', 'Western mountains deeper'],
+  ['Massachusetts', '36–48"', 'Boston, Worcester', 'Cape Cod slightly less'],
+  ['Michigan', '36–60"', 'Detroit, Grand Rapids', 'Upper Peninsula up to 72"'],
+  ['Minnesota', '42–72"', 'Minneapolis, Duluth', 'Northern Minnesota up to 80"'],
+  ['Mississippi', '6–12"', 'Jackson, Biloxi', ''],
+  ['Missouri', '24–36"', 'St. Louis, Kansas City', 'Northern Missouri closer to 42"'],
+  ['Montana', '48–72"', 'Billings, Missoula', 'Eastern plains slightly less'],
+  ['Nebraska', '36–48"', 'Omaha, Lincoln', 'Panhandle up to 60"'],
+  ['Nevada', '12–36"', 'Las Vegas, Reno', 'High elevation areas deeper'],
+  ['New Hampshire', '48–60"', 'Manchester, Concord', 'North Country up to 72"'],
+  ['New Jersey', '24–36"', 'Newark, Trenton', 'Northern NJ closer to 36"'],
+  ['New Mexico', '12–24"', 'Albuquerque, Santa Fe', 'Mountains can reach 36"'],
+  ['New York', '36–48"', 'New York City, Albany', 'Upstate/Adirondacks up to 60"'],
+  ['North Carolina', '6–18"', 'Charlotte, Raleigh', 'Appalachians up to 24"'],
+  ['North Dakota', '60–72"', 'Bismarck, Fargo', 'One of the deepest in the lower 48'],
+  ['Ohio', '36–42"', 'Columbus, Cleveland', ''],
+  ['Oklahoma', '12–24"', 'Oklahoma City, Tulsa', 'Panhandle up to 30"'],
+  ['Oregon', '12–36"', 'Portland, Eugene', 'Eastern Oregon higher elevation deeper'],
+  ['Pennsylvania', '30–42"', 'Philadelphia, Pittsburgh', 'Northern tier closer to 48"'],
+  ['Rhode Island', '36–42"', 'Providence', ''],
+  ['South Carolina', '6–12"', 'Columbia, Charleston', ''],
+  ['South Dakota', '42–72"', 'Sioux Falls, Rapid City', 'Black Hills deeper'],
+  ['Tennessee', '12–18"', 'Nashville, Memphis', 'East TN mountains up to 24"'],
+  ['Texas', '0–12"', 'Houston, Dallas', 'Panhandle up to 18"'],
+  ['Utah', '24–48"', 'Salt Lake City, Provo', 'High valleys can reach 60"'],
+  ['Vermont', '48–60"', 'Burlington, Montpelier', 'Northeast Kingdom up to 72"'],
+  ['Virginia', '18–24"', 'Richmond, Norfolk', 'Northern VA/mountains up to 36"'],
+  ['Washington', '12–36"', 'Seattle, Spokane', 'Eastern WA higher; mountains deeper'],
+  ['Washington DC', '18–24"', 'Washington DC', ''],
+  ['West Virginia', '24–36"', 'Charleston, Morgantown', 'High elevations up to 42"'],
+  ['Wisconsin', '42–60"', 'Milwaukee, Madison', 'Northern Wisconsin up to 72"'],
+  ['Wyoming', '36–60"', 'Cheyenne, Casper', 'High elevations can exceed 72"'],
+];
+
+const faqs = [
+  {
+    q: 'What is frost depth and why does it matter for construction?',
+    a: 'Frost depth (also called frost line) is the depth at which groundwater in soil freezes during winter. Footings placed above the frost line are subject to frost heave — ice expansion pushing soil upward and damaging structures. All footings for permanent structures must extend below local frost depth.',
+  },
+  {
+    q: 'Where do I find the official frost depth for my county?',
+    a: 'The International Residential Code (IRC) Table R301.2(1) lists design frost depths by jurisdiction. Your local building department is the authoritative source since counties can adopt more stringent values than the state minimum.',
+  },
+  {
+    q: 'Does frost depth apply to deck footings?',
+    a: 'Yes. Deck footings are structural elements that must extend below frost depth. Frost-exempt footings (pinned footings, helical piers) are available alternatives in some jurisdictions — check with your local AHJ.',
+  },
+  {
+    q: 'Can I use a shorter footing depth with insulation?',
+    a: 'In some cases, yes. Frost-protected shallow foundations (FPSF) use rigid insulation to reduce required depth. This is permitted under IRC Appendix F and typically requires an engineering review.',
+  },
+];
+---
+
+<BaseLayout meta={meta}>
+
+  <!-- Hero -->
+  <section class="guide-hero">
+    <div class="guide-hero-inner">
+      <div class="guide-breadcrumb">
+        <a href="/">Home</a>
+        <span>›</span>
+        <a href="/guides/">Guides</a>
+        <span>›</span>
+        <span>Frost Depth Reference</span>
+      </div>
+      <h1 class="guide-title">US Frost Depth Reference by State</h1>
+      <p class="guide-lead">
+        IRC design frost depth ranges for all 50 states and DC. These values represent the minimum footing depth required to prevent frost heave. Always verify with your local building department.
+      </p>
+      <div class="guide-meta-row">
+        <span class="guide-badge">IRC Table R301.2(1)</span>
+        <span class="guide-badge">All 50 States + DC</span>
+        <span class="guide-badge">Updated 2026</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="guide-body">
+
+    <!-- Quick-use callout -->
+    <div class="guide-callout">
+      <div class="guide-callout-icon" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+          <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M10 7v1m0 2v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <p class="guide-callout-title">Apply frost depth to your project</p>
+        <p class="guide-callout-body">
+          Use these values with the
+          <a href="/calculators/post-hole-calculator/">Post Hole Calculator</a>
+          and
+          <a href="/calculators/deck-footing-calculator/">Deck Footing Calculator</a>
+          to size your concrete footings correctly.
+        </p>
+      </div>
+    </div>
+
+    <!-- Main table -->
+    <section class="guide-section">
+      <h2>Frost Depth by State</h2>
+      <p class="guide-section-intro">
+        Depths shown are typical design values. Local jurisdictions may require deeper footings based on soil type, topography, and elevation. The maximum values apply to the coldest areas of each state.
+      </p>
+      <div class="guide-table-wrap">
+        <table class="guide-table">
+          <thead>
+            <tr>
+              <th>State</th>
+              <th>Frost Depth Range</th>
+              <th>Key Cities</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            {frostData.map(([state, depth, cities, notes]) => (
+              <tr>
+                <th scope="row">{state}</th>
+                <td class="depth-cell">{depth}</td>
+                <td>{cities}</td>
+                <td class="notes-cell">{notes}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="guide-table-source">
+        Source: IRC Table R301.2(1) — Climatic and Geographic Design Criteria. Values reflect typical minimums; consult your local AHJ for jurisdiction-specific requirements.
+      </p>
+    </section>
+
+    <!-- Calculator links -->
+    <section class="guide-section">
+      <h2>Related Calculators</h2>
+      <div class="guide-calc-grid">
+        <a href="/calculators/post-hole-calculator/" class="guide-calc-card">
+          <strong>Post Hole Calculator</strong>
+          <p>Calculate concrete volume for fence posts, mailboxes, and deck posts using your local frost depth.</p>
+          <span class="guide-calc-cta">Open calculator →</span>
+        </a>
+        <a href="/calculators/deck-footing-calculator/" class="guide-calc-card">
+          <strong>Deck Footing Calculator</strong>
+          <p>Size deck footings by load and frost depth. Outputs footing diameter, depth, and concrete volume.</p>
+          <span class="guide-calc-cta">Open calculator →</span>
+        </a>
+        <a href="/calculators/concrete-slab-calculator/" class="guide-calc-card">
+          <strong>Concrete Slab Calculator</strong>
+          <p>Estimate concrete for any slab including thickened edge slabs that extend below frost.</p>
+          <span class="guide-calc-cta">Open calculator →</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="guide-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="guide-faq">
+        {faqs.map(({ q, a }) => (
+          <div class="guide-faq-item">
+            <h3>{q}</h3>
+            <p>{a}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+  </div>
+</BaseLayout>
+
+<style>
+  /* Hero */
+  .guide-hero {
+    background: var(--ink);
+    color: #fff;
+    padding: 4rem 0 3.5rem;
+  }
+
+  .guide-hero-inner {
+    max-width: 56rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .guide-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    color: var(--ink-dim);
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .guide-breadcrumb a { color: var(--ink-dim); transition: color 150ms; }
+  .guide-breadcrumb a:hover { color: #fff; }
+
+  .guide-title {
+    font-size: clamp(1.75rem, 4vw, 2.625rem);
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+    margin-bottom: 1.25rem;
+  }
+
+  .guide-lead {
+    font-size: 1.0625rem;
+    color: var(--ink-dim);
+    line-height: 1.65;
+    max-width: 52ch;
+    margin-bottom: 1.5rem;
+  }
+
+  .guide-meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .guide-badge {
+    padding: 0.25rem 0.75rem;
+    background: rgba(249,115,22,0.15);
+    border: 1px solid rgba(249,115,22,0.3);
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: rgba(249,115,22,0.9);
+    letter-spacing: 0.02em;
+  }
+
+  /* Body */
+  .guide-body {
+    max-width: 56rem;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  /* Callout */
+  .guide-callout {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    background: color-mix(in srgb, var(--color-primary) 6%, var(--surface-card));
+    border: 1px solid color-mix(in srgb, var(--color-primary) 25%, var(--border-default));
+    border-radius: 14px;
+    padding: 1.25rem 1.5rem;
+  }
+
+  .guide-callout-icon {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--color-primary) 12%, var(--surface-card));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary);
+  }
+
+  .guide-callout-title {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: 0.375rem;
+  }
+
+  .guide-callout-body {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  .guide-callout-body a {
+    color: var(--color-primary);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  /* Sections */
+  .guide-section { display: flex; flex-direction: column; gap: 1.25rem; }
+
+  .guide-section h2 {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-default);
+  }
+
+  .guide-section-intro {
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    line-height: 1.65;
+    max-width: 60ch;
+  }
+
+  /* Table */
+  .guide-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border-default);
+    border-radius: 14px;
+  }
+
+  .guide-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+
+  .guide-table thead tr {
+    background: var(--border-subtle);
+  }
+
+  .guide-table th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    white-space: nowrap;
+  }
+
+  .guide-table td {
+    padding: 0.625rem 1rem;
+    color: var(--color-text-secondary);
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .guide-table tbody tr:hover {
+    background: var(--border-subtle);
+  }
+
+  .guide-table tbody th {
+    padding: 0.625rem 1rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    border-top: 1px solid var(--border-subtle);
+    white-space: nowrap;
+  }
+
+  .depth-cell {
+    font-weight: 700;
+    color: var(--color-primary) !important;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .notes-cell {
+    font-size: 0.8125rem;
+    color: var(--color-text-muted) !important;
+  }
+
+  .guide-table-source {
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    line-height: 1.55;
+    font-style: italic;
+  }
+
+  /* Calculator cards */
+  .guide-calc-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 0.875rem;
+  }
+  @media (min-width: 640px)  { .guide-calc-grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .guide-calc-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    padding: 1.125rem 1.25rem;
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 14px;
+    transition: box-shadow 150ms, transform 150ms, border-color 150ms;
+  }
+  .guide-calc-card:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--color-primary) 40%, var(--border-default));
+  }
+  .guide-calc-card strong {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+  }
+  .guide-calc-card p {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+    flex: 1;
+  }
+  .guide-calc-cta {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    margin-top: 0.375rem;
+  }
+
+  /* FAQ */
+  .guide-faq {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--border-default);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .guide-faq-item {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border-default);
+  }
+  .guide-faq-item:last-child { border-bottom: none; }
+
+  .guide-faq-item h3 {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+  }
+
+  .guide-faq-item p {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.65;
+  }
+</style>

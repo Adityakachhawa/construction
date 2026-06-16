@@ -95,6 +95,11 @@ export const categoryContent: Record<string, CategoryContent> = {
             href: '/calculators/post-hole-calculator/',
             desc: 'Concrete volume for fence posts, deck footings, and sign bases. Enter hole diameter, depth, and post count.',
           },
+          {
+            name: 'Concrete Slab + Rebar Calculator',
+            href: '/calculators/concrete-slab-rebar-calculator/',
+            desc: 'Get concrete volume and rebar quantities in one step — cubic yards of concrete plus linear feet, piece count, and weight of rebar for any reinforced slab.',
+          },
         ],
       },
       {

@@ -1,0 +1,356 @@
+import type {
+  CalculatorConfig,
+  CalculatorInputMap,
+  CalculatorOutputMap,
+  UnitSystem,
+} from './_types';
+import { rectVolumeImperial, rectVolumeMetric } from './volume-engine';
+
+const REBAR_LBS_PER_FT = 0.668;
+const REBAR_KG_PER_M   = 0.994;
+
+function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
+  if (unitSystem === 'imperial') {
+    const vol = rectVolumeImperial(inputs, 'thickness');
+
+    const lengthFt  = Number(inputs.length_ft ?? 10) + Number(inputs.length_in ?? 0) / 12;
+    const widthFt   = Number(inputs.width_ft  ?? 10) + Number(inputs.width_in  ?? 0) / 12;
+    const spacingIn = Number(inputs.spacing   ?? 12);
+    const wastePct  = Number(inputs.waste_pct ?? 10) / 100;
+
+    const spacingFt = spacingIn / 12;
+    if (spacingFt <= 0 || lengthFt <= 0 || widthFt <= 0) {
+      return {
+        cubic_yards: vol.cubic_yards, cubic_feet: vol.cubic_feet, cubic_meters: vol.cubic_meters,
+        rebar_linear_ft: 0, rebar_linear_m: 0, rebar_pieces: 0,
+        rebar_weight_lbs: 0, rebar_weight_kg: 0,
+      };
+    }
+    const rowCount     = Math.floor(lengthFt / spacingFt) + 1;
+    const colCount     = Math.floor(widthFt  / spacingFt) + 1;
+    const rebarPieces  = rowCount + colCount;
+    const rebarLinFt   = Math.round((rowCount * widthFt + colCount * lengthFt) * (1 + wastePct) * 10) / 10;
+    const rebarWtLbs   = Math.round(rebarLinFt * REBAR_LBS_PER_FT * 10) / 10;
+
+    return {
+      cubic_yards: vol.cubic_yards,
+      cubic_feet:  vol.cubic_feet,
+      cubic_meters: vol.cubic_meters,
+      rebar_linear_ft: rebarLinFt,
+      rebar_linear_m:  Math.round(rebarLinFt * 0.3048 * 10) / 10,
+      rebar_pieces:    rebarPieces,
+      rebar_weight_lbs: rebarWtLbs,
+      rebar_weight_kg:  Math.round(rebarWtLbs * 0.453592 * 10) / 10,
+    };
+  } else {
+    const vol = rectVolumeMetric(inputs, 'thickness_mm');
+
+    const lengthM   = Number(inputs.length_m   ?? 3);
+    const widthM    = Number(inputs.width_m    ?? 3);
+    const spacingMm = Number(inputs.spacing_mm ?? 300);
+    const wastePct  = Number(inputs.waste_pct  ?? 10) / 100;
+
+    const spacingM = spacingMm / 1000;
+    if (spacingM <= 0 || lengthM <= 0 || widthM <= 0) {
+      return {
+        cubic_yards: vol.cubic_yards, cubic_feet: vol.cubic_feet, cubic_meters: vol.cubic_meters,
+        rebar_linear_ft: 0, rebar_linear_m: 0, rebar_pieces: 0,
+        rebar_weight_lbs: 0, rebar_weight_kg: 0,
+      };
+    }
+    const rowCount    = Math.floor(lengthM / spacingM) + 1;
+    const colCount    = Math.floor(widthM  / spacingM) + 1;
+    const rebarPieces = rowCount + colCount;
+    const rebarLinM   = Math.round((rowCount * widthM + colCount * lengthM) * (1 + wastePct) * 10) / 10;
+    const rebarWtKg   = Math.round(rebarLinM * REBAR_KG_PER_M * 10) / 10;
+
+    return {
+      cubic_yards:  vol.cubic_yards,
+      cubic_feet:   vol.cubic_feet,
+      cubic_meters: vol.cubic_meters,
+      rebar_linear_ft: Math.round(rebarLinM / 0.3048 * 10) / 10,
+      rebar_linear_m:  rebarLinM,
+      rebar_pieces:    rebarPieces,
+      rebar_weight_lbs: Math.round(rebarWtKg / 0.453592 * 10) / 10,
+      rebar_weight_kg:  rebarWtKg,
+    };
+  }
+}
+
+export const concreteSlabRebarCalculator: CalculatorConfig = {
+  slug: 'concrete-slab-rebar-calculator',
+  name: 'Concrete Slab + Rebar Calculator',
+  category: 'concrete',
+  description:
+    'Combined slab and rebar calculator. Enter slab dimensions, thickness, and rebar spacing to get concrete volume in cubic yards plus total linear feet of rebar and weight in one step.',
+  inputs: [
+    // ── Imperial ─────────────────────────────────────────
+    {
+      id: 'length_ft',
+      label: 'Slab Length',
+      type: 'number',
+      unit: 'ft',
+      min: 1,
+      max: 500,
+      step: 1,
+      defaultValue: 10,
+      required: true,
+      onlyIn: 'imperial',
+    },
+    {
+      id: 'length_in',
+      label: 'Slab Length (in)',
+      type: 'number',
+      unit: 'in',
+      min: 0,
+      max: 11,
+      step: 1,
+      defaultValue: 0,
+      onlyIn: 'imperial',
+      groupWith: 'length_ft',
+    },
+    {
+      id: 'width_ft',
+      label: 'Slab Width',
+      type: 'number',
+      unit: 'ft',
+      min: 1,
+      max: 500,
+      step: 1,
+      defaultValue: 10,
+      required: true,
+      onlyIn: 'imperial',
+    },
+    {
+      id: 'width_in',
+      label: 'Slab Width (in)',
+      type: 'number',
+      unit: 'in',
+      min: 0,
+      max: 11,
+      step: 1,
+      defaultValue: 0,
+      onlyIn: 'imperial',
+      groupWith: 'width_ft',
+    },
+    {
+      id: 'thickness',
+      label: 'Slab Thickness',
+      type: 'number',
+      unit: 'in',
+      min: 1,
+      max: 72,
+      step: 0.5,
+      defaultValue: 4,
+      required: true,
+      onlyIn: 'imperial',
+      helpText: 'Standard residential slabs are 4 in thick.',
+    },
+    {
+      id: 'spacing',
+      label: 'Rebar Spacing',
+      type: 'number',
+      unit: 'in',
+      min: 3,
+      max: 24,
+      step: 1,
+      defaultValue: 12,
+      required: true,
+      onlyIn: 'imperial',
+      helpText: 'Common spacing: 12 in residential, 6–8 in driveways.',
+    },
+    {
+      id: 'waste_pct',
+      label: 'Waste %',
+      type: 'number',
+      unit: '%',
+      min: 0,
+      max: 30,
+      step: 1,
+      defaultValue: 10,
+      onlyIn: 'imperial',
+      helpText: 'Add 10% for cuts and overlaps.',
+    },
+    // ── Metric ───────────────────────────────────────────
+    {
+      id: 'length_m',
+      label: 'Slab Length',
+      type: 'number',
+      unit: 'm',
+      min: 0.5,
+      max: 150,
+      step: 0.1,
+      defaultValue: 3,
+      defaultValueMetric: 3,
+      required: true,
+      onlyIn: 'metric',
+    },
+    {
+      id: 'width_m',
+      label: 'Slab Width',
+      type: 'number',
+      unit: 'm',
+      min: 0.5,
+      max: 150,
+      step: 0.1,
+      defaultValue: 3,
+      defaultValueMetric: 3,
+      required: true,
+      onlyIn: 'metric',
+    },
+    {
+      id: 'thickness_mm',
+      label: 'Slab Thickness',
+      type: 'number',
+      unit: 'mm',
+      min: 25,
+      max: 1800,
+      step: 1,
+      defaultValue: 100,
+      defaultValueMetric: 100,
+      required: true,
+      onlyIn: 'metric',
+      helpText: 'Standard residential slabs are 100 mm thick.',
+    },
+    {
+      id: 'spacing_mm',
+      label: 'Rebar Spacing',
+      type: 'number',
+      unit: 'mm',
+      min: 75,
+      max: 600,
+      step: 25,
+      defaultValue: 300,
+      defaultValueMetric: 300,
+      required: true,
+      onlyIn: 'metric',
+      helpText: 'Common spacing: 300 mm residential, 150–200 mm driveways.',
+    },
+    {
+      id: 'waste_pct',
+      label: 'Waste %',
+      type: 'number',
+      unit: '%',
+      min: 0,
+      max: 30,
+      step: 1,
+      defaultValue: 10,
+      onlyIn: 'metric',
+      helpText: 'Add 10% for cuts and overlaps.',
+    },
+  ],
+  outputs: [
+    {
+      id: 'cubic_yards',
+      label: 'Cubic Yards',
+      unit: 'yd³',
+      unitMetric: 'm³',
+      format: 'volume',
+      primary: true,
+      description: 'Concrete volume — standard US order unit',
+    },
+    {
+      id: 'cubic_feet',
+      label: 'Cubic Feet',
+      unit: 'ft³',
+      unitMetric: 'ft³',
+      format: 'volume',
+    },
+    {
+      id: 'cubic_meters',
+      label: 'Cubic Meters',
+      unit: 'm³',
+      unitMetric: 'm³',
+      format: 'volume',
+    },
+    {
+      id: 'rebar_linear_ft',
+      label: 'Rebar Linear Ft',
+      unit: 'ft',
+      unitMetric: 'm',
+      format: 'length',
+      description: 'Total rebar needed (includes waste)',
+    },
+    {
+      id: 'rebar_pieces',
+      label: 'Rebar Pieces',
+      unit: 'bars',
+      unitMetric: 'bars',
+      format: 'number',
+    },
+    {
+      id: 'rebar_weight_lbs',
+      label: 'Rebar Weight',
+      unit: 'lbs',
+      unitMetric: 'kg',
+      format: 'weight',
+      description: 'Based on #4 rebar (0.668 lbs/ft)',
+    },
+  ],
+  formula,
+  unitSystems: ['imperial', 'metric'],
+  relatedCalculators: ['concrete-slab-calculator', 'rebar-calculator', 'concrete-bags-calculator'],
+  orderCallout: {
+    hint: 'Order 5–10% extra concrete and 10% extra rebar to account for waste, cuts, and overlaps.',
+  },
+  seo: {
+    title: 'Concrete Slab + Rebar Calculator',
+    description:
+      'Combined concrete slab and rebar calculator. Enter dimensions, thickness, and bar spacing to get cubic yards of concrete plus rebar linear footage and weight in one step.',
+    h1: 'Concrete Slab + Rebar Calculator',
+    focusKeyword: 'concrete slab rebar calculator',
+  },
+  schema: {
+    appType: 'Construction Calculator',
+    features: [
+      'Calculate concrete volume in cubic yards',
+      'Calculate rebar linear footage',
+      'Calculate rebar piece count',
+      'Calculate rebar weight',
+      'Adjustable rebar spacing',
+      'Configurable waste percentage',
+      'Imperial and metric support',
+    ],
+  },
+  formulaSteps: [
+    {
+      label: 'Calculate concrete volume',
+      formula: 'Volume (yd³) = Length × Width × (Thickness ÷ 12) ÷ 27',
+      description: 'Length and width in feet, thickness converted from inches to feet',
+    },
+    {
+      label: 'Count rebar rows (bars along width)',
+      formula: 'Rows = ⌊Length ÷ Spacing⌋ + 1',
+    },
+    {
+      label: 'Count rebar columns (bars along length)',
+      formula: 'Columns = ⌊Width ÷ Spacing⌋ + 1',
+    },
+    {
+      label: 'Total rebar linear footage (with waste)',
+      formula: 'Linear ft = (Rows × Width + Columns × Length) × (1 + Waste %)',
+    },
+    {
+      label: 'Rebar weight',
+      formula: 'Weight (lbs) = Linear ft × 0.668',
+      description: '#4 rebar: 0.668 lbs per linear foot',
+    },
+  ],
+  faq: [
+    {
+      question: 'Why use a combined slab and rebar calculator?',
+      answer:
+        'Every reinforced slab requires both concrete and rebar — calculating them separately from the same dimensions wastes time and creates room for entry errors. This combined calculator uses your slab dimensions once and returns both material quantities in a single step.',
+    },
+    {
+      question: 'What rebar spacing should I use for a concrete slab?',
+      answer:
+        '12 inches (300 mm) on center is standard for residential slabs, patios, and sidewalks. Use 6–8 inches for driveways and garage floors. Structural engineers specify spacing for load-bearing applications. Closer spacing increases material cost but significantly improves crack resistance.',
+    },
+    {
+      question: 'Should I order extra concrete and rebar?',
+      answer:
+        'Yes. Order 5–10% extra concrete for driveways and slabs — running short mid-pour is expensive and causes cold joints. Order 10% extra rebar to account for overlap splices (typically 12–18 inches) and edge cuts.',
+    },
+  ],
+};

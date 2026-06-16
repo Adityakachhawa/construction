@@ -35,6 +35,7 @@ import { insulationCalculator } from '../calculators/insulation-calculator';
 import { mortarCalculator } from '../calculators/mortar-calculator';
 import { groutCalculator } from '../calculators/grout-calculator';
 import { postHoleCalculator } from '../calculators/post-hole-calculator';
+import { concreteSlabRebarCalculator } from '../calculators/concrete-slab-rebar-calculator';
 
 const _registry: CalculatorConfig[] = [
   concreteSlab,
@@ -73,6 +74,7 @@ const _registry: CalculatorConfig[] = [
   mortarCalculator,
   groutCalculator,
   postHoleCalculator,
+  concreteSlabRebarCalculator,
 ];
 
 const relatedMap: Record<string, string[]> = {
@@ -110,8 +112,9 @@ const relatedMap: Record<string, string[]> = {
   'deck-footing-calculator':      ['concrete-bags-calculator', 'concrete-footing-calculator', 'lumber-calculator'],
   'fence-post-calculator':        ['post-hole-calculator', 'concrete-bags-calculator', 'lumber-calculator'],
   'post-hole-calculator':         ['fence-post-calculator', 'concrete-bags-calculator', 'deck-footing-calculator'],
-  'retaining-wall-calculator':    ['concrete-block-calculator', 'mortar-calculator', 'rebar-calculator'],
-  'paver-base-calculator':        ['gravel-calculator', 'sand-calculator', 'flooring-calculator'],
+  'retaining-wall-calculator':         ['concrete-block-calculator', 'mortar-calculator', 'rebar-calculator'],
+  'paver-base-calculator':             ['gravel-calculator', 'sand-calculator', 'flooring-calculator'],
+  'concrete-slab-rebar-calculator':    ['concrete-slab-calculator', 'rebar-calculator', 'concrete-bags-calculator'],
 };
 
 // Unique on-page intro paragraph per calculator. Feeds calc.seo.intro, which the
@@ -132,6 +135,8 @@ const introMap: Record<string, string> = {
     'Calculate how many concrete blocks (CMUs) you need for a wall, plus the mortar to lay them. Enter wall dimensions and block size to get block count, courses, and mortar volume. Works for standard 8×8×16 block and other common sizes.',
   'rebar-calculator':
     'Plan rebar for a concrete slab or footing: total linear feet, number of bars, and estimated weight. Enter the slab dimensions and your bar spacing (12 in is typical for residential, 6–8 in for driveways) and the calculator lays out a bidirectional grid with a waste allowance. Weights are based on #4 (½ in) rebar.',
+  'concrete-slab-rebar-calculator':
+    'Get concrete volume and rebar quantities for any reinforced slab in a single step. Enter slab dimensions, thickness, and rebar spacing — the calculator returns cubic yards of concrete alongside total rebar linear footage, piece count, and weight. Eliminates the need to run the slab and rebar calculators separately.',
   'gravel-calculator':
     'Estimate gravel, crushed stone, or aggregate by volume and weight for driveways, paths, and drainage. Enter the area dimensions and depth to get cubic yards, cubic feet, and tons. Most loose gravel weighs roughly 1.4 tons per cubic yard, which the calculator uses to convert volume to delivery weight.',
   'sand-calculator':

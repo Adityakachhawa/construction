@@ -41,7 +41,15 @@ const outputsJson = JSON.stringify(
   data-slug={calc.slug}
   data-unit={defaultUnit}
   data-outputs={outputsJson}
+  data-name={calc.name}
 >
+  <!-- Print-only header (hidden on screen) -->
+  <div class="print-header" aria-hidden="true">
+    <strong>{calc.name}</strong>
+    <span id="print-url"></span>
+    <span id="print-date"></span>
+  </div>
+
   <!-- ── LEFT: Input panel ──────────────────────────────── -->
   <div class="widget-inputs">
     <div class="widget-inputs-header">
@@ -174,6 +182,33 @@ const outputsJson = JSON.stringify(
       </div>
     )}
 
+    <!-- Result action buttons -->
+    <div class="result-actions" id="result-actions">
+      <button type="button" class="action-btn" id="action-share" title="Copy shareable link">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M10 3l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M13 6H7a4 4 0 000 8h1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <span id="share-label">Copy link</span>
+      </button>
+      <button type="button" class="action-btn" id="action-checklist" title="Copy order checklist">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M6 3h8M6 8h8M6 13h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M3 3l-1 1 .5.5M3 8l-1 1 .5.5M3 13l-1 1 .5.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span id="checklist-label">Copy checklist</span>
+      </button>
+      <button type="button" class="action-btn" id="action-print" title="Print or save as PDF">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <rect x="3" y="1" width="10" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/>
+          <rect x="3" y="9" width="10" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M3 6h10v5H3z" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="11.5" cy="8.5" r="0.75" fill="currentColor"/>
+        </svg>
+        Print / PDF
+      </button>
+    </div>
+
     <!-- Recommended order callout — only shown when calc.orderCallout is set -->
     {showOrderCallout && primaryOutput && (
       <div class="result-callout" id="order-callout">
@@ -234,6 +269,39 @@ const outputsJson = JSON.stringify(
 </div>
 
 <style>
+  /* ── Print-only header ────────────────────────────────── */
+  .print-header { display: none; }
+
+  @media print {
+    .print-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+      font-size: 0.75rem;
+      color: #555;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+      grid-column: 1 / -1;
+    }
+    .print-header strong { font-size: 1rem; font-weight: 700; color: #000; }
+
+    /* Single-column print layout */
+    .widget-shell { display: block !important; }
+    .widget-results { position: static !important; top: auto !important; }
+
+    /* Hide non-essential UI */
+    .result-actions,
+    .unit-toggle { display: none !important; }
+
+    /* Expand cost details in print */
+    .cost-estimate[open] .cost-body,
+    .cost-estimate .cost-body { display: flex !important; }
+    .cost-estimate { border: 1px solid #ccc; }
+  }
+
   /* ── Widget shell: 40/60 two-column layout ────────────── */
   .widget-shell {
     display: grid;
@@ -377,7 +445,7 @@ const outputsJson = JSON.stringify(
     margin-bottom: 0.25rem;
   }
 
-  /* Primary result card — dominant blue */
+  /* Primary result card */
   .result-primary {
     background: var(--color-primary);
     border-radius: 20px;
@@ -395,54 +463,6 @@ const outputsJson = JSON.stringify(
     text-transform: uppercase;
     letter-spacing: 0.07em;
     opacity: 0.92;
-  }
-
-  .result-primary-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-  }
-
-  .copy-btn {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-    border-radius: 6px;
-    border: 1px solid rgba(255,255,255,0.2);
-    background: rgba(255,255,255,0.1);
-    color: #fff;
-    cursor: pointer;
-    transition: background 150ms, border-color 150ms;
-  }
-  .copy-btn:hover {
-    background: rgba(255,255,255,0.2);
-    border-color: rgba(255,255,255,0.4);
-  }
-
-  .copy-tooltip {
-    position: absolute;
-    bottom: calc(100% + 8px);
-    right: 0;
-    padding: 0.25rem 0.5rem;
-    background: var(--ink);
-    color: #fff;
-    font-size: 0.75rem;
-    font-weight: 600;
-    border-radius: 4px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 200ms, transform 200ms;
-    transform: translateY(4px);
-    white-space: nowrap;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  }
-  .copy-btn.copied .copy-tooltip {
-    opacity: 1;
-    transform: translateY(0);
   }
 
   .result-primary-value-row {
@@ -472,7 +492,7 @@ const outputsJson = JSON.stringify(
     line-height: 1.4;
   }
 
-  /* Secondary results — side by side compact */
+  /* Secondary results */
   .result-secondary-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -510,6 +530,39 @@ const outputsJson = JSON.stringify(
     font-weight: 500;
     color: var(--color-text-muted);
     margin-top: 0.25rem;
+  }
+
+  /* ── Result action buttons ────────────────────────────── */
+  .result-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.4375rem 0.875rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: color 150ms, background 150ms, border-color 150ms;
+    white-space: nowrap;
+  }
+  .action-btn:hover {
+    color: var(--color-text-primary);
+    background: var(--border-subtle);
+    border-color: var(--border-strong);
+  }
+  .action-btn.action-feedback {
+    color: #15803d;
+    border-color: #86efac;
+    background: #f0fdf4;
   }
 
   /* Recommended order callout */
@@ -669,17 +722,24 @@ const outputsJson = JSON.stringify(
   const costTotal  = document.getElementById('cost-total') as HTMLElement | null;
   const orderQty   = document.getElementById('order-qty') as HTMLElement | null;
   const primaryValueEl = document.getElementById('primary-value') as HTMLElement | null;
-  const copyBtn     = document.getElementById('copy-result') as HTMLButtonElement | null;
+  const shareBtn   = document.getElementById('action-share') as HTMLButtonElement | null;
+  const shareLabel = document.getElementById('share-label') as HTMLElement | null;
+  const checklistBtn = document.getElementById('action-checklist') as HTMLButtonElement | null;
+  const checklistLabel = document.getElementById('checklist-label') as HTMLElement | null;
+  const printBtn   = document.getElementById('action-print') as HTMLButtonElement | null;
 
   if (!widget || !form) throw new Error('Calculator DOM missing');
 
   const slug    = widget.dataset.slug ?? '';
+  const calcName = widget.dataset.name ?? 'Calculator';
   const outputs: { id: string; label: string; unit: string; unitMetric: string; primary: boolean }[] =
     JSON.parse(widget.dataset.outputs ?? '[]');
   const formula = formulaRegistry[slug];
   if (!formula) throw new Error(`No formula for "${slug}"`);
 
-  // Persistence: check localStorage first
+  const INPUTS_KEY = `cc-inputs-${slug}`;
+  const PRICE_KEY  = `cc-price-${slug}`;
+
   const savedUnit = localStorage.getItem('cc-unit-system') as 'imperial' | 'metric' | null;
   let currentUnit: 'imperial' | 'metric' = savedUnit ||
     (widget.dataset.unit as 'imperial' | 'metric') || 'imperial';
@@ -695,6 +755,14 @@ const outputsJson = JSON.stringify(
     return data;
   }
 
+  function restoreInputs(map: Record<string, unknown>) {
+    form.querySelectorAll<HTMLInputElement>('input[name]').forEach((el) => {
+      if (map[el.name] !== undefined) {
+        el.value = String(map[el.name]);
+      }
+    });
+  }
+
   function fmt(n: number, decimals = 3): string {
     if (!Number.isFinite(n)) n = 0;
     return n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: decimals });
@@ -702,23 +770,32 @@ const outputsJson = JSON.stringify(
 
   function updateResults() {
     const results = formula(getInputs(), currentUnit);
+    let primaryVal = 0;
 
     outputs.forEach(({ id, unit, primary }) => {
       const raw = results[id] ?? 0;
       if (primary) {
-        // Update the primary big number
+        primaryVal = raw;
         if (primaryValueEl) primaryValueEl.textContent = fmt(raw, 3);
-        // Update the recommended order callout
         if (orderQty) orderQty.textContent = fmt(raw * 1.1, 2);
-        // Update cost estimate
         updateCost(raw);
       } else {
-        // Secondary cards — find by data-output-id
         const card = document.querySelector<HTMLElement>(`#secondary-results [data-output-id="${id}"]`);
         const numEl = card?.querySelector<HTMLElement>('.result-secondary-number');
         if (numEl) numEl.textContent = fmt(raw, 3);
       }
     });
+
+    // Persist inputs
+    try {
+      localStorage.setItem(INPUTS_KEY, JSON.stringify(getInputs()));
+    } catch {}
+
+    // Update shareable URL hash
+    try {
+      const encoded = btoa(JSON.stringify({ u: currentUnit, i: getInputs() }));
+      history.replaceState(null, '', '#' + encoded);
+    } catch {}
   }
 
   function updateCost(primaryVal?: number) {
@@ -764,13 +841,52 @@ const outputsJson = JSON.stringify(
     updateResults();
   }
 
-  copyBtn?.addEventListener('click', () => {
-    if (!primaryValueEl) return;
-    const text = primaryValueEl.textContent?.trim() || '';
-    navigator.clipboard.writeText(text).then(() => {
-      copyBtn.classList.add('copied');
-      setTimeout(() => copyBtn.classList.remove('copied'), 2000);
+  function flashFeedback(btn: HTMLButtonElement, label: HTMLElement | null, text: string) {
+    btn.classList.add('action-feedback');
+    if (label) label.textContent = text;
+    setTimeout(() => {
+      btn.classList.remove('action-feedback');
+      if (label) label.textContent = label === shareLabel ? 'Copy link' : 'Copy checklist';
+    }, 2000);
+  }
+
+  // Share button — copy current URL (with hash) to clipboard
+  shareBtn?.addEventListener('click', () => {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      flashFeedback(shareBtn, shareLabel, 'Copied!');
+    }).catch(() => {
+      flashFeedback(shareBtn, shareLabel, 'Link ready');
     });
+  });
+
+  // Checklist button — build order checklist and copy
+  checklistBtn?.addEventListener('click', () => {
+    const results = formula(getInputs(), currentUnit);
+    const lines: string[] = [`Order checklist — ${calcName}`, ''];
+    outputs.forEach(({ id, label, unit, unitMetric }) => {
+      const raw = results[id] ?? 0;
+      const unitLabel = currentUnit === 'metric' && unitMetric ? unitMetric : unit;
+      lines.push(`□  ${label}: ${fmt(raw, 2)} ${unitLabel}`.trimEnd());
+    });
+    lines.push('', `Source: ${window.location.href}`);
+    navigator.clipboard.writeText(lines.join('\n')).then(() => {
+      flashFeedback(checklistBtn, checklistLabel, 'Copied!');
+    });
+  });
+
+  // Print button
+  printBtn?.addEventListener('click', () => {
+    const printUrl = document.getElementById('print-url');
+    const printDate = document.getElementById('print-date');
+    if (printUrl) printUrl.textContent = window.location.href;
+    if (printDate) printDate.textContent = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    window.print();
+  });
+
+  // Persist cost price on change
+  priceInput?.addEventListener('input', () => {
+    updateCost();
+    try { localStorage.setItem(PRICE_KEY, priceInput.value); } catch {}
   });
 
   widget.querySelectorAll<HTMLButtonElement>('.unit-btn').forEach((btn) => {
@@ -783,12 +899,39 @@ const outputsJson = JSON.stringify(
     debounce = setTimeout(updateResults, 100);
   });
 
-  priceInput?.addEventListener('input', () => updateCost());
-
-  syncVisibility();
-  if (savedUnit && savedUnit !== (widget.dataset.unit as 'imperial' | 'metric')) {
-    setUnit(savedUnit);
+  // ── Init sequence ──────────────────────────────────────
+  // Priority 1: URL hash (shareable link)
+  let restoredUnit: 'imperial' | 'metric' | null = null;
+  if (location.hash) {
+    try {
+      const parsed = JSON.parse(atob(location.hash.slice(1)));
+      if (parsed.u === 'imperial' || parsed.u === 'metric') restoredUnit = parsed.u;
+      if (parsed.i && typeof parsed.i === 'object') restoreInputs(parsed.i);
+    } catch {}
   } else {
+    // Priority 2: localStorage inputs
+    try {
+      const saved = localStorage.getItem(INPUTS_KEY);
+      if (saved) restoreInputs(JSON.parse(saved));
+    } catch {}
+  }
+
+  // Restore persistent price
+  try {
+    const savedPrice = localStorage.getItem(PRICE_KEY);
+    if (savedPrice && priceInput) priceInput.value = savedPrice;
+  } catch {}
+
+  // Apply unit (hash > saved > default)
+  const unitToUse: 'imperial' | 'metric' = restoredUnit ?? savedUnit ??
+    (widget.dataset.unit as 'imperial' | 'metric') ?? 'imperial';
+
+  if (unitToUse !== (widget.dataset.unit as 'imperial' | 'metric')) {
+    setUnit(unitToUse);
+  } else {
+    currentUnit = unitToUse;
+    syncVisibility();
+    syncUnitLabels();
     updateResults();
   }
 </script>
