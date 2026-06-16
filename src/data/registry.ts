@@ -119,7 +119,7 @@ const relatedMap: Record<string, string[]> = {
 // than in 36 files) so the content reads consistently and is easy to review/edit.
 const introMap: Record<string, string> = {
   'concrete-slab-calculator':
-    'Estimate the concrete volume for any slab, patio, or floor in cubic yards, cubic feet, and cubic meters. Enter your length, width, and thickness — the calculator handles the unit conversions and shows the exact ready-mix order quantity. Built for contractors pouring footings to driveways and DIYers planning a single patio.',
+    'Estimate the concrete volume for any slab, patio, or floor in cubic yards, cubic feet, and cubic meters. Enter your length, width, and thickness; the calculator handles the unit conversions and shows the exact ready-mix order quantity. Built for contractors pouring footings to driveways and DIYers planning a single patio.',
   'concrete-bags-calculator':
     'Find out exactly how many bags of pre-mixed concrete your project needs, in 40, 60, or 80 lb sizes. Enter the dimensions and the calculator converts volume to bag count using each bag\'s real yield, so you avoid the classic mistake of buying too few. Ideal for small pours where ordering ready-mix by the yard isn\'t worth it.',
   'concrete-footing-calculator':
@@ -127,11 +127,11 @@ const introMap: Record<string, string> = {
   'concrete-column-calculator':
     'Work out the concrete needed to fill round or square columns, piers, and tube forms. Enter the diameter (or side) and height and the calculator returns volume per column and for your full count. Useful for deck piers, porch posts, and Sonotube pours.',
   'concrete-driveway-calculator':
-    'Estimate concrete volume and material cost for a driveway slab. Enter the driveway length, width, and thickness — typically 4 inches for cars and 5–6 inches for heavier vehicles — to get cubic yards and an order quantity with waste. Pair it with the rebar calculator for reinforcement planning.',
+    'Estimate concrete volume and material cost for a driveway slab. Enter the driveway length, width, and thickness (typically 4 inches for cars, 5–6 inches for heavier vehicles) to get cubic yards and an order quantity with waste. Pair it with the rebar calculator for reinforcement planning.',
   'concrete-block-calculator':
     'Calculate how many concrete blocks (CMUs) you need for a wall, plus the mortar to lay them. Enter wall dimensions and block size to get block count, courses, and mortar volume. Works for standard 8×8×16 block and other common sizes.',
   'rebar-calculator':
-    'Plan rebar for a concrete slab or footing: total linear feet, number of bars, and estimated weight. Enter the slab dimensions and your bar spacing — 12 in is typical for residential, 6–8 in for driveways — and the calculator lays out a bidirectional grid with a waste allowance. Weights are based on #4 (½ in) rebar.',
+    'Plan rebar for a concrete slab or footing: total linear feet, number of bars, and estimated weight. Enter the slab dimensions and your bar spacing (12 in is typical for residential, 6–8 in for driveways) and the calculator lays out a bidirectional grid with a waste allowance. Weights are based on #4 (½ in) rebar.',
   'gravel-calculator':
     'Estimate gravel, crushed stone, or aggregate by volume and weight for driveways, paths, and drainage. Enter the area dimensions and depth to get cubic yards, cubic feet, and tons. Most loose gravel weighs roughly 1.4 tons per cubic yard, which the calculator uses to convert volume to delivery weight.',
   'sand-calculator':
@@ -139,7 +139,7 @@ const introMap: Record<string, string> = {
   'aggregate-calculator':
     'Estimate aggregate volume and tonnage for base layers, backfill, and concrete mixing. Enter your dimensions and depth to convert to cubic yards and tons for ordering. Covers crushed stone, road base, and similar granular materials.',
   'topsoil-calculator':
-    'Work out how much topsoil to order for gardens, lawns, and raised beds, in cubic yards and bags. Enter the bed area and the depth you want to add — 2–3 inches for overseeding, 6–12 inches for new beds — to get volume and an estimated delivery weight.',
+    'Work out how much topsoil to order for gardens, lawns, and raised beds, in cubic yards and bags. Enter the bed area and the depth you want to add (2–3 inches for overseeding, 6–12 inches for new beds) to get volume and an estimated delivery weight.',
   'mulch-calculator':
     'Calculate mulch by the cubic yard and by the bag for garden beds and landscaping. Enter the bed dimensions and mulch depth (2–4 inches is typical) to get total volume and how many 2 cu ft bags that equals. Avoids both under-ordering and the cost of hauling away extra.',
   'excavation-calculator':
@@ -161,7 +161,7 @@ const introMap: Record<string, string> = {
   'lumber-calculator':
     'Estimate framing lumber: total boards, linear footage, board feet, and cost. Enter your board size, length, and quantity to get the full material and pricing picture. Useful for walls, joists, and any repetitive framing member.',
   'board-foot-calculator':
-    'Calculate board feet for hardwood and rough lumber pricing. Enter thickness, width, and length and the calculator returns board feet — the volume unit lumberyards price by. Essential for buying rough-sawn or specialty lumber where boards aren\'t sold by the piece.',
+    'Calculate board feet for hardwood and rough lumber pricing. Enter thickness, width, and length and the calculator returns board feet, the volume unit lumberyards price by. Essential for buying rough-sawn or specialty lumber where boards aren\'t sold by the piece.',
   'plywood-calculator':
     'Work out how many sheets of plywood or OSB you need for floors, walls, or roofs. Enter the area to cover and your sheet size to get sheet count with a waste allowance. Covers sheathing, subfloor, and underlayment jobs.',
   'drywall-calculator':

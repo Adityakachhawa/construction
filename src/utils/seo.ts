@@ -28,7 +28,7 @@ export function buildCalculatorMeta(opts: {
 
 export function buildCalculatorsIndexMeta(): MetaProps {
   return {
-    title: `Free Construction Calculators — Concrete, Framing, Fencing & More | ${SITE_NAME}`,
+    title: `Free Construction Calculators: Concrete, Framing, Fencing & More | ${SITE_NAME}`,
     description:
       'Browse free construction calculators for concrete, gravel, drywall, flooring, fencing, and more. Instant material quantities and cost estimates across every trade.',
     canonical: buildCanonical('/calculators/'),
@@ -39,7 +39,7 @@ export function buildCalculatorsIndexMeta(): MetaProps {
 
 export function buildBlogIndexMeta(): MetaProps {
   return {
-    title: `Construction Blog — Guides, Tips & Material Calculators | ${SITE_NAME}`,
+    title: `Construction Blog: Guides, Tips & Material Calculators | ${SITE_NAME}`,
     description:
       'Construction tips, material guides, cost breakdowns, and project planning advice for contractors and DIYers.',
     canonical: buildCanonical('/blog/'),
@@ -51,8 +51,8 @@ export function buildBlogIndexMeta(): MetaProps {
 export function buildBlogTagMeta(tag: string, postCount: number): MetaProps {
   const label = tag.charAt(0).toUpperCase() + tag.slice(1);
   return {
-    title: `${label} Articles (${postCount}) — ${SITE_NAME}`,
-    description: `Browse ${postCount} construction article${postCount !== 1 ? 's' : ''} tagged "${tag}" — guides, tips, and material calculators.`,
+    title: `${label} Articles (${postCount}) | ${SITE_NAME}`,
+    description: `Browse ${postCount} construction article${postCount !== 1 ? 's' : ''} tagged "${tag}": guides, tips, and material calculators.`,
     canonical: buildCanonical(`/blog/tag/${tag}/`),
     ogImage: DEFAULT_OG_IMAGE,
     ogType: 'website',
@@ -69,7 +69,7 @@ export function buildArticleMeta(opts: {
   ogImage?: string;
 }): MetaProps {
   return {
-    title: `${opts.title} — ${SITE_NAME}`,
+    title: `${opts.title} | ${SITE_NAME}`,
     description: opts.description,
     canonical: buildCanonical(`/${opts.section}/${opts.slug}/`),
     ogImage: opts.ogImage ?? DEFAULT_OG_IMAGE,
@@ -87,7 +87,7 @@ export function buildCategoryMeta(opts: {
   metaDescription?: string;
 }): MetaProps {
   const keywordSuffix = opts.keywords?.length
-    ? ` — ${opts.keywords.slice(0, 3).join(', ')}`
+    ? `: ${opts.keywords.slice(0, 3).join(', ')}`
     : '';
   return {
     title: `Free ${opts.name} Calculators${keywordSuffix} | ${SITE_NAME}`,
@@ -100,9 +100,9 @@ export function buildCategoryMeta(opts: {
 
 export function buildHomeMeta(): MetaProps {
   return {
-    title: `Free Construction Calculators — ${SITE_NAME}`,
+    title: `Free Construction Calculators | ${SITE_NAME}`,
     description:
-      'Accurate material estimates for concrete, framing, decking, fencing, and more. Free tools built for contractors and serious DIYers — no signup required.',
+      'Accurate material estimates for concrete, framing, decking, fencing, and more. Free tools built for contractors and serious DIYers. No signup required.',
     canonical: buildCanonical('/'),
     ogImage: DEFAULT_OG_IMAGE,
     ogType: 'website',
@@ -115,7 +115,7 @@ export function buildCanonical(path: string): string {
 }
 
 export function buildPageTitle(title: string): string {
-  return `${title} — ${SITE_NAME}`;
+  return `${title} | ${SITE_NAME}`;
 }
 
 // Re-export for consumers that need the raw values

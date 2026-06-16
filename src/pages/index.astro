@@ -127,7 +127,7 @@ const schemas = [
           <input
             id="hero-search-input"
             type="search"
-            placeholder="Search calculators — concrete, rebar, roof pitch…"
+            placeholder="Search calculators: concrete, rebar, roof pitch…"
             class="hero-search-input"
             autocomplete="off"
             aria-label="Search calculators"
@@ -338,7 +338,7 @@ const schemas = [
   )}
 
   <!-- ── Trust / EEAT ──────────────────────────────────────────── -->
-  <section class="section section--alt trust-section">
+  <section class="section trust-section">
     <div class="container">
       <div class="section-header section-header--center">
         <div>
@@ -785,6 +785,8 @@ const schemas = [
 
   /* ── Trust section ────────────────────────────────────────── */
   .trust-section { background: var(--surface-page); }
+  .trust-section .section-title { color: var(--color-text-primary); }
+  .trust-section .section-sub { color: var(--color-text-secondary); }
 
   .trust-grid { display: grid; grid-template-columns: repeat(1, 1fr); gap: 1rem; margin-bottom: 2rem; }
   @media (min-width: 640px)  { .trust-grid { grid-template-columns: repeat(2, 1fr); } }

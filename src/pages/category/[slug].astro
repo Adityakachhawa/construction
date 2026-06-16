@@ -4,10 +4,12 @@ import { buildCategoryMeta } from '../../utils/seo';
 import { buildCollectionPageSchema, buildBreadcrumbList, buildFaqSchema } from '../../utils/schema';
 import { categories, getCategoryBySlug } from '../../data/categories';
 import { getCalculatorsByCategory, getCalculatorBySlug } from '../../data/registry';
-import { getCollection, render } from 'astro:content';
+import { getCollection } from 'astro:content';
 import Card from '../../components/ui/Card.astro';
 import CategoryIcon from '../../components/ui/CategoryIcon.astro';
 import FaqSection from '../../components/calculators/FaqSection.astro';
+import CategoryReference from '../../components/category/CategoryReference.astro';
+import { categoryContent } from '../../data/categoryContent';
 import type { GetStaticPaths } from 'astro';
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -37,12 +39,8 @@ const relatedPosts = allPosts
   .sort((a, b) => b.data.publishedAt.localeCompare(a.data.publishedAt))
   .slice(0, 3);
 
-// MDX content for this category
-const allCategoryContent = await getCollection('categories');
-const categoryContent = allCategoryContent.find(
-  (entry) => entry.id.replace(/\.[^.]+$/, '') === cat.slug
-);
-const { Content } = categoryContent ? await render(categoryContent) : { Content: null };
+// Structured reference content for this category
+const refContent = categoryContent[cat.slug] ?? null;
 
 // Per-category FAQs (structured, plain text for JSON-LD)
 const categoryFaqs: Record<string, Array<{ q: string; a: string }>> = {
@@ -187,15 +185,10 @@ const breadcrumbs = [
     ) : null}
   </div>
 
-  <!-- Rich category content from markdown -->
-  {Content && (
-    <div slot="content" class="cat-content prose prose-neutral max-w-none
-      prose-headings:font-bold prose-headings:text-[var(--color-text-primary)]
-      prose-p:text-[var(--color-text-secondary)] prose-p:leading-relaxed
-      prose-a:text-[var(--color-primary)] prose-a:no-underline hover:prose-a:underline
-      prose-table:w-full prose-th:text-left prose-th:font-semibold
-      prose-li:text-[var(--color-text-secondary)]">
-      <Content />
+  <!-- Structured reference content -->
+  {refContent && (
+    <div slot="content">
+      <CategoryReference content={refContent} categoryColor={cat.color} />
     </div>
   )}
 
