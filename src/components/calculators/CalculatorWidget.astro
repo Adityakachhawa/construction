@@ -397,6 +397,54 @@ const outputsJson = JSON.stringify(
     opacity: 0.92;
   }
 
+  .result-primary-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .copy-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    cursor: pointer;
+    transition: background 150ms, border-color 150ms;
+  }
+  .copy-btn:hover {
+    background: rgba(255,255,255,0.2);
+    border-color: rgba(255,255,255,0.4);
+  }
+
+  .copy-tooltip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    right: 0;
+    padding: 0.25rem 0.5rem;
+    background: var(--ink);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 4px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms, transform 200ms;
+    transform: translateY(4px);
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+  .copy-btn.copied .copy-tooltip {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
   .result-primary-value-row {
     display: flex;
     align-items: baseline;
@@ -621,6 +669,7 @@ const outputsJson = JSON.stringify(
   const costTotal  = document.getElementById('cost-total') as HTMLElement | null;
   const orderQty   = document.getElementById('order-qty') as HTMLElement | null;
   const primaryValueEl = document.getElementById('primary-value') as HTMLElement | null;
+  const copyBtn     = document.getElementById('copy-result') as HTMLButtonElement | null;
 
   if (!widget || !form) throw new Error('Calculator DOM missing');
 
@@ -630,8 +679,10 @@ const outputsJson = JSON.stringify(
   const formula = formulaRegistry[slug];
   if (!formula) throw new Error(`No formula for "${slug}"`);
 
-  let currentUnit: 'imperial' | 'metric' =
-    (widget.dataset.unit as 'imperial' | 'metric') ?? 'imperial';
+  // Persistence: check localStorage first
+  const savedUnit = localStorage.getItem('cc-unit-system') as 'imperial' | 'metric' | null;
+  let currentUnit: 'imperial' | 'metric' = savedUnit ||
+    (widget.dataset.unit as 'imperial' | 'metric') || 'imperial';
 
   function getInputs(): Record<string, number> {
     const data: Record<string, number> = {};
@@ -704,6 +755,7 @@ const outputsJson = JSON.stringify(
   function setUnit(unit: 'imperial' | 'metric') {
     currentUnit = unit;
     widget.dataset.unit = unit;
+    localStorage.setItem('cc-unit-system', unit);
     widget.querySelectorAll<HTMLButtonElement>('.unit-btn').forEach((btn) => {
       btn.setAttribute('aria-pressed', btn.dataset.unit === unit ? 'true' : 'false');
     });
@@ -711,6 +763,15 @@ const outputsJson = JSON.stringify(
     syncUnitLabels();
     updateResults();
   }
+
+  copyBtn?.addEventListener('click', () => {
+    if (!primaryValueEl) return;
+    const text = primaryValueEl.textContent?.trim() || '';
+    navigator.clipboard.writeText(text).then(() => {
+      copyBtn.classList.add('copied');
+      setTimeout(() => copyBtn.classList.remove('copied'), 2000);
+    });
+  });
 
   widget.querySelectorAll<HTMLButtonElement>('.unit-btn').forEach((btn) => {
     btn.addEventListener('click', () => setUnit(btn.dataset.unit as 'imperial' | 'metric'));
@@ -725,5 +786,9 @@ const outputsJson = JSON.stringify(
   priceInput?.addEventListener('input', () => updateCost());
 
   syncVisibility();
-  updateResults();
+  if (savedUnit && savedUnit !== (widget.dataset.unit as 'imperial' | 'metric')) {
+    setUnit(savedUnit);
+  } else {
+    updateResults();
+  }
 </script>

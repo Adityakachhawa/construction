@@ -1,4 +1,4 @@
-﻿---
+---
 interface Props {
   class?: string;
 }
@@ -13,14 +13,14 @@ const { class: className = '' } = Astro.props;
         <path d="M4 5V3.5a3 3 0 016 0V5" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/>
       </svg>
     </span>
-    <h2 id="diagram-caption" class="diagram-title">Slab Dimensions Diagram</h2>
+    <h2 id="diagram-caption" class="diagram-title">Slab dimensions diagram</h2>
   </div>
   <div class="diagram-box">
     <svg
       viewBox="0 0 480 300"
       width="100%"
       xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
+      aria-label="Isometric diagram showing length, width, and thickness of a concrete slab for volume calculation"
       focusable="false"
       class="diagram-svg"
     >
@@ -50,43 +50,43 @@ const { class: className = '' } = Astro.props;
       <polygon points="155,135 395,135 395,225 155,225"
         fill="url(#slabRight)" stroke="#475569" stroke-width="1.5"/>
 
-      <!-- â”€â”€ LENGTH annotation (top, horizontal) â”€â”€ -->
-      <line x1="90" y1="85" x2="90" y2="58" stroke="#0070f3" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
-      <line x1="330" y1="85" x2="330" y2="58" stroke="#0070f3" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
-      <line x1="90" y1="65" x2="330" y2="65" stroke="#0070f3" stroke-width="1.75"/>
-      <polygon points="90,65 100,60 100,70" fill="#0070f3"/>
-      <polygon points="330,65 320,60 320,70" fill="#0070f3"/>
-      <text x="210" y="52" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
-        font-size="13" font-weight="700" fill="#0070f3" letter-spacing="-0.3">Length</text>
+      <!-- ── LENGTH annotation (top, horizontal) ── -->
+      <line x1="90" y1="85" x2="90" y2="58" stroke="var(--color-primary)" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="330" y1="85" x2="330" y2="58" stroke="var(--color-primary)" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="90" y1="65" x2="330" y2="65" stroke="var(--color-primary)" stroke-width="1.75"/>
+      <polygon points="90,65 100,60 100,70" fill="var(--color-primary)"/>
+      <polygon points="330,65 320,60 320,70" fill="var(--color-primary)"/>
+      <text x="210" y="52" text-anchor="middle" font-family="var(--font-sans)"
+        font-size="13" font-weight="700" fill="var(--color-primary)" letter-spacing="-0.3">Length</text>
 
-      <!-- â”€â”€ WIDTH annotation (right side, diagonal) â”€â”€ -->
-      <line x1="330" y1="85" x2="418" y2="62" stroke="#16a34a" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
-      <line x1="395" y1="135" x2="418" y2="155" stroke="#16a34a" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
-      <line x1="418" y1="62" x2="418" y2="155" stroke="#16a34a" stroke-width="1.75"/>
-      <polygon points="418,62 413,73 423,73" fill="#16a34a"/>
-      <polygon points="418,155 413,144 423,144" fill="#16a34a"/>
-      <text x="432" y="113" text-anchor="start" font-family="Inter,system-ui,sans-serif"
-        font-size="13" font-weight="700" fill="#16a34a" letter-spacing="-0.3">Width</text>
+      <!-- ── WIDTH annotation (right side, diagonal) ── -->
+      <line x1="330" y1="85" x2="418" y2="62" stroke="var(--color-primary)" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="395" y1="135" x2="418" y2="155" stroke="var(--color-primary)" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="418" y1="62" x2="418" y2="155" stroke="var(--color-primary)" stroke-width="1.75"/>
+      <polygon points="418,62 413,73 423,73" fill="var(--color-primary)"/>
+      <polygon points="418,155 413,144 423,144" fill="var(--color-primary)"/>
+      <text x="432" y="113" text-anchor="start" font-family="var(--font-sans)"
+        font-size="13" font-weight="700" fill="var(--color-primary)" letter-spacing="-0.3">Width</text>
 
-      <!-- â”€â”€ THICKNESS annotation (left, vertical) â”€â”€ -->
-      <line x1="90" y1="85" x2="55" y2="85" stroke="#d97706" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
-      <line x1="90" y1="225" x2="55" y2="225" stroke="#d97706" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
-      <line x1="62" y1="85" x2="62" y2="225" stroke="#d97706" stroke-width="1.75"/>
-      <polygon points="62,85 57,96 67,96" fill="#d97706"/>
-      <polygon points="62,225 57,214 67,214" fill="#d97706"/>
-      <text x="48" y="158" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
-        font-size="13" font-weight="700" fill="#d97706" letter-spacing="-0.3"
+      <!-- ── THICKNESS annotation (left, vertical) ── -->
+      <line x1="90" y1="85" x2="55" y2="85" stroke="var(--color-primary)" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="90" y1="225" x2="55" y2="225" stroke="var(--color-primary)" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="62" y1="85" x2="62" y2="225" stroke="var(--color-primary)" stroke-width="1.75"/>
+      <polygon points="62,85 57,96 67,96" fill="var(--color-primary)"/>
+      <polygon points="62,225 57,214 67,214" fill="var(--color-primary)"/>
+      <text x="48" y="158" text-anchor="middle" font-family="var(--font-sans)"
+        font-size="13" font-weight="700" fill="var(--color-primary)" letter-spacing="-0.3"
         transform="rotate(-90 48 158)">Thickness</text>
 
       <!-- ── FORMULA CALLOUT ────────────────────────────────────── -->
       <rect x="128" y="252" width="168" height="40" rx="6"
-        fill="#eff6ff" stroke="#0070f3" stroke-width="1"/>
-      <text x="212" y="264" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
-        font-size="8" font-weight="700" fill="#1d4ed8" letter-spacing="0.2">VOLUME FORMULA</text>
-      <text x="212" y="277" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
-        font-size="10" font-weight="800" fill="#1e3a8a">V = L × W × T</text>
-      <text x="212" y="288" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
-        font-size="8" fill="#1d4ed8">÷ 27 = cu yd  ·  4 in slab ≈ 0.0123 yd/ft²</text>
+        fill="var(--color-primary-50)" stroke="var(--color-primary)" stroke-width="1"/>
+      <text x="212" y="264" text-anchor="middle" font-family="var(--font-sans)"
+        font-size="8" font-weight="700" fill="var(--color-primary-800)" letter-spacing="0.2">VOLUME FORMULA</text>
+      <text x="212" y="277" text-anchor="middle" font-family="var(--font-sans)"
+        font-size="10" font-weight="800" fill="var(--color-primary-900)">V = L × W × T</text>
+      <text x="212" y="288" text-anchor="middle" font-family="var(--font-sans)"
+        font-size="8" fill="var(--color-primary-700)">÷ 27 = cu yd  ·  4 in slab ≈ 0.0123 yd/ft²</text>
     </svg>
   </div>
   <figcaption class="diagram-caption">

@@ -138,12 +138,12 @@ const schemas = [
 
       <div class="hero-actions">
         <a href="/calculators/" class="hero-btn-primary">
-          Browse All {totalCalcs} Calculators
+          Browse all {totalCalcs} calculators
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
             <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </a>
-        <a href="/blog/" class="hero-btn-ghost">Read the Guides</a>
+        <a href="/blog/" class="hero-btn-ghost">Read the guides</a>
       </div>
 
       <div class="hero-proof">
@@ -163,7 +163,7 @@ const schemas = [
     <div class="container">
       <div class="section-header">
         <div>
-          <h2 class="section-title">Popular Calculators</h2>
+          <h2 class="section-title">Popular calculators</h2>
           <p class="section-sub">Most-used tools by contractors and DIYers</p>
         </div>
         <a href="/calculators/" class="section-link">View all {totalCalcs} →</a>
@@ -196,7 +196,7 @@ const schemas = [
     <div class="container">
       <div class="section-header">
         <div>
-          <h2 class="section-title">Browse by Category</h2>
+          <h2 class="section-title">Browse by category</h2>
           <p class="section-sub">Every trade, every material</p>
         </div>
       </div>
@@ -223,7 +223,7 @@ const schemas = [
     <div class="container">
       <div class="section-header section-header--center">
         <div>
-          <h2 class="section-title">Construction Formula Reference</h2>
+          <h2 class="section-title">Construction formula reference</h2>
           <p class="section-sub">The six most common calculations — click any to open the full calculator</p>
         </div>
       </div>
@@ -313,7 +313,7 @@ const schemas = [
       <div class="container">
         <div class="section-header">
           <div>
-            <h2 class="section-title">Construction Guides &amp; Articles</h2>
+            <h2 class="section-title">Construction guides & articles</h2>
             <p class="section-sub">How-to guides, cost breakdowns, and formula walkthroughs</p>
           </div>
           <a href="/blog/" class="section-link">View all →</a>
@@ -374,7 +374,7 @@ const schemas = [
     <div class="container-narrow">
       <div class="section-header section-header--center">
         <div>
-          <h2 class="section-title">Frequently Asked Questions</h2>
+          <h2 class="section-title">Frequently asked questions</h2>
         </div>
       </div>
       <div class="faq-list">
@@ -402,8 +402,8 @@ const schemas = [
         {totalCalcs}+ free calculators. No signup required. Works on any device.
       </p>
       <div class="cta-actions">
-        <a href="/calculators/" class="cta-btn-primary">Browse Calculators</a>
-        <a href="/blog/" class="cta-btn-ghost">Read the Guides</a>
+        <a href="/calculators/" class="cta-btn-primary">Browse calculators</a>
+        <a href="/blog/" class="cta-btn-ghost">Read the guides</a>
       </div>
     </div>
   </section>
@@ -413,6 +413,7 @@ const schemas = [
 <script define:vars={{ searchIndex }}>
   const input = document.getElementById('hero-search-input');
   const resultsBox = document.getElementById('hero-search-results');
+  let activeIndex = -1;
 
   if (input && resultsBox) {
     const calcs = searchIndex;
@@ -421,8 +422,17 @@ const schemas = [
       { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
     ));
 
+    const updateActive = () => {
+      const items = resultsBox.querySelectorAll('.sr-item');
+      items.forEach((item, i) => {
+        item.classList.toggle('is-active', i === activeIndex);
+        if (i === activeIndex) item.scrollIntoView({ block: 'nearest' });
+      });
+    };
+
     input.addEventListener('input', () => {
       const q = input.value.trim().toLowerCase();
+      activeIndex = -1;
       if (!q || q.length < 2) { resultsBox.innerHTML = ''; resultsBox.removeAttribute('data-open'); return; }
       const matches = calcs.filter(c =>
         c.name.toLowerCase().includes(q) || c.description.toLowerCase().includes(q)
@@ -432,6 +442,27 @@ const schemas = [
         `<a href="/calculators/${c.slug}/" class="sr-item"><strong>${escapeHtml(c.name)}</strong><span>${escapeHtml(c.description)}</span></a>`
       ).join('');
       resultsBox.setAttribute('data-open', '');
+    });
+
+    input.addEventListener('keydown', e => {
+      const items = resultsBox.querySelectorAll('.sr-item');
+      if (!items.length) return;
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        activeIndex = (activeIndex + 1) % items.length;
+        updateActive();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        activeIndex = (activeIndex - 1 + items.length) % items.length;
+        updateActive();
+      } else if (e.key === 'Enter' && activeIndex >= 0) {
+        e.preventDefault();
+        items[activeIndex].click();
+      } else if (e.key === 'Escape') {
+        resultsBox.innerHTML = '';
+        resultsBox.removeAttribute('data-open');
+      }
     });
 
     document.addEventListener('click', e => {
@@ -580,7 +611,8 @@ const schemas = [
     transition: background 100ms;
   }
   .hero-search-results :global(.sr-item:last-child) { border-bottom: none; }
-  .hero-search-results :global(.sr-item:hover) { background: var(--border-subtle); }
+  .hero-search-results :global(.sr-item:hover),
+  .hero-search-results :global(.sr-item.is-active) { background: var(--border-subtle); }
   .hero-search-results :global(.sr-item strong) { font-size: 0.9rem; color: var(--color-text-primary); }
   .hero-search-results :global(.sr-item span) { font-size: 0.8rem; color: var(--color-text-muted); }
   .hero-search-results :global(.sr-empty) { padding: 1rem; text-align: center; font-size: 0.875rem; color: var(--color-text-muted); }

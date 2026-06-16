@@ -126,3 +126,13 @@ p { margin: 0; }
 ul, ol { margin: 0; padding: 0; }
 button { cursor: pointer; font-family: inherit; }
 input, select, textarea { font-family: inherit; }
+
+/* ── Accessibility ────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.section--alt :focus-visible {
+  outline-color: #fff;
+}
