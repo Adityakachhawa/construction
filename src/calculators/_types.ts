@@ -35,6 +35,8 @@ export interface OutputField {
   format: 'number' | 'currency' | 'area' | 'volume' | 'weight' | 'length';
   primary?: boolean;
   description?: string;
+  /** Mark as an equivalent/conversion output (e.g. bag counts from volume). Displayed in a separate Equivalents section. */
+  isEquivalent?: boolean;
 }
 
 export interface SeoConfig {
@@ -100,4 +102,30 @@ export interface CalculatorConfig {
   defaultPricePerUnit?: number;
   /** ISO date string — when the calculator was last reviewed/updated */
   lastUpdated?: string;
+  /**
+   * Material-specific waste factor displayed in the order callout.
+   * `default` overrides the global 10% fallback.
+   */
+  wasteFactor?: {
+    default: number;
+    range?: string;
+    notes?: string;
+  };
+  /**
+   * Typical market cost range per primary unit (e.g. per yd³, per square).
+   * Shown as a live total estimate multiplied by the current primary result.
+   */
+  costRange?: {
+    low: number;
+    high: number;
+    unit: string;
+  };
+  /**
+   * Authoritative references displayed below the FAQ section.
+   */
+  references?: Array<{
+    title: string;
+    organization: string;
+    url?: string;
+  }>;
 }

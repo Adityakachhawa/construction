@@ -44,6 +44,8 @@ import InsulationDiagram from '../../components/calculators/InsulationDiagram.as
 import MortarDiagram from '../../components/calculators/MortarDiagram.astro';
 import GroutDiagram from '../../components/calculators/GroutDiagram.astro';
 import PostHoleDiagram from '../../components/calculators/PostHoleDiagram.astro';
+import ReferencesSection from '../../components/calculators/ReferencesSection.astro';
+import MethodologyLink from '../../components/calculators/MethodologyLink.astro';
 import type { GetStaticPaths } from 'astro';
 
 // Diagram lookup — add new slugs here instead of adding more booleans
@@ -144,6 +146,8 @@ const intro = calc.seo.intro ?? calc.seo.description;
 >
   <CalculatorWidget slot="calculator" calc={calc} />
 
+  <MethodologyLink slot="diagram" calcSlug={calc.slug} categorySlug={calc.category} />
+
   {Diagram && <Diagram slot="diagram" />}
 
   {calc.formulaSteps?.length && (
@@ -156,5 +160,9 @@ const intro = calc.seo.intro ?? calc.seo.description;
 
   {relatedCalcs.length > 0 && (
     <RelatedCalculators slot="related" calcs={relatedCalcs} />
+  )}
+
+  {calc.references?.length && (
+    <ReferencesSection slot="references" references={calc.references} />
   )}
 </CalculatorLayout>

@@ -426,4 +426,10 @@ export const lumberCalculator: CalculatorConfig = {
         'The metric equivalent of a board foot is roughly 0.00236 cubic metres (2,360 cm³). To convert: 1 BF = 144 in³ = 2,359.7 cm³ ≈ 0.00236 m³. European timber merchants use cubic metres (m³) for volume pricing. To convert a lumber order: multiply total board feet by 0.00236 to get cubic metres. Alternatively, use actual metric dimensions (mm × mm × m) and multiply by quantity to get volume in m³ directly — this calculator does both.',
     },
   ],
+  orderCallout: true,
+  wasteFactor: {
+    default: 15,
+    range: '10–20%',
+    notes: 'Dimensional framing lumber: 10–15%. Hardwood finish lumber with knot selection: 15–20%.',
+  },
 };

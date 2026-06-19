@@ -457,4 +457,22 @@ export const mortarCalculator: CalculatorConfig = {
         'Mortar is used to bond masonry units together — it fills the joints between bricks, blocks, or stones and provides structural adhesion. Grout fills cavities inside CMU cores or the gaps in tile installations. The two mixes have different proportions and are not interchangeable.',
     },
   ],
+  orderCallout: true,
+  wasteFactor: {
+    default: 15,
+    range: '10–20%',
+    notes: 'Standard block work: 10–12%. Irregular stone or rubble masonry: up to 20%.',
+  },
+  references: [
+    {
+      title: 'ASTM C270 – Standard Specification for Mortar for Unit Masonry',
+      organization: 'ASTM International',
+      url: 'https://www.astm.org/',
+    },
+    {
+      title: 'TMS 402 – Building Code Requirements for Masonry Structures',
+      organization: 'The Masonry Society',
+      url: 'https://masonrysociety.org/',
+    },
+  ],
 };

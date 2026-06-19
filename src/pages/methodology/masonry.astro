@@ -1,0 +1,237 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/layout/Breadcrumbs.astro';
+import { buildPageTitle, buildCanonical } from '../../utils/seo';
+import { DEFAULT_OG_IMAGE } from '../../utils/constants';
+import { buildBreadcrumbList } from '../../utils/schema';
+import { calculatorRegistry } from '../../data/registry';
+
+const meta = {
+  title: buildPageTitle('Masonry Calculation Methodology'),
+  description: 'How ConstructCalc masonry calculators work — TMS references, mortar joint assumptions, brick/block counts, and waste factors.',
+  canonical: buildCanonical('/methodology/masonry/'),
+  ogType: 'website' as const,
+  ogImage: DEFAULT_OG_IMAGE,
+};
+
+const schemas = [
+  buildBreadcrumbList([
+    { name: 'Home', href: '/' },
+    { name: 'Methodology', href: '/methodology/' },
+    { name: 'Masonry', href: '/methodology/masonry/' },
+  ]),
+];
+
+const breadcrumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Methodology', href: '/methodology/' },
+  { name: 'Masonry', href: '/methodology/masonry/' },
+];
+
+const relatedCalcs = calculatorRegistry.filter((c) =>
+  ['concrete-block-calculator','mortar-calculator','grout-calculator','square-footage-calculator'].includes(c.slug)
+);
+---
+
+<BaseLayout meta={meta} schemas={schemas}>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbs} />
+      <div class="header-chip">Masonry</div>
+      <h1 class="page-title">Masonry Calculation Methodology</h1>
+      <p class="page-sub">TMS 402/602 references, mortar joint sizing, brick and CMU unit counts, grout volume formulas, and waste factors for masonry estimating.</p>
+    </div>
+  </div>
+
+  <div class="page-body">
+    <div class="container-narrow">
+
+      <section class="content-section">
+        <h2>Overview</h2>
+        <p>Masonry estimating involves counting modular units (bricks, CMU blocks, pavers), calculating mortar and grout volumes, and applying appropriate waste allowances for cuts and breakage. Unit dimensions are nominal — actual manufactured dimensions are 3/8 inch smaller on each face to accommodate the standard mortar joint.</p>
+        <p>All formulas follow conventional masonry practice consistent with TMS 402/602 (The Masonry Society) and ASTM standards for concrete masonry units and mortar.</p>
+      </section>
+
+      <section class="content-section">
+        <h2>Nominal vs. Actual Unit Dimensions</h2>
+        <div class="waste-table">
+          <table>
+            <thead>
+              <tr><th>Unit Type</th><th>Nominal Size</th><th>Actual Size</th><th>With 3/8" Joint</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Standard CMU (8" block)</td><td>8×8×16"</td><td>7⅝×7⅝×15⅝"</td><td>8×8×16" modular</td></tr>
+              <tr><td>Standard modular brick</td><td>2⅔×4×8"</td><td>2¼×3⅝×7⅝"</td><td>2⅔×4×8" modular</td></tr>
+              <tr><td>Queen brick</td><td>2¾×4×8"</td><td>2⅜×3⅝×7⅝"</td><td>Queen coursing</td></tr>
+              <tr><td>Paver brick (standard)</td><td>4×8×2.25"</td><td>3⅝×7⅝×2¼"</td><td>Typically dry-set</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Pavers installed with sand setting bed use nominal dimensions with 1/16" to 1/8" joint spacing — far smaller than mortared masonry. Our paver calculators use the nominal face dimensions to compute coverage.</p>
+      </section>
+
+      <section class="content-section">
+        <h2>Core Formulas</h2>
+
+        <h3>CMU / Brick Count</h3>
+        <div class="formula-block">
+          <code>Units = (Wall area / Unit face area) × (1 + Waste)</code>
+        </div>
+        <p>Unit face area includes the mortar joint: for a standard 8×16" CMU with 3/8" joint → face area = 8/12 × 16/12 = 0.889 ft² → ~1.125 units/ft².</p>
+
+        <h3>Standard Rules of Thumb (Brick)</h3>
+        <ul>
+          <li>Modular brick (4" wythe): ~6.75 bricks per ft² of wall face</li>
+          <li>Engineer modular: ~5.63 bricks/ft²</li>
+          <li>Jumbo: ~5.14 bricks/ft²</li>
+          <li>King: ~4.89 bricks/ft²</li>
+        </ul>
+        <p>Values per Brick Industry Association (BIA) Technical Notes 10.</p>
+
+        <h3>Mortar Volume</h3>
+        <div class="formula-block">
+          <code>Mortar (ft³) = Units × Joint volume per unit</code>
+        </div>
+        <p>Industry standard: approximately 0.042 ft³ of mortar per standard modular brick (accounts for bed and head joints, ~25% waste from tooling, dropping, and overfill). For CMU: approximately 0.11 ft³ per block for face-shell bedding only.</p>
+
+        <h3>Mortar Yield from Bag</h3>
+        <div class="formula-block">
+          <code>Bags = Total mortar volume / Yield per bag</code>
+        </div>
+        <p>Typical yields: 80 lb Type S premixed mortar bag → ~0.45 ft³ mixed. 60 lb bag → ~0.33 ft³.</p>
+
+        <h3>Grout Volume (Filled CMU Cells)</h3>
+        <div class="formula-block">
+          <code>Grout (yd³) = (Cell area × Cell height × Cell count) / 27</code>
+        </div>
+        <p>Standard 8" CMU open cell: approximately 0.258 ft³ per cell void. Fully grouted: ~0.258 × number of courses × number of cells per course.</p>
+      </section>
+
+      <section class="content-section">
+        <h2>Waste Factors</h2>
+        <div class="waste-table">
+          <table>
+            <thead>
+              <tr><th>Material</th><th>Default Waste</th><th>Rationale</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Brick (standard wall)</td><td>5%</td><td>Corner cuts, window openings, breakage</td></tr>
+              <tr><td>Brick (complex / arch)</td><td>10–15%</td><td>High cut frequency</td></tr>
+              <tr><td>CMU block</td><td>5%</td><td>Openings, corner cuts</td></tr>
+              <tr><td>Mortar</td><td>25%</td><td>Bed over-fill, dropped mortar, joint tooling</td></tr>
+              <tr><td>Grout</td><td>10%</td><td>Voids, pump loss, cleanouts</td></tr>
+              <tr><td>Pavers (rectangular)</td><td>5–7%</td><td>Edge cuts, pattern borders</td></tr>
+              <tr><td>Pavers (diagonal/herringbone)</td><td>10–15%</td><td>Increased perimeter cut frequency</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <h2>Mortar Mix Proportions</h2>
+        <div class="waste-table">
+          <table>
+            <thead>
+              <tr><th>Mortar Type</th><th>Portland Cement</th><th>Masonry Cement</th><th>Hydrated Lime</th><th>Sand</th><th>Use</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Type M</td><td>1</td><td>—</td><td>¼</td><td>3–3.75</td><td>Below grade, foundations</td></tr>
+              <tr><td>Type S</td><td>1</td><td>—</td><td>½</td><td>4–4.5</td><td>General above grade, exterior</td></tr>
+              <tr><td>Type N</td><td>1</td><td>—</td><td>1</td><td>5–6</td><td>Interior, non-load bearing</td></tr>
+              <tr><td>Type O</td><td>1</td><td>—</td><td>2</td><td>8–9</td><td>Interior, very low load</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Type S is the most common exterior residential mortar per IRC R607. Type N is acceptable for interior non-structural work. Mix proportions per ASTM C270.</p>
+      </section>
+
+      <section class="content-section">
+        <h2>Industry Standards &amp; Code References</h2>
+        <ul>
+          <li><strong>TMS 402/602-22</strong> — Building Code Requirements and Specification for Masonry Structures (The Masonry Society). Governing standard for structural masonry design.</li>
+          <li><strong>ASTM C90</strong> — Standard Specification for Loadbearing Concrete Masonry Units.</li>
+          <li><strong>ASTM C270</strong> — Standard Specification for Mortar for Unit Masonry. Defines Types M, S, N, O.</li>
+          <li><strong>ASTM C476</strong> — Standard Specification for Grout for Masonry.</li>
+          <li><strong>BIA Technical Notes 10</strong> — Bricklaying estimating guide, Brick Industry Association.</li>
+          <li><strong>IRC R606</strong> — General Masonry Construction. Bond pattern, joint reinforcement, and attachment to framing.</li>
+          <li><strong>IRC R607</strong> — Unit Masonry, Mortar, and Grout requirements.</li>
+        </ul>
+      </section>
+
+      <section class="content-section">
+        <h2>Limitations</h2>
+        <ul>
+          <li>Structural masonry design (wall thickness, reinforcement, seismic reinforcing) requires TMS 402 analysis by a licensed structural engineer.</li>
+          <li>Cavity wall construction, veneer anchoring, and flashing details are not modeled — allow for additional materials in detailed estimates.</li>
+          <li>Efflorescence, moisture barriers, and waterproofing materials are project-specific and excluded from these calculators.</li>
+        </ul>
+      </section>
+
+      <section class="content-section">
+        <h2>References &amp; Citations</h2>
+        <ul>
+          <li>The Masonry Society. <em>TMS 402/602-22: Building Code Requirements and Specification for Masonry Structures.</em> Longmont, CO: TMS, 2022.</li>
+          <li>ASTM International. <em>ASTM C90: Standard Specification for Loadbearing Concrete Masonry Units.</em></li>
+          <li>ASTM International. <em>ASTM C270: Standard Specification for Mortar for Unit Masonry.</em></li>
+          <li>ASTM International. <em>ASTM C476: Standard Specification for Grout for Masonry.</em></li>
+          <li>Brick Industry Association. <em>Technical Notes on Brick Construction, No. 10: Dimensioning and Estimating Brick Masonry.</em> BIA, 2006.</li>
+          <li>International Code Council. <em>International Residential Code (IRC) 2021.</em> Sections R606–R608.</li>
+          <li>National Concrete Masonry Association. <em>TEK 3-6C: Concrete Masonry Unit Dimensions.</em> NCMA, 2012.</li>
+        </ul>
+      </section>
+
+      {relatedCalcs.length > 0 && (
+        <section class="content-section">
+          <h2>Related Calculators</h2>
+          <div class="related-grid">
+            {relatedCalcs.map((calc) => (
+              <a href={`/calculators/${calc.slug}/`} class="related-card">
+                <strong class="related-name">{calc.name}</strong>
+                <span class="related-desc">{calc.description}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <div class="nav-links">
+        <a href="/methodology/excavation/" class="nav-link-back">← Excavation Methodology</a>
+        <a href="/methodology/" class="nav-link-next">All Methodologies →</a>
+      </div>
+
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-header { background: var(--surface-page); border-bottom: 1px solid var(--border-default); padding: 2rem 0 2.5rem; }
+  .container { max-width: 72rem; margin: 0 auto; padding: 0 1.5rem; }
+  .container-narrow { max-width: 52rem; margin: 0 auto; padding: 0 1.5rem; }
+  .header-chip { display: inline-flex; align-items: center; padding: 0.2rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; background: var(--color-primary-50); color: var(--color-primary); border: 1px solid color-mix(in srgb, var(--color-primary) 20%, transparent); margin-bottom: 0.875rem; }
+  .page-title { font-size: clamp(1.75rem, 3.5vw, 2.5rem); font-weight: 900; color: var(--color-text-primary); letter-spacing: -0.04em; margin-top: 0.5rem; line-height: 1.1; }
+  .page-sub { margin-top: 0.625rem; font-size: 1.0625rem; color: var(--color-text-secondary); max-width: 44rem; line-height: 1.6; }
+  .page-body { padding: 3rem 0 5rem; }
+  .content-section { margin-bottom: 3rem; }
+  .content-section h2 { font-size: 1.375rem; font-weight: 800; color: var(--color-text-primary); letter-spacing: -0.03em; margin-bottom: 1rem; padding-bottom: 0.625rem; border-bottom: 2px solid var(--border-default); }
+  .content-section h3 { font-size: 1rem; font-weight: 700; color: var(--color-text-primary); margin: 1.25rem 0 0.375rem; }
+  .content-section p { font-size: 1rem; color: var(--color-text-secondary); line-height: 1.7; margin-bottom: 0.875rem; }
+  .content-section strong { color: var(--color-text-primary); font-weight: 600; }
+  .formula-block { background: var(--surface-card); border: 1px solid var(--border-default); border-left: 3px solid var(--color-primary); border-radius: 0 10px 10px 0; padding: 0.75rem 1rem; margin: 0.5rem 0 0.875rem; }
+  .formula-block code { font-family: var(--font-mono); font-size: 0.9375rem; font-weight: 600; color: var(--color-text-primary); }
+  .content-section ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; }
+  .content-section ul li { font-size: 1rem; color: var(--color-text-secondary); padding-left: 1.25rem; position: relative; line-height: 1.6; }
+  .content-section ul li::before { content: '·'; position: absolute; left: 0.25rem; color: var(--color-primary); font-weight: 700; }
+  .waste-table { overflow-x: auto; margin: 0.75rem 0 1rem; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9375rem; }
+  th { background: var(--surface-card); border: 1px solid var(--border-default); padding: 0.625rem 1rem; text-align: left; font-weight: 600; color: var(--color-text-primary); font-size: 0.875rem; }
+  td { border: 1px solid var(--border-default); padding: 0.625rem 1rem; color: var(--color-text-secondary); font-size: 0.875rem; }
+  tr:nth-child(even) td { background: var(--border-subtle); }
+  .related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; margin-top: 0.5rem; }
+  .related-card { display: flex; flex-direction: column; gap: 0.25rem; padding: 0.875rem 1rem; background: var(--surface-card); border: 1px solid var(--border-default); border-radius: 12px; transition: border-color 150ms, box-shadow 150ms; text-decoration: none; }
+  .related-card:hover { border-color: var(--color-primary); box-shadow: 0 2px 8px rgba(194,65,12,0.12); }
+  .related-name { font-size: 0.875rem; font-weight: 700; color: var(--color-text-primary); }
+  .related-desc { font-size: 0.8125rem; color: var(--color-text-muted); line-height: 1.4; }
+  .nav-links { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; padding-top: 2rem; border-top: 1px solid var(--border-default); margin-top: 1rem; }
+  .nav-link-back, .nav-link-next { font-size: 0.875rem; font-weight: 600; color: var(--color-primary); }
+  .nav-link-back:hover, .nav-link-next:hover { text-decoration: underline; }
+</style>

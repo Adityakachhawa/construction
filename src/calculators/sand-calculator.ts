@@ -244,4 +244,10 @@ export const sandCalculator: CalculatorConfig = {
         'Bulk sand costs $10–$40 per ton depending on type and location. Play sand costs the most ($25–$40/ton), masonry sand runs $15–$30/ton, and fill sand is the cheapest ($10–$20/ton). Bagged sand costs significantly more per cubic foot — typically $5–$8 per 50-lb bag.',
     },
   ],
+  orderCallout: true,
+  wasteFactor: {
+    default: 10,
+    range: '10%',
+    notes: 'Account for spillage and spreading variation, especially on sloped or uneven surfaces.',
+  },
 };

@@ -300,4 +300,10 @@ export const paverBaseCalculator: CalculatorConfig = {
         'Place landscape fabric at the bottom of the excavation before adding gravel — it separates the base material from native soil, preventing fines from migrating up into the base over time. Do NOT place fabric between the gravel base and sand layer, as this prevents proper compaction and causes the sand to shift.',
     },
   ],
+  orderCallout: true,
+  wasteFactor: {
+    default: 10,
+    range: '10–15%',
+    notes: 'Base gravel compacts 10–15% after compaction. Always over-order to reach target finished depth.',
+  },
 };

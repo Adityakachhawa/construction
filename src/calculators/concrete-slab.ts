@@ -6,10 +6,19 @@ import type {
 } from './_types';
 import { rectVolumeImperial, rectVolumeMetric } from './volume-engine';
 
+const FT3_PER_60LB_BAG = 0.45;
+const FT3_PER_80LB_BAG = 0.60;
+
 function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
-  return unitSystem === 'imperial'
+  const vol = unitSystem === 'imperial'
     ? rectVolumeImperial(inputs, 'thickness')
     : rectVolumeMetric(inputs, 'thickness_mm');
+  const ft3 = vol.cubic_feet;
+  return {
+    ...vol,
+    bags_60lb: Math.ceil(ft3 / FT3_PER_60LB_BAG),
+    bags_80lb: Math.ceil(ft3 / FT3_PER_80LB_BAG),
+  };
 }
 
 export const concreteSlab: CalculatorConfig = {
@@ -126,11 +135,11 @@ export const concreteSlab: CalculatorConfig = {
   outputs: [
     {
       id: 'cubic_yards',
-      label: 'Cubic Yards',
+      label: 'Concrete Required',
       unit: 'yd³',
       format: 'volume',
       primary: true,
-      description: 'Standard US concrete order unit',
+      description: 'Standard US ready-mix order unit',
     },
     {
       id: 'cubic_feet',
@@ -145,10 +154,52 @@ export const concreteSlab: CalculatorConfig = {
       format: 'volume',
       description: 'Standard metric concrete order unit',
     },
+    {
+      id: 'bags_60lb',
+      label: '60 lb Bags',
+      unit: 'bags',
+      format: 'number',
+      isEquivalent: true,
+    },
+    {
+      id: 'bags_80lb',
+      label: '80 lb Bags',
+      unit: 'bags',
+      format: 'number',
+      isEquivalent: true,
+    },
   ],
   formula,
   unitSystems: ['imperial', 'metric'],
   relatedCalculators: [],
+  orderCallout: true,
+  wasteFactor: {
+    default: 10,
+    range: '5–15%',
+    notes: 'Simple rectangular slabs: 5–10% is adequate. Add 15% for complex shapes or uneven subgrade.',
+  },
+  costRange: {
+    low: 100,
+    high: 175,
+    unit: 'per cubic yard (ready-mix)',
+  },
+  references: [
+    {
+      title: 'ACI 318 – Building Code Requirements for Structural Concrete',
+      organization: 'American Concrete Institute',
+      url: 'https://www.concrete.org/',
+    },
+    {
+      title: 'Design and Control of Concrete Mixtures',
+      organization: 'Portland Cement Association (PCA)',
+      url: 'https://www.cement.org/',
+    },
+    {
+      title: 'IRC R506 – Concrete Floors on Ground',
+      organization: 'International Residential Code',
+      url: 'https://codes.iccsafe.org/',
+    },
+  ],
   seo: {
     title: 'Concrete Slab Calculator',
     description:

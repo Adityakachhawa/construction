@@ -355,4 +355,10 @@ export const drywallCalculator: CalculatorConfig = {
         'A standard 4×8 sheet of ½-inch drywall costs $12–$20 depending on brand and region. Specialty types (moisture-resistant, fire-rated) cost more. For a 16-sheet order at $15 per sheet, material cost is $240. Add joint compound ($20–$40 for a 5-gallon bucket), tape ($5–$15), screws ($10–$20), and corner bead ($20–$40). Professional installation adds $1.50–$3.50 per sq ft for labor on top of materials.',
     },
   ],
+  orderCallout: true,
+  wasteFactor: {
+    default: 10,
+    range: '10–15%',
+    notes: 'Standard rooms: 10%. Many cuts around windows, doors, or irregular ceilings: 12–15%.',
+  },
 };

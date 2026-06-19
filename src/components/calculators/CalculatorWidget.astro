@@ -1,6 +1,7 @@
 ---
 import type { CalculatorConfig, UnitSystem } from '../../calculators/_types';
 import { formatNumber } from '../../utils/format';
+import ResultTable from './ResultTable.astro';
 
 interface Props {
   calc: CalculatorConfig;
@@ -9,28 +10,38 @@ interface Props {
 const { calc } = Astro.props;
 
 const defaultUnit: UnitSystem = calc.unitSystems[0] ?? 'imperial';
-const hasMetric = calc.unitSystems.includes('metric');
+const hasMetric   = calc.unitSystems.includes('metric');
 const hasImperial = calc.unitSystems.includes('imperial');
 
-const defaultInputs = Object.fromEntries(calc.inputs.map((f) => [f.id, f.defaultValue]));
+const defaultInputs  = Object.fromEntries(calc.inputs.map((f) => [f.id, f.defaultValue]));
 const defaultOutputs = calc.formula(defaultInputs, defaultUnit);
 
-const primaryOutput = calc.outputs.find((o) => o.primary) ?? calc.outputs[0];
-const secondaryOutputs = calc.outputs.filter((o) => !o.primary);
+const primaryOutput       = calc.outputs.find((o) => o.primary) ?? calc.outputs[0];
+const equivalentOutputs   = calc.outputs.filter((o) => !o.primary && o.isEquivalent);
+const nonEquivSecondary   = calc.outputs.filter((o) => !o.primary && !o.isEquivalent);
+const useTable            = nonEquivSecondary.length > 4;
 
-const showOrderCallout = !!calc.orderCallout;
+const showOrderCallout    = !!calc.orderCallout;
+const wasteFactorDefault  = calc.wasteFactor?.default ?? 10;
+const wasteFactorRange    = calc.wasteFactor?.range ?? null;
+const wasteFactorNotes    = calc.wasteFactor?.notes ?? null;
+const wasteMultiplier     = 1 + wasteFactorDefault / 100;
+
 const orderHint = typeof calc.orderCallout === 'object' && calc.orderCallout.hint
   ? calc.orderCallout.hint
-  : 'We recommend 10% extra to account for spillage and uneven subgrade.';
+  : `We recommend ${wasteFactorDefault}% extra to account for spillage, uneven subgrade, and formwork variation.`;
+
 const defaultPrice = calc.defaultPricePerUnit ?? 0;
+const costRange    = calc.costRange ?? null;
 
 const outputsJson = JSON.stringify(
   calc.outputs.map((o) => ({
-    id: o.id,
-    label: o.label,
-    unit: o.unit ?? '',
-    unitMetric: o.unitMetric ?? '',
-    primary: !!o.primary,
+    id:          o.id,
+    label:       o.label,
+    unit:        o.unit ?? '',
+    unitMetric:  o.unitMetric ?? '',
+    primary:     !!o.primary,
+    isEquivalent: !!o.isEquivalent,
   }))
 );
 ---
@@ -42,35 +53,31 @@ const outputsJson = JSON.stringify(
   data-unit={defaultUnit}
   data-outputs={outputsJson}
   data-name={calc.name}
+  data-waste={wasteFactorDefault}
+  data-cost-range={costRange ? JSON.stringify(costRange) : ''}
 >
-  <!-- Print-only header (hidden on screen) -->
+  <!-- Print-only header -->
   <div class="print-header" aria-hidden="true">
-    <strong>{calc.name}</strong>
-    <span id="print-url"></span>
-    <span id="print-date"></span>
+    <div class="print-header-top">
+      <strong class="print-title">{calc.name}</strong>
+      <span id="print-date" class="print-meta"></span>
+    </div>
+    <span id="print-url" class="print-url"></span>
   </div>
 
-  <!-- ── LEFT: Input panel ──────────────────────────────── -->
+  <!-- ── LEFT: Input panel ───────────────────────────── -->
   <div class="widget-inputs">
     <div class="widget-inputs-header">
       <h2 class="widget-panel-label">Enter Dimensions</h2>
       {calc.unitSystems.length > 1 && (
         <div class="unit-toggle" role="group" aria-label="Unit system">
           {hasImperial && (
-            <button
-              type="button"
-              class="unit-btn"
-              data-unit="imperial"
-              aria-pressed={defaultUnit === 'imperial' ? 'true' : 'false'}
-            >Imperial</button>
+            <button type="button" class="unit-btn" data-unit="imperial"
+              aria-pressed={defaultUnit === 'imperial' ? 'true' : 'false'}>Imperial</button>
           )}
           {hasMetric && (
-            <button
-              type="button"
-              class="unit-btn"
-              data-unit="metric"
-              aria-pressed={defaultUnit === 'metric' ? 'true' : 'false'}
-            >Metric</button>
+            <button type="button" class="unit-btn" data-unit="metric"
+              aria-pressed={defaultUnit === 'metric' ? 'true' : 'false'}>Metric</button>
           )}
         </div>
       )}
@@ -92,23 +99,39 @@ const outputsJson = JSON.stringify(
                 {field.required && <span class="field-required" aria-hidden="true">*</span>}
               </label>
               <div class={subField ? 'field-group' : 'field-single'}>
-                <!-- Leader input -->
                 <div class="input-wrap">
-                  <input
-                    type="number"
-                    id={`field-${field.id}`}
-                    name={field.id}
-                    min={field.min}
-                    max={field.max}
-                    step={field.step ?? 'any'}
-                    value={field.defaultValue}
-                    required={field.required}
-                    aria-describedby={field.helpText ? `help-${field.id}` : undefined}
-                    class="field-input"
-                  />
-                  {field.unit && <span class="field-unit" aria-hidden="true">{field.unit}</span>}
+                  {field.type === 'select' ? (
+                    <select
+                      id={`field-${field.id}`}
+                      name={field.id}
+                      class="field-input field-select"
+                      aria-describedby={field.helpText ? `help-${field.id}` : undefined}
+                    >
+                      {field.options?.map((opt) => (
+                        <option value={opt.value} selected={opt.value === String(field.defaultValue)}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <>
+                      <input
+                        type="number"
+                        inputmode="decimal"
+                        id={`field-${field.id}`}
+                        name={field.id}
+                        min={field.min}
+                        max={field.max}
+                        step={field.step ?? 'any'}
+                        value={field.defaultValue}
+                        required={field.required}
+                        aria-describedby={field.helpText ? `help-${field.id}` : undefined}
+                        class="field-input"
+                      />
+                      {field.unit && <span class="field-unit" aria-hidden="true">{field.unit}</span>}
+                    </>
+                  )}
                 </div>
-                <!-- Sub-field (inches, etc.) -->
                 {subField && (
                   <div
                     class="input-wrap"
@@ -117,6 +140,7 @@ const outputsJson = JSON.stringify(
                   >
                     <input
                       type="number"
+                      inputmode="decimal"
                       id={`field-${subField.id}`}
                       name={subField.id}
                       min={subField.min}
@@ -143,13 +167,16 @@ const outputsJson = JSON.stringify(
         })}
       </div>
     </form>
+
+    <!-- Print-only inputs summary -->
+    <div class="print-inputs-summary" id="print-inputs-summary" aria-hidden="true"></div>
   </div>
 
-  <!-- ── RIGHT: Results panel ───────────────────────────── -->
+  <!-- ── RIGHT: Results panel ─────────────────────────── -->
   <div class="widget-results" id="results-panel">
     <h2 class="widget-panel-label">Results</h2>
 
-    <!-- Primary result — dominant card -->
+    <!-- Primary result card -->
     {primaryOutput && (
       <div class="result-primary" data-output-id={primaryOutput.id}>
         <span class="result-primary-label">{primaryOutput.label}</span>
@@ -167,22 +194,47 @@ const outputsJson = JSON.stringify(
       </div>
     )}
 
-    <!-- Secondary results -->
-    {secondaryOutputs.length > 0 && (
-      <div class="result-secondary-grid" id="secondary-results">
-        {secondaryOutputs.map((out) => (
-          <div class="result-secondary" data-output-id={out.id}>
-            <span class="result-secondary-number">
-              {formatNumber(defaultOutputs[out.id] ?? 0, 3)}
-            </span>
-            <span class="result-secondary-unit" data-output-unit={out.id}>{out.unit ?? ''}</span>
-            <span class="result-secondary-label">{out.label}</span>
-          </div>
-        ))}
+    <!-- Equivalents section — bag counts, alternate units, etc. -->
+    {equivalentOutputs.length > 0 && (
+      <div class="result-equivalents" id="equivalents-section">
+        <p class="equivalents-heading">Equivalent</p>
+        <div class="equivalents-list">
+          {equivalentOutputs.map((out) => (
+            <div class="equivalent-item" data-output-id={out.id}>
+              <span class="result-secondary-number">
+                {formatNumber(defaultOutputs[out.id] ?? 0, 0)}
+              </span>
+              <span class="equivalent-x">×</span>
+              <span class="equivalent-label-wrap">
+                <span class="result-secondary-unit" data-output-unit={out.id}>{out.unit ?? ''}</span>
+                <span class="equivalent-name">{out.label}</span>
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
     )}
 
-    <!-- Result action buttons -->
+    <!-- Secondary results — table if >4 outputs, otherwise cards -->
+    {nonEquivSecondary.length > 0 && (
+      useTable
+        ? <ResultTable outputs={nonEquivSecondary} defaultOutputs={defaultOutputs} unit={defaultUnit} />
+        : (
+          <div class="result-secondary-grid" id="secondary-results">
+            {nonEquivSecondary.map((out) => (
+              <div class="result-secondary" data-output-id={out.id}>
+                <span class="result-secondary-number">
+                  {formatNumber(defaultOutputs[out.id] ?? 0, 3)}
+                </span>
+                <span class="result-secondary-unit" data-output-unit={out.id}>{out.unit ?? ''}</span>
+                <span class="result-secondary-label">{out.label}</span>
+              </div>
+            ))}
+          </div>
+        )
+    )}
+
+    <!-- Action buttons -->
     <div class="result-actions" id="result-actions">
       <button type="button" class="action-btn" id="action-share" title="Copy shareable link">
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -198,6 +250,14 @@ const outputsJson = JSON.stringify(
         </svg>
         <span id="checklist-label">Copy checklist</span>
       </button>
+      <button type="button" class="action-btn" id="action-copy-results" title="Copy results as text">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <rect x="5" y="2" width="9" height="11" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M2 5h1M2 8h1M2 11h1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M8 6h3M8 9h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <span id="copy-results-label">Copy results</span>
+      </button>
       <button type="button" class="action-btn" id="action-print" title="Print or save as PDF">
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
           <rect x="3" y="1" width="10" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/>
@@ -209,7 +269,7 @@ const outputsJson = JSON.stringify(
       </button>
     </div>
 
-    <!-- Recommended order callout — only shown when calc.orderCallout is set -->
+    <!-- Order callout — enhanced with waste factor range + notes -->
     {showOrderCallout && primaryOutput && (
       <div class="result-callout" id="order-callout">
         <div class="callout-icon">
@@ -218,23 +278,59 @@ const outputsJson = JSON.stringify(
             <path d="M8 6v3.5M8 11v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
           </svg>
         </div>
-        <div>
+        <div class="callout-content">
           <p class="callout-title">
-            Order at least <span id="order-qty">{formatNumber((defaultOutputs[primaryOutput.id] ?? 0) * 1.1, 2)}</span> {primaryOutput.unit}
+            Recommended Order:&nbsp;
+            <span id="order-qty">
+              {formatNumber((defaultOutputs[primaryOutput.id] ?? 0) * wasteMultiplier, 2)}
+            </span>
+            &nbsp;{primaryOutput.unit}
           </p>
-          <p class="callout-body">{orderHint}</p>
+          <p class="callout-waste">
+            Includes {wasteFactorDefault}% waste allowance
+            {wasteFactorRange && (
+              <span class="callout-waste-range"> ({wasteFactorRange} typical for this material)</span>
+            )}
+          </p>
+          {wasteFactorNotes && (
+            <p class="callout-notes">{wasteFactorNotes}</p>
+          )}
         </div>
       </div>
     )}
 
-    <!-- Cost estimate -->
+    <!-- Cost range — market rate estimate, live total -->
+    {costRange && primaryOutput && (
+      <div class="cost-range-section" id="cost-range-section">
+        <div class="cost-range-header">
+          <span class="cost-range-label">Estimated Cost</span>
+          <span class="cost-range-badge">Market Rate</span>
+        </div>
+        <div class="cost-range-row">
+          <span class="cost-range-value">
+            $<span id="cost-range-low">{Math.round((defaultOutputs[primaryOutput.id] ?? 0) * costRange.low)}</span>
+            &nbsp;–&nbsp;
+            $<span id="cost-range-high">{Math.round((defaultOutputs[primaryOutput.id] ?? 0) * costRange.high)}</span>
+          </span>
+          <span class="cost-range-unit">{costRange.unit}</span>
+        </div>
+        <p class="cost-range-note">
+          Based on current market rates. Actual cost varies by region, supplier, and project complexity.
+        </p>
+      </div>
+    )}
+
+    <!-- Natural language interpretation — populated by client JS -->
+    <div class="result-interpretation" id="result-interpretation" style="display:none" aria-live="polite"></div>
+
+    <!-- Cost estimate (user-entered price) -->
     <details class="cost-estimate" id="cost-section">
       <summary class="cost-summary">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
           <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.25"/>
           <path d="M7 4.5v5M4.5 7h5" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/>
         </svg>
-        Estimate Cost
+        Enter Your Price
         <svg class="cost-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
           <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
@@ -269,40 +365,70 @@ const outputsJson = JSON.stringify(
 </div>
 
 <style>
-  /* ── Print-only header ────────────────────────────────── */
-  .print-header { display: none; }
+  /* ── Print header (hidden on screen) ────────────────── */
+  .print-header         { display: none; }
+  .print-inputs-summary { display: none; }
 
   @media print {
+    /* ── Print header ── */
     .print-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 0.25rem;
-      font-size: 0.75rem;
-      color: #555;
-      border-bottom: 1px solid #ccc;
-      padding-bottom: 0.5rem;
-      margin-bottom: 1rem;
+      display: block;
+      border-bottom: 2px solid #000;
+      padding-bottom: 0.75rem;
+      margin-bottom: 1.25rem;
       grid-column: 1 / -1;
     }
-    .print-header strong { font-size: 1rem; font-weight: 700; color: #000; }
+    .print-header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 1rem;
+    }
+    .print-title { font-size: 1.25rem; font-weight: 800; color: #000; }
+    .print-meta  { font-size: 0.8rem; color: #444; }
+    .print-url   { display: block; font-size: 0.75rem; color: #666; margin-top: 0.2rem; }
 
-    /* Single-column print layout */
-    .widget-shell { display: block !important; }
-    .widget-results { position: static !important; top: auto !important; }
+    /* ── Layout ── */
+    .widget-shell    { display: block !important; }
+    .widget-inputs   { margin-bottom: 1.5rem; box-shadow: none; border: 1px solid #ccc; }
+    .widget-results  { position: static !important; top: auto !important; }
 
-    /* Hide non-essential UI */
-    .result-actions,
-    .unit-toggle { display: none !important; }
+    /* ── Input panel print styling ── */
+    .widget-inputs-header { display: none; }
+    .field-input {
+      border: none !important;
+      border-bottom: 1px solid #bbb !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      padding-left: 0 !important;
+      font-weight: 600;
+    }
+    .field-unit   { right: 0; }
+    .field-help   { display: none; }
 
-    /* Expand cost details in print */
-    .cost-estimate[open] .cost-body,
+    /* ── Print inputs summary ── */
+    .print-inputs-summary {
+      display: block;
+      margin-top: 0.75rem;
+      border-top: 1px solid #ddd;
+      padding-top: 0.5rem;
+      font-size: 0.8rem;
+      color: #444;
+    }
+
+    /* ── Results ── */
+    .result-actions { display: none !important; }
+    .unit-toggle    { display: none !important; }
+    .cost-estimate  { border: 1px solid #ccc; }
     .cost-estimate .cost-body { display: flex !important; }
-    .cost-estimate { border: 1px solid #ccc; }
+    .cost-estimate:not([open]) { display: none; }
+
+    /* Keep interpretation and cost range visible */
+    .result-interpretation { display: block !important; border: 1px solid #e5e7eb; }
+    .cost-range-section    { border: 1px solid #e5e7eb; }
   }
 
-  /* ── Widget shell: 40/60 two-column layout ────────────── */
+  /* ── Widget shell: 40/60 two-column ─────────────────── */
   .widget-shell {
     display: grid;
     grid-template-columns: 1fr;
@@ -343,7 +469,6 @@ const outputsJson = JSON.stringify(
     letter-spacing: 0.07em;
   }
 
-  /* Unit toggle — segmented control */
   .unit-toggle {
     display: flex;
     background: var(--surface-page);
@@ -370,17 +495,14 @@ const outputsJson = JSON.stringify(
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   }
 
-  /* Fields */
   .field-stack { display: flex; flex-direction: column; gap: 1.25rem; }
-
-  .field-row { display: flex; flex-direction: column; gap: 0.375rem; }
+  .field-row   { display: flex; flex-direction: column; gap: 0.375rem; }
 
   .field-label {
     font-size: 0.875rem;
     font-weight: 600;
     color: var(--color-text-primary);
   }
-
   .field-required { color: #ef4444; margin-left: 2px; }
 
   .field-group  { display: flex; gap: 0.625rem; }
@@ -414,6 +536,15 @@ const outputsJson = JSON.stringify(
     box-shadow: 0 0 0 3px rgba(194,65,12,0.18);
   }
 
+  .field-select {
+    padding-right: 2rem;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5l3 3 3-3' stroke='%236b7280' stroke-width='1.5' stroke-linecap='round' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+  }
+
   .field-unit {
     position: absolute;
     right: 0.75rem;
@@ -432,7 +563,7 @@ const outputsJson = JSON.stringify(
     line-height: 1.4;
   }
 
-  /* ── Results panel ────────────────────────────────────── */
+  /* ── Results panel ──────────────────────────────────── */
   .widget-results {
     display: flex;
     flex-direction: column;
@@ -440,10 +571,7 @@ const outputsJson = JSON.stringify(
     position: sticky;
     top: 5rem;
   }
-
-  .widget-results > .widget-panel-label {
-    margin-bottom: 0.25rem;
-  }
+  .widget-results > .widget-panel-label { margin-bottom: 0.25rem; }
 
   /* Primary result card */
   .result-primary {
@@ -456,7 +584,6 @@ const outputsJson = JSON.stringify(
     gap: 0.5rem;
     box-shadow: 0 8px 32px rgba(194,65,12,0.30);
   }
-
   .result-primary-label {
     font-size: 0.8125rem;
     font-weight: 600;
@@ -464,13 +591,11 @@ const outputsJson = JSON.stringify(
     letter-spacing: 0.07em;
     opacity: 0.92;
   }
-
   .result-primary-value-row {
     display: flex;
     align-items: baseline;
     gap: 0.5rem;
   }
-
   .result-primary-number {
     font-size: clamp(3rem, 6vw, 4rem);
     font-weight: 900;
@@ -478,27 +603,76 @@ const outputsJson = JSON.stringify(
     line-height: 1;
     font-variant-numeric: tabular-nums;
   }
-
   .result-primary-unit {
     font-size: 1.5rem;
     font-weight: 600;
     opacity: 0.7;
     letter-spacing: -0.01em;
   }
-
   .result-primary-desc {
     font-size: 0.8125rem;
     opacity: 0.88;
     line-height: 1.4;
   }
 
-  /* Secondary results */
+  /* Equivalents section */
+  .result-equivalents {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 14px;
+    padding: 1rem 1.25rem;
+    box-shadow: var(--shadow-card);
+  }
+  .equivalents-heading {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--color-text-muted);
+    margin-bottom: 0.625rem;
+  }
+  .equivalents-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+  .equivalent-item {
+    display: flex;
+    align-items: baseline;
+    gap: 0.375rem;
+  }
+  .equivalent-x {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+  }
+  .equivalent-label-wrap {
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+  }
+  .equivalent-name {
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+  }
+  .equivalent-item .result-secondary-number {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+  }
+  .equivalent-item .result-secondary-unit {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+  }
+
+  /* Secondary cards */
   .result-secondary-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     gap: 0.75rem;
   }
-
   .result-secondary {
     background: var(--surface-card);
     border: 1px solid var(--border-default);
@@ -509,7 +683,6 @@ const outputsJson = JSON.stringify(
     gap: 0.2rem;
     box-shadow: var(--shadow-card);
   }
-
   .result-secondary-number {
     font-size: 1.625rem;
     font-weight: 800;
@@ -518,13 +691,11 @@ const outputsJson = JSON.stringify(
     line-height: 1;
     font-variant-numeric: tabular-nums;
   }
-
   .result-secondary-unit {
     font-size: 0.8125rem;
     font-weight: 600;
     color: var(--color-text-muted);
   }
-
   .result-secondary-label {
     font-size: 0.75rem;
     font-weight: 500;
@@ -532,13 +703,12 @@ const outputsJson = JSON.stringify(
     margin-top: 0.25rem;
   }
 
-  /* ── Result action buttons ────────────────────────────── */
+  /* Action buttons */
   .result-actions {
     display: flex;
     gap: 0.5rem;
     flex-wrap: wrap;
   }
-
   .action-btn {
     display: inline-flex;
     align-items: center;
@@ -565,7 +735,7 @@ const outputsJson = JSON.stringify(
     background: #f0fdf4;
   }
 
-  /* Recommended order callout */
+  /* Order callout — enhanced */
   .result-callout {
     display: flex;
     gap: 0.875rem;
@@ -575,7 +745,6 @@ const outputsJson = JSON.stringify(
     border-radius: 14px;
     padding: 1rem 1.125rem;
   }
-
   .callout-icon {
     flex-shrink: 0;
     width: 32px;
@@ -588,18 +757,92 @@ const outputsJson = JSON.stringify(
     color: #b45309;
     margin-top: 1px;
   }
-
+  .callout-content { flex: 1; }
   .callout-title {
     font-size: 0.9375rem;
     font-weight: 700;
     color: #78350f;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.2rem;
   }
-
-  .callout-body {
+  .callout-waste {
     font-size: 0.8125rem;
     color: #92400e;
     line-height: 1.5;
+  }
+  .callout-waste-range {
+    color: #b45309;
+    font-style: italic;
+  }
+  .callout-notes {
+    font-size: 0.8125rem;
+    color: #92400e;
+    margin-top: 0.375rem;
+    line-height: 1.5;
+  }
+
+  /* Cost range section */
+  .cost-range-section {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 14px;
+    padding: 1rem 1.25rem;
+    box-shadow: var(--shadow-card);
+  }
+  .cost-range-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+  .cost-range-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--color-text-muted);
+  }
+  .cost-range-badge {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    padding: 0.15rem 0.5rem;
+    background: #dbeafe;
+    color: #1d4ed8;
+    border-radius: 9999px;
+  }
+  .cost-range-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 0.375rem;
+  }
+  .cost-range-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+  }
+  .cost-range-unit {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--color-text-muted);
+  }
+  .cost-range-note {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+  }
+
+  /* Interpretation */
+  .result-interpretation {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-left: 3px solid var(--color-primary);
+    border-radius: 0 12px 12px 0;
+    padding: 0.875rem 1.125rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
   }
 
   /* Cost estimate */
@@ -610,7 +853,6 @@ const outputsJson = JSON.stringify(
     overflow: hidden;
     box-shadow: var(--shadow-card);
   }
-
   .cost-summary {
     display: flex;
     align-items: center;
@@ -625,11 +867,7 @@ const outputsJson = JSON.stringify(
   }
   .cost-summary:hover { background: var(--surface-page); }
   .cost-summary::-webkit-details-marker { display: none; }
-
-  .cost-chevron {
-    margin-left: auto;
-    transition: transform 200ms ease;
-  }
+  .cost-chevron { margin-left: auto; transition: transform 200ms ease; }
   details[open] .cost-chevron { transform: rotate(180deg); }
 
   .cost-body {
@@ -639,7 +877,6 @@ const outputsJson = JSON.stringify(
     gap: 0.875rem;
     border-top: 1px solid var(--border-subtle);
   }
-
   .cost-input-row {
     display: flex;
     align-items: center;
@@ -647,13 +884,7 @@ const outputsJson = JSON.stringify(
     gap: 1rem;
     padding-top: 0.875rem;
   }
-
-  .cost-label {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--color-text-secondary);
-  }
-
+  .cost-label { font-size: 0.875rem; font-weight: 500; color: var(--color-text-secondary); }
   .cost-input-wrap {
     display: flex;
     align-items: center;
@@ -662,7 +893,6 @@ const outputsJson = JSON.stringify(
     overflow: hidden;
     background: var(--surface-page);
   }
-
   .cost-dollar {
     padding: 0 0.625rem;
     font-size: 0.875rem;
@@ -673,7 +903,6 @@ const outputsJson = JSON.stringify(
     display: flex;
     align-items: center;
   }
-
   .cost-input {
     width: 80px;
     padding: 0.5rem 0.625rem;
@@ -687,7 +916,6 @@ const outputsJson = JSON.stringify(
   .cost-input::-webkit-outer-spin-button,
   .cost-input::-webkit-inner-spin-button { -webkit-appearance: none; }
   .cost-input:focus { outline: none; }
-
   .cost-result {
     display: flex;
     align-items: center;
@@ -697,13 +925,7 @@ const outputsJson = JSON.stringify(
     border-radius: 10px;
     border: 1px solid var(--border-default);
   }
-
-  .cost-result-label {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--color-text-secondary);
-  }
-
+  .cost-result-label { font-size: 0.875rem; font-weight: 500; color: var(--color-text-secondary); }
   .cost-result-value {
     font-size: 1.25rem;
     font-weight: 800;
@@ -715,51 +937,114 @@ const outputsJson = JSON.stringify(
 
 <script>
   import { formulaRegistry } from '../../calculators/client-registry';
+  import { interpretRegistry } from '../../calculators/interpret-registry';
 
-  const widget   = document.getElementById('calc-widget') as HTMLElement;
-  const form     = document.getElementById('calc-form') as HTMLFormElement;
-  const priceInput = document.getElementById('price-per-unit') as HTMLInputElement | null;
-  const costTotal  = document.getElementById('cost-total') as HTMLElement | null;
-  const orderQty   = document.getElementById('order-qty') as HTMLElement | null;
-  const primaryValueEl = document.getElementById('primary-value') as HTMLElement | null;
-  const shareBtn   = document.getElementById('action-share') as HTMLButtonElement | null;
-  const shareLabel = document.getElementById('share-label') as HTMLElement | null;
+  const widget       = document.getElementById('calc-widget') as HTMLElement;
+  const form         = document.getElementById('calc-form') as HTMLFormElement;
+  const priceInput   = document.getElementById('price-per-unit') as HTMLInputElement | null;
+  const costTotal    = document.getElementById('cost-total') as HTMLElement | null;
+  const orderQty     = document.getElementById('order-qty') as HTMLElement | null;
+  const primaryValEl = document.getElementById('primary-value') as HTMLElement | null;
+  const shareBtn     = document.getElementById('action-share') as HTMLButtonElement | null;
+  const shareLabel   = document.getElementById('share-label') as HTMLElement | null;
   const checklistBtn = document.getElementById('action-checklist') as HTMLButtonElement | null;
   const checklistLabel = document.getElementById('checklist-label') as HTMLElement | null;
-  const printBtn   = document.getElementById('action-print') as HTMLButtonElement | null;
+  const copyResultsBtn   = document.getElementById('action-copy-results') as HTMLButtonElement | null;
+  const copyResultsLabel = document.getElementById('copy-results-label') as HTMLElement | null;
+  const printBtn     = document.getElementById('action-print') as HTMLButtonElement | null;
+  const interpretEl  = document.getElementById('result-interpretation') as HTMLElement | null;
+  const costRangeLowEl  = document.getElementById('cost-range-low') as HTMLElement | null;
+  const costRangeHighEl = document.getElementById('cost-range-high') as HTMLElement | null;
 
   if (!widget || !form) throw new Error('Calculator DOM missing');
 
-  const slug    = widget.dataset.slug ?? '';
+  const slug     = widget.dataset.slug ?? '';
   const calcName = widget.dataset.name ?? 'Calculator';
-  const outputs: { id: string; label: string; unit: string; unitMetric: string; primary: boolean }[] =
+  const outputs: { id: string; label: string; unit: string; unitMetric: string; primary: boolean; isEquivalent: boolean }[] =
     JSON.parse(widget.dataset.outputs ?? '[]');
   const formula = formulaRegistry[slug];
   if (!formula) throw new Error(`No formula for "${slug}"`);
 
-  const INPUTS_KEY = `cc-inputs-${slug}`;
-  const PRICE_KEY  = `cc-price-${slug}`;
+  const wasteDefault = Number(widget.dataset.waste ?? '10');
+  const wasteMultiplier = 1 + wasteDefault / 100;
 
-  const savedUnit = localStorage.getItem('cc-unit-system') as 'imperial' | 'metric' | null;
+  let costRange: { low: number; high: number; unit: string } | null = null;
+  try {
+    const raw = widget.dataset.costRange;
+    if (raw) costRange = JSON.parse(raw);
+  } catch {}
+
+  const INPUTS_KEY      = `cc-inputs-${slug}`;
+  const PRICE_KEY       = `cc-price-${slug}`;
+  const UNITS_KEY       = 'cc-units';
+  const GLOBAL_PRICES_KEY = 'cc-material-prices';
+
+  // Material key map: calc slug → global price key
+  const MATERIAL_KEY_MAP: Record<string, string> = {
+    'concrete-slab-calculator':        'concrete',
+    'concrete-driveway-calculator':    'concrete',
+    'concrete-footing-calculator':     'concrete',
+    'concrete-bags-calculator':        'concrete',
+    'concrete-block-calculator':       'concrete',
+    'concrete-column-calculator':      'concrete',
+    'post-hole-calculator':            'concrete',
+    'concrete-slab-rebar-calculator':  'concrete',
+    'gravel-calculator':               'gravel',
+    'french-drain-calculator':         'gravel',
+    'aggregate-calculator':            'gravel',
+    'paver-base-calculator':           'gravel',
+    'rebar-calculator':                'rebar',
+    'sand-calculator':                 'sand',
+    'topsoil-calculator':              'topsoil',
+    'mulch-calculator':                'mulch',
+    'asphalt-calculator':              'asphalt',
+    'lumber-calculator':               'lumber',
+    'board-foot-calculator':           'lumber',
+    'plywood-calculator':              'plywood',
+  };
+  const materialKey = MATERIAL_KEY_MAP[slug] ?? null;
+
+  function getGlobalPrice(): number | null {
+    if (!materialKey) return null;
+    try {
+      const prices = JSON.parse(localStorage.getItem(GLOBAL_PRICES_KEY) ?? '{}');
+      const v = prices[materialKey];
+      return typeof v === 'number' && v > 0 ? v : null;
+    } catch { return null; }
+  }
+
+  function saveGlobalPrice(price: number) {
+    if (!materialKey) return;
+    try {
+      const prices = JSON.parse(localStorage.getItem(GLOBAL_PRICES_KEY) ?? '{}');
+      prices[materialKey] = price;
+      localStorage.setItem(GLOBAL_PRICES_KEY, JSON.stringify(prices));
+    } catch {}
+  }
+
+  // Read unit pref — support old key for backward compat
+  const savedUnit = (
+    localStorage.getItem(UNITS_KEY) ||
+    localStorage.getItem('cc-unit-system')
+  ) as 'imperial' | 'metric' | null;
+
   let currentUnit: 'imperial' | 'metric' = savedUnit ||
     (widget.dataset.unit as 'imperial' | 'metric') || 'imperial';
 
-  function getInputs(): Record<string, number> {
-    const data: Record<string, number> = {};
-    form.querySelectorAll<HTMLInputElement>('input[name]').forEach((el) => {
+  function getInputs(): Record<string, number | string> {
+    const data: Record<string, number | string> = {};
+    form.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[name]').forEach((el) => {
       const row = el.closest<HTMLElement>('[data-only-in]');
       const onlyIn = row?.dataset.onlyIn;
       if (onlyIn && onlyIn !== 'both' && onlyIn !== currentUnit) return;
-      data[el.name] = el.value === '' ? 0 : Number(el.value);
+      data[el.name] = el instanceof HTMLSelectElement ? el.value : (el.value === '' ? 0 : Number(el.value));
     });
     return data;
   }
 
   function restoreInputs(map: Record<string, unknown>) {
-    form.querySelectorAll<HTMLInputElement>('input[name]').forEach((el) => {
-      if (map[el.name] !== undefined) {
-        el.value = String(map[el.name]);
-      }
+    form.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[name]').forEach((el) => {
+      if (map[el.name] !== undefined) el.value = String(map[el.name]);
     });
   }
 
@@ -769,31 +1054,30 @@ const outputsJson = JSON.stringify(
   }
 
   function updateResults() {
-    const results = formula(getInputs(), currentUnit);
+    const inputs  = getInputs();
+    const results = formula(inputs, currentUnit);
     let primaryVal = 0;
 
-    outputs.forEach(({ id, unit, primary }) => {
+    outputs.forEach(({ id, unit, unitMetric, primary }) => {
       const raw = results[id] ?? 0;
       if (primary) {
         primaryVal = raw;
-        if (primaryValueEl) primaryValueEl.textContent = fmt(raw, 3);
-        if (orderQty) orderQty.textContent = fmt(raw * 1.1, 2);
+        if (primaryValEl) primaryValEl.textContent = fmt(raw, 3);
+        if (orderQty) orderQty.textContent = fmt(raw * wasteMultiplier, 2);
         updateCost(raw);
+        updateCostRange(raw);
       } else {
-        const card = document.querySelector<HTMLElement>(`#secondary-results [data-output-id="${id}"]`);
-        const numEl = card?.querySelector<HTMLElement>('.result-secondary-number');
-        if (numEl) numEl.textContent = fmt(raw, 3);
+        // Works for both card and table layouts — both use [data-output-id]
+        const el = widget.querySelector<HTMLElement>(`[data-output-id="${id}"] .result-secondary-number`);
+        if (el) el.textContent = fmt(raw, 3);
       }
     });
 
-    // Persist inputs
-    try {
-      localStorage.setItem(INPUTS_KEY, JSON.stringify(getInputs()));
-    } catch {}
+    updateInterpretation(results, inputs);
 
-    // Update shareable URL hash
+    try { localStorage.setItem(INPUTS_KEY, JSON.stringify(inputs)); } catch {}
     try {
-      const encoded = btoa(JSON.stringify({ u: currentUnit, i: getInputs() }));
+      const encoded = btoa(JSON.stringify({ u: currentUnit, i: inputs }));
       history.replaceState(null, '', '#' + encoded);
     } catch {}
   }
@@ -801,19 +1085,36 @@ const outputsJson = JSON.stringify(
   function updateCost(primaryVal?: number) {
     if (!costTotal || !priceInput) return;
     const price = parseFloat(priceInput.value) || 0;
-    let val = primaryVal;
-    if (val === undefined) {
-      const results = formula(getInputs(), currentUnit);
+    if (primaryVal === undefined) {
+      const inputs = getInputs();
+      const results = formula(inputs, currentUnit);
       const primary = outputs.find((o) => o.primary);
-      val = primary ? (results[primary.id] ?? 0) : 0;
+      primaryVal = primary ? (results[primary.id] ?? 0) : 0;
     }
-    const total = val * price;
-    const safeTotal = Number.isFinite(total) ? total : 0;
-    costTotal.textContent = `$${safeTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    const total = Number.isFinite(primaryVal * price) ? primaryVal * price : 0;
+    costTotal.textContent = `$${total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  }
+
+  function updateCostRange(primaryVal: number) {
+    if (!costRange || !costRangeLowEl || !costRangeHighEl) return;
+    costRangeLowEl.textContent  = fmt(primaryVal * costRange.low, 0);
+    costRangeHighEl.textContent = fmt(primaryVal * costRange.high, 0);
+  }
+
+  function updateInterpretation(results: Record<string, number>, inputs: Record<string, number | string>) {
+    if (!interpretEl) return;
+    const interpretFn = interpretRegistry[slug];
+    if (!interpretFn) { interpretEl.style.display = 'none'; return; }
+    const lines = interpretFn(results, inputs, currentUnit).filter(Boolean);
+    if (!lines.length) { interpretEl.style.display = 'none'; return; }
+    interpretEl.style.display = '';
+    interpretEl.innerHTML = lines
+      .map((l) => `<p style="font-size:0.875rem;color:var(--color-text-secondary);line-height:1.6;margin:0">${l}</p>`)
+      .join('');
   }
 
   function syncVisibility() {
-    form.querySelectorAll<HTMLElement>('[data-only-in]').forEach((el) => {
+    widget.querySelectorAll<HTMLElement>('[data-only-in]').forEach((el) => {
       const v = el.dataset.onlyIn;
       if (!v || v === 'both') return;
       el.style.display = v === currentUnit ? '' : 'none';
@@ -832,7 +1133,7 @@ const outputsJson = JSON.stringify(
   function setUnit(unit: 'imperial' | 'metric') {
     currentUnit = unit;
     widget.dataset.unit = unit;
-    localStorage.setItem('cc-unit-system', unit);
+    localStorage.setItem(UNITS_KEY, unit);
     widget.querySelectorAll<HTMLButtonElement>('.unit-btn').forEach((btn) => {
       btn.setAttribute('aria-pressed', btn.dataset.unit === unit ? 'true' : 'false');
     });
@@ -841,27 +1142,24 @@ const outputsJson = JSON.stringify(
     updateResults();
   }
 
-  function flashFeedback(btn: HTMLButtonElement, label: HTMLElement | null, text: string) {
+  function flashFeedback(btn: HTMLButtonElement, labelEl: HTMLElement | null, text: string, original: string) {
     btn.classList.add('action-feedback');
-    if (label) label.textContent = text;
+    if (labelEl) labelEl.textContent = text;
     setTimeout(() => {
       btn.classList.remove('action-feedback');
-      if (label) label.textContent = label === shareLabel ? 'Copy link' : 'Copy checklist';
+      if (labelEl) labelEl.textContent = original;
     }, 2000);
   }
 
-  // Share button — copy current URL (with hash) to clipboard
   shareBtn?.addEventListener('click', () => {
     navigator.clipboard.writeText(window.location.href).then(() => {
-      flashFeedback(shareBtn, shareLabel, 'Copied!');
-    }).catch(() => {
-      flashFeedback(shareBtn, shareLabel, 'Link ready');
-    });
+      flashFeedback(shareBtn, shareLabel, 'Copied!', 'Copy link');
+    }).catch(() => flashFeedback(shareBtn, shareLabel, 'Link ready', 'Copy link'));
   });
 
-  // Checklist button — build order checklist and copy
   checklistBtn?.addEventListener('click', () => {
-    const results = formula(getInputs(), currentUnit);
+    const inputs  = getInputs();
+    const results = formula(inputs, currentUnit);
     const lines: string[] = [`Order checklist — ${calcName}`, ''];
     outputs.forEach(({ id, label, unit, unitMetric }) => {
       const raw = results[id] ?? 0;
@@ -870,23 +1168,85 @@ const outputsJson = JSON.stringify(
     });
     lines.push('', `Source: ${window.location.href}`);
     navigator.clipboard.writeText(lines.join('\n')).then(() => {
-      flashFeedback(checklistBtn, checklistLabel, 'Copied!');
+      flashFeedback(checklistBtn, checklistLabel, 'Copied!', 'Copy checklist');
     });
   });
 
-  // Print button
+  copyResultsBtn?.addEventListener('click', () => {
+    const inputs  = getInputs();
+    const results = formula(inputs, currentUnit);
+    const lines: string[] = [calcName, ''];
+
+    outputs.forEach(({ id, label, unit, unitMetric }) => {
+      const raw = results[id] ?? 0;
+      const unitLabel = currentUnit === 'metric' && unitMetric ? unitMetric : unit;
+      lines.push(`${label}: ${fmt(raw, 2)}${unitLabel ? ' ' + unitLabel : ''}`.trimEnd());
+    });
+
+    // Append cost estimate when a price is entered
+    if (priceInput?.value) {
+      const price = parseFloat(priceInput.value);
+      const primaryOut = outputs.find((o) => o.primary);
+      if (primaryOut && !isNaN(price) && price > 0) {
+        const primaryVal = results[primaryOut.id] ?? 0;
+        const total = primaryVal * price;
+        if (total > 0) lines.push(`Estimated Cost: $${total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`);
+      }
+    } else if (costRange) {
+      const primaryOut = outputs.find((o) => o.primary);
+      if (primaryOut) {
+        const primaryVal = results[primaryOut.id] ?? 0;
+        const low  = Math.round(primaryVal * costRange.low);
+        const high = Math.round(primaryVal * costRange.high);
+        if (low > 0 && high > 0) lines.push(`Estimated Cost: $${low.toLocaleString('en-US')}–$${high.toLocaleString('en-US')}`);
+      }
+    }
+
+    lines.push('', 'Generated by ConstructCalc');
+    navigator.clipboard.writeText(lines.join('\n')).then(() => {
+      flashFeedback(copyResultsBtn, copyResultsLabel, 'Copied!', 'Copy results');
+    }).catch(() => flashFeedback(copyResultsBtn, copyResultsLabel, 'Ready', 'Copy results'));
+  });
+
   printBtn?.addEventListener('click', () => {
-    const printUrl = document.getElementById('print-url');
+    const printUrl  = document.getElementById('print-url');
     const printDate = document.getElementById('print-date');
-    if (printUrl) printUrl.textContent = window.location.href;
-    if (printDate) printDate.textContent = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    if (printUrl)  printUrl.textContent  = window.location.href;
+    if (printDate) printDate.textContent = new Date().toLocaleDateString('en-US', {
+      year: 'numeric', month: 'long', day: 'numeric',
+    });
+
+    // Build print inputs summary
+    const summaryEl = document.getElementById('print-inputs-summary');
+    if (summaryEl) {
+      const rows = Array.from(
+        form.querySelectorAll<HTMLElement>('.field-row')
+      ).filter((row) => {
+        const v = row.dataset.onlyIn;
+        return !v || v === 'both' || v === currentUnit;
+      }).map((row) => {
+        const labelText = row.querySelector('.field-label')?.childNodes[0]?.textContent?.trim() ?? '';
+        const vals = Array.from(row.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[name]'))
+          .map((inp) => {
+            const v = inp.value;
+            const unit = inp.closest('.input-wrap')?.querySelector('.field-unit')?.textContent ?? '';
+            return `${v}${unit ? ' ' + unit : ''}`;
+          }).join(' ');
+        return `<tr style="border-bottom:1px solid #eee"><td style="padding:3px 8px 3px 0;font-size:0.75rem;color:#555">${labelText}</td><td style="padding:3px 0;font-size:0.75rem;font-weight:600">${vals}</td></tr>`;
+      });
+      summaryEl.innerHTML = rows.length
+        ? `<p style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#888;margin-bottom:4px">Inputs</p><table style="border-collapse:collapse;width:100%">${rows.join('')}</table>`
+        : '';
+    }
+
     window.print();
   });
 
-  // Persist cost price on change
   priceInput?.addEventListener('input', () => {
     updateCost();
     try { localStorage.setItem(PRICE_KEY, priceInput.value); } catch {}
+    const price = parseFloat(priceInput.value);
+    if (!isNaN(price) && price > 0) saveGlobalPrice(price);
   });
 
   widget.querySelectorAll<HTMLButtonElement>('.unit-btn').forEach((btn) => {
@@ -899,8 +1259,7 @@ const outputsJson = JSON.stringify(
     debounce = setTimeout(updateResults, 100);
   });
 
-  // ── Init sequence ──────────────────────────────────────
-  // Priority 1: URL hash (shareable link)
+  // ── Init ──────────────────────────────────────────────
   let restoredUnit: 'imperial' | 'metric' | null = null;
   if (location.hash) {
     try {
@@ -909,20 +1268,22 @@ const outputsJson = JSON.stringify(
       if (parsed.i && typeof parsed.i === 'object') restoreInputs(parsed.i);
     } catch {}
   } else {
-    // Priority 2: localStorage inputs
     try {
       const saved = localStorage.getItem(INPUTS_KEY);
       if (saved) restoreInputs(JSON.parse(saved));
     } catch {}
   }
 
-  // Restore persistent price
   try {
-    const savedPrice = localStorage.getItem(PRICE_KEY);
+    const savedPrice = localStorage.getItem(PRICE_KEY) ?? (getGlobalPrice()?.toString() ?? null);
     if (savedPrice && priceInput) priceInput.value = savedPrice;
   } catch {}
 
-  // Apply unit (hash > saved > default)
+  // Persist resolved unit under new key (migrates old cc-unit-system silently)
+  if (savedUnit && !localStorage.getItem(UNITS_KEY)) {
+    try { localStorage.setItem(UNITS_KEY, savedUnit); } catch {}
+  }
+
   const unitToUse: 'imperial' | 'metric' = restoredUnit ?? savedUnit ??
     (widget.dataset.unit as 'imperial' | 'metric') ?? 'imperial';
 

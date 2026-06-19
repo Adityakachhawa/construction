@@ -1,0 +1,217 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/layout/Breadcrumbs.astro';
+import { buildPageTitle, buildCanonical } from '../../utils/seo';
+import { DEFAULT_OG_IMAGE } from '../../utils/constants';
+import { buildBreadcrumbList } from '../../utils/schema';
+import { calculatorRegistry } from '../../data/registry';
+
+const meta = {
+  title: buildPageTitle('Roofing Calculation Methodology'),
+  description: 'How ConstructCalc roofing calculators work — slope factor formulas, IRC R905 references, square calculations, and shingle waste factors.',
+  canonical: buildCanonical('/methodology/roofing/'),
+  ogType: 'website' as const,
+  ogImage: DEFAULT_OG_IMAGE,
+};
+
+const schemas = [
+  buildBreadcrumbList([
+    { name: 'Home', href: '/' },
+    { name: 'Methodology', href: '/methodology/' },
+    { name: 'Roofing', href: '/methodology/roofing/' },
+  ]),
+];
+
+const breadcrumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Methodology', href: '/methodology/' },
+  { name: 'Roofing', href: '/methodology/roofing/' },
+];
+
+const relatedCalcs = calculatorRegistry.filter((c) =>
+  ['roofing-calculator','roof-pitch-calculator','metal-roofing-calculator','rafter-calculator'].includes(c.slug)
+);
+---
+
+<BaseLayout meta={meta} schemas={schemas}>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbs} />
+      <div class="header-chip">Roofing</div>
+      <h1 class="page-title">Roofing Calculation Methodology</h1>
+      <p class="page-sub">The slope factor formulas, IRC R905 references, square calculations, and waste factors behind ConstructCalc roofing calculators.</p>
+    </div>
+  </div>
+
+  <div class="page-body">
+    <div class="container-narrow">
+
+      <section class="content-section">
+        <h2>Overview</h2>
+        <p>Roofing material quantities depend on actual roof surface area, not plan (footprint) area. The slope factor converts horizontal projection to true sloped area. All roofing material is ordered in <strong>squares</strong> (1 square = 100 ft²). Waste factors account for edge cuts, ridge caps, valleys, and starter courses.</p>
+        <p>Metal roofing (standing seam, corrugated) uses panel coverage width rather than squares, since panels run full slope length with minimal overlap waste.</p>
+      </section>
+
+      <section class="content-section">
+        <h2>Core Formulas</h2>
+
+        <h3>Slope Factor</h3>
+        <div class="formula-block">
+          <code>Slope Factor = √(1 + (Pitch/12)²)</code>
+        </div>
+        <p>For a 6/12 pitch: √(1 + 0.25) = √1.25 ≈ 1.118. A 6/12 roof has 11.8% more surface area than its footprint.</p>
+
+        <h3>Roof Surface Area</h3>
+        <div class="formula-block">
+          <code>Roof Area = Plan Area × Slope Factor</code>
+        </div>
+        <p>Plan area = Length × Width of the building footprint covered by the roof section.</p>
+
+        <h3>Squares Required</h3>
+        <div class="formula-block">
+          <code>Squares = ⌈(Roof Area / 100) × (1 + Waste)⌉</code>
+        </div>
+
+        <h3>Pitch Angle</h3>
+        <div class="formula-block">
+          <code>Angle (°) = arctan(Pitch / 12) × (180 / π)</code>
+        </div>
+        <p>A 4/12 pitch = arctan(0.333) ≈ 18.4°. Walking safety is typically considered acceptable at or below 6/12 (26.6°).</p>
+
+        <h3>Metal Roofing Panel Count</h3>
+        <div class="formula-block">
+          <code>Panels = ⌈(Rafter length / Panel length)⌉ × ⌈(Width / Coverage width)⌉</code>
+        </div>
+        <p>Coverage width accounts for the panel overlap (typically 1–2 inches per panel seam).</p>
+      </section>
+
+      <section class="content-section">
+        <h2>Slope Factor Reference Table</h2>
+        <div class="waste-table">
+          <table>
+            <thead>
+              <tr><th>Pitch (x/12)</th><th>Slope Factor</th><th>Angle (°)</th><th>Classification</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>2/12</td><td>1.054</td><td>9.5°</td><td>Low slope</td></tr>
+              <tr><td>3/12</td><td>1.031</td><td>14.0°</td><td>Low slope</td></tr>
+              <tr><td>4/12</td><td>1.054</td><td>18.4°</td><td>Moderate</td></tr>
+              <tr><td>5/12</td><td>1.083</td><td>22.6°</td><td>Moderate</td></tr>
+              <tr><td>6/12</td><td>1.118</td><td>26.6°</td><td>Standard</td></tr>
+              <tr><td>7/12</td><td>1.158</td><td>30.3°</td><td>Standard</td></tr>
+              <tr><td>8/12</td><td>1.202</td><td>33.7°</td><td>Steep</td></tr>
+              <tr><td>10/12</td><td>1.302</td><td>39.8°</td><td>Steep</td></tr>
+              <tr><td>12/12</td><td>1.414</td><td>45.0°</td><td>Very steep</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <h2>Waste Factors</h2>
+        <div class="waste-table">
+          <table>
+            <thead>
+              <tr><th>Roof Type</th><th>Default Waste</th><th>Rationale</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Simple gable</td><td>10%</td><td>Minimal cuts, one ridge line</td></tr>
+              <tr><td>Hip roof</td><td>15%</td><td>Four diagonal hip cuts per section</td></tr>
+              <tr><td>Complex / valleys</td><td>15–20%</td><td>Multiple valleys, dormers, step flashing</td></tr>
+              <tr><td>Metal panels (standing seam)</td><td>5–8%</td><td>Panels run full slope with minimal offcuts</td></tr>
+              <tr><td>Low-slope modified bitumen</td><td>10%</td><td>Roll goods, seams, perimeter detailing</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>NRCA (National Roofing Contractors Association) guidelines recommend a minimum 10% waste for residential shingle work; 15% is industry standard for hip or complex roofs.</p>
+      </section>
+
+      <section class="content-section">
+        <h2>Assumptions</h2>
+        <ul>
+          <li>Starter course is included in the 10% waste factor; a separate starter-course calculator is not provided.</li>
+          <li>Ridge cap shingles use 3 tabs per lineal foot of ridge from a standard bundle — not separately calculated.</li>
+          <li>Ice-and-water shield coverage (2 ft from eave minimum per IRC) is not modeled; allow 1 square per 30 lineal ft of eave.</li>
+          <li>Our calculators model simple rectangular roof sections. L-shaped, multi-section, or complex dormered roofs should be divided into rectangles and summed.</li>
+          <li>Drip edge and flashing linear footage is not calculated — allow 1 lineal foot of drip edge per lineal foot of rake and eave.</li>
+        </ul>
+      </section>
+
+      <section class="content-section">
+        <h2>Industry Standards &amp; Code References</h2>
+        <ul>
+          <li><strong>IRC R905</strong> — Requirements for Roof Coverings. Minimum slope requirements per covering type (e.g., R905.2: asphalt shingles min 2:12 with double underlayment, 4:12 for standard installation).</li>
+          <li><strong>NRCA Roofing Manual</strong> — Industry installation standards for all roof covering types.</li>
+          <li><strong>ASTM D3462</strong> — Standard specification for asphalt shingles made from glass felt.</li>
+          <li><strong>UL 790 / ASTM E108</strong> — Fire classification for roof assemblies (Class A, B, C).</li>
+          <li><strong>IRC R903</strong> — Weather protection and underlayment requirements.</li>
+          <li><strong>IRC R905.10</strong> — Metal roof shingles and panels minimum slope and fastening.</li>
+        </ul>
+      </section>
+
+      <section class="content-section">
+        <h2>References &amp; Citations</h2>
+        <ul>
+          <li>International Code Council. <em>International Residential Code (IRC) 2021.</em> Sections R903, R905.</li>
+          <li>National Roofing Contractors Association. <em>The NRCA Roofing Manual: Steep-slope Roof Systems.</em> 2022.</li>
+          <li>CertainTeed. <em>Shingle Roofing Application Manual.</em> 2023.</li>
+          <li>Owens Corning. <em>Pro Contractor Resource: Estimating Roofing Materials.</em> 2022.</li>
+          <li>American Iron and Steel Institute. <em>AISI S100: North American Specification for the Design of Cold-Formed Steel Structural Members.</em></li>
+        </ul>
+      </section>
+
+      {relatedCalcs.length > 0 && (
+        <section class="content-section">
+          <h2>Related Calculators</h2>
+          <div class="related-grid">
+            {relatedCalcs.map((calc) => (
+              <a href={`/calculators/${calc.slug}/`} class="related-card">
+                <strong class="related-name">{calc.name}</strong>
+                <span class="related-desc">{calc.description}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <div class="nav-links">
+        <a href="/methodology/framing/" class="nav-link-back">← Framing Methodology</a>
+        <a href="/methodology/excavation/" class="nav-link-next">Excavation Methodology →</a>
+      </div>
+
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-header { background: var(--surface-page); border-bottom: 1px solid var(--border-default); padding: 2rem 0 2.5rem; }
+  .container { max-width: 72rem; margin: 0 auto; padding: 0 1.5rem; }
+  .container-narrow { max-width: 52rem; margin: 0 auto; padding: 0 1.5rem; }
+  .header-chip { display: inline-flex; align-items: center; padding: 0.2rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; background: var(--color-primary-50); color: var(--color-primary); border: 1px solid color-mix(in srgb, var(--color-primary) 20%, transparent); margin-bottom: 0.875rem; }
+  .page-title { font-size: clamp(1.75rem, 3.5vw, 2.5rem); font-weight: 900; color: var(--color-text-primary); letter-spacing: -0.04em; margin-top: 0.5rem; line-height: 1.1; }
+  .page-sub { margin-top: 0.625rem; font-size: 1.0625rem; color: var(--color-text-secondary); max-width: 44rem; line-height: 1.6; }
+  .page-body { padding: 3rem 0 5rem; }
+  .content-section { margin-bottom: 3rem; }
+  .content-section h2 { font-size: 1.375rem; font-weight: 800; color: var(--color-text-primary); letter-spacing: -0.03em; margin-bottom: 1rem; padding-bottom: 0.625rem; border-bottom: 2px solid var(--border-default); }
+  .content-section h3 { font-size: 1rem; font-weight: 700; color: var(--color-text-primary); margin: 1.25rem 0 0.375rem; }
+  .content-section p { font-size: 1rem; color: var(--color-text-secondary); line-height: 1.7; margin-bottom: 0.875rem; }
+  .content-section strong { color: var(--color-text-primary); font-weight: 600; }
+  .formula-block { background: var(--surface-card); border: 1px solid var(--border-default); border-left: 3px solid var(--color-primary); border-radius: 0 10px 10px 0; padding: 0.75rem 1rem; margin: 0.5rem 0 0.875rem; }
+  .formula-block code { font-family: var(--font-mono); font-size: 0.9375rem; font-weight: 600; color: var(--color-text-primary); }
+  .content-section ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; }
+  .content-section ul li { font-size: 1rem; color: var(--color-text-secondary); padding-left: 1.25rem; position: relative; line-height: 1.6; }
+  .content-section ul li::before { content: '·'; position: absolute; left: 0.25rem; color: var(--color-primary); font-weight: 700; }
+  .waste-table { overflow-x: auto; margin: 0.75rem 0 1rem; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9375rem; }
+  th { background: var(--surface-card); border: 1px solid var(--border-default); padding: 0.625rem 1rem; text-align: left; font-weight: 600; color: var(--color-text-primary); font-size: 0.875rem; }
+  td { border: 1px solid var(--border-default); padding: 0.625rem 1rem; color: var(--color-text-secondary); font-size: 0.875rem; }
+  tr:nth-child(even) td { background: var(--border-subtle); }
+  .related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; margin-top: 0.5rem; }
+  .related-card { display: flex; flex-direction: column; gap: 0.25rem; padding: 0.875rem 1rem; background: var(--surface-card); border: 1px solid var(--border-default); border-radius: 12px; transition: border-color 150ms, box-shadow 150ms; text-decoration: none; }
+  .related-card:hover { border-color: var(--color-primary); box-shadow: 0 2px 8px rgba(194,65,12,0.12); }
+  .related-name { font-size: 0.875rem; font-weight: 700; color: var(--color-text-primary); }
+  .related-desc { font-size: 0.8125rem; color: var(--color-text-muted); line-height: 1.4; }
+  .nav-links { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; padding-top: 2rem; border-top: 1px solid var(--border-default); margin-top: 1rem; }
+  .nav-link-back, .nav-link-next { font-size: 0.875rem; font-weight: 600; color: var(--color-primary); }
+  .nav-link-back:hover, .nav-link-next:hover { text-decoration: underline; }
+</style>

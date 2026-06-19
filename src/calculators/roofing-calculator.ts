@@ -374,4 +374,27 @@ export const roofingCalculator: CalculatorConfig = {
         'Material costs for architectural asphalt shingles run $100–$160 per square (3 bundles × $35–$55 per bundle). A 20-square roof is $2,000–$3,200 in shingles alone. Add underlayment ($15–$25 per square), nails, ridge cap, and flashing. Professional installation adds $150–$350 per square for labor, bringing the total to $300–$500 per square installed. A 20-square roof: $6,000–$10,000 fully installed. Metal roofing runs $400–$900 per square installed. Always get three quotes — prices vary significantly by region and contractor.',
     },
   ],
+  orderCallout: true,
+  wasteFactor: {
+    default: 15,
+    range: '10–20%',
+    notes: 'Simple gable roof: 10–12%. Hip roof: 15%. Complex roof with dormers, valleys, or multiple pitches: 20%+.',
+  },
+  costRange: {
+    low: 100,
+    high: 160,
+    unit: 'per square (materials only)',
+  },
+  references: [
+    {
+      title: 'IRC R905 – Requirements for Roof Coverings',
+      organization: 'International Residential Code',
+      url: 'https://codes.iccsafe.org/',
+    },
+    {
+      title: 'Roofing Manual – Steep-Slope Roofing',
+      organization: 'National Roofing Contractors Association (NRCA)',
+      url: 'https://www.nrca.net/',
+    },
+  ],
 };

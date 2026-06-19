@@ -359,4 +359,16 @@ export const rafterCalculator: CalculatorConfig = {
         'Common rafters run perpendicular from the wall plate to the ridge — this calculator calculates common rafter length. Hip rafters run at 45° from a corner to the ridge end on hip roofs — their length is longer: hip rafter = √(run² + run² + rise²) = √(2 × run² + rise²). Valley rafters occupy re-entrant corners on L-shaped roofs and use the same formula as hip rafters. Jack rafters are shortened common rafters that frame into hip or valley rafters rather than the ridge.',
     },
   ],
+  references: [
+    {
+      title: 'IRC R802 – Wood Roof Framing',
+      organization: 'International Residential Code',
+      url: 'https://codes.iccsafe.org/',
+    },
+    {
+      title: 'Span Tables for Joists and Rafters',
+      organization: 'American Wood Council (AWC)',
+      url: 'https://www.awc.org/',
+    },
+  ],
 };

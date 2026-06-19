@@ -316,4 +316,22 @@ export const rebarCalculator: CalculatorConfig = {
         'Rebar should be placed at the middle to lower-middle of the slab depth. For a 4-inch slab, center the rebar at 2 inches from the bottom (providing 2-inch cover). Use rebar chairs or dobies to hold the bars at the correct height — never lay rebar on the ground before pouring, as it will end up at the bottom with no concrete cover.',
     },
   ],
+  orderCallout: true,
+  wasteFactor: {
+    default: 10,
+    range: '10–15%',
+    notes: 'Simple grids: 10%. Complex layouts with many short pieces, hooks, or L-bars: 15%.',
+  },
+  references: [
+    {
+      title: 'ACI 318 – Building Code Requirements for Structural Concrete (Reinforcement)',
+      organization: 'American Concrete Institute',
+      url: 'https://www.concrete.org/',
+    },
+    {
+      title: 'CRSI Design Handbook',
+      organization: 'Concrete Reinforcing Steel Institute',
+      url: 'https://www.crsi.org/',
+    },
+  ],
 };

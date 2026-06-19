@@ -444,4 +444,10 @@ export const groutCalculator: CalculatorConfig = {
         'Sanded grout in a standard 25 lb bag typically costs $12–20. Unsanded grout runs $15–25 per 25 lb bag. Epoxy grout kits are $30–60 each. Prices vary by brand, retailer, and region. For larger jobs, buying 50 lb bags generally offers better value per cubic foot.',
     },
   ],
+  orderCallout: true,
+  wasteFactor: {
+    default: 10,
+    range: '10–15%',
+    notes: 'Straight-set tile: 10%. Mosaic or very small tiles with narrow joints: 15%.',
+  },
 };

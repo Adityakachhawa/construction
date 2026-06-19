@@ -396,4 +396,9 @@ export const excavationCalculator: CalculatorConfig = {
         '1 cubic yard = 0.7646 cubic metres. To convert yd³ to m³: multiply by 0.7646. To convert m³ to yd³: multiply by 1.308. Example: 100 yd³ = 76.46 m³. This matters when comparing quotes from contractors who use different unit systems, or when checking material specifications written in metric. This calculator shows both automatically.',
     },
   ],
+  wasteFactor: {
+    default: 15,
+    range: '10–30%',
+    notes: 'Excavated soil expands 10–30% when loaded (swell factor). Order proportionally more truck trips than the bank-measure volume suggests.',
+  },
 };

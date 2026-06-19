@@ -243,4 +243,10 @@ export const mulchCalculator: CalculatorConfig = {
         'For a circular bed, calculate the area first: Area = π × radius². Then multiply by your desired depth. For example, a 10-foot diameter circle (5-foot radius) has an area of 78.5 sq ft. At 3 inches deep, that is 19.6 cubic feet, or 0.73 cubic yards (about 10 bags).',
     },
   ],
+  orderCallout: true,
+  wasteFactor: {
+    default: 10,
+    range: '5–10%',
+    notes: 'Mulch settles and compresses after watering. Add 5–10% to reach your target finished depth.',
+  },
 };

@@ -444,4 +444,22 @@ export const studCalculator: CalculatorConfig = {
         'Run this calculator once per wall, then add the totals. Shared corners between intersecting walls may let you reduce the count slightly — one wall\'s end studs can serve as the corner assembly for the adjacent wall. In practice, most framers calculate each wall independently and add 10% overall, since lumber is inexpensive relative to labour and a separate trip for a few extra studs costs far more than the boards themselves.',
     },
   ],
+  orderCallout: true,
+  wasteFactor: {
+    default: 10,
+    range: '10–15%',
+    notes: 'Simple rectangular walls: 10%. Walls with many corners, angled runs, or complex header configurations: 15%.',
+  },
+  references: [
+    {
+      title: 'IRC R602 – Wood Wall Framing',
+      organization: 'International Residential Code',
+      url: 'https://codes.iccsafe.org/',
+    },
+    {
+      title: 'Wood Frame Construction Manual (WFCM)',
+      organization: 'American Wood Council (AWC)',
+      url: 'https://www.awc.org/',
+    },
+  ],
 };

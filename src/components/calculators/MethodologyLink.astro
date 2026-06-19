@@ -1,0 +1,62 @@
+---
+import { getMethodologySlug, getMethodologyPage } from '../../data/methodology';
+
+interface Props {
+  calcSlug: string;
+  categorySlug: string;
+}
+
+const { calcSlug, categorySlug } = Astro.props;
+
+const mSlug = getMethodologySlug(calcSlug, categorySlug);
+const page  = mSlug ? getMethodologyPage(mSlug) : null;
+---
+
+{page && (
+  <div class="methodology-link">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/>
+      <path d="M8 6v4M8 5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <span class="methodology-link-text">
+      How we calculate this:
+    </span>
+    <a href={`/methodology/${page.slug}/`} class="methodology-link-anchor">
+      {page.label}
+      <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+        <path d="M2.5 6h7M6.5 3l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </div>
+)}
+
+<style>
+  .methodology-link {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    padding: 0.625rem 0.875rem;
+    background: var(--color-primary-50);
+    border: 1px solid color-mix(in srgb, var(--color-primary) 20%, transparent);
+    border-radius: 10px;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .methodology-link svg { color: var(--color-primary); flex-shrink: 0; }
+
+  .methodology-link-text { font-weight: 500; }
+
+  .methodology-link-anchor {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: gap 150ms ease;
+  }
+  .methodology-link-anchor:hover { gap: 0.4rem; }
+</style>

@@ -1,0 +1,153 @@
+---
+import type { OutputField } from '../../calculators/_types';
+import { formatNumber } from '../../utils/format';
+
+interface Props {
+  outputs: OutputField[];
+  defaultOutputs: Record<string, number>;
+  unit: string;
+}
+
+const { outputs, defaultOutputs, unit } = Astro.props;
+---
+
+<div class="result-table-wrap" id="secondary-results">
+  <table class="result-table" aria-label="Detailed results">
+    <thead>
+      <tr>
+        <th class="col-label">Measurement</th>
+        <th class="col-value">Value</th>
+        <th class="col-unit">Unit</th>
+      </tr>
+    </thead>
+    <tbody>
+      {outputs.map((out) => (
+        <tr
+          data-output-id={out.id}
+          class={out.description ? 'has-desc' : ''}
+        >
+          <td class="col-label">
+            <span class="tbl-label">{out.label}</span>
+            {out.description && (
+              <span class="tbl-desc">{out.description}</span>
+            )}
+          </td>
+          <td class="col-value">
+            <span class="result-secondary-number">
+              {formatNumber(defaultOutputs[out.id] ?? 0, 3)}
+            </span>
+          </td>
+          <td class="col-unit">
+            <span class="result-secondary-unit" data-output-unit={out.id}>
+              {out.unit ?? ''}
+            </span>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .result-table-wrap {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+
+  .result-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+
+  thead tr {
+    background: var(--surface-page);
+    border-bottom: 1px solid var(--border-default);
+  }
+
+  thead th {
+    padding: 0.625rem 1rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-muted);
+    text-align: left;
+  }
+
+  thead th.col-value,
+  thead th.col-unit {
+    text-align: right;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border-subtle);
+    transition: background 120ms;
+  }
+
+  tbody tr:last-child {
+    border-bottom: none;
+  }
+
+  tbody tr:hover {
+    background: var(--surface-page);
+  }
+
+  tbody td {
+    padding: 0.75rem 1rem;
+    vertical-align: middle;
+  }
+
+  .col-label { width: 55%; }
+  .col-value  { width: 25%; text-align: right; }
+  .col-unit   { width: 20%; text-align: right; }
+
+  .tbl-label {
+    font-weight: 600;
+    color: var(--color-text-primary);
+    display: block;
+  }
+
+  .tbl-desc {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    display: block;
+    margin-top: 0.125rem;
+    line-height: 1.4;
+  }
+
+  .result-secondary-number {
+    font-size: 1.0625rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .result-secondary-unit {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+  }
+
+  @media (max-width: 480px) {
+    .tbl-desc { display: none; }
+    thead th.col-unit { display: none; }
+    tbody td.col-unit { display: none; }
+    .result-secondary-unit::before { content: ' '; }
+    .col-value { text-align: left; }
+    .col-label { width: 60%; }
+    .col-value { width: 40%; }
+  }
+
+  @media print {
+    .result-table-wrap {
+      box-shadow: none;
+      border: 1px solid #ccc;
+    }
+    tbody tr:hover { background: transparent; }
+  }
+</style>

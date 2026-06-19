@@ -1,0 +1,216 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/layout/Breadcrumbs.astro';
+import { buildPageTitle, buildCanonical } from '../../utils/seo';
+import { DEFAULT_OG_IMAGE } from '../../utils/constants';
+import { buildBreadcrumbList } from '../../utils/schema';
+import { calculatorRegistry } from '../../data/registry';
+
+const meta = {
+  title: buildPageTitle('Framing Calculation Methodology'),
+  description: 'How ConstructCalc framing calculators work — IRC R602 formulas, span tables, stud spacing rules, board feet, and lumber waste factors.',
+  canonical: buildCanonical('/methodology/framing/'),
+  ogType: 'website' as const,
+  ogImage: DEFAULT_OG_IMAGE,
+};
+
+const schemas = [
+  buildBreadcrumbList([
+    { name: 'Home', href: '/' },
+    { name: 'Methodology', href: '/methodology/' },
+    { name: 'Framing', href: '/methodology/framing/' },
+  ]),
+];
+
+const breadcrumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Methodology', href: '/methodology/' },
+  { name: 'Framing', href: '/methodology/framing/' },
+];
+
+const relatedCalcs = calculatorRegistry.filter((c) =>
+  ['stud-calculator','rafter-calculator','lumber-calculator','board-foot-calculator',
+   'plywood-calculator','drywall-calculator','insulation-calculator'].includes(c.slug)
+);
+---
+
+<BaseLayout meta={meta} schemas={schemas}>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbs} />
+      <div class="header-chip">Framing</div>
+      <h1 class="page-title">Framing Calculation Methodology</h1>
+      <p class="page-sub">The formulas, IRC R602 references, span tables, and lumber waste factors behind ConstructCalc framing and structural calculators.</p>
+    </div>
+  </div>
+
+  <div class="page-body">
+    <div class="container-narrow">
+
+      <section class="content-section">
+        <h2>Overview</h2>
+        <p>Framing calculators on ConstructCalc handle wall framing, floor and ceiling systems, and roof structures. All calculations follow conventional light-frame wood construction as governed by the International Residential Code (IRC) Section R602 and AWC (American Wood Council) span tables. Engineered lumber (LVL, glulam, I-joists) sizing requires span table lookup beyond the scope of these calculators.</p>
+      </section>
+
+      <section class="content-section">
+        <h2>Core Formulas</h2>
+
+        <h3>Stud Count (Wall Framing)</h3>
+        <div class="formula-block">
+          <code>Studs = ⌈(Wall length / Spacing)⌉ + 1</code>
+        </div>
+        <p>The +1 accounts for the end stud. Additional studs are added for:</p>
+        <ul>
+          <li>Corner framing: 3 extra studs per exterior corner (California corner)</li>
+          <li>T-intersections: 3 extra studs per interior wall intersection</li>
+          <li>Door/window openings: 2 trimmer (jack) studs + 2 king studs per opening</li>
+        </ul>
+        <p>IRC R602.3 specifies stud spacing at 16" or 24" o.c. for bearing walls; 24" o.c. is permitted for non-bearing walls up to 10 ft height with 2×4 studs.</p>
+
+        <h3>Rafter Length</h3>
+        <div class="formula-block">
+          <code>Rafter = √(Run² + Rise²) + Overhang</code>
+        </div>
+        <p>Where Rise = Run × (Pitch / 12). Pitch is expressed as rise-per-foot-of-run (e.g., 6/12 = 6 inches of rise per 12 inches of run). The result is the structural rafter length measured along the slope from ridge to top plate, before adding the tail cut for overhang.</p>
+
+        <h3>Board Feet</h3>
+        <div class="formula-block">
+          <code>BF = (T_in × W_in × L_ft) / 12</code>
+        </div>
+        <p>Where T = nominal thickness (inches), W = nominal width (inches), L = length (feet). Note: board feet measure volume, not the actual dressed (S4S) dimensions. A 2×4×8 contains 5.33 board feet by nominal measure.</p>
+
+        <h3>Plywood / Sheathing Sheets</h3>
+        <div class="formula-block">
+          <code>Sheets = ⌈(Area / Sheet area) × (1 + Waste)⌉</code>
+        </div>
+        <p>Standard sheet size is 4×8 ft = 32 ft². Waste defaults to 10% for rectangular layouts, 15% for diagonal or complex cuts.</p>
+      </section>
+
+      <section class="content-section">
+        <h2>Assumptions</h2>
+        <ul>
+          <li>Standard dimensional lumber: 2×4, 2×6, 2×8, 2×10, 2×12 at standard lengths</li>
+          <li>Lumber moisture content at 19% (green) or 15% (kiln-dried) — stud calculators use nominal count; actual piece count does not change with moisture</li>
+          <li>Single top and bottom plate unless noted; double top plate adds 1 extra linear foot of lumber per foot of wall</li>
+          <li>Headers over openings use standard double-member construction per IRC Table R602.7</li>
+          <li>Rafter calculations do not include collar ties, ceiling joists, or ridge beam sizing</li>
+        </ul>
+      </section>
+
+      <section class="content-section">
+        <h2>Waste Factors</h2>
+        <div class="waste-table">
+          <table>
+            <thead>
+              <tr><th>Application</th><th>Default Waste</th><th>Rationale</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Wall framing lumber</td><td>10–15%</td><td>Cut-offs, blocking, mistakes</td></tr>
+              <tr><td>Roof rafters</td><td>10%</td><td>Tail cuts, bird's mouth cuts</td></tr>
+              <tr><td>Plywood / OSB sheathing</td><td>10%</td><td>Rectangular layouts</td></tr>
+              <tr><td>Plywood (diagonal)</td><td>15%</td><td>Diagonal cut patterns</td></tr>
+              <tr><td>Drywall</td><td>10%</td><td>Standard rooms, butt joints</td></tr>
+              <tr><td>Insulation batts</td><td>5%</td><td>Minimal cut waste</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <h2>Material Density Assumptions</h2>
+        <ul>
+          <li>Southern Yellow Pine (SYP): 37 lb/ft³ green, 31 lb/ft³ dry</li>
+          <li>Douglas Fir: 34 lb/ft³ green, 28 lb/ft³ dry</li>
+          <li>Spruce-Pine-Fir (SPF): 28 lb/ft³ dry — common framing lumber in northern US/Canada</li>
+          <li>Weight estimates in our lumber calculator use a generic 32 lb/ft³ average for estimation purposes</li>
+        </ul>
+      </section>
+
+      <section class="content-section">
+        <h2>Industry Standards &amp; Code References</h2>
+        <ul>
+          <li><strong>IRC R602</strong> — Wood Wall Framing. Stud sizing, spacing, and bracing requirements.</li>
+          <li><strong>IRC R802</strong> — Wood Roof Framing. Rafter sizing tables and span limits for conventional construction.</li>
+          <li><strong>AWC Span Calculator</strong> — American Wood Council publishes free span tables for joists, rafters, and headers.</li>
+          <li><strong>AWC NDS 2018</strong> — National Design Specification for Wood Construction. Allowable stresses and size factors.</li>
+          <li><strong>IRC Table R602.3(5)</strong> — Stud height and spacing requirements by application.</li>
+          <li><strong>APA E30</strong> — Engineered Wood Construction Guide. Plywood and OSB sheathing applications.</li>
+        </ul>
+      </section>
+
+      <section class="content-section">
+        <h2>Limitations</h2>
+        <ul>
+          <li>Span capacity checks are not performed — calculators count pieces needed, not structural adequacy. Always verify span with IRC span tables or a licensed engineer.</li>
+          <li>Seismic and high-wind requirements (IRC R602.10 braced wall panels) are not modeled.</li>
+          <li>Fire-rated assemblies (Type X drywall, fire blocking) require separate analysis per IRC R302.</li>
+          <li>Engineered lumber (LVL, PSL, I-joists) requires manufacturer span tables — our calculators cover dimensional lumber only.</li>
+        </ul>
+      </section>
+
+      <section class="content-section">
+        <h2>References &amp; Citations</h2>
+        <ul>
+          <li>International Code Council. <em>International Residential Code (IRC) 2021.</em> Sections R602, R802.</li>
+          <li>American Wood Council. <em>National Design Specification (NDS) for Wood Construction 2018.</em></li>
+          <li>American Wood Council. <em>Span Calculator for Wood Joists and Rafters.</em> awc.org.</li>
+          <li>APA — The Engineered Wood Association. <em>E30: Engineered Wood Construction Guide.</em> 2019.</li>
+          <li>Spradlin, Steven. <em>RSMeans Carpentry &amp; Framing Estimating.</em> Gordian, 2022.</li>
+        </ul>
+      </section>
+
+      {relatedCalcs.length > 0 && (
+        <section class="content-section">
+          <h2>Related Calculators</h2>
+          <div class="related-grid">
+            {relatedCalcs.map((calc) => (
+              <a href={`/calculators/${calc.slug}/`} class="related-card">
+                <strong class="related-name">{calc.name}</strong>
+                <span class="related-desc">{calc.description}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <div class="nav-links">
+        <a href="/methodology/concrete/" class="nav-link-back">← Concrete Methodology</a>
+        <a href="/methodology/roofing/" class="nav-link-next">Roofing Methodology →</a>
+      </div>
+
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-header { background: var(--surface-page); border-bottom: 1px solid var(--border-default); padding: 2rem 0 2.5rem; }
+  .container { max-width: 72rem; margin: 0 auto; padding: 0 1.5rem; }
+  .container-narrow { max-width: 52rem; margin: 0 auto; padding: 0 1.5rem; }
+  .header-chip { display: inline-flex; align-items: center; padding: 0.2rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; background: var(--color-primary-50); color: var(--color-primary); border: 1px solid color-mix(in srgb, var(--color-primary) 20%, transparent); margin-bottom: 0.875rem; }
+  .page-title { font-size: clamp(1.75rem, 3.5vw, 2.5rem); font-weight: 900; color: var(--color-text-primary); letter-spacing: -0.04em; margin-top: 0.5rem; line-height: 1.1; }
+  .page-sub { margin-top: 0.625rem; font-size: 1.0625rem; color: var(--color-text-secondary); max-width: 44rem; line-height: 1.6; }
+  .page-body { padding: 3rem 0 5rem; }
+  .content-section { margin-bottom: 3rem; }
+  .content-section h2 { font-size: 1.375rem; font-weight: 800; color: var(--color-text-primary); letter-spacing: -0.03em; margin-bottom: 1rem; padding-bottom: 0.625rem; border-bottom: 2px solid var(--border-default); }
+  .content-section h3 { font-size: 1rem; font-weight: 700; color: var(--color-text-primary); margin: 1.25rem 0 0.375rem; }
+  .content-section p { font-size: 1rem; color: var(--color-text-secondary); line-height: 1.7; margin-bottom: 0.875rem; }
+  .content-section strong { color: var(--color-text-primary); font-weight: 600; }
+  .formula-block { background: var(--surface-card); border: 1px solid var(--border-default); border-left: 3px solid var(--color-primary); border-radius: 0 10px 10px 0; padding: 0.75rem 1rem; margin: 0.5rem 0 0.875rem; }
+  .formula-block code { font-family: var(--font-mono); font-size: 0.9375rem; font-weight: 600; color: var(--color-text-primary); }
+  .content-section ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; }
+  .content-section ul li { font-size: 1rem; color: var(--color-text-secondary); padding-left: 1.25rem; position: relative; line-height: 1.6; }
+  .content-section ul li::before { content: '·'; position: absolute; left: 0.25rem; color: var(--color-primary); font-weight: 700; }
+  .waste-table { overflow-x: auto; margin: 0.75rem 0 1rem; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9375rem; }
+  th { background: var(--surface-card); border: 1px solid var(--border-default); padding: 0.625rem 1rem; text-align: left; font-weight: 600; color: var(--color-text-primary); font-size: 0.875rem; }
+  td { border: 1px solid var(--border-default); padding: 0.625rem 1rem; color: var(--color-text-secondary); font-size: 0.875rem; }
+  tr:nth-child(even) td { background: var(--border-subtle); }
+  .related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; margin-top: 0.5rem; }
+  .related-card { display: flex; flex-direction: column; gap: 0.25rem; padding: 0.875rem 1rem; background: var(--surface-card); border: 1px solid var(--border-default); border-radius: 12px; transition: border-color 150ms, box-shadow 150ms; text-decoration: none; }
+  .related-card:hover { border-color: var(--color-primary); box-shadow: 0 2px 8px rgba(194,65,12,0.12); }
+  .related-name { font-size: 0.875rem; font-weight: 700; color: var(--color-text-primary); }
+  .related-desc { font-size: 0.8125rem; color: var(--color-text-muted); line-height: 1.4; }
+  .nav-links { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; padding-top: 2rem; border-top: 1px solid var(--border-default); margin-top: 1rem; }
+  .nav-link-back, .nav-link-next { font-size: 0.875rem; font-weight: 600; color: var(--color-primary); }
+  .nav-link-back:hover, .nav-link-next:hover { text-decoration: underline; }
+</style>

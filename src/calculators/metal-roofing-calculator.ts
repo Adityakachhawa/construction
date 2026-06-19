@@ -462,4 +462,15 @@ export const metalRoofingCalculator: CalculatorConfig = {
         'Exposed-fastener corrugated or ribbed panels cost $75–$150 per square (100 ft²) for materials. Standing seam metal roofing runs $150–$350 per square in materials. Installed costs are higher: $200–$400 per square for corrugated, $400–$900 per square for standing seam, depending on region, pitch complexity, and contractor. A 20-square roof is $4,000–$18,000 installed depending on the product and location. Get at least three quotes — metal roofing pricing varies more than asphalt shingles.',
     },
   ],
+  orderCallout: true,
+  wasteFactor: {
+    default: 10,
+    range: '8–12%',
+    notes: 'Full-length panel runs waste less than asphalt shingles. Add 10% for hip and valley cuts.',
+  },
+  costRange: {
+    low: 75,
+    high: 350,
+    unit: 'per square (100 sq ft, materials only)',
+  },
 };

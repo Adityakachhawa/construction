@@ -360,4 +360,10 @@ export const insulationCalculator: CalculatorConfig = {
         'This calculator is designed for batt and roll insulation priced and measured by area coverage. Spray foam is sold by the board-foot (1 ft² at 1″ thickness) or by two-component kit coverage in square feet at a given depth. Use a spray foam kit\'s stated coverage in ft² at your target depth as the "coverage per roll" input for a rough estimate, but for spray foam projects a dedicated board-foot calculator is more accurate.',
     },
   ],
+  orderCallout: true,
+  wasteFactor: {
+    default: 10,
+    range: '8–12%',
+    notes: 'Standard stud bays: 8%. Many cuts around pipes, boxes, and irregular framing: 12%.',
+  },
 };

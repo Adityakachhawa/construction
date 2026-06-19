@@ -97,6 +97,7 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 80px; /* clears sticky header on anchor links */
   -webkit-text-size-adjust: 100%;
   tab-size: 4;
 }
@@ -129,10 +130,29 @@ input, select, textarea { font-family: inherit; }
 
 /* ── Accessibility ────────────────────────────────────────── */
 :focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+  outline: 3px solid #f97316;   /* amber-500 — high contrast in both light and dark */
+  outline-offset: 3px;
+  border-radius: 3px;
 }
 
-.section--alt :focus-visible {
-  outline-color: #fff;
+/* Dark / inverted sections: use white ring so it's visible on dark bg */
+.section--alt :focus-visible,
+[data-hero] :focus-visible {
+  outline-color: #ffffff;
+  outline-offset: 3px;
+}
+
+/* Interactive elements that need tighter radius to look correct */
+button:focus-visible,
+[role="button"]:focus-visible {
+  border-radius: 6px;
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  /* Inputs have their own border-color + box-shadow focus style;
+     keep outline for keyboard nav but don't double-up visually */
+  outline: 3px solid #f97316;
+  outline-offset: 2px;
 }

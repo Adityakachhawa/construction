@@ -332,4 +332,10 @@ export const plywoodCalculator: CalculatorConfig = {
         'Yes — always stagger seams by at least half a sheet (24 inches for 4×8 sheets) between rows. Aligned seams create a continuous weak line across the floor or wall. Staggering distributes loads across multiple joists or studs and is required by most building codes. Staggering does not increase material usage but does affect how you lay out cuts — plan your sheet arrangement before cutting.',
     },
   ],
+  orderCallout: true,
+  wasteFactor: {
+    default: 10,
+    range: '8–12%',
+    notes: 'Wall sheathing: 8%. Floor decking: 10%. Irregular shapes or many cuts: 12%.',
+  },
 };

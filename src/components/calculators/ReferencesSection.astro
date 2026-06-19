@@ -1,0 +1,116 @@
+---
+interface Reference {
+  title: string;
+  organization: string;
+  url?: string;
+}
+
+interface Props {
+  references: Reference[];
+}
+
+const { references } = Astro.props;
+if (!references?.length) return;
+---
+
+<section class="references-section" aria-label="References">
+  <h3 class="references-heading">References</h3>
+  <ol class="references-list">
+    {references.map((ref) => (
+      <li class="references-item">
+        <span class="ref-org">{ref.organization}</span>
+        {ref.url
+          ? (
+            <a href={ref.url} class="ref-title" target="_blank" rel="noopener noreferrer">
+              {ref.title}
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                <path d="M2 10L10 2M10 2H5M10 2v5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+          ) : (
+            <span class="ref-title">{ref.title}</span>
+          )
+        }
+      </li>
+    ))}
+  </ol>
+</section>
+
+<style>
+  .references-section {
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-default);
+  }
+
+  .references-heading {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--color-text-muted);
+    margin-bottom: 1rem;
+  }
+
+  .references-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    padding: 0;
+    margin: 0;
+    counter-reset: ref-counter;
+  }
+
+  .references-item {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem 1rem;
+    align-items: baseline;
+    padding: 0.625rem 0.875rem;
+    background: var(--surface-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    counter-increment: ref-counter;
+  }
+
+  @media (max-width: 600px) {
+    .references-item {
+      grid-template-columns: 1fr;
+      gap: 0.2rem;
+    }
+  }
+
+  .ref-org {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+  }
+
+  .ref-title {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  a.ref-title {
+    color: var(--color-primary);
+  }
+
+  a.ref-title:hover {
+    text-decoration: underline;
+  }
+
+  @media print {
+    .references-section {
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+    }
+    a.ref-title { color: inherit; }
+    a.ref-title svg { display: none; }
+  }
+</style>

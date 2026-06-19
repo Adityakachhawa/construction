@@ -4,6 +4,7 @@ import Breadcrumbs from '../components/layout/Breadcrumbs.astro';
 import { buildPageTitle, buildCanonical } from '../utils/seo';
 import { DEFAULT_OG_IMAGE } from '../utils/constants';
 import { buildBreadcrumbList } from '../utils/schema';
+import { methodologyPages } from '../data/methodology';
 
 const meta = {
   title: buildPageTitle('Calculation Methodology'),
@@ -37,6 +38,21 @@ const breadcrumbs = [
 
   <div class="page-body">
     <div class="container-narrow">
+
+      <!-- Sub-page navigation -->
+      <section class="content-section">
+        <h2>Methodology by Category</h2>
+        <p>Detailed formulas, code references, waste factors, and assumptions for each construction category:</p>
+        <div class="methodology-grid">
+          {methodologyPages.map((page) => (
+            <a href={`/methodology/${page.slug}/`} class="methodology-card">
+              <strong class="methodology-card-title">{page.label}</strong>
+              <span class="methodology-card-desc">{page.description}</span>
+              <span class="methodology-card-link">Read methodology →</span>
+            </a>
+          ))}
+        </div>
+      </section>
 
       <section class="content-section">
         <h2>Core Calculation Principles</h2>
@@ -269,6 +285,50 @@ const breadcrumbs = [
     left: 0.25rem;
     color: var(--color-primary);
     font-weight: 700;
+  }
+
+  .methodology-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .methodology-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    padding: 1rem 1.125rem;
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 14px;
+    text-decoration: none;
+    transition: border-color 150ms, box-shadow 150ms, transform 150ms;
+    box-shadow: var(--shadow-card);
+  }
+  .methodology-card:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 4px 16px rgba(194,65,12,0.12);
+    transform: translateY(-1px);
+  }
+  .methodology-card-title {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    letter-spacing: -0.01em;
+  }
+  .methodology-card-desc {
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    line-height: 1.4;
+    flex: 1;
+  }
+  .methodology-card-link {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    margin-top: 0.25rem;
   }
 
   .waste-table {

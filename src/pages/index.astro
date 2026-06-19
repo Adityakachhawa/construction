@@ -100,7 +100,7 @@ const schemas = [
     <div class="hero-glow"></div>
     <div class="hero-inner">
       <h1 class="hero-headline">
-        Construction calculators<br/>that actually work on site.
+        Construction calculators<br/>that actually work.
       </h1>
 
       <p class="hero-sub">
@@ -115,6 +115,17 @@ const schemas = [
             {cat.name}
           </a>
         ))}
+      </div>
+
+      <!-- Proof bar (above search bar) -->
+      <div class="hero-proof">
+        <span>{totalCalcs}+ calculators</span>
+        <span class="hero-proof-sep">·</span>
+        <span>{categories.length} categories</span>
+        <span class="hero-proof-sep">·</span>
+        <span>Imperial &amp; metric</span>
+        <span class="hero-proof-sep">·</span>
+        <span>No signup</span>
       </div>
 
       <!-- Search bar -->
@@ -145,16 +156,13 @@ const schemas = [
         </a>
         <a href="/blog/" class="hero-btn-ghost">Read the guides</a>
       </div>
+    </div>
 
-      <div class="hero-proof">
-        <span>{totalCalcs}+ calculators</span>
-        <span class="hero-proof-sep">·</span>
-        <span>{categories.length} categories</span>
-        <span class="hero-proof-sep">·</span>
-        <span>Imperial &amp; metric</span>
-        <span class="hero-proof-sep">·</span>
-        <span>No signup</span>
-      </div>
+    <!-- Scroll indicator -->
+    <div class="hero-scroll" aria-hidden="true">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+        <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
     </div>
   </section>
 
@@ -480,8 +488,37 @@ const schemas = [
     position: relative;
     background: var(--ink);
     overflow: hidden;
-    padding: 5.5rem 1.5rem 5rem;
+    /* Pull up behind the 64px sticky header so the dark background
+       extends behind the transparent header at scrollY 0. */
+    margin-top: -64px;
+    padding-top: calc(5.5rem + 64px);
+    padding-bottom: 5.5rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
     text-align: center;
+  }
+
+  /* Animated grain/noise texture */
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.025;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Soft bottom-edge fade */
+  .hero::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0; right: 0;
+    height: 100px;
+    background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.55) 100%);
+    pointer-events: none;
+    z-index: 1;
   }
 
   .hero-glow {
@@ -564,22 +601,23 @@ const schemas = [
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0 1.125rem;
+    padding: 0 1.25rem;
     background: rgba(255,255,255,0.07);
     border: 1.5px solid rgba(255,255,255,0.14);
     border-radius: 9999px;
-    transition: border-color 150ms, background 150ms;
+    transition: border-color 200ms, background 200ms, box-shadow 200ms;
   }
   .hero-search:focus-within {
-    border-color: rgba(255,255,255,0.3);
+    border-color: rgba(249,115,22,0.55);
     background: rgba(255,255,255,0.10);
+    box-shadow: 0 0 0 3px rgba(249,115,22,0.15), inset 0 1px 0 rgba(255,255,255,0.04);
   }
 
   .hero-search-icon { color: #6b7280; flex-shrink: 0; }
 
   .hero-search-input {
     flex: 1;
-    padding: 0.875rem 0;
+    padding: 1.0625rem 0;
     background: none;
     border: none;
     outline: none;
@@ -623,7 +661,7 @@ const schemas = [
     justify-content: center;
     flex-wrap: wrap;
     gap: 0.875rem;
-    margin-bottom: 2.25rem;
+    margin-bottom: 0.25rem;
   }
 
   .hero-btn-primary {
@@ -666,8 +704,30 @@ const schemas = [
     font-size: 0.8125rem;
     color: #9ca3af;
     font-weight: 500;
+    margin-bottom: 1.5rem;
   }
   .hero-proof-sep { opacity: 0.4; }
+
+  /* Scroll indicator */
+  .hero-scroll {
+    position: absolute;
+    bottom: 1.25rem;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255,255,255,0.35);
+    z-index: 2;
+    animation: hero-bounce 2.4s ease-in-out infinite;
+    line-height: 0;
+  }
+
+  @keyframes hero-bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0);   opacity: 0.35; }
+    50%       { transform: translateX(-50%) translateY(7px); opacity: 0.65; }
+  }
+
+  @media (max-width: 639px) {
+    .hero-scroll { display: none; }
+  }
 
   /* ── Sections ─────────────────────────────────────────────── */
   .section { padding: 5rem 0; }

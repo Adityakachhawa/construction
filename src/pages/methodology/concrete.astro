@@ -1,0 +1,369 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/layout/Breadcrumbs.astro';
+import { buildPageTitle, buildCanonical } from '../../utils/seo';
+import { DEFAULT_OG_IMAGE } from '../../utils/constants';
+import { buildBreadcrumbList } from '../../utils/schema';
+import { calculatorRegistry } from '../../data/registry';
+
+const meta = {
+  title: buildPageTitle('Concrete Calculation Methodology'),
+  description: 'How ConstructCalc concrete calculators work — ACI 318 formulas, bag yield tables, waste factors, and industry assumptions behind every result.',
+  canonical: buildCanonical('/methodology/concrete/'),
+  ogType: 'website' as const,
+  ogImage: DEFAULT_OG_IMAGE,
+};
+
+const schemas = [
+  buildBreadcrumbList([
+    { name: 'Home', href: '/' },
+    { name: 'Methodology', href: '/methodology/' },
+    { name: 'Concrete', href: '/methodology/concrete/' },
+  ]),
+];
+
+const breadcrumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Methodology', href: '/methodology/' },
+  { name: 'Concrete', href: '/methodology/concrete/' },
+];
+
+const relatedCalcs = calculatorRegistry.filter((c) =>
+  ['concrete-slab-calculator','concrete-footing-calculator','concrete-driveway-calculator',
+   'concrete-bags-calculator','concrete-block-calculator','concrete-column-calculator','post-hole-calculator'].includes(c.slug)
+);
+---
+
+<BaseLayout meta={meta} schemas={schemas}>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbs} />
+      <div class="header-chip">Concrete</div>
+      <h1 class="page-title">Concrete Calculation Methodology</h1>
+      <p class="page-sub">The formulas, ACI 318 references, waste factors, and material assumptions behind every ConstructCalc concrete result.</p>
+    </div>
+  </div>
+
+  <div class="page-body">
+    <div class="container-narrow">
+
+      <section class="content-section">
+        <h2>Overview</h2>
+        <p>Concrete volume calculations on ConstructCalc follow the same geometry used in industry — plain rectangular/circular volume formulas from field geometry, then converted to the order unit (cubic yards or cubic meters). Every result includes a conservative waste allowance consistent with ACI and PCA field practice.</p>
+        <p>Our formulas are intentionally simple and verifiable. Complex engineered pours (post-tensioned slabs, high-strength mixes, structural elements per ACI 318 Chapter 26) require a licensed structural engineer; our calculators cover standard residential and light commercial work.</p>
+      </section>
+
+      <section class="content-section">
+        <h2>Core Formulas</h2>
+        <h3>Rectangular Slab / Footing</h3>
+        <div class="formula-block">
+          <code>V = L × W × T</code>
+        </div>
+        <p>Where L = length (ft), W = width (ft), T = thickness (ft, converted from inches by ÷ 12). Result in ft³, then ÷ 27 for yd³.</p>
+
+        <h3>Round Column / Post Hole</h3>
+        <div class="formula-block">
+          <code>V = π × r² × H</code>
+        </div>
+        <p>Where r = radius (ft), H = height/depth (ft). Standard value π = 3.14159.</p>
+
+        <h3>Trapezoidal Footing (Stepped)</h3>
+        <div class="formula-block">
+          <code>V = ((A₁ + A₂) / 2) × H</code>
+        </div>
+        <p>Used for sloped or stepped footings where the top and bottom cross-sections differ.</p>
+
+        <h3>Concrete Bags to Volume</h3>
+        <div class="formula-block">
+          <code>Bags = V_ft³ / Yield_per_bag</code>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <h2>Unit Conversions</h2>
+        <ul>
+          <li>1 cubic yard = 27 cubic feet</li>
+          <li>1 cubic foot = 0.0283168 m³</li>
+          <li>1 cubic meter = 35.3147 cubic feet = 1.30795 cubic yards</li>
+          <li>Thickness entered in inches → divided by 12 to convert to feet before multiplying</li>
+        </ul>
+      </section>
+
+      <section class="content-section">
+        <h2>Bag Yield Assumptions</h2>
+        <p>Mixed yield per bag after accounting for water addition and shrinkage. Values match manufacturer data sheets from Quikrete and Sakrete:</p>
+        <div class="waste-table">
+          <table>
+            <thead>
+              <tr><th>Bag Size</th><th>Yield (ft³)</th><th>Source</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>80 lb</td><td>0.60</td><td>Quikrete #1101 / Sakrete 80 lb</td></tr>
+              <tr><td>60 lb</td><td>0.45</td><td>Quikrete #1101 / Sakrete 60 lb</td></tr>
+              <tr><td>50 lb</td><td>0.375</td><td>Standard high-strength mix</td></tr>
+              <tr><td>40 lb</td><td>0.30</td><td>Quikrete #1101 40 lb</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Yields are for standard 3000 psi mix. High-strength (5000 psi) mixes yield slightly less per bag due to lower water content. Always verify with your supplier's current product data sheet.</p>
+      </section>
+
+      <section class="content-section">
+        <h2>Waste Factors</h2>
+        <p>We apply a default <strong>10% waste allowance</strong> to all concrete orders, shown in the "Recommended Order" callout. Concrete is ordered in whole cubic yard increments from most ready-mix plants, so the actual order is rounded up to the nearest 0.25 yd³.</p>
+        <div class="waste-table">
+          <table>
+            <thead>
+              <tr><th>Application</th><th>Default Waste</th><th>Rationale</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Residential slabs</td><td>5–10%</td><td>Formwork variation, uneven subgrade</td></tr>
+              <tr><td>Footings</td><td>10%</td><td>Soil irregularity, form settling</td></tr>
+              <tr><td>Columns</td><td>5%</td><td>Tight cylindrical forms, less spillage</td></tr>
+              <tr><td>Driveways</td><td>10%</td><td>Edge forms, contraction joints</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>PCA (Portland Cement Association) field guides recommend ordering at minimum 5% extra for residential work; ACI 302.1R-15 (Guide for Concrete Floor and Slab Construction) recommends 10% for slabs with irregular subgrades.</p>
+      </section>
+
+      <section class="content-section">
+        <h2>Material Density Assumptions</h2>
+        <ul>
+          <li>Wet concrete: ~145 lb/ft³ (2,320 kg/m³) — standard normal-weight mix</li>
+          <li>Cured concrete: ~150 lb/ft³ (2,400 kg/m³) — used for weight load estimates</li>
+          <li>Ready-mix density varies with aggregate type; lightweight mix ≈ 110 lb/ft³</li>
+        </ul>
+      </section>
+
+      <section class="content-section">
+        <h2>Industry Standards &amp; Code References</h2>
+        <ul>
+          <li><strong>ACI 318-19</strong> — Building Code Requirements for Structural Concrete. Section 26.4 governs proportioning and ordering of concrete mixtures.</li>
+          <li><strong>ACI 302.1R-15</strong> — Guide for Concrete Floor and Slab Construction. Waste and ordering guidance for slabs.</li>
+          <li><strong>PCA Design and Control of Concrete Mixtures</strong> (15th ed.) — Volume calculations and batch plant practices.</li>
+          <li><strong>IRC R506</strong> — Concrete Floors on Ground. Minimum 3.5 inch (90 mm) thickness for residential slabs; 4 inch minimum for garage floors.</li>
+          <li><strong>IRC R403.1</strong> — Footing depth and width minimums for continuous footings.</li>
+        </ul>
+      </section>
+
+      <section class="content-section">
+        <h2>Assumptions &amp; Limitations</h2>
+        <ul>
+          <li>All calculations assume uniform thickness. Variable-thickness pours (thickened edges, haunches) should be split into multiple sections.</li>
+          <li>No reinforcement volume deduction is applied. Rebar typically displaces &lt;2% of concrete volume — negligible for ordering purposes.</li>
+          <li>Ready-mix concrete is ordered in yd³; bag concrete is ordered by count. Mixed pour strategies are not modeled.</li>
+          <li>Prices shown are national market-rate estimates. Actual pricing varies by region, mix design, and supplier.</li>
+        </ul>
+      </section>
+
+      <section class="content-section">
+        <h2>References &amp; Citations</h2>
+        <ul>
+          <li>American Concrete Institute. <em>ACI 318-19: Building Code Requirements for Structural Concrete.</em> Farmington Hills, MI: ACI, 2019.</li>
+          <li>American Concrete Institute. <em>ACI 302.1R-15: Guide for Concrete Floor and Slab Construction.</em> ACI, 2015.</li>
+          <li>Portland Cement Association. <em>Design and Control of Concrete Mixtures</em>, 15th ed. Skokie, IL: PCA, 2011.</li>
+          <li>International Code Council. <em>International Residential Code (IRC) 2021.</em> Section R506, R403.</li>
+          <li>Quikrete Companies. <em>Product Data Sheet: QUIKRETE® Concrete Mix #1101.</em> 2023.</li>
+          <li>Sakrete. <em>Product Data Sheet: Sakrete 80 lb Concrete Mix.</em> 2023.</li>
+        </ul>
+      </section>
+
+      {relatedCalcs.length > 0 && (
+        <section class="content-section">
+          <h2>Related Calculators</h2>
+          <div class="related-grid">
+            {relatedCalcs.map((calc) => (
+              <a href={`/calculators/${calc.slug}/`} class="related-card">
+                <strong class="related-name">{calc.name}</strong>
+                <span class="related-desc">{calc.description}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <div class="nav-links">
+        <a href="/methodology/" class="nav-link-back">← All Methodologies</a>
+        <a href="/methodology/framing/" class="nav-link-next">Framing Methodology →</a>
+      </div>
+
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-header {
+    background: var(--surface-page);
+    border-bottom: 1px solid var(--border-default);
+    padding: 2rem 0 2.5rem;
+  }
+
+  .container { max-width: 72rem; margin: 0 auto; padding: 0 1.5rem; }
+  .container-narrow { max-width: 52rem; margin: 0 auto; padding: 0 1.5rem; }
+
+  .header-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: var(--color-primary-50);
+    color: var(--color-primary);
+    border: 1px solid color-mix(in srgb, var(--color-primary) 20%, transparent);
+    margin-bottom: 0.875rem;
+  }
+
+  .page-title {
+    font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+    font-weight: 900;
+    color: var(--color-text-primary);
+    letter-spacing: -0.04em;
+    margin-top: 0.5rem;
+    line-height: 1.1;
+  }
+
+  .page-sub {
+    margin-top: 0.625rem;
+    font-size: 1.0625rem;
+    color: var(--color-text-secondary);
+    max-width: 44rem;
+    line-height: 1.6;
+  }
+
+  .page-body { padding: 3rem 0 5rem; }
+
+  .content-section { margin-bottom: 3rem; }
+
+  .content-section h2 {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+    margin-bottom: 1rem;
+    padding-bottom: 0.625rem;
+    border-bottom: 2px solid var(--border-default);
+  }
+
+  .content-section h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 1.25rem 0 0.375rem;
+  }
+
+  .content-section p {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    margin-bottom: 0.875rem;
+  }
+
+  .content-section strong { color: var(--color-text-primary); font-weight: 600; }
+
+  .formula-block {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-left: 3px solid var(--color-primary);
+    border-radius: 0 10px 10px 0;
+    padding: 0.75rem 1rem;
+    margin: 0.5rem 0 0.875rem;
+  }
+
+  .formula-block code {
+    font-family: var(--font-mono);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+
+  .content-section ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .content-section ul li {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+    padding-left: 1.25rem;
+    position: relative;
+    line-height: 1.6;
+  }
+
+  .content-section ul li::before {
+    content: '·';
+    position: absolute;
+    left: 0.25rem;
+    color: var(--color-primary);
+    font-weight: 700;
+  }
+
+  .waste-table { overflow-x: auto; margin: 0.75rem 0 1rem; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.9375rem; }
+  th {
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    padding: 0.625rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    font-size: 0.875rem;
+  }
+  td {
+    border: 1px solid var(--border-default);
+    padding: 0.625rem 1rem;
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+  }
+  tr:nth-child(even) td { background: var(--border-subtle); }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+
+  .related-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.875rem 1rem;
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 12px;
+    transition: border-color 150ms, box-shadow 150ms;
+    text-decoration: none;
+  }
+  .related-card:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 2px 8px rgba(194,65,12,0.12);
+  }
+  .related-name { font-size: 0.875rem; font-weight: 700; color: var(--color-text-primary); }
+  .related-desc { font-size: 0.8125rem; color: var(--color-text-muted); line-height: 1.4; }
+
+  .nav-links {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-default);
+    margin-top: 1rem;
+  }
+  .nav-link-back, .nav-link-next {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    transition: gap 150ms;
+  }
+  .nav-link-back:hover, .nav-link-next:hover { text-decoration: underline; }
+</style>

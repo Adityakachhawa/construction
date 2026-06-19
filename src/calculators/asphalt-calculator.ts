@@ -245,4 +245,15 @@ export const asphaltCalculator: CalculatorConfig = {
         'A standard 2-car driveway is 20 ft wide × 20 ft long = 400 sq ft. At 3-inch thickness: 400 × (3/12) / 27 × 2.025 ≈ 7.5 tons of asphalt. For a longer 2-car driveway (20 × 40 ft = 800 sq ft): about 15 tons. Enter your actual dimensions above — driveway lengths vary widely from 20 ft to over 100 ft.',
     },
   ],
+  orderCallout: true,
+  wasteFactor: {
+    default: 10,
+    range: '10–15%',
+    notes: 'Irregular edges, curves, and areas around drain grates need extra material. Steep grades also increase waste.',
+  },
+  costRange: {
+    low: 100,
+    high: 200,
+    unit: 'per ton (material only)',
+  },
 };

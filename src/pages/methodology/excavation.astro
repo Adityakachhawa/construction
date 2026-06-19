@@ -1,0 +1,216 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/layout/Breadcrumbs.astro';
+import { buildPageTitle, buildCanonical } from '../../utils/seo';
+import { DEFAULT_OG_IMAGE } from '../../utils/constants';
+import { buildBreadcrumbList } from '../../utils/schema';
+import { calculatorRegistry } from '../../data/registry';
+
+const meta = {
+  title: buildPageTitle('Excavation Calculation Methodology'),
+  description: 'How ConstructCalc excavation calculators work — volume formulas, bulk density tables, compaction factors, and OSHA trench safety references.',
+  canonical: buildCanonical('/methodology/excavation/'),
+  ogType: 'website' as const,
+  ogImage: DEFAULT_OG_IMAGE,
+};
+
+const schemas = [
+  buildBreadcrumbList([
+    { name: 'Home', href: '/' },
+    { name: 'Methodology', href: '/methodology/' },
+    { name: 'Excavation', href: '/methodology/excavation/' },
+  ]),
+];
+
+const breadcrumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Methodology', href: '/methodology/' },
+  { name: 'Excavation', href: '/methodology/excavation/' },
+];
+
+const relatedCalcs = calculatorRegistry.filter((c) =>
+  ['excavation-calculator','gravel-calculator','topsoil-calculator','sand-calculator',
+   'mulch-calculator','french-drain-calculator','aggregate-calculator'].includes(c.slug)
+);
+---
+
+<BaseLayout meta={meta} schemas={schemas}>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbs} />
+      <div class="header-chip">Excavation</div>
+      <h1 class="page-title">Excavation Calculation Methodology</h1>
+      <p class="page-sub">Volume formulas, bulk density assumptions, swell/shrink factors, compaction allowances, and OSHA trench safety references for excavation and fill calculators.</p>
+    </div>
+  </div>
+
+  <div class="page-body">
+    <div class="container-narrow">
+
+      <section class="content-section">
+        <h2>Overview</h2>
+        <p>Excavation and fill material calculations involve three distinct volume states: <strong>bank</strong> (in-place), <strong>loose</strong> (excavated, in truck or pile), and <strong>compacted</strong> (final placed state). Our calculators operate on the compacted or in-place volume needed for the project and apply swell/shrink factors to estimate truck loads or material ordered.</p>
+        <p>All calculations use the standard volume formula for rectangular or trapezoidal sections. Weight estimates apply published bulk density values to produce tonnage for hauling and purchasing.</p>
+      </section>
+
+      <section class="content-section">
+        <h2>Core Formulas</h2>
+
+        <h3>Rectangular Volume</h3>
+        <div class="formula-block">
+          <code>V = L × W × D</code>
+        </div>
+        <p>Where L = length, W = width, D = depth, all in the same unit. Result in ft³ (÷ 27 for yd³) or m³.</p>
+
+        <h3>Trapezoidal Section (Sloped Trench)</h3>
+        <div class="formula-block">
+          <code>V = ((W_top + W_bottom) / 2) × D × L</code>
+        </div>
+        <p>Used for sloped-wall trenches where safe slope angle widens the cut above the bottom width.</p>
+
+        <h3>Material Weight</h3>
+        <div class="formula-block">
+          <code>Weight (tons) = V_yd³ × Density (tons/yd³)</code>
+        </div>
+
+        <h3>Truck Loads</h3>
+        <div class="formula-block">
+          <code>Loads = ⌈Weight / Truck capacity⌉</code>
+        </div>
+        <p>Standard dump truck capacity: 10 tons (loose material). Tandem: 14–16 tons. Transfer trailer: 22–25 tons.</p>
+      </section>
+
+      <section class="content-section">
+        <h2>Material Density Assumptions</h2>
+        <div class="waste-table">
+          <table>
+            <thead>
+              <tr><th>Material</th><th>Bulk Density (tons/yd³)</th><th>Bulk Density (kg/m³)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Crushed stone / gravel</td><td>1.35–1.45</td><td>1,600–1,720</td></tr>
+              <tr><td>Pea gravel</td><td>1.30</td><td>1,540</td></tr>
+              <tr><td>Sand (dry)</td><td>1.30</td><td>1,540</td></tr>
+              <tr><td>Sand (wet)</td><td>1.50</td><td>1,780</td></tr>
+              <tr><td>Topsoil (dry)</td><td>1.00</td><td>1,185</td></tr>
+              <tr><td>Topsoil (moist)</td><td>1.20</td><td>1,420</td></tr>
+              <tr><td>Clay (compacted)</td><td>1.50</td><td>1,780</td></tr>
+              <tr><td>Mulch (shredded wood)</td><td>0.45–0.55</td><td>535–650</td></tr>
+              <tr><td>Asphalt millings</td><td>1.40</td><td>1,660</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Density values sourced from ASTM C136 (gradation) and AASHTO T-99 (compaction) field data and manufacturer spec sheets. Actual bulk density varies with moisture content and gradation; confirm with your supplier before large hauls.</p>
+      </section>
+
+      <section class="content-section">
+        <h2>Swell and Shrink Factors</h2>
+        <p>Material changes volume when moved from its in-place state:</p>
+        <div class="waste-table">
+          <table>
+            <thead>
+              <tr><th>Material</th><th>Swell (Bank → Loose)</th><th>Shrink (Loose → Compacted)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Sandy soil</td><td>+10–15%</td><td>−5–10%</td></tr>
+              <tr><td>Clay</td><td>+25–35%</td><td>−10–15%</td></tr>
+              <tr><td>Rock (blasted)</td><td>+30–40%</td><td>n/a (no compaction)</td></tr>
+              <tr><td>Gravel (imported fill)</td><td>+12%</td><td>−8%</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Our excavation calculator applies a 10% swell factor by default to account for typical sandy/loamy soil. Adjust for your specific soil type.</p>
+      </section>
+
+      <section class="content-section">
+        <h2>Waste / Over-Dig Factors</h2>
+        <ul>
+          <li>Excavation for footings: add 12–18 inches working room on each side of the footing form</li>
+          <li>Gravel base: 5% compaction factor (ordered quantity &gt; placed quantity)</li>
+          <li>Topsoil and mulch: 5% for settling and edging losses</li>
+          <li>French drain gravel: 10% for pipe displacement and void space</li>
+        </ul>
+      </section>
+
+      <section class="content-section">
+        <h2>Industry Standards &amp; Code References</h2>
+        <ul>
+          <li><strong>OSHA 29 CFR 1926 Subpart P</strong> — Excavations. Requires protective systems (sloping, shoring, trench box) for excavations 5 ft or deeper in most soil types. Type A soil: 3/4:1 (H:V) slope; Type B: 1:1; Type C: 1.5:1.</li>
+          <li><strong>OSHA 1926.652</strong> — Requirements for protective systems in excavations. Applies to any trench deeper than 5 ft; mandatory for trenches ≥20 ft deep with engineered system.</li>
+          <li><strong>ASTM D698 / AASHTO T-99</strong> — Standard Proctor compaction test, used to determine maximum dry density and optimum moisture for compaction QA.</li>
+          <li><strong>IRC R401.4</strong> — Soil classification and bearing capacity requirements for residential foundations.</li>
+          <li><strong>ASTM C136</strong> — Sieve analysis for fine and coarse aggregate gradation.</li>
+        </ul>
+      </section>
+
+      <section class="content-section">
+        <h2>Safety Note</h2>
+        <p>ConstructCalc excavation calculators are for <strong>material estimation only</strong>. Trench safety, shoring design, and geotechnical soil classification are engineering decisions. OSHA Subpart P requires a competent person to classify soil on-site before any trench work deeper than 5 feet. Do not rely on these calculators for safety-critical trench design.</p>
+      </section>
+
+      <section class="content-section">
+        <h2>References &amp; Citations</h2>
+        <ul>
+          <li>U.S. Department of Labor, OSHA. <em>29 CFR 1926 Subpart P: Excavations.</em> Washington, DC: DOL, current edition.</li>
+          <li>ASTM International. <em>ASTM D698: Standard Test Methods for Laboratory Compaction Characteristics of Soil Using Standard Effort.</em></li>
+          <li>ASTM International. <em>ASTM C136: Sieve Analysis of Fine and Coarse Aggregates.</em></li>
+          <li>International Code Council. <em>International Residential Code (IRC) 2021.</em> Section R401.</li>
+          <li>Caterpillar Inc. <em>Caterpillar Performance Handbook, Edition 51.</em> Peoria, IL, 2021. (Swell/shrinkage factors, material densities.)</li>
+        </ul>
+      </section>
+
+      {relatedCalcs.length > 0 && (
+        <section class="content-section">
+          <h2>Related Calculators</h2>
+          <div class="related-grid">
+            {relatedCalcs.map((calc) => (
+              <a href={`/calculators/${calc.slug}/`} class="related-card">
+                <strong class="related-name">{calc.name}</strong>
+                <span class="related-desc">{calc.description}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <div class="nav-links">
+        <a href="/methodology/roofing/" class="nav-link-back">← Roofing Methodology</a>
+        <a href="/methodology/masonry/" class="nav-link-next">Masonry Methodology →</a>
+      </div>
+
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-header { background: var(--surface-page); border-bottom: 1px solid var(--border-default); padding: 2rem 0 2.5rem; }
+  .container { max-width: 72rem; margin: 0 auto; padding: 0 1.5rem; }
+  .container-narrow { max-width: 52rem; margin: 0 auto; padding: 0 1.5rem; }
+  .header-chip { display: inline-flex; align-items: center; padding: 0.2rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; background: var(--color-primary-50); color: var(--color-primary); border: 1px solid color-mix(in srgb, var(--color-primary) 20%, transparent); margin-bottom: 0.875rem; }
+  .page-title { font-size: clamp(1.75rem, 3.5vw, 2.5rem); font-weight: 900; color: var(--color-text-primary); letter-spacing: -0.04em; margin-top: 0.5rem; line-height: 1.1; }
+  .page-sub { margin-top: 0.625rem; font-size: 1.0625rem; color: var(--color-text-secondary); max-width: 44rem; line-height: 1.6; }
+  .page-body { padding: 3rem 0 5rem; }
+  .content-section { margin-bottom: 3rem; }
+  .content-section h2 { font-size: 1.375rem; font-weight: 800; color: var(--color-text-primary); letter-spacing: -0.03em; margin-bottom: 1rem; padding-bottom: 0.625rem; border-bottom: 2px solid var(--border-default); }
+  .content-section h3 { font-size: 1rem; font-weight: 700; color: var(--color-text-primary); margin: 1.25rem 0 0.375rem; }
+  .content-section p { font-size: 1rem; color: var(--color-text-secondary); line-height: 1.7; margin-bottom: 0.875rem; }
+  .content-section strong { color: var(--color-text-primary); font-weight: 600; }
+  .formula-block { background: var(--surface-card); border: 1px solid var(--border-default); border-left: 3px solid var(--color-primary); border-radius: 0 10px 10px 0; padding: 0.75rem 1rem; margin: 0.5rem 0 0.875rem; }
+  .formula-block code { font-family: var(--font-mono); font-size: 0.9375rem; font-weight: 600; color: var(--color-text-primary); }
+  .content-section ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; }
+  .content-section ul li { font-size: 1rem; color: var(--color-text-secondary); padding-left: 1.25rem; position: relative; line-height: 1.6; }
+  .content-section ul li::before { content: '·'; position: absolute; left: 0.25rem; color: var(--color-primary); font-weight: 700; }
+  .waste-table { overflow-x: auto; margin: 0.75rem 0 1rem; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9375rem; }
+  th { background: var(--surface-card); border: 1px solid var(--border-default); padding: 0.625rem 1rem; text-align: left; font-weight: 600; color: var(--color-text-primary); font-size: 0.875rem; }
+  td { border: 1px solid var(--border-default); padding: 0.625rem 1rem; color: var(--color-text-secondary); font-size: 0.875rem; }
+  tr:nth-child(even) td { background: var(--border-subtle); }
+  .related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; margin-top: 0.5rem; }
+  .related-card { display: flex; flex-direction: column; gap: 0.25rem; padding: 0.875rem 1rem; background: var(--surface-card); border: 1px solid var(--border-default); border-radius: 12px; transition: border-color 150ms, box-shadow 150ms; text-decoration: none; }
+  .related-card:hover { border-color: var(--color-primary); box-shadow: 0 2px 8px rgba(194,65,12,0.12); }
+  .related-name { font-size: 0.875rem; font-weight: 700; color: var(--color-text-primary); }
+  .related-desc { font-size: 0.8125rem; color: var(--color-text-muted); line-height: 1.4; }
+  .nav-links { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; padding-top: 2rem; border-top: 1px solid var(--border-default); margin-top: 1rem; }
+  .nav-link-back, .nav-link-next { font-size: 0.875rem; font-weight: 600; color: var(--color-primary); }
+  .nav-link-back:hover, .nav-link-next:hover { text-decoration: underline; }
+</style>

@@ -283,4 +283,17 @@ export const concreteBlockCalculator: CalculatorConfig = {
         'CMU blocks cost $2–$4 each at hardware stores or $1.50–$2.50 in bulk from a masonry supplier. A 20 ft × 8 ft wall (≈180 blocks) costs $360–$720 in block material alone. Add mortar ($8–$12 per bag × 6 bags ≈ $60), rebar if required, and labor (professional masons charge $15–$25 per sq ft installed). DIY block laying is feasible for experienced builders — expect 50–80 blocks per day for a first project.',
     },
   ],
+  orderCallout: true,
+  wasteFactor: {
+    default: 5,
+    range: '3–5%',
+    notes: 'CMU blocks have very low waste. Order 5% extra to cover broken blocks and end cuts.',
+  },
+  references: [
+    {
+      title: 'TMS 402 – Building Code Requirements for Masonry Structures',
+      organization: 'The Masonry Society',
+      url: 'https://masonrysociety.org/',
+    },
+  ],
 };

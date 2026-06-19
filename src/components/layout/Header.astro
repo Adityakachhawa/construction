@@ -12,6 +12,10 @@ const { currentPath = '', heroPage = false } = Astro.props;
 const featuredCalcs = getFeaturedCalculators(6);
 const totalCalcs = calculatorRegistry.length;
 
+const isOnCalculators = currentPath.startsWith('/calculators/');
+const isOnCategories  = currentPath.startsWith('/category/');
+const isOnBlog        = currentPath.startsWith('/blog/');
+
 const searchIndex = calculatorRegistry.map(c => ({
   slug: c.slug,
   name: c.name,
@@ -19,17 +23,34 @@ const searchIndex = calculatorRegistry.map(c => ({
 }));
 ---
 
-<header class="site-header" data-hero={heroPage ? '' : undefined}>
+<!-- Scroll progress bar (fixed, above everything) -->
+<div id="scroll-progress" aria-hidden="true"></div>
+
+<header class="site-header" role="banner" data-hero={heroPage ? '' : undefined}>
   <div class="header-inner">
 
     <!-- Logo -->
     <a href="/" class="logo" aria-label="ConstructCalc Home">
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-        <rect x="2" y="14" width="7" height="12" rx="1.5" fill="var(--color-primary)"/>
-        <rect x="10.5" y="8" width="7" height="18" rx="1.5" fill="var(--color-primary)" opacity="0.75"/>
-        <rect x="19" y="2" width="7" height="24" rx="1.5" fill="var(--color-primary)" opacity="0.5"/>
+      <svg class="logo-icon" width="30" height="30" viewBox="0 0 30 30" fill="none" aria-hidden="true">
+        <rect x="2"  y="15" width="7" height="13" rx="2" fill="url(#logo-g1)"/>
+        <rect x="11" y="9"  width="7" height="19" rx="2" fill="url(#logo-g2)"/>
+        <rect x="20" y="3"  width="7" height="25" rx="2" fill="url(#logo-g3)"/>
+        <defs>
+          <linearGradient id="logo-g1" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
+            <stop offset="0%" stop-color="#f97316"/>
+            <stop offset="100%" stop-color="#c2410c"/>
+          </linearGradient>
+          <linearGradient id="logo-g2" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
+            <stop offset="0%" stop-color="#fb923c"/>
+            <stop offset="100%" stop-color="#ea580c"/>
+          </linearGradient>
+          <linearGradient id="logo-g3" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
+            <stop offset="0%" stop-color="#fdba74"/>
+            <stop offset="100%" stop-color="#f97316"/>
+          </linearGradient>
+        </defs>
       </svg>
-      <span>ConstructCalc</span>
+      <span class="logo-text">ConstructCalc</span>
     </a>
 
     <!-- Desktop nav -->
@@ -38,7 +59,7 @@ const searchIndex = calculatorRegistry.map(c => ({
       <!-- Calculators dropdown -->
       <div class="nav-dropdown-wrap" data-dropdown="calculators">
         <button
-          class="nav-link nav-link--toggle"
+          class={['nav-link nav-link--toggle', isOnCalculators ? 'nav-link--active' : ''].join(' ')}
           aria-expanded="false"
           aria-haspopup="true"
           aria-controls="dd-calculators"
@@ -59,7 +80,12 @@ const searchIndex = calculatorRegistry.map(c => ({
             ))}
           </div>
           <div class="dropdown-footer">
-            <a href="/calculators/" class="dropdown-footer-link">View all {totalCalcs} calculators →</a>
+            <a href="/calculators/" class="dropdown-footer-link">
+              View all {totalCalcs} calculators
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                <path d="M2.5 6h7M6.5 3l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
           </div>
         </div>
       </div>
@@ -67,7 +93,7 @@ const searchIndex = calculatorRegistry.map(c => ({
       <!-- Categories dropdown -->
       <div class="nav-dropdown-wrap" data-dropdown="categories">
         <button
-          class="nav-link nav-link--toggle"
+          class={['nav-link nav-link--toggle', isOnCategories ? 'nav-link--active' : ''].join(' ')}
           aria-expanded="false"
           aria-haspopup="true"
           aria-controls="dd-categories"
@@ -97,7 +123,7 @@ const searchIndex = calculatorRegistry.map(c => ({
       <!-- Blog link -->
       <a
         href="/blog/"
-        class={['nav-link', currentPath.startsWith('/blog/') ? 'nav-link--active' : ''].join(' ')}
+        class={['nav-link', isOnBlog ? 'nav-link--active' : ''].join(' ')}
       >Blog</a>
 
     </nav>
@@ -105,9 +131,9 @@ const searchIndex = calculatorRegistry.map(c => ({
     <!-- Desktop search -->
     <div class="header-search" data-search-root>
       <div class="header-search-box">
-        <svg class="header-search-icon" width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-          <circle cx="8.5" cy="8.5" r="5.75" stroke="currentColor" stroke-width="1.5"/>
-          <path d="M13 13l3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <svg class="header-search-icon" width="15" height="15" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <circle cx="8.5" cy="8.5" r="5.75" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M13 13l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
         </svg>
         <input
           type="search"
@@ -120,6 +146,7 @@ const searchIndex = calculatorRegistry.map(c => ({
           aria-controls="header-search-results"
           aria-autocomplete="list"
         />
+        <kbd class="search-kbd" aria-hidden="true">⌘K</kbd>
       </div>
       <div id="header-search-results" class="header-search-results" role="listbox" aria-label="Search results"></div>
     </div>
@@ -127,8 +154,8 @@ const searchIndex = calculatorRegistry.map(c => ({
     <!-- Desktop CTA -->
     <a href="/calculators/" class="header-cta" aria-label="Browse all calculators">
       Browse Calculators
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-        <path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </a>
 
@@ -141,12 +168,9 @@ const searchIndex = calculatorRegistry.map(c => ({
       aria-controls="mobile-overlay"
       class="mobile-toggle"
     >
-      <svg id="icon-open" width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-        <path fill-rule="evenodd" d="M3 5h14a1 1 0 010 2H3a1 1 0 010-2zm0 4h14a1 1 0 010 2H3a1 1 0 010-2zm0 4h14a1 1 0 010 2H3a1 1 0 010-2z" clip-rule="evenodd"/>
-      </svg>
-      <svg id="icon-close" width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" style="display:none">
-        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
-      </svg>
+      <span class="burger-bar"></span>
+      <span class="burger-bar"></span>
+      <span class="burger-bar"></span>
     </button>
   </div>
 </header>
@@ -156,38 +180,71 @@ const searchIndex = calculatorRegistry.map(c => ({
 
 <!-- Mobile bottom sheet -->
 <div id="mobile-overlay" class="mobile-overlay" aria-hidden="true">
-  <!-- Drag handle -->
   <div class="mobile-handle" aria-hidden="true"></div>
 
   <div class="mobile-overlay-inner">
     <div class="mobile-overlay-header">
       <a href="/" class="logo">
-        <svg width="24" height="24" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-          <rect x="2" y="14" width="7" height="12" rx="1.5" fill="var(--color-primary)"/>
-          <rect x="10.5" y="8" width="7" height="18" rx="1.5" fill="var(--color-primary)" opacity="0.75"/>
-          <rect x="19" y="2" width="7" height="24" rx="1.5" fill="var(--color-primary)" opacity="0.5"/>
+        <svg class="logo-icon" width="24" height="24" viewBox="0 0 30 30" fill="none" aria-hidden="true">
+          <rect x="2"  y="15" width="7" height="13" rx="2" fill="url(#logo-g1-m)"/>
+          <rect x="11" y="9"  width="7" height="19" rx="2" fill="url(#logo-g2-m)"/>
+          <rect x="20" y="3"  width="7" height="25" rx="2" fill="url(#logo-g3-m)"/>
+          <defs>
+            <linearGradient id="logo-g1-m" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
+              <stop offset="0%" stop-color="#f97316"/>
+              <stop offset="100%" stop-color="#c2410c"/>
+            </linearGradient>
+            <linearGradient id="logo-g2-m" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
+              <stop offset="0%" stop-color="#fb923c"/>
+              <stop offset="100%" stop-color="#ea580c"/>
+            </linearGradient>
+            <linearGradient id="logo-g3-m" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
+              <stop offset="0%" stop-color="#fdba74"/>
+              <stop offset="100%" stop-color="#f97316"/>
+            </linearGradient>
+          </defs>
         </svg>
-        <span>ConstructCalc</span>
+        <span class="logo-text">ConstructCalc</span>
       </a>
       <button id="mobile-close" type="button" aria-label="Close navigation" class="mobile-close">
-        <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/>
         </svg>
       </button>
     </div>
 
     <nav class="mobile-nav" aria-label="Mobile navigation">
-      <a href="/calculators/" class="mobile-nav-link">Calculators</a>
-      <a href="/blog/" class="mobile-nav-link">Blog</a>
-      <a href="/methodology/" class="mobile-nav-link">Methodology</a>
+      <a href="/calculators/" class={['mobile-nav-link', isOnCalculators ? 'mobile-nav-link--active' : ''].join(' ')}>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <rect x="2" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/>
+          <rect x="9" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/>
+          <rect x="2" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/>
+          <rect x="9" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+        Calculators
+      </a>
+      <a href="/blog/" class={['mobile-nav-link', isOnBlog ? 'mobile-nav-link--active' : ''].join(' ')}>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M5 6h6M5 9h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        Blog
+      </a>
+      <a href="/methodology/" class="mobile-nav-link">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M8 5v3.5l2 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        Methodology
+      </a>
     </nav>
 
     <!-- Mobile search -->
     <div class="mobile-search" data-search-root>
       <div class="mobile-search-box">
         <svg class="header-search-icon" width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-          <circle cx="8.5" cy="8.5" r="5.75" stroke="currentColor" stroke-width="1.5"/>
-          <path d="M13 13l3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="8.5" cy="8.5" r="5.75" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M13 13l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
         </svg>
         <input
           type="search"
@@ -215,52 +272,85 @@ const searchIndex = calculatorRegistry.map(c => ({
       </div>
     </div>
 
-    <a href="/calculators/" class="mobile-cta">Browse All Calculators →</a>
+    <a href="/calculators/" class="mobile-cta">Browse All {totalCalcs} Calculators →</a>
   </div>
 </div>
 
 <style>
+  /* ── Scroll progress bar ─────────────────────────────── */
+  #scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    width: 0%;
+    background: linear-gradient(90deg, #c2410c 0%, #f97316 60%, #fdba74 100%);
+    z-index: 200;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 300ms ease;
+  }
+  #scroll-progress[data-visible] {
+    opacity: 1;
+  }
+
   /* ── Header base ──────────────────────────────────────── */
   .site-header {
     position: sticky;
     top: 0;
     z-index: 50;
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--border-default);
-    transition: background 200ms, border-color 200ms, box-shadow 200ms;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+    transition:
+      background     250ms cubic-bezier(0.4, 0, 0.2, 1),
+      border-color   250ms cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow     250ms cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  /* Hero pages: start transparent, become frosted on scroll */
+  /* Hero pages: gradient scrim when at top */
   .site-header[data-hero]:not([data-scrolled]) {
-    background: transparent;
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.5) 0%,
+      rgba(0, 0, 0, 0.15) 70%,
+      transparent 100%
+    );
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     border-bottom-color: transparent;
+    box-shadow: none;
   }
 
+  /* When scrolled: elevated frosted glass */
   .site-header[data-scrolled] {
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border-bottom-color: var(--border-default);
-    box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(24px) saturate(200%);
+    -webkit-backdrop-filter: blur(24px) saturate(200%);
+    border-bottom-color: rgba(0, 0, 0, 0.07);
+    box-shadow:
+      0 1px 0 rgba(0, 0, 0, 0.06),
+      0 4px 16px rgba(0, 0, 0, 0.06),
+      0 1px 4px rgba(0, 0, 0, 0.04);
   }
 
-  /* On hero pages override logo/link colors when transparent */
-  .site-header[data-hero]:not([data-scrolled]) .logo { color: #fff; }
-  .site-header[data-hero]:not([data-scrolled]) .nav-link { color: rgba(255,255,255,0.8); }
-  .site-header[data-hero]:not([data-scrolled]) .nav-link:hover { color: #fff; background: rgba(255,255,255,0.1); }
+  /* Hero child colours on transparent header */
+  .site-header[data-hero]:not([data-scrolled]) .logo,
+  .site-header[data-hero]:not([data-scrolled]) .logo-text { color: #fff; }
+  .site-header[data-hero]:not([data-scrolled]) .nav-link { color: rgba(255,255,255,0.88); }
+  .site-header[data-hero]:not([data-scrolled]) .nav-link:hover { color: #fff; background: rgba(255,255,255,0.12); }
   .site-header[data-hero]:not([data-scrolled]) .header-search-box {
     background: rgba(255,255,255,0.12);
-    border-color: rgba(255,255,255,0.2);
+    border-color: rgba(255,255,255,0.25);
   }
   .site-header[data-hero]:not([data-scrolled]) .header-search-input { color: #fff; }
   .site-header[data-hero]:not([data-scrolled]) .header-search-input::placeholder { color: rgba(255,255,255,0.55); }
-  .site-header[data-hero]:not([data-scrolled]) .header-search-icon { color: rgba(255,255,255,0.6); }
-  .site-header[data-hero]:not([data-scrolled]) .mobile-toggle { color: rgba(255,255,255,0.85); }
-  .site-header[data-hero]:not([data-scrolled]) .mobile-toggle:hover { background: rgba(255,255,255,0.1); }
+  .site-header[data-hero]:not([data-scrolled]) .header-search-icon { color: rgba(255,255,255,0.65); }
+  .site-header[data-hero]:not([data-scrolled]) .search-kbd { display: none; }
+  .site-header[data-hero]:not([data-scrolled]) .mobile-toggle { color: #fff; }
+  .site-header[data-hero]:not([data-scrolled]) .burger-bar { background: #fff; }
 
   .header-inner {
     max-width: 72rem;
@@ -269,7 +359,7 @@ const searchIndex = calculatorRegistry.map(c => ({
     height: 64px;
     display: flex;
     align-items: center;
-    gap: 1.25rem;
+    gap: 0.75rem;
   }
 
   /* ── Logo ─────────────────────────────────────────────── */
@@ -277,44 +367,56 @@ const searchIndex = calculatorRegistry.map(c => ({
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-weight: 700;
-    font-size: 1.0625rem;
-    color: var(--color-text-primary);
-    letter-spacing: -0.02em;
     flex-shrink: 0;
-    transition: opacity 150ms ease, color 200ms;
+    transition: opacity 180ms ease;
   }
   .logo:hover { opacity: 0.8; }
+
+  .logo-icon { flex-shrink: 0; transition: transform 200ms ease; }
+  .logo:hover .logo-icon { transform: translateY(-1px); }
+
+  .logo-text {
+    font-weight: 750;
+    font-size: 1.0625rem;
+    color: var(--color-text-primary);
+    letter-spacing: -0.03em;
+    transition: color 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
 
   /* ── Desktop nav ──────────────────────────────────────── */
   .desktop-nav {
     display: none;
     align-items: center;
     gap: 0.125rem;
-    margin-left: 0.25rem;
+    margin-left: 0.5rem;
   }
   @media (min-width: 768px) { .desktop-nav { display: flex; } }
 
   .nav-link {
-    padding: 0.375rem 0.75rem;
+    padding: 0.375rem 0.6875rem;
     font-size: 0.875rem;
     font-weight: 500;
     color: var(--color-text-secondary);
     border-radius: 8px;
     transition: color 150ms, background 150ms;
     white-space: nowrap;
+    letter-spacing: -0.01em;
   }
   .nav-link:hover {
     color: var(--color-text-primary);
-    background: var(--border-subtle);
+    background: rgba(0, 0, 0, 0.05);
   }
   .nav-link--active {
     color: var(--color-primary);
     background: var(--color-primary-50);
     font-weight: 600;
   }
+  .nav-link--active:hover {
+    background: #ffe8d8;
+    color: var(--color-primary-hover);
+  }
 
-  /* Dropdown trigger button */
+  /* Dropdown trigger */
   .nav-link--toggle {
     display: flex;
     align-items: center;
@@ -325,20 +427,30 @@ const searchIndex = calculatorRegistry.map(c => ({
     font-family: inherit;
   }
   .nav-chevron {
-    transition: transform 200ms;
-    color: currentColor;
-    opacity: 0.6;
+    transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0.5;
+    flex-shrink: 0;
   }
-  .nav-dropdown-wrap[data-open] .nav-chevron { transform: rotate(180deg); }
+  .nav-dropdown-wrap[data-open] .nav-chevron { transform: rotate(180deg); opacity: 0.8; }
   .nav-dropdown-wrap[data-open] .nav-link--toggle {
     color: var(--color-text-primary);
-    background: var(--border-subtle);
+    background: rgba(0,0,0,0.05);
   }
 
   /* ── Dropdown panel ───────────────────────────────────── */
-  .nav-dropdown-wrap {
-    position: relative;
+  .nav-dropdown-wrap { position: relative; }
+
+  /* Invisible bridge fills the gap so mouse can travel to panel */
+  .nav-dropdown-wrap::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: -12px;
+    right: -12px;
+    height: 10px;
+    display: none;
   }
+  .nav-dropdown-wrap[data-open]::after { display: block; }
 
   .nav-dropdown {
     position: absolute;
@@ -346,51 +458,60 @@ const searchIndex = calculatorRegistry.map(c => ({
     left: 0;
     min-width: 480px;
     background: var(--surface-card);
-    border: 1px solid var(--border-default);
+    border: 1px solid rgba(0,0,0,0.08);
     border-radius: 16px;
-    box-shadow: var(--shadow-widget);
+    box-shadow:
+      0 4px 6px rgba(0,0,0,0.04),
+      0 12px 36px rgba(0,0,0,0.10),
+      0 0 0 1px rgba(0,0,0,0.03);
     opacity: 0;
-    transform: translateY(-6px);
+    transform: translateY(-6px) scale(0.97);
+    transform-origin: top left;
     pointer-events: none;
-    transition: opacity 150ms, transform 150ms;
+    transition: opacity 160ms cubic-bezier(0.16, 1, 0.3, 1), transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
     z-index: 60;
     overflow: hidden;
   }
-
   .nav-dropdown-wrap[data-open] .nav-dropdown {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
     pointer-events: auto;
   }
 
   .dropdown-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1px;
-    padding: 0.75rem;
-    background: var(--border-subtle);
+    gap: 2px;
+    padding: 0.625rem;
   }
 
   .dropdown-item {
     display: flex;
     flex-direction: column;
-    gap: 0.125rem;
+    gap: 0.2rem;
     padding: 0.625rem 0.75rem;
     border-radius: 10px;
-    background: var(--surface-card);
-    transition: background 100ms;
+    transition: background 120ms;
+    position: relative;
   }
-  .dropdown-item:hover { background: var(--color-primary-50); }
+  .dropdown-item:hover {
+    background: var(--color-primary-50);
+  }
+  .dropdown-item:hover .dropdown-item-name {
+    color: var(--color-primary);
+  }
 
   .dropdown-item-name {
     font-size: 0.8125rem;
     font-weight: 600;
     color: var(--color-text-primary);
+    transition: color 120ms;
+    letter-spacing: -0.01em;
   }
   .dropdown-item-desc {
     font-size: 0.75rem;
     color: var(--color-text-muted);
-    line-height: 1.4;
+    line-height: 1.35;
     display: -webkit-box;
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
@@ -398,104 +519,78 @@ const searchIndex = calculatorRegistry.map(c => ({
   }
 
   .dropdown-footer {
-    padding: 0.75rem 1rem;
+    padding: 0.625rem 0.875rem 0.75rem;
     border-top: 1px solid var(--border-subtle);
+    background: var(--surface-page);
   }
   .dropdown-footer-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
     font-size: 0.8125rem;
     font-weight: 600;
     color: var(--color-primary);
-    transition: opacity 150ms;
+    transition: gap 150ms ease;
   }
-  .dropdown-footer-link:hover { opacity: 0.7; }
+  .dropdown-footer-link:hover { gap: 0.625rem; }
 
   /* Categories dropdown */
-  .nav-dropdown--cats {
-    min-width: 320px;
-    left: 0;
-  }
+  .nav-dropdown--cats { min-width: 300px; }
   .dropdown-cats {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
-    padding: 0.875rem;
+    gap: 0.375rem;
+    padding: 0.75rem;
   }
   .dropdown-cat {
     padding: 0.5rem 0.875rem;
     border-radius: 8px;
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     font-weight: 600;
     color: var(--color-text-primary);
+    letter-spacing: -0.01em;
     background: color-mix(in srgb, var(--accent, var(--color-primary)) 8%, var(--surface-card));
-    border: 1px solid color-mix(in srgb, var(--accent, var(--color-primary)) 20%, var(--border-default));
-    transition: background 150ms, border-color 150ms;
+    border: 1px solid color-mix(in srgb, var(--accent, var(--color-primary)) 18%, var(--border-default));
+    transition: background 120ms, border-color 120ms, transform 120ms;
   }
   .dropdown-cat:hover {
-    background: color-mix(in srgb, var(--accent, var(--color-primary)) 15%, var(--surface-card));
-    border-color: color-mix(in srgb, var(--accent, var(--color-primary)) 40%, var(--border-default));
-  }
-
-  /* ── Header search ────────────────────────────────────── */
-  .header-cta {
-    display: none;
-    align-items: center;
-    gap: 0.375rem;
-    margin-left: auto;
-    padding: 0.5rem 1.125rem;
-    background: var(--color-primary);
-    color: #fff;
-    font-size: 0.875rem;
-    font-weight: 600;
-    border-radius: 9999px;
-    transition: background 150ms, transform 150ms;
-    white-space: nowrap;
-  }
-  .header-cta:hover {
-    background: var(--color-primary-hover);
+    background: color-mix(in srgb, var(--accent, var(--color-primary)) 16%, var(--surface-card));
+    border-color: color-mix(in srgb, var(--accent, var(--color-primary)) 40%, transparent);
     transform: translateY(-1px);
   }
-  @media (min-width: 768px) { .header-cta { display: flex; } }
-
-  .mobile-toggle {
-    margin-left: auto;
-    padding: 0.5rem;
-    background: none;
-    border: none;
-    color: var(--color-text-secondary);
-    border-radius: 8px;
-    transition: background 150ms, color 200ms;
-  }
-  .mobile-toggle:hover { background: var(--border-subtle); }
-  @media (min-width: 768px) { .mobile-toggle { display: none; } }
 
   /* ── Desktop search ───────────────────────────────────── */
   .header-search {
     display: none;
     position: relative;
     margin-left: auto;
-    width: 14rem;
+    width: 13rem;
     flex-shrink: 1;
-    min-width: 9rem;
+    min-width: 8rem;
   }
   @media (min-width: 768px) { .header-search { display: block; } }
+  @media (min-width: 1024px) { .header-search { width: 15rem; } }
 
   .header-search-box {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0 0.75rem;
-    height: 38px;
+    padding: 0 0.625rem;
+    height: 36px;
     background: var(--surface-page);
     border: 1px solid var(--border-default);
     border-radius: 9999px;
-    transition: border-color 150ms, background 150ms;
+    transition: border-color 150ms, box-shadow 150ms, background 250ms;
   }
   .header-search-box:focus-within {
     border-color: var(--color-primary);
-    background: var(--surface-card);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(194, 65, 12, 0.12);
   }
+  .header-search-box:focus-within .search-kbd { display: none; }
 
-  .header-search-icon { color: var(--color-text-muted); flex-shrink: 0; transition: color 200ms; }
+  .header-search-icon { color: var(--color-text-muted); flex-shrink: 0; transition: color 250ms; }
+  .header-search-box:focus-within .header-search-icon { color: var(--color-primary); }
 
   .header-search-input {
     flex: 1;
@@ -503,25 +598,42 @@ const searchIndex = calculatorRegistry.map(c => ({
     background: none;
     border: none;
     outline: none;
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     color: var(--color-text-primary);
-    transition: color 200ms;
+    transition: color 250ms;
   }
-  .header-search-input::placeholder { color: var(--color-text-muted); transition: color 200ms; }
+  .header-search-input::placeholder { color: var(--color-text-muted); }
   .header-search-input::-webkit-search-cancel-button { -webkit-appearance: none; }
+
+  .search-kbd {
+    font-size: 0.625rem;
+    font-family: var(--font-sans);
+    color: var(--color-text-muted);
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    padding: 0.1rem 0.3rem;
+    line-height: 1.5;
+    white-space: nowrap;
+    flex-shrink: 0;
+    letter-spacing: 0;
+    pointer-events: none;
+    user-select: none;
+  }
 
   .header-search-results,
   .mobile-search-results {
     display: none;
     position: absolute;
-    top: calc(100% + 8px);
+    top: calc(100% + 6px);
     right: 0;
     width: 22rem;
     max-width: min(22rem, calc(100vw - 3rem));
     background: var(--surface-card);
-    border: 1px solid var(--border-default);
+    border: 1px solid rgba(0,0,0,0.08);
     border-radius: 12px;
-    box-shadow: var(--shadow-widget);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.04), 0 12px 32px rgba(0,0,0,0.10);
     overflow: hidden;
     z-index: 60;
   }
@@ -546,14 +658,88 @@ const searchIndex = calculatorRegistry.map(c => ({
     background: var(--color-primary-50);
   }
   .header-search-results :global(.hs-item strong),
-  .mobile-search-results :global(.hs-item strong) { font-size: 0.875rem; font-weight: 600; color: var(--color-text-primary); }
+  .mobile-search-results :global(.hs-item strong) {
+    font-size: 0.875rem; font-weight: 600; color: var(--color-text-primary);
+    letter-spacing: -0.01em;
+  }
   .header-search-results :global(.hs-item span),
   .mobile-search-results :global(.hs-item span) {
     font-size: 0.8125rem; color: var(--color-text-muted);
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
   .header-search-results :global(.hs-empty),
-  .mobile-search-results :global(.hs-empty) { padding: 1rem; text-align: center; font-size: 0.875rem; color: var(--color-text-muted); }
+  .mobile-search-results :global(.hs-empty) {
+    padding: 1rem; text-align: center; font-size: 0.875rem; color: var(--color-text-muted);
+  }
+
+  /* ── CTA button ───────────────────────────────────────── */
+  .header-cta {
+    display: none;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.4375rem 1rem;
+    background: linear-gradient(135deg, #c2410c 0%, #ea580c 100%);
+    color: #fff;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    border-radius: 9999px;
+    box-shadow: 0 1px 2px rgba(194, 65, 12, 0.3), inset 0 1px 0 rgba(255,255,255,0.15);
+    transition: box-shadow 150ms, transform 150ms, filter 150ms;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .header-cta:hover {
+    filter: brightness(1.08);
+    box-shadow: 0 4px 14px rgba(194, 65, 12, 0.38), inset 0 1px 0 rgba(255,255,255,0.15);
+    transform: translateY(-1px);
+  }
+  .header-cta:active {
+    transform: translateY(0);
+    filter: brightness(0.96);
+  }
+  @media (min-width: 768px) { .header-cta { display: flex; } }
+
+  /* ── Mobile toggle (animated hamburger) ──────────────── */
+  .mobile-toggle {
+    margin-left: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4.5px;
+    width: 40px;
+    height: 40px;
+    padding: 0.5rem;
+    background: none;
+    border: none;
+    border-radius: 10px;
+    color: var(--color-text-secondary);
+    transition: background 150ms;
+    flex-shrink: 0;
+  }
+  .mobile-toggle:hover { background: rgba(0,0,0,0.05); }
+  @media (min-width: 768px) { .mobile-toggle { display: none; } }
+
+  .burger-bar {
+    display: block;
+    width: 18px;
+    height: 1.75px;
+    background: currentColor;
+    border-radius: 9999px;
+    transition: transform 280ms cubic-bezier(0.4, 0, 0.2, 1), opacity 200ms ease, width 200ms ease;
+    transform-origin: center;
+  }
+  .mobile-toggle[aria-expanded="true"] .burger-bar:nth-child(1) {
+    transform: translateY(6.25px) rotate(45deg);
+  }
+  .mobile-toggle[aria-expanded="true"] .burger-bar:nth-child(2) {
+    opacity: 0;
+    width: 0;
+  }
+  .mobile-toggle[aria-expanded="true"] .burger-bar:nth-child(3) {
+    transform: translateY(-6.25px) rotate(-45deg);
+  }
 
   /* ── Mobile backdrop ──────────────────────────────────── */
   .mobile-backdrop {
@@ -561,94 +747,118 @@ const searchIndex = calculatorRegistry.map(c => ({
     position: fixed;
     inset: 0;
     z-index: 90;
-    background: rgba(0,0,0,0.4);
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    animation: none;
   }
-  .mobile-backdrop.is-open { display: block; }
+  .mobile-backdrop.is-open {
+    display: block;
+    animation: backdrop-in 220ms ease forwards;
+  }
+  @keyframes backdrop-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
 
   /* ── Mobile bottom sheet ──────────────────────────────── */
   .mobile-overlay {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    bottom: 0; left: 0; right: 0;
     z-index: 100;
     background: #fff;
     border-radius: 20px 20px 0 0;
-    max-height: 85vh;
+    max-height: 88vh;
     transform: translateY(100%);
     visibility: hidden;
-    transition: transform 280ms cubic-bezier(0.32, 0.72, 0, 1), visibility 0s linear 280ms;
-    box-shadow: 0 -4px 32px rgba(0,0,0,0.14);
+    transition: transform 320ms cubic-bezier(0.32, 0.72, 0, 1), visibility 0s linear 320ms;
+    box-shadow: 0 -2px 0 rgba(0,0,0,0.04), 0 -8px 40px rgba(0,0,0,0.16);
   }
   .mobile-overlay.is-open {
     transform: translateY(0);
     visibility: visible;
-    transition: transform 280ms cubic-bezier(0.32, 0.72, 0, 1), visibility 0s linear 0s;
+    transition: transform 320ms cubic-bezier(0.32, 0.72, 0, 1), visibility 0s linear 0s;
   }
 
   .mobile-handle {
-    width: 36px;
-    height: 4px;
+    width: 32px;
+    height: 3px;
     background: var(--border-strong);
     border-radius: 9999px;
-    margin: 0.75rem auto 0;
+    margin: 0.875rem auto 0;
+    opacity: 0.5;
   }
 
   .mobile-overlay-inner {
     display: flex;
     flex-direction: column;
-    max-height: calc(85vh - 1.5rem);
-    padding: 0.5rem 1.25rem 2rem;
+    max-height: calc(88vh - 1.5rem);
+    padding: 0.5rem 1.25rem env(safe-area-inset-bottom, 1.5rem);
     overflow-y: auto;
     overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
   }
 
   .mobile-overlay-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.75rem 0 1.25rem;
+    padding: 0.75rem 0 1.125rem;
     border-bottom: 1px solid var(--border-default);
   }
 
   .mobile-close {
-    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
     background: var(--border-subtle);
     border: none;
     border-radius: 8px;
     color: var(--color-text-secondary);
     cursor: pointer;
-    transition: background 150ms;
+    transition: background 150ms, color 150ms;
   }
-  .mobile-close:hover { background: var(--border-default); }
+  .mobile-close:hover { background: var(--border-default); color: var(--color-text-primary); }
 
+  /* Mobile nav */
   .mobile-nav {
     display: flex;
     flex-direction: column;
     gap: 0.125rem;
-    padding: 1.25rem 0;
+    padding: 1rem 0;
     border-bottom: 1px solid var(--border-default);
   }
 
   .mobile-nav-link {
-    padding: 0.75rem 0.5rem;
-    font-size: 1.0625rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0.625rem;
+    font-size: 1rem;
     font-weight: 600;
-    color: var(--color-text-primary);
-    border-radius: 8px;
-    transition: background 150ms;
+    color: var(--color-text-secondary);
+    border-radius: 10px;
+    letter-spacing: -0.01em;
+    transition: background 150ms, color 150ms;
   }
-  .mobile-nav-link:hover { background: var(--border-subtle); }
+  .mobile-nav-link:hover,
+  .mobile-nav-link--active {
+    background: var(--border-subtle);
+    color: var(--color-text-primary);
+  }
+  .mobile-nav-link--active {
+    color: var(--color-primary);
+    background: var(--color-primary-50);
+  }
 
   /* Mobile search */
   .mobile-search {
     position: relative;
-    padding: 1.25rem 0;
+    padding: 1rem 0;
     border-bottom: 1px solid var(--border-default);
   }
-
   .mobile-search-box {
     display: flex;
     align-items: center;
@@ -658,8 +868,12 @@ const searchIndex = calculatorRegistry.map(c => ({
     background: var(--surface-page);
     border: 1px solid var(--border-default);
     border-radius: 12px;
+    transition: border-color 150ms, box-shadow 150ms;
   }
-  .mobile-search-box:focus-within { border-color: var(--color-primary); }
+  .mobile-search-box:focus-within {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(194,65,12,0.12);
+  }
   .mobile-search-box .header-search-input { font-size: 1rem; }
 
   .mobile-search-results {
@@ -668,81 +882,122 @@ const searchIndex = calculatorRegistry.map(c => ({
     max-width: none;
     margin-top: 0.5rem;
     box-shadow: none;
+    border-radius: 10px;
   }
 
-  .mobile-categories { padding: 1.25rem 0; }
-
+  /* Mobile categories */
+  .mobile-categories { padding: 1.125rem 0; }
   .mobile-categories-label {
-    font-size: 0.75rem;
+    font-size: 0.6875rem;
     font-weight: 700;
     color: var(--color-text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 0.75rem;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.625rem;
   }
-
   .mobile-category-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
+    gap: 0.4375rem;
   }
-
   .mobile-category-chip {
-    padding: 0.625rem 0.875rem;
+    padding: 0.5625rem 0.75rem;
     background: color-mix(in srgb, var(--accent, var(--color-primary)) 8%, var(--surface-page));
-    border: 1px solid color-mix(in srgb, var(--accent, var(--color-primary)) 25%, var(--border-default));
+    border: 1px solid color-mix(in srgb, var(--accent, var(--color-primary)) 20%, var(--border-default));
     border-radius: 8px;
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     font-weight: 600;
     color: var(--color-text-secondary);
+    letter-spacing: -0.01em;
     transition: background 150ms, border-color 150ms, color 150ms;
   }
   .mobile-category-chip:hover {
-    background: color-mix(in srgb, var(--accent, var(--color-primary)) 14%, var(--surface-page));
+    background: color-mix(in srgb, var(--accent, var(--color-primary)) 15%, var(--surface-page));
     border-color: var(--accent, var(--color-primary));
     color: var(--color-text-primary);
   }
 
+  /* Mobile CTA */
   .mobile-cta {
     display: block;
     margin-top: 1rem;
-    padding: 1rem;
-    background: var(--color-primary);
+    margin-bottom: 0.5rem;
+    padding: 0.9375rem 1rem;
+    background: linear-gradient(135deg, #c2410c 0%, #ea580c 100%);
     color: #fff;
     text-align: center;
-    font-size: 1rem;
-    font-weight: 600;
-    border-radius: 12px;
-    transition: background 150ms;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(194, 65, 12, 0.3);
+    transition: filter 150ms, transform 150ms;
   }
-  .mobile-cta:hover { background: var(--color-primary-hover); }
+  .mobile-cta:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+  }
 </style>
 
 <script>
-  /* ── Scroll-triggered transparent→frosted ────────────── */
-  const header = document.querySelector<HTMLElement>('.site-header');
-  if (header?.dataset.hero !== undefined) {
-    const onScroll = () => {
-      if (window.scrollY > 60) {
-        header.setAttribute('data-scrolled', '');
-      } else {
-        header.removeAttribute('data-scrolled');
-      }
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+  /* ── Scroll progress bar ─────────────────────────────── */
+  const progressBar = document.getElementById('scroll-progress');
+  function updateProgress() {
+    if (!progressBar) return;
+    const maxY = document.documentElement.scrollHeight - window.innerHeight;
+    if (maxY <= 0) return;
+    const pct = Math.min((window.scrollY / maxY) * 100, 100);
+    progressBar.style.width = pct.toFixed(1) + '%';
+    // Show bar only after user has scrolled a bit
+    progressBar.toggleAttribute('data-visible', window.scrollY > 80);
   }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  updateProgress();
+
+  /* ── Hero scrim → frosted transition ─────────────────── */
+  const header = document.querySelector<HTMLElement>('.site-header');
+  if (header?.hasAttribute('data-hero')) {
+    const hero =
+      document.querySelector<HTMLElement>('.hero') ??
+      document.querySelector<HTMLElement>('main > section:first-child');
+
+    if (hero) {
+      const obs = new IntersectionObserver(
+        ([entry]) => header.toggleAttribute('data-scrolled', entry.intersectionRatio < 0.5),
+        { threshold: [0.5] }
+      );
+      obs.observe(hero);
+    } else {
+      const check = () => header.toggleAttribute('data-scrolled', window.scrollY > 60);
+      window.addEventListener('scroll', check, { passive: true });
+      check();
+    }
+  } else if (header) {
+    // Non-hero pages: add scrolled depth class for stronger shadow
+    const check = () => header.toggleAttribute('data-scrolled', window.scrollY > 8);
+    window.addEventListener('scroll', check, { passive: true });
+    check();
+  }
+
+  /* ── Keyboard shortcut: ⌘K / Ctrl+K opens search ─────── */
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      const input = document.querySelector<HTMLInputElement>('.header-search .header-search-input');
+      input?.focus();
+      input?.select();
+    }
+  });
 
   /* ── Dropdown menus ───────────────────────────────────── */
   document.querySelectorAll<HTMLElement>('.nav-dropdown-wrap').forEach((wrap) => {
-    const btn = wrap.querySelector<HTMLButtonElement>('.nav-link--toggle');
+    const btn   = wrap.querySelector<HTMLButtonElement>('.nav-link--toggle');
     const panel = wrap.querySelector<HTMLElement>('.nav-dropdown');
     if (!btn || !panel) return;
 
     let closeTimer: ReturnType<typeof setTimeout>;
 
     function open() {
-      // Close any other open dropdown first
       document.querySelectorAll<HTMLElement>('.nav-dropdown-wrap[data-open]').forEach(other => {
         if (other !== wrap) {
           other.removeAttribute('data-open');
@@ -758,25 +1013,19 @@ const searchIndex = calculatorRegistry.map(c => ({
       closeTimer = setTimeout(() => {
         wrap.removeAttribute('data-open');
         btn.setAttribute('aria-expanded', 'false');
-      }, 120);
+      }, 100);
     }
 
     wrap.addEventListener('mouseenter', open);
     wrap.addEventListener('mouseleave', close);
-    btn.addEventListener('click', () => {
-      if (wrap.hasAttribute('data-open')) {
-        wrap.removeAttribute('data-open');
-        btn.setAttribute('aria-expanded', 'false');
-      } else {
-        open();
-      }
-    });
-    // Keep open while hovering panel
     panel.addEventListener('mouseenter', () => clearTimeout(closeTimer));
     panel.addEventListener('mouseleave', close);
+
+    btn.addEventListener('click', () => {
+      wrap.hasAttribute('data-open') ? close() : open();
+    });
   });
 
-  // Click outside closes all dropdowns
   document.addEventListener('click', (e) => {
     if (!(e.target as HTMLElement).closest('.nav-dropdown-wrap')) {
       document.querySelectorAll<HTMLElement>('.nav-dropdown-wrap[data-open]').forEach(wrap => {
@@ -791,8 +1040,6 @@ const searchIndex = calculatorRegistry.map(c => ({
   const closeBtn = document.getElementById('mobile-close');
   const overlay  = document.getElementById('mobile-overlay');
   const backdrop = document.getElementById('mobile-backdrop');
-  const iconOpen  = document.getElementById('icon-open');
-  const iconClose = document.getElementById('icon-close');
 
   const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled])';
 
@@ -805,23 +1052,18 @@ const searchIndex = calculatorRegistry.map(c => ({
     overlay?.classList.add('is-open');
     backdrop?.classList.add('is-open');
     overlay?.removeAttribute('aria-hidden');
-    backdrop?.removeAttribute('aria-hidden');
     toggle?.setAttribute('aria-expanded', 'true');
-    if (iconOpen) iconOpen.style.display = 'none';
-    if (iconClose) iconClose.style.display = 'block';
     document.body.style.overflow = 'hidden';
-    closeBtn?.focus();
+    // Slight delay so animation is visible before focus moves
+    setTimeout(() => closeBtn?.focus(), 60);
   }
 
   function closeMenu() {
     if (!overlay?.classList.contains('is-open')) return;
-    overlay?.classList.remove('is-open');
+    overlay.classList.remove('is-open');
     backdrop?.classList.remove('is-open');
-    overlay?.setAttribute('aria-hidden', 'true');
-    backdrop?.setAttribute('aria-hidden', 'true');
+    overlay.setAttribute('aria-hidden', 'true');
     toggle?.setAttribute('aria-expanded', 'false');
-    if (iconOpen) iconOpen.style.display = 'block';
-    if (iconClose) iconClose.style.display = 'none';
     document.body.style.overflow = '';
     toggle?.focus();
   }
@@ -853,7 +1095,7 @@ const searchIndex = calculatorRegistry.map(c => ({
   }
 
   function wireSearch(root) {
-    const input = root.querySelector('input');
+    const input   = root.querySelector('input');
     const results = root.querySelector('[role="listbox"]');
     if (!input || !results) return;
 
@@ -899,8 +1141,8 @@ const searchIndex = calculatorRegistry.map(c => ({
     input.addEventListener('input', render);
     input.addEventListener('keydown', (e) => {
       if (!items.length) return;
-      if (e.key === 'ArrowDown') { e.preventDefault(); setActive((active + 1) % items.length); }
-      else if (e.key === 'ArrowUp') { e.preventDefault(); setActive((active - 1 + items.length) % items.length); }
+      if (e.key === 'ArrowDown')  { e.preventDefault(); setActive((active + 1) % items.length); }
+      else if (e.key === 'ArrowUp')   { e.preventDefault(); setActive((active - 1 + items.length) % items.length); }
       else if (e.key === 'Enter') {
         const t = active >= 0 ? items[active] : items[0];
         if (t) { e.preventDefault(); window.location.href = t.getAttribute('href'); }

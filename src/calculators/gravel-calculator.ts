@@ -244,4 +244,15 @@ export const gravelCalculator: CalculatorConfig = {
         'Gravel costs $15–$75 per cubic yard depending on type and location. Pea gravel runs $15–$30/yd³, crushed stone $20–$40/yd³, and specialty decorative gravels up to $75/yd³. Delivery typically adds $50–$150 depending on distance.',
     },
   ],
+  orderCallout: true,
+  wasteFactor: {
+    default: 10,
+    range: '10–15%',
+    notes: 'Gravel compacts and settles after spreading. Add 10–15% to reach your target finished depth.',
+  },
+  costRange: {
+    low: 15,
+    high: 75,
+    unit: 'per cubic yard (material only)',
+  },
 };

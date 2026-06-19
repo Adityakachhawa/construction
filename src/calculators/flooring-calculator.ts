@@ -290,4 +290,10 @@ export const flooringCalculator: CalculatorConfig = {
         'Measure the longest length and widest width of the room in feet and inches. For L-shaped or irregular rooms, split the area into rectangles, calculate each separately, and add the totals. Include closets and areas under appliances that will not be removed — it\'s easier to cut around them than to come up short. Do not subtract small obstacles like doorways or floor vents.',
     },
   ],
+  orderCallout: true,
+  wasteFactor: {
+    default: 10,
+    range: '7–15%',
+    notes: 'Straight-lay hardwood or LVP: 7–10%. Diagonal or herringbone installation: 12–15%.',
+  },
 };

@@ -290,4 +290,27 @@ export const concreteDrivewayCalculator: CalculatorConfig = {
         'Concrete reaches initial set in 24–48 hours — you can walk on it. Wait 7 days before driving passenger vehicles on it. Full design strength (typically 4,000 PSI) is reached at 28 days. Avoid heavy vehicles, deicing salts, and pressure washing for the first 30 days. Keep the surface moist during the first week (wet curing) to maximise final strength.',
     },
   ],
+  orderCallout: true,
+  wasteFactor: {
+    default: 10,
+    range: '5–10%',
+    notes: 'Standard rectangular driveways: 5–7% is adequate. L-shaped or curved driveways: use 10%.',
+  },
+  costRange: {
+    low: 130,
+    high: 180,
+    unit: 'per cubic yard (ready-mix)',
+  },
+  references: [
+    {
+      title: 'ACI 330R – Guide for Design and Construction of Concrete Parking Lots',
+      organization: 'American Concrete Institute',
+      url: 'https://www.concrete.org/',
+    },
+    {
+      title: 'IRC R506 – Concrete Floors on Ground',
+      organization: 'International Residential Code',
+      url: 'https://codes.iccsafe.org/',
+    },
+  ],
 };

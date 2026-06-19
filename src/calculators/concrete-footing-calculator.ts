@@ -335,4 +335,22 @@ export const concreteFootingCalculator: CalculatorConfig = {
         'Bagged concrete (60 lb or 80 lb) is practical for up to 10–15 bags per session. An 80 lb bag yields about 0.60 ft³. For 4 footings at 2 ft × 2 ft × 1 ft each (16 ft³ total), you would need 27 bags — manageable for a weekend project. For larger foundations, ready-mix is faster and produces more consistent concrete. The break-even point is typically around 0.5–1 cubic yard.',
     },
   ],
+  orderCallout: true,
+  wasteFactor: {
+    default: 10,
+    range: '10–15%',
+    notes: 'Irregular trenches and round tube forms lose more concrete to over-excavation — use 15% for footings dug by hand.',
+  },
+  references: [
+    {
+      title: 'IRC R403 – Footings',
+      organization: 'International Residential Code',
+      url: 'https://codes.iccsafe.org/',
+    },
+    {
+      title: 'ACI 318 – Building Code for Structural Concrete',
+      organization: 'American Concrete Institute',
+      url: 'https://www.concrete.org/',
+    },
+  ],
 };
