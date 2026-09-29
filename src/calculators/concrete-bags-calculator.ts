@@ -151,7 +151,6 @@ export const concreteBagsCalculator: CalculatorConfig = {
       max: 11,
       step: 1,
       defaultValue: 4,
-      required: true,
       onlyIn: 'imperial',
       groupWith: 'depth_ft',
       helpText: 'Common slab: 4″. Footings: 8–12″.',

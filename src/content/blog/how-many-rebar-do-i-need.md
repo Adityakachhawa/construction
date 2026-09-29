@@ -127,3 +127,7 @@ For slabs, place rebar at the middle or slightly below center — about 1.5–2 
 
 **What's the difference between smooth bar and deformed bar?**
 Deformed rebar has surface ribs (deformations) that mechanically lock to the concrete. All structural rebar today is deformed. Smooth bar is used only for dowels and expansion joints where movement must be allowed.
+
+---
+
+**See also:** [Concrete Calculation Methodology](/methodology/concrete/) — formula derivations, waste factors, and ACI 318 references behind ConstructCalc concrete and rebar calculators.

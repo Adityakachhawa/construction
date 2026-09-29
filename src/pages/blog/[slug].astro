@@ -2,8 +2,8 @@
 import ArticleLayout from '../../layouts/ArticleLayout.astro';
 import RelatedCalculators from '../../components/calculators/RelatedCalculators.astro';
 import { buildArticleMeta } from '../../utils/seo';
-import { buildArticleSchema, buildBreadcrumbList } from '../../utils/schema';
-import { getCollection, render } from 'astro:content';
+import { buildArticleSchema, buildBreadcrumbList, buildFaqSchema, parseFaqFromMarkdown } from '../../utils/schema';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
 import { calculatorRegistry } from '../../data/registry';
 import { categories } from '../../data/categories';
 import type { CalculatorConfig } from '../../calculators/_types';
@@ -29,7 +29,14 @@ export const getStaticPaths: GetStaticPaths = async () => {
   });
 };
 
-const { post, slug, prevPost, nextPost } = Astro.props;
+type Props = {
+  post: CollectionEntry<'blog'>;
+  slug: string;
+  prevPost?: { title: string; slug: string; };
+  nextPost?: { title: string; slug: string; };
+};
+
+const { post, slug, prevPost, nextPost } = Astro.props as Props;
 const { Content } = await render(post);
 
 const wordCount = (post.body ?? '').trim().split(/\s+/).length;
@@ -44,6 +51,8 @@ const meta = buildArticleMeta({
   updatedAt: post.data.updatedAt,
   ogImage: post.data.featuredImage,
 });
+
+const faqItems = parseFaqFromMarkdown(post.body ?? '');
 
 const schemas = [
   buildArticleSchema({
@@ -61,6 +70,7 @@ const schemas = [
     { name: 'Blog', href: '/blog/' },
     { name: post.data.title, href: `/blog/${slug}/` },
   ]),
+  ...(faqItems.length ? [buildFaqSchema(faqItems)] : []),
 ];
 
 const breadcrumbs = [

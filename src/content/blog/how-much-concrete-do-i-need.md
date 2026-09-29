@@ -118,3 +118,7 @@ One cubic yard covers:
 
 **What's the difference between concrete and cement?**
 Cement is an ingredient in concrete. Concrete = cement + sand + aggregate + water. "I need to order cement" when you mean concrete is a very common mix-up on job sites.
+
+---
+
+**See also:** [Concrete Calculation Methodology](/methodology/concrete/) — the formula derivations, bag yield tables, waste factors, and ACI 318 references behind ConstructCalc concrete calculators.

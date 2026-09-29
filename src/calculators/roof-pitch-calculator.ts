@@ -5,14 +5,7 @@ import type {
   UnitSystem,
 } from './_types';
 
-// Roof pitch classification thresholds (pitch = rise/run as decimal)
-function classifyPitch(pitchDecimal: number): string {
-  if (pitchDecimal < 1 / 12)  return 'Flat (< 1:12)';
-  if (pitchDecimal < 4 / 12)  return 'Low slope (1:12 – 3:12)';
-  if (pitchDecimal < 9 / 12)  return 'Conventional (4:12 – 8:12)';
-  if (pitchDecimal < 19 / 12) return 'Steep (9:12 – 18:12)';
-  return 'Very steep (≥ 19:12)';
-}
+
 
 // Encode classification string as a numeric index so the output map (Record<string,number>) stays type-safe.
 // The CalculatorWidget renders it via the description field; we store index and expose the label separately.

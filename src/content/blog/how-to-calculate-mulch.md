@@ -81,3 +81,7 @@ Usually not necessary. If total depth exceeds 4 inches, remove some old mulch be
 
 **Is it cheaper to use gravel instead of mulch?**
 Gravel costs more upfront but doesn't need replacement. Over 10 years, gravel is often cheaper. Mulch feeds the soil and looks more natural. It's a personal and functional preference. See our [Gravel Calculator](/calculators/gravel-calculator/) to compare quantities.
+
+---
+
+**See also:** [Excavation Calculation Methodology](/methodology/excavation/) — volume formulas, bulk density tables, swell/shrink factors, and coverage calculations behind ConstructCalc excavation and fill calculators.

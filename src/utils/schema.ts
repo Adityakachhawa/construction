@@ -138,6 +138,45 @@ export function buildFaqSchema(items: FaqItem[]) {
   };
 }
 
+function stripMarkdown(text: string): string {
+  return text
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/\*\*([^*]+)\*\*/g, '$1')
+    .replace(/\*([^*]+)\*/g, '$1')
+    .replace(/_([^_]+)_/g, '$1')
+    .replace(/`([^`]+)`/g, '$1')
+    .trim();
+}
+
+export function parseFaqFromMarkdown(body: string): FaqItem[] {
+  const faqMarker = '## Frequently Asked Questions';
+  const faqStart = body.indexOf(faqMarker);
+  if (faqStart === -1) return [];
+
+  let faqSection = body.slice(faqStart + faqMarker.length);
+
+  // Stop before the --- separator (methodology link we append)
+  const separatorIdx = faqSection.indexOf('\n---');
+  if (separatorIdx !== -1) {
+    faqSection = faqSection.slice(0, separatorIdx);
+  }
+
+  const items: FaqItem[] = [];
+  const blocks = faqSection.split(/\n(?=\*\*)/);
+
+  for (const block of blocks) {
+    const qMatch = block.match(/^\*\*([^*]+)\*\*\s*\n([\s\S]+)/);
+    if (!qMatch) continue;
+    const question = qMatch[1].trim();
+    const answer = stripMarkdown(qMatch[2].trim());
+    if (question && answer) {
+      items.push({ question, answer });
+    }
+  }
+
+  return items;
+}
+
 export function buildCollectionPageSchema(opts: {
   name: string;
   description: string;

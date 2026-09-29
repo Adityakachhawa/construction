@@ -51,6 +51,7 @@ import type { GetStaticPaths } from 'astro';
 // Diagram lookup — add new slugs here instead of adding more booleans
 const diagramMap: Record<string, any> = {
   'concrete-slab-calculator':      SlabDiagram,
+  'concrete-slab-rebar-calculator': SlabDiagram,
   'gravel-calculator':             GravelDiagram,
   'mulch-calculator':              MulchDiagram,
   'sand-calculator':               SandDiagram,
@@ -88,6 +89,8 @@ const diagramMap: Record<string, any> = {
   'post-hole-calculator':          PostHoleDiagram,
 };
 
+import type { CalculatorConfig } from '../../calculators/_types';
+
 export const getStaticPaths: GetStaticPaths = async () => {
   return calculatorRegistry.map((calc) => ({
     params: { slug: calc.slug },
@@ -95,7 +98,11 @@ export const getStaticPaths: GetStaticPaths = async () => {
   }));
 };
 
-const { calc } = Astro.props;
+type Props = {
+  calc: CalculatorConfig;
+};
+
+const { calc } = Astro.props as Props;
 
 const category = getCategoryBySlug(calc.category);
 const categoryName = category?.name ?? calc.category;

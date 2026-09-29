@@ -371,6 +371,7 @@ const schemas = [
       </div>
       <div class="trust-links">
         <a href="/methodology/">How our calculations work</a>
+        <a href="/guides/">Deep-dive guides</a>
         <a href="/about/">About ConstructCalc</a>
         <a href="/contact/">Report an error</a>
       </div>
@@ -418,7 +419,7 @@ const schemas = [
 
 </BaseLayout>
 
-<script define:vars={{ searchIndex }}>
+<script is:inline define:vars={{ searchIndex }}>
   const input = document.getElementById('hero-search-input');
   const resultsBox = document.getElementById('hero-search-results');
   let activeIndex = -1;

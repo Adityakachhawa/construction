@@ -30,7 +30,8 @@ const breadcrumbs = [
 
 const relatedCalcs = calculatorRegistry.filter((c) =>
   ['concrete-slab-calculator','concrete-footing-calculator','concrete-driveway-calculator',
-   'concrete-bags-calculator','concrete-block-calculator','concrete-column-calculator','post-hole-calculator'].includes(c.slug)
+   'concrete-bags-calculator','concrete-block-calculator','concrete-column-calculator',
+   'post-hole-calculator','rebar-calculator','concrete-slab-rebar-calculator'].includes(c.slug)
 );
 ---
 
@@ -183,8 +184,23 @@ const relatedCalcs = calculatorRegistry.filter((c) =>
         </section>
       )}
 
+      <section class="content-section">
+        <h2>Related Guides</h2>
+        <div class="related-grid">
+          <a href="/guides/compare-concrete-mixes/" class="related-card">
+            <strong class="related-name">Concrete Mix Comparison</strong>
+            <span class="related-desc">Compare 3,000, 3,500, and 4,000 PSI mixes with interactive bag-count calculator.</span>
+          </a>
+          <a href="/guides/frost-depth/" class="related-card">
+            <strong class="related-name">Frost Depth by State</strong>
+            <span class="related-desc">IRC frost depth values for all 50 states — essential for sizing concrete footings correctly.</span>
+          </a>
+        </div>
+      </section>
+
       <div class="nav-links">
         <a href="/methodology/" class="nav-link-back">← All Methodologies</a>
+        <a href="/category/concrete/" class="nav-link-category">Browse concrete calculators</a>
         <a href="/methodology/framing/" class="nav-link-next">Framing Methodology →</a>
       </div>
 
@@ -359,11 +375,11 @@ const relatedCalcs = calculatorRegistry.filter((c) =>
     border-top: 1px solid var(--border-default);
     margin-top: 1rem;
   }
-  .nav-link-back, .nav-link-next {
+  .nav-link-back, .nav-link-next, .nav-link-category {
     font-size: 0.875rem;
     font-weight: 600;
     color: var(--color-primary);
     transition: gap 150ms;
   }
-  .nav-link-back:hover, .nav-link-next:hover { text-decoration: underline; }
+  .nav-link-back:hover, .nav-link-next:hover, .nav-link-category:hover { text-decoration: underline; }
 </style>

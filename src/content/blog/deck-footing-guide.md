@@ -78,3 +78,7 @@ For floating decks (not attached to the house, close to grade), deck blocks may 
 
 **How long after pouring before I can put posts on the footings?**
 Standard concrete reaches adequate strength for post installation in 24–48 hours for an unloaded post. Wait the full 7 days before applying significant beam and deck loads.
+
+---
+
+**See also:** [Concrete Calculation Methodology](/methodology/concrete/) — footing volume formulas, bag yield tables, and ACI 318 references behind ConstructCalc concrete calculators.

@@ -1006,13 +1006,13 @@ const searchIndex = calculatorRegistry.map(c => ({
       });
       clearTimeout(closeTimer);
       wrap.setAttribute('data-open', '');
-      btn.setAttribute('aria-expanded', 'true');
+      btn?.setAttribute('aria-expanded', 'true');
     }
 
     function close() {
       closeTimer = setTimeout(() => {
         wrap.removeAttribute('data-open');
-        btn.setAttribute('aria-expanded', 'false');
+        btn?.setAttribute('aria-expanded', 'false');
       }, 100);
     }
 
@@ -1089,7 +1089,7 @@ const searchIndex = calculatorRegistry.map(c => ({
   });
 </script>
 
-<script define:vars={{ searchIndex }}>
+<script is:inline define:vars={{ searchIndex }}>
   function escapeHtml(s) {
     return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }

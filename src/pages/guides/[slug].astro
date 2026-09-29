@@ -2,7 +2,7 @@
 import ArticleLayout from '../../layouts/ArticleLayout.astro';
 import { buildArticleMeta } from '../../utils/seo';
 import { buildArticleSchema, buildBreadcrumbList } from '../../utils/schema';
-import { getCollection, render } from 'astro:content';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
 import type { GetStaticPaths } from 'astro';
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -16,7 +16,12 @@ export const getStaticPaths: GetStaticPaths = async () => {
   });
 };
 
-const { guide, slug } = Astro.props;
+type Props = {
+  guide: CollectionEntry<'guides'>;
+  slug: string;
+};
+
+const { guide, slug } = Astro.props as Props;
 const { Content } = await render(guide);
 
 const meta = buildArticleMeta({

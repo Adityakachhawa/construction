@@ -2,7 +2,7 @@
 import BaseLayout from '../../layouts/CategoryLayout.astro';
 import { buildCategoryMeta } from '../../utils/seo';
 import { buildCollectionPageSchema, buildBreadcrumbList, buildFaqSchema } from '../../utils/schema';
-import { categories, getCategoryBySlug } from '../../data/categories';
+import { categories, type Category } from '../../data/categories';
 import { getCalculatorsByCategory, getCalculatorBySlug } from '../../data/registry';
 import { getCollection } from 'astro:content';
 import Card from '../../components/ui/Card.astro';
@@ -19,7 +19,11 @@ export const getStaticPaths: GetStaticPaths = async () => {
   }));
 };
 
-const { cat } = Astro.props;
+type Props = {
+  cat: Category;
+};
+
+const { cat } = Astro.props as Props;
 const calcs = getCalculatorsByCategory(cat.slug);
 const relatedCategories = categories.filter(c => c.slug !== cat.slug);
 
@@ -41,6 +45,16 @@ const relatedPosts = allPosts
 
 // Structured reference content for this category
 const refContent = categoryContent[cat.slug] ?? null;
+
+const methodologyMap: Record<string, { slug: string; label: string }> = {
+  concrete:   { slug: 'concrete',   label: 'Concrete' },
+  framing:    { slug: 'framing',    label: 'Framing' },
+  excavation: { slug: 'excavation', label: 'Excavation' },
+  masonry:    { slug: 'masonry',    label: 'Masonry' },
+  decking:    { slug: 'concrete',   label: 'Concrete' },
+  fencing:    { slug: 'concrete',   label: 'Concrete' },
+};
+const methodology = methodologyMap[cat.slug] ?? null;
 
 // Per-category FAQs (structured, plain text for JSON-LD)
 const categoryFaqs: Record<string, Array<{ q: string; a: string }>> = {
@@ -201,6 +215,14 @@ const breadcrumbs = [
 
   <!-- Related blog posts + category chips -->
   <div slot="guides">
+    {methodology && (
+      <div class="methodology-section">
+        <a href={`/methodology/${methodology.slug}/`} class="methodology-callout">
+          How we calculate {cat.name.toLowerCase()} estimates
+          <span class="methodology-callout-arrow">— {methodology.label} Methodology →</span>
+        </a>
+      </div>
+    )}
     {relatedPosts.length > 0 && (
       <div class="related-posts-section">
         <h2 class="related-section-title">Related guides</h2>
@@ -436,4 +458,27 @@ const breadcrumbs = [
 
   .chip-name { font-size: 0.875rem; font-weight: 600; color: var(--color-text-primary); }
   .chip-count { font-size: 0.75rem; color: var(--color-text-muted); }
+
+  .methodology-section {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-default);
+  }
+  .methodology-callout {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    padding: 0.875rem 1rem;
+    background: var(--surface-card);
+    border: 1px solid var(--border-default);
+    border-radius: 10px;
+    transition: border-color 150ms;
+    text-decoration: none;
+  }
+  .methodology-callout:hover { border-color: var(--color-primary); }
+  .methodology-callout-arrow { font-weight: 500; opacity: 0.8; }
 </style>

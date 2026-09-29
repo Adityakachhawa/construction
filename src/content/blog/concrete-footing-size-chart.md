@@ -107,3 +107,7 @@ Yes, with precautions. The concrete mix temperature must be above 50°F when pla
 
 **What happens if my footing is too shallow?**
 Frost heave lifts the footing, which can crack the foundation, rack door and window frames, and damage finishes. The cost of properly deep footings is trivial compared to the cost of fixing frost heave damage.
+
+---
+
+**See also:** [Concrete Calculation Methodology](/methodology/concrete/) — footing volume formulas, bag yield tables, and IRC R403.1 references. Also see the [Frost Depth Reference](/guides/frost-depth/) for all 50 states.

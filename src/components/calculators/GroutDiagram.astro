@@ -179,6 +179,27 @@ const { class: className = '' } = Astro.props;
       <text x="458" y="191" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
         font-size="7" fill="#15803d" opacity="0.8">incl. waste factor</text>
 
+      <!-- ══ MAGNIFIED JOINT DETAIL (right panel, below bags formula) ══ -->
+      <line x1="405" y1="200" x2="510" y2="200" stroke="#e5e7eb" stroke-width="1"/>
+      <text x="457" y="212" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8" font-weight="700" fill="#374151">Joint detail ×10</text>
+      <!-- Magnified view frame -->
+      <rect x="408" y="217" width="98" height="52" rx="4"
+        fill="#f9fafb" stroke="#d97706" stroke-width="1.5"/>
+      <!-- Left tile face -->
+      <rect x="411" y="220" width="34" height="46" fill="url(#gTileA)" stroke="#d1d5db" stroke-width="0.75" rx="1"/>
+      <!-- Grout joint (magnified: 14px wide gap) -->
+      <rect x="445" y="220" width="14" height="46" fill="#9ca3af"/>
+      <!-- Right tile face -->
+      <rect x="459" y="220" width="44" height="46" fill="url(#gTileB)" stroke="#d1d5db" stroke-width="0.75" rx="1"/>
+      <!-- Joint width double arrow -->
+      <line x1="446" y1="243" x2="458" y2="243" stroke="#d97706" stroke-width="1.5"/>
+      <polygon points="446,243 449,240 449,246" fill="#d97706"/>
+      <polygon points="458,243 455,240 455,246" fill="#d97706"/>
+      <!-- Joint width label below frame -->
+      <text x="452" y="281" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="7.5" font-weight="700" fill="#92400e">Joint width</text>
+
     </svg>
   </div>
   <figcaption class="diagram-caption">

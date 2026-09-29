@@ -126,3 +126,7 @@ The plumb cut is the vertical cut at the top of the rafter where it meets the ri
 
 **How do I mark rafters for a production cut?**
 Use a speed square and a story pole (a straight stick marked with your rise-per-run). Mark the plumb cut, seat cut, and heel cut on one rafter, test it, then use it as a pattern for the rest.
+
+---
+
+**See also:** [Framing Calculation Methodology](/methodology/framing/) — IRC R602 references, rafter length formulas, board-foot calculations, and lumber waste factors behind ConstructCalc framing calculators.

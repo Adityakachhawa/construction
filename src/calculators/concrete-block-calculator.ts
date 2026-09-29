@@ -13,7 +13,7 @@ const BLOCKS_PER_SQM = 12.5;
 // 1 bag of Type S/N mortar covers ~35 blocks at 3/8" joints
 const BLOCKS_PER_MORTAR_BAG = 35;
 // 80 lb bag concrete yields ~0.60 ft³ (for core fill)
-const BAG_FT3 = 0.60;
+
 
 function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   if (unitSystem === 'imperial') {

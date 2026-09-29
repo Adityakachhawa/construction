@@ -97,3 +97,7 @@ Rough-sawn lumber costs less per board foot but requires more work. S4S (surface
 
 **What's an MBF?**
 An MBF is 1,000 board feet — a common wholesale unit. Large lumber orders are often quoted per MBF. Divide the MBF price by 1,000 to get the per-board-foot price.
+
+---
+
+**See also:** [Framing Calculation Methodology](/methodology/framing/) — IRC R602 references, stud count formulas, and lumber waste factors behind ConstructCalc framing calculators.

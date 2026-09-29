@@ -232,7 +232,6 @@ export const interpretRegistry: Record<string, InterpretFn> = {
 
   'asphalt-calculator': (outputs, _inputs, _unit) => {
     const tons = outputs.tons ?? 0;
-    const yd3 = outputs.cubic_yards ?? 0;
     if (tons <= 0) return [];
     return [
       `This paving project requires approximately ${fmt(tons)} tons of asphalt.`,

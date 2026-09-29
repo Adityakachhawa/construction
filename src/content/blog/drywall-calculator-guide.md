@@ -75,3 +75,7 @@ Yes. Using 4×12 sheets on walls and ceiling reduces seam count but requires mor
 
 **What's included in a drywall package beyond sheets?**
 For a complete installation you'll need: joint compound (mud), drywall tape, corner bead, drywall screws (1-5/8" for 1/2" drywall into wood studs), and potentially primer. Budget approximately $100–$200 in finishing supplies per room beyond the sheet cost.
+
+---
+
+**See also:** [Framing Calculation Methodology](/methodology/framing/) — IRC R602 references, stud count formulas, and lumber waste factors behind ConstructCalc framing calculators.

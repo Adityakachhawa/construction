@@ -86,3 +86,7 @@ Generally not recommended. Asphalt is flexible; concrete is rigid. Concrete pour
 
 **How long until I can drive on a new driveway?**
 Asphalt: wait 24–48 hours for light vehicles, 5–7 days for heavy vehicles. Concrete: wait 7 days minimum for any vehicle traffic.
+
+---
+
+**See also:** [Concrete Calculation Methodology](/methodology/concrete/) — bag yield tables, mix ratio formulas, slab volume derivations, and ACI 318 references behind ConstructCalc concrete calculators.

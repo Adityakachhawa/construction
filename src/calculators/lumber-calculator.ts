@@ -117,6 +117,7 @@ export const lumberCalculator: CalculatorConfig = {
       max: 24,
       step: 0.25,
       defaultValue: 1.5,
+      required: true,
       onlyIn: 'imperial',
       helpText: 'Actual (not nominal) thickness. Only used when "Custom" is selected.',
     },
@@ -129,7 +130,8 @@ export const lumberCalculator: CalculatorConfig = {
       max: 24,
       step: 0.25,
       defaultValue: 3.5,
-      onlyIn: 'imperial',
+        required: true,
+        onlyIn: 'imperial',
       helpText: 'Actual (not nominal) width. Only used when "Custom" is selected.',
     },
     {

@@ -73,3 +73,7 @@ Multiply bags per post by total post count. For 14 posts at 2 bags each: 28 bags
 
 **Should I use fast-setting concrete for fence posts?**
 Fast-setting Quikrete is popular for fence posts — you pour the dry mix in the hole and add water. It sets in 20–40 minutes, so you can move post to post quickly without waiting for cure. It works well; just keep the mix away from the post below grade.
+
+---
+
+**See also:** [Concrete Calculation Methodology](/methodology/concrete/) — bag yield tables, mix ratio formulas, and ACI 318 references behind ConstructCalc concrete calculators.

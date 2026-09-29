@@ -18,7 +18,7 @@ export const categories: Category[] = [
       'Calculate concrete volume, mix ratios, bag counts, and material costs for slabs, footings, columns, and walls.',
     icon: 'concrete',
     color: '#6b7280',
-    featuredCalculators: ['concrete-slab-calculator', 'concrete-cost-calculator'],
+    featuredCalculators: ['concrete-slab-calculator'],
     order: 1,
   },
   {

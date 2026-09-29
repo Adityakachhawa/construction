@@ -78,13 +78,13 @@ const _registry: CalculatorConfig[] = [
 ];
 
 const relatedMap: Record<string, string[]> = {
-  'concrete-slab-calculator':     ['concrete-bags-calculator', 'concrete-footing-calculator', 'rebar-calculator'],
+  'concrete-slab-calculator':     ['concrete-bags-calculator', 'concrete-footing-calculator', 'rebar-calculator', 'concrete-slab-rebar-calculator'],
   'concrete-bags-calculator':     ['concrete-slab-calculator', 'concrete-footing-calculator', 'concrete-column-calculator'],
   'concrete-footing-calculator':  ['concrete-slab-calculator', 'rebar-calculator', 'concrete-column-calculator', 'post-hole-calculator'],
   'concrete-column-calculator':   ['concrete-footing-calculator', 'concrete-bags-calculator', 'rebar-calculator'],
   'concrete-driveway-calculator': ['concrete-slab-calculator', 'concrete-bags-calculator', 'asphalt-calculator'],
   'concrete-block-calculator':    ['mortar-calculator', 'grout-calculator', 'retaining-wall-calculator'],
-  'rebar-calculator':             ['concrete-slab-calculator', 'concrete-footing-calculator', 'retaining-wall-calculator'],
+  'rebar-calculator':             ['concrete-slab-calculator', 'concrete-footing-calculator', 'concrete-slab-rebar-calculator', 'retaining-wall-calculator'],
   'mortar-calculator':            ['concrete-block-calculator', 'grout-calculator', 'paver-base-calculator'],
   'grout-calculator':             ['mortar-calculator', 'concrete-block-calculator', 'flooring-calculator'],
   'gravel-calculator':            ['aggregate-calculator', 'sand-calculator', 'excavation-calculator', 'french-drain-calculator'],
@@ -94,7 +94,7 @@ const relatedMap: Record<string, string[]> = {
   'aggregate-calculator':         ['gravel-calculator', 'sand-calculator', 'excavation-calculator'],
   'excavation-calculator':        ['gravel-calculator', 'topsoil-calculator', 'french-drain-calculator'],
   'french-drain-calculator':      ['gravel-calculator', 'excavation-calculator', 'post-hole-calculator'],
-  'square-footage-calculator':    ['flooring-calculator', 'drywall-calculator', 'roofing-calculator'],
+  'square-footage-calculator':    ['flooring-calculator', 'drywall-calculator', 'roofing-calculator', 'stair-calculator'],
   'stud-calculator':              ['drywall-calculator', 'lumber-calculator', 'plywood-calculator'],
   'drywall-calculator':           ['stud-calculator', 'plywood-calculator', 'insulation-calculator'],
   'plywood-calculator':           ['stud-calculator', 'lumber-calculator', 'drywall-calculator'],

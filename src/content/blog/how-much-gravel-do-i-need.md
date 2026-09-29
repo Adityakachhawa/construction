@@ -111,3 +111,7 @@ Recycled crushed concrete is typically the cheapest option ($15–$25/ton vs. $2
 
 **How much does gravel delivery cost?**
 Gravel itself is $25–$75 per ton depending on material and location. Delivery adds $50–$150 for local hauls, more for longer distances. For large quantities, ask about spreading with the truck — many drivers can spread gravel along a driveway from the truck.
+
+---
+
+**See also:** [Excavation Calculation Methodology](/methodology/excavation/) — volume formulas, bulk density tables, swell/shrink factors, and coverage calculations behind ConstructCalc excavation and fill calculators.

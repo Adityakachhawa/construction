@@ -128,3 +128,7 @@ The driver will wait, but they're on the clock. Most trucks are paid in excess a
 
 **Is fast-setting concrete as strong as standard concrete?**
 Fast-setting concrete typically reaches the same final strength as standard concrete (around 4,000 psi for Quikrete Fast-Setting). It just reaches usable strength much faster due to the accelerated chemistry.
+
+---
+
+**See also:** [Concrete Calculation Methodology](/methodology/concrete/) — bag yield tables, mix ratio formulas, slab volume derivations, and ACI 318 references behind ConstructCalc concrete calculators.

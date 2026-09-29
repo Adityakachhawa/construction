@@ -67,3 +67,7 @@ Yes — in fact, tilling new topsoil into your existing soil (to 6–8 inches) p
 
 **How much does topsoil cost?**
 Bulk delivered topsoil runs $25–$75 per cubic yard depending on quality and your region. Screened, blended topsoil commands the higher end. Delivery charges add $50–$150 for most areas.
+
+---
+
+**See also:** [Excavation Calculation Methodology](/methodology/excavation/) — volume formulas, bulk density tables, swell/shrink factors, and OSHA trench safety references behind ConstructCalc excavation calculators.

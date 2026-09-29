@@ -72,3 +72,7 @@ No — polymeric sand is for filling joints between pavers after installation. U
 
 **What happens if I don't compact the base?**
 The base will settle unevenly under load and over time. Individual pavers will rock, sink, and create tripping hazards. The base is the most important part of any paver installation.
+
+---
+
+**See also:** [Excavation Calculation Methodology](/methodology/excavation/) — volume formulas, bulk density tables, swell/shrink factors, and OSHA trench safety references behind ConstructCalc excavation calculators.

@@ -111,3 +111,7 @@ Yes, especially dense-pack cellulose and mineral wool. Sound Transmission Class 
 
 **Should I remove old insulation before adding new?**
 For attics: usually not necessary. You can blow new insulation over old batts if the old insulation is dry and undamaged. For walls: replacement requires opening the wall. For basement rim joists: remove old fiberglass, replace with spray foam.
+
+---
+
+**See also:** [Framing Calculation Methodology](/methodology/framing/) — IRC R602 references, stud count formulas, and lumber waste factors behind ConstructCalc framing calculators.

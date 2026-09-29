@@ -3,7 +3,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../../components/layout/Breadcrumbs.astro';
 import { buildBlogTagMeta } from '../../../utils/seo';
 import { buildBreadcrumbList } from '../../../utils/schema';
-import { getCollection } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 import type { GetStaticPaths } from 'astro';
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -21,8 +21,13 @@ export const getStaticPaths: GetStaticPaths = async () => {
   }));
 };
 
-const { tag, posts } = Astro.props;
-posts.sort((a: any, b: any) => b.data.publishedAt.localeCompare(a.data.publishedAt));
+type Props = {
+  tag: string;
+  posts: CollectionEntry<'blog'>[];
+};
+
+const { tag, posts } = Astro.props as Props;
+posts.sort((a, b) => b.data.publishedAt.localeCompare(a.data.publishedAt));
 
 const meta = buildBlogTagMeta(tag, posts.length);
 

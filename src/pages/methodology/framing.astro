@@ -30,7 +30,8 @@ const breadcrumbs = [
 
 const relatedCalcs = calculatorRegistry.filter((c) =>
   ['stud-calculator','rafter-calculator','lumber-calculator','board-foot-calculator',
-   'plywood-calculator','drywall-calculator','insulation-calculator'].includes(c.slug)
+   'plywood-calculator','drywall-calculator','insulation-calculator',
+   'siding-calculator','stair-calculator','flooring-calculator'].includes(c.slug)
 );
 ---
 
@@ -175,6 +176,7 @@ const relatedCalcs = calculatorRegistry.filter((c) =>
 
       <div class="nav-links">
         <a href="/methodology/concrete/" class="nav-link-back">← Concrete Methodology</a>
+        <a href="/category/framing/" class="nav-link-category">Browse framing calculators</a>
         <a href="/methodology/roofing/" class="nav-link-next">Roofing Methodology →</a>
       </div>
 
@@ -211,6 +213,6 @@ const relatedCalcs = calculatorRegistry.filter((c) =>
   .related-name { font-size: 0.875rem; font-weight: 700; color: var(--color-text-primary); }
   .related-desc { font-size: 0.8125rem; color: var(--color-text-muted); line-height: 1.4; }
   .nav-links { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; padding-top: 2rem; border-top: 1px solid var(--border-default); margin-top: 1rem; }
-  .nav-link-back, .nav-link-next { font-size: 0.875rem; font-weight: 600; color: var(--color-primary); }
-  .nav-link-back:hover, .nav-link-next:hover { text-decoration: underline; }
+  .nav-link-back, .nav-link-next, .nav-link-category { font-size: 0.875rem; font-weight: 600; color: var(--color-primary); }
+  .nav-link-back:hover, .nav-link-next:hover, .nav-link-category:hover { text-decoration: underline; }
 </style>

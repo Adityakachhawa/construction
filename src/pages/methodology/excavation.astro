@@ -30,7 +30,8 @@ const breadcrumbs = [
 
 const relatedCalcs = calculatorRegistry.filter((c) =>
   ['excavation-calculator','gravel-calculator','topsoil-calculator','sand-calculator',
-   'mulch-calculator','french-drain-calculator','aggregate-calculator'].includes(c.slug)
+   'mulch-calculator','french-drain-calculator','aggregate-calculator',
+   'asphalt-calculator','paver-base-calculator'].includes(c.slug)
 );
 ---
 
@@ -173,8 +174,19 @@ const relatedCalcs = calculatorRegistry.filter((c) =>
         </section>
       )}
 
+      <section class="content-section">
+        <h2>Related Guides</h2>
+        <div class="related-grid">
+          <a href="/guides/frost-depth/" class="related-card">
+            <strong class="related-name">Frost Depth by State</strong>
+            <span class="related-desc">IRC frost depth values for all 50 states — determines excavation depth for footings and foundations.</span>
+          </a>
+        </div>
+      </section>
+
       <div class="nav-links">
         <a href="/methodology/roofing/" class="nav-link-back">← Roofing Methodology</a>
+        <a href="/category/excavation/" class="nav-link-category">Browse excavation calculators</a>
         <a href="/methodology/masonry/" class="nav-link-next">Masonry Methodology →</a>
       </div>
 
@@ -211,6 +223,6 @@ const relatedCalcs = calculatorRegistry.filter((c) =>
   .related-name { font-size: 0.875rem; font-weight: 700; color: var(--color-text-primary); }
   .related-desc { font-size: 0.8125rem; color: var(--color-text-muted); line-height: 1.4; }
   .nav-links { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; padding-top: 2rem; border-top: 1px solid var(--border-default); margin-top: 1rem; }
-  .nav-link-back, .nav-link-next { font-size: 0.875rem; font-weight: 600; color: var(--color-primary); }
-  .nav-link-back:hover, .nav-link-next:hover { text-decoration: underline; }
+  .nav-link-back, .nav-link-next, .nav-link-category { font-size: 0.875rem; font-weight: 600; color: var(--color-primary); }
+  .nav-link-back:hover, .nav-link-next:hover, .nav-link-category:hover { text-decoration: underline; }
 </style>

@@ -76,3 +76,7 @@ For 8-foot ceilings, buy **92-5/8" precut studs** — they're cut to the right l
 
 **How much do studs cost?**
 Standard 2×4×8 studs currently run $3.50–$6.00 each at big-box stores, depending on market conditions. Steel studs for non-load-bearing partitions run $2.50–$4.00 each and resist moisture and fire.
+
+---
+
+**See also:** [Framing Calculation Methodology](/methodology/framing/) — IRC R602 references, stud count formulas, and lumber waste factors behind ConstructCalc framing calculators.

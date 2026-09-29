@@ -27,10 +27,6 @@ const wasteFactorRange    = calc.wasteFactor?.range ?? null;
 const wasteFactorNotes    = calc.wasteFactor?.notes ?? null;
 const wasteMultiplier     = 1 + wasteFactorDefault / 100;
 
-const orderHint = typeof calc.orderCallout === 'object' && calc.orderCallout.hint
-  ? calc.orderCallout.hint
-  : `We recommend ${wasteFactorDefault}% extra to account for spillage, uneven subgrade, and formwork variation.`;
-
 const defaultPrice = calc.defaultPricePerUnit ?? 0;
 const costRange    = calc.costRange ?? null;
 
@@ -174,7 +170,16 @@ const outputsJson = JSON.stringify(
 
   <!-- ── RIGHT: Results panel ─────────────────────────── -->
   <div class="widget-results" id="results-panel">
-    <h2 class="widget-panel-label">Results</h2>
+    <div style="display:flex; justify-content:space-between; align-items:baseline;">
+      <h2 class="widget-panel-label">Results</h2>
+      <div id="validation-error" class="validation-error" style="display:none" aria-live="polite">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="margin-top:-1px">
+          <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M8 4v5M8 11.5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        Invalid input detected
+      </div>
+    </div>
 
     <!-- Primary result card -->
     {primaryOutput && (
@@ -534,6 +539,22 @@ const outputsJson = JSON.stringify(
     outline: none;
     border-color: var(--color-primary);
     box-shadow: 0 0 0 3px rgba(194,65,12,0.18);
+  }
+  .field-input.invalid-field {
+    border-color: #ef4444;
+    background-color: #fef2f2;
+    color: #991b1b;
+  }
+  .field-input.invalid-field:focus {
+    box-shadow: 0 0 0 3px rgba(239,68,68,0.18);
+  }
+  .validation-error {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #ef4444;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
   }
 
   .field-select {
@@ -1037,7 +1058,7 @@ const outputsJson = JSON.stringify(
       const row = el.closest<HTMLElement>('[data-only-in]');
       const onlyIn = row?.dataset.onlyIn;
       if (onlyIn && onlyIn !== 'both' && onlyIn !== currentUnit) return;
-      data[el.name] = el instanceof HTMLSelectElement ? el.value : (el.value === '' ? 0 : Number(el.value));
+      data[el.name] = el instanceof HTMLSelectElement ? el.value : (el.value === '' ? NaN : Number(el.value));
     });
     return data;
   }
@@ -1054,14 +1075,35 @@ const outputsJson = JSON.stringify(
   }
 
   function updateResults() {
+    let isValid = true;
+    form.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[name]').forEach((el) => {
+      const row = el.closest<HTMLElement>('[data-only-in]');
+      const onlyIn = row?.dataset.onlyIn;
+      if (onlyIn && onlyIn !== 'both' && onlyIn !== currentUnit) {
+        el.classList.remove('invalid-field');
+        return;
+      }
+      
+      const isNumValid = el.type !== 'number' || (el.value !== '' && !isNaN(Number(el.value)));
+      if (!el.checkValidity() || !isNumValid) {
+        isValid = false;
+        el.classList.add('invalid-field');
+      } else {
+        el.classList.remove('invalid-field');
+      }
+    });
+
+    const errorMsgEl = document.getElementById('validation-error');
+    if (errorMsgEl) errorMsgEl.style.display = isValid ? 'none' : 'flex';
+
+    if (!isValid) return; // Stop recalculation, preserve last valid result
+
     const inputs  = getInputs();
     const results = formula(inputs, currentUnit);
-    let primaryVal = 0;
 
-    outputs.forEach(({ id, unit, unitMetric, primary }) => {
+    outputs.forEach(({ id, primary }) => {
       const raw = results[id] ?? 0;
       if (primary) {
-        primaryVal = raw;
         if (primaryValEl) primaryValEl.textContent = fmt(raw, 3);
         if (orderQty) orderQty.textContent = fmt(raw * wasteMultiplier, 2);
         updateCost(raw);

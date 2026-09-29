@@ -129,3 +129,7 @@ You'll excavate more soil than you'll put back (the gravel occupies the space th
 
 **Can I install a French drain myself without a trencher?**
 Yes, by hand-digging. A 50-foot trench at 12" wide × 18" deep is about 25 cubic feet per foot = a significant excavation project. Expect 1–2 full days of hard digging for one person. Most rental yards charge $150–$250 per day for a trencher, which makes it very cost-effective for most projects.
+
+---
+
+**See also:** [Excavation Calculation Methodology](/methodology/excavation/) — volume formulas, bulk density tables, swell/shrink factors, and OSHA trench safety references behind ConstructCalc excavation calculators.

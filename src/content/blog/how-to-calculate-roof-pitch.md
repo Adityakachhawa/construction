@@ -133,3 +133,7 @@ True flat roofs don't exist — all roofs must drain. "Flat" commercial roofs ar
 
 **Can I walk on my roof safely?**
 At 6:12 and below, most people can walk on roofing with caution. Above 8:12, safety harnesses and roof jacks become important. Above 12:12, professional equipment is essentially required. Always prioritize safety over the cost of equipment.
+
+---
+
+**See also:** [Roofing Calculation Methodology](/methodology/roofing/) — slope factor formulas, IRC R905 references, square calculations, and shingle waste factors behind ConstructCalc roofing calculators.

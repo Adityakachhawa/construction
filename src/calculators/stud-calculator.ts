@@ -25,7 +25,6 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const spacingIn     = SPACING_IN[String(inputs.spacing ?? '16')] ?? 16;
     const openingCount  = Math.max(0, Math.round(Number(inputs.openings ?? 1)));
     const openingWFt    = Number(inputs.opening_width_ft  ?? 3) + Number(inputs.opening_width_in  ?? 0) / 12;
-    const openingHFt    = Number(inputs.opening_height_ft ?? 6) + Number(inputs.opening_height_in ?? 8) / 12;
 
     const spacingFt = spacingIn / 12;
 
@@ -65,7 +64,6 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const spacingMm     = SPACING_MM[String(inputs.spacing ?? '400')] ?? 400;
     const openingCount  = Math.max(0, Math.round(Number(inputs.openings ?? 1)));
     const openingWM     = Number(inputs.opening_width_m  ?? 0.9);
-    const openingHM     = Number(inputs.opening_height_m ?? 2.1);
 
     const spacingM = spacingMm / 1000;
 

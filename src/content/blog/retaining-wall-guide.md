@@ -83,3 +83,7 @@ A properly installed segmental block retaining wall with adequate drainage will 
 
 **Do I need permits for a retaining wall?**
 Most jurisdictions require permits for retaining walls over 3–4 feet in total height, or any retaining wall adjacent to a public right-of-way, structure, or slope. Check with your local building department before starting.
+
+---
+
+**See also:** [Masonry Calculation Methodology](/methodology/masonry/) — brick, block, and mortar quantity formulas, waste factors, and industry references behind ConstructCalc masonry calculators.

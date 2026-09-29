@@ -90,3 +90,7 @@ Most surface grading doesn't require a permit. Foundation excavation, utility tr
 
 **What is "cut and fill"?**
 Cut and fill is a grading technique where soil removed from high areas (cut) is used to fill in low areas on the same site. When cut equals fill, no import or export is needed — a significant cost saving. Our [Excavation Calculator](/calculators/excavation-calculator/) can help estimate cut vs. fill balance.
+
+---
+
+**See also:** [Excavation Calculation Methodology](/methodology/excavation/) — volume formulas, bulk density tables, swell/shrink factors, and OSHA trench safety references behind ConstructCalc excavation calculators.
