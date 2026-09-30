@@ -1,19 +1,6 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
-const calculatorsCollection = defineCollection({
-  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/calculators' }),
-  schema: z.object({
-    title: z.string(),
-    description: z.string(),
-    category: z.string(),
-    lastUpdated: z.string(),
-    featured: z.boolean().default(false),
-    difficulty: z.enum(['beginner', 'intermediate', 'advanced']).default('beginner'),
-    faqCount: z.number().int().min(0).default(0),
-  }),
-});
-
 const blogCollection = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/blog' }),
   schema: z.object({
@@ -58,7 +45,6 @@ const categoriesCollection = defineCollection({
 });
 
 export const collections = {
-  calculators: calculatorsCollection,
   blog: blogCollection,
   guides: guidesCollection,
   categories: categoriesCollection,
