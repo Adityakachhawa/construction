@@ -20,8 +20,8 @@ const SHEET_SIZES_M: Record<string, { w: number; h: number }> = {
 
 const WASTE_FACTOR = 1.10; // 10% for cuts and offcuts
 
-// Joint compound: ~0.053 gallons per sq ft of drywall (covers tape + 3 coats)
-const COMPOUND_GAL_PER_SQFT = 0.053;
+// Joint compound: ~0.011 gallons per sq ft of drywall (Standard USG Level 4 finish: ~5.5 gal per 500 sq ft)
+const COMPOUND_GAL_PER_SQFT = 0.011;
 // Tape: ~1 linear foot of tape per 2 sq ft of drywall (seams every 4 ft on 4-ft sheets)
 const TAPE_LF_PER_SQFT = 0.5;
 
@@ -304,8 +304,8 @@ export const drywallCalculator: CalculatorConfig = {
     },
     {
       label: 'Estimate joint compound',
-      formula: 'Compound (gal) = Total Area × 0.053',
-      description: 'Covers tape coat plus three finish coats at standard application rate',
+      formula: 'Compound (gal) = Total Area × 0.011',
+      description: 'Covers standard Level 4 finish (tape coat plus two finish coats). Quantities vary by finish method.',
     },
     {
       label: 'Estimate tape',
@@ -327,7 +327,7 @@ export const drywallCalculator: CalculatorConfig = {
     {
       question: 'How much joint compound (mud) do I need for drywall?',
       answer:
-        'Plan for about 0.053 gallons of joint compound per square foot of drywall. This covers one tape coat and three finish coats (standard three-coat system). For a 432 sq ft room, that\'s about 23 gallons (roughly 4–5 five-gallon buckets). Buy all-purpose compound for the tape coat and topping or lightweight compound for finish coats — or use all-purpose for all coats on smaller jobs.',
+        'Plan for about 0.011 gallons of joint compound per square foot of drywall for a standard Level 4 finish. For a 432 sq ft room, that\'s about 4.8 gallons (roughly one 5-gallon bucket). Buy all-purpose compound for the tape coat and topping or lightweight compound for finish coats — or use all-purpose for all coats on smaller jobs.',
     },
     {
       question: 'How much drywall tape do I need?',

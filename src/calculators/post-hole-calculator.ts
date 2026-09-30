@@ -424,6 +424,8 @@ export const postHoleCalculator: CalculatorConfig = {
     h1: 'Post Hole Calculator',
     focusKeyword: 'post hole calculator',
   },
+
+  disclaimer: 'Construction estimate only: Results are based on the dimensions and assumptions entered. This calculator does not perform structural engineering or guarantee local building-code compliance. Verify project-specific requirements with your local building department or a qualified professional.',
   schema: {
     appType: 'Construction Calculator',
     features: [

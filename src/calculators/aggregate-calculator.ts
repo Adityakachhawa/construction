@@ -14,10 +14,12 @@ const DENSITY_METRIC   = 1.63;
 function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   if (unitSystem === 'imperial') {
     const vol = rectVolumeImperial(inputs, 'depth');
-    return { ...vol, tons: tonsFromYards(vol.cubic_yards, DENSITY_IMPERIAL) };
+    const density = Number(inputs.density ?? DENSITY_IMPERIAL);
+    return { ...vol, tons: tonsFromYards(vol.cubic_yards, density) };
   } else {
     const vol = rectVolumeMetric(inputs, 'depth_mm');
-    return { ...vol, tons: tonsFromMeters(vol.cubic_meters, DENSITY_METRIC) };
+    const density = Number(inputs.density ?? DENSITY_METRIC);
+    return { ...vol, tons: tonsFromMeters(vol.cubic_meters, density) };
   }
 }
 
@@ -90,6 +92,18 @@ export const aggregateCalculator: CalculatorConfig = {
       onlyIn: 'imperial',
       helpText: 'Driveway base: 4–6 in. Drainage layer: 6–12 in. Path: 2–4 in.',
     },
+    {
+      id: 'density',
+      label: 'Material Density',
+      type: 'number',
+      unit: 'tons/yd³',
+      min: 0.1,
+      max: 5,
+      step: 0.01,
+      defaultValue: 1.5,
+      onlyIn: 'imperial',
+      helpText: 'Default is 1.5 tons/yd³. Actual density varies by moisture and material type.',
+    },
     // ── Metric ────────────────────────────────────────
     {
       id: 'length_m',
@@ -131,6 +145,19 @@ export const aggregateCalculator: CalculatorConfig = {
       onlyIn: 'metric',
       helpText: 'Driveway base: 100–150 mm. Drainage: 150–300 mm. Path: 50–100 mm.',
     },
+    {
+      id: 'density',
+      label: 'Material Density',
+      type: 'number',
+      unit: 't/m³',
+      min: 0.1,
+      max: 5,
+      step: 0.01,
+      defaultValue: 1.63,
+      defaultValueMetric: 1.63,
+      onlyIn: 'metric',
+      helpText: 'Default is 1.63 t/m³. Actual density varies by moisture and material type.',
+    }
   ],
   outputs: [
     {
@@ -146,7 +173,7 @@ export const aggregateCalculator: CalculatorConfig = {
       label: 'Tons of Aggregate',
       unit: 'tons',
       format: 'weight',
-      description: 'Based on ~1.5 tons per cubic yard (crushed stone)',
+      description: 'Calculated using the provided material density',
     },
     {
       id: 'cubic_feet',
@@ -201,7 +228,7 @@ export const aggregateCalculator: CalculatorConfig = {
     },
     {
       label: 'Calculate weight in tons',
-      formula: 'Tons = Cubic Yards × 1.5',
+      formula: 'Tons = Cubic Yards × Density',
       description: 'Crushed stone weighs approximately 2,700–3,000 lbs per cubic yard (1.35–1.5 short tons). This calculator uses 1.5 tons/yd³ as a conservative estimate.',
     },
   ],

@@ -12,10 +12,12 @@ const DENSITY_METRIC   = 1.46;  // tonnes/m³
 function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   if (unitSystem === 'imperial') {
     const vol = rectVolumeImperial(inputs, 'depth');
-    return { ...vol, tons: tonsFromYards(vol.cubic_yards, DENSITY_IMPERIAL) };
+    const density = Number(inputs.density ?? DENSITY_IMPERIAL);
+    return { ...vol, tons: tonsFromYards(vol.cubic_yards, density) };
   } else {
     const vol = rectVolumeMetric(inputs, 'depth_mm');
-    return { ...vol, tons: tonsFromMeters(vol.cubic_meters, DENSITY_METRIC) };
+    const density = Number(inputs.density ?? DENSITY_METRIC);
+    return { ...vol, tons: tonsFromMeters(vol.cubic_meters, density) };
   }
 }
 
@@ -88,6 +90,18 @@ export const sandCalculator: CalculatorConfig = {
       onlyIn: 'imperial',
       helpText: 'Paver base: 1 in. Leveling: 0.5–1 in. Sandbox: 6–12 in.',
     },
+    {
+      id: 'density',
+      label: 'Material Density',
+      type: 'number',
+      unit: 'tons/yd³',
+      min: 0.1,
+      max: 5,
+      step: 0.01,
+      defaultValue: 1.35,
+      onlyIn: 'imperial',
+      helpText: 'Default is 1.35 tons/yd³. Actual density varies by moisture and material type.',
+    },
     // ── Metric ────────────────────────────────────────
     {
       id: 'length_m',
@@ -129,6 +143,19 @@ export const sandCalculator: CalculatorConfig = {
       onlyIn: 'metric',
       helpText: 'Paver base: 25 mm. Leveling: 10–25 mm. Sandbox: 150–300 mm.',
     },
+    {
+      id: 'density',
+      label: 'Material Density',
+      type: 'number',
+      unit: 't/m³',
+      min: 0.1,
+      max: 5,
+      step: 0.01,
+      defaultValue: 1.46,
+      defaultValueMetric: 1.46,
+      onlyIn: 'metric',
+      helpText: 'Default is 1.46 t/m³. Actual density varies by moisture and material type.',
+    }
   ],
   outputs: [
     {
@@ -144,7 +171,7 @@ export const sandCalculator: CalculatorConfig = {
       label: 'Tons of Sand',
       unit: 'tons',
       format: 'weight',
-      description: 'Based on ~1.35 tons per cubic yard (dry loose sand)',
+      description: 'Calculated using the provided material density',
     },
     {
       id: 'cubic_feet',
@@ -198,7 +225,7 @@ export const sandCalculator: CalculatorConfig = {
     },
     {
       label: 'Calculate tons of sand',
-      formula: 'Tons = Cubic Yards × 1.35',
+      formula: 'Tons = Cubic Yards × Density',
       description: 'Dry loose sand weighs approximately 2,700 lbs per cubic yard (1.35 short tons)',
     },
   ],

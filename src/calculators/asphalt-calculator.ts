@@ -14,10 +14,12 @@ const DENSITY_METRIC   = 2.4;   // tonnes/m³
 function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   if (unitSystem === 'imperial') {
     const vol = rectVolumeImperial(inputs, 'thickness');
-    return { ...vol, tons: tonsFromYards(vol.cubic_yards, DENSITY_IMPERIAL) };
+    const density = Number(inputs.density ?? DENSITY_IMPERIAL);
+    return { ...vol, tons: tonsFromYards(vol.cubic_yards, density) };
   } else {
     const vol = rectVolumeMetric(inputs, 'thickness_mm');
-    return { ...vol, tons: tonsFromMeters(vol.cubic_meters, DENSITY_METRIC) };
+    const density = Number(inputs.density ?? DENSITY_METRIC);
+    return { ...vol, tons: tonsFromMeters(vol.cubic_meters, density) };
   }
 }
 
@@ -90,6 +92,18 @@ export const asphaltCalculator: CalculatorConfig = {
       onlyIn: 'imperial',
       helpText: 'Residential driveways: 2–3 in. Parking lots: 3–4 in. Roads: 4–6 in.',
     },
+    {
+      id: 'density',
+      label: 'Material Density',
+      type: 'number',
+      unit: 'tons/yd³',
+      min: 0.1,
+      max: 5,
+      step: 0.01,
+      defaultValue: 2.025,
+      onlyIn: 'imperial',
+      helpText: 'Default is 2.025 tons/yd³. Actual density varies by moisture and material type.',
+    },
     // ── Metric ────────────────────────────────────────
     {
       id: 'length_m',
@@ -131,6 +145,19 @@ export const asphaltCalculator: CalculatorConfig = {
       onlyIn: 'metric',
       helpText: 'Residential driveways: 50–75 mm. Parking lots: 75–100 mm. Roads: 100–150 mm.',
     },
+    {
+      id: 'density',
+      label: 'Material Density',
+      type: 'number',
+      unit: 't/m³',
+      min: 0.1,
+      max: 5,
+      step: 0.01,
+      defaultValue: 2.4,
+      defaultValueMetric: 2.4,
+      onlyIn: 'metric',
+      helpText: 'Default is 2.4 t/m³. Actual density varies by moisture and material type.',
+    }
   ],
   outputs: [
     {
@@ -199,7 +226,7 @@ export const asphaltCalculator: CalculatorConfig = {
     },
     {
       label: 'Calculate asphalt tonnage',
-      formula: 'Tons = Cubic Yards × 2.025',
+      formula: 'Tons = Cubic Yards × Density',
       description: 'Hot-mix asphalt weighs ~145 lbs/ft³ or ~2.025 short tons per cubic yard',
     },
   ],

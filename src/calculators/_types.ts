@@ -94,6 +94,7 @@ export interface CalculatorConfig {
   seo: SeoConfig;
   schema: SchemaConfig;
   formulaSteps?: FormulaStep[];
+  disclaimer?: string;
   faq?: CalculatorFaqItem[];
   programmatic?: ProgrammaticConfig;
   /** Show the "order extra" callout on the results panel. Omit or false to hide. */

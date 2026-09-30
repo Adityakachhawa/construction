@@ -59,6 +59,7 @@ describe('Category A: Behavioral & Validation Tests', () => {
               input.id === 'truck_capacity' ||
               input.id === 'gravel_pct' ||
               input.id === 'gravel_depth_in' ||
+              input.id === 'density' ||
                 input.id === 'gravel_depth_mm';
 
             if (isOptional) {
@@ -134,7 +135,7 @@ describe('Category B: Formula Regression Tests (Domain & Mathematical Correctnes
     console.log('GRAVEL-CALCULATOR: FORMULA VERIFIED — DOMAIN ASSUMPTION (1.4 tons/yd3) REQUIRES VALIDATION');
   });
 
-  test('Drywall Calculator (Domain Assumption: 0.053 gal/sqft, 0.5 lf/sqft)', () => {
+  test('Drywall Calculator (Domain Assumption: 0.011 gal/sqft, 0.5 lf/sqft)', () => {
     // 10ft x 10ft room = 100 sq ft area. If using 4x8 sheets (32 sqft), sheets = 100/32 = 3.125
     // Actually the drywall formula calculates total area based on walls/ceiling. 
     // Wait, let's use a 100 sqft explicit test.
@@ -142,10 +143,10 @@ describe('Category B: Formula Regression Tests (Domain & Mathematical Correctnes
     const res = formula({ wall_height_ft: 10, wall_width_ft: 10, num_walls: 4, sheet_size: '32' }, 'imperial');
     // Area: walls (10)*10*4 = 400 sq ft. 
     // Sheets = 400 / 32 = 12.5 (Net sheets, drywall calculator might return rounded or exact)
-    // 400 * 0.053 = 21.2 gal
+    // 400 * 0.011 = 4.4 gal
     assert.strictEqual(res['sheets_net'], 13);
-    assert.strictEqual(Math.abs(res['compound_gallons'] - 21.2) < 0.01, true);
-    console.log('DRYWALL-CALCULATOR: FORMULA VERIFIED — DOMAIN ASSUMPTION (0.053 gal/sqft) REQUIRES VALIDATION');
+    assert.strictEqual(Math.abs(res['compound_gallons'] - 4.4) < 0.01, true);
+    console.log('DRYWALL-CALCULATOR: FORMULA VERIFIED — DOMAIN ASSUMPTION (0.011 gal/sqft) REQUIRES VALIDATION');
   });
 
   // Adding generic regression cases for all 37 to meet the requirement "For EVERY calculator, create at least one..."

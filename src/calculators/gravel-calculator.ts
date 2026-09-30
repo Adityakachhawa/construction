@@ -12,10 +12,12 @@ const DENSITY_METRIC   = 1.52;  // tonnes/m³
 function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   if (unitSystem === 'imperial') {
     const vol = rectVolumeImperial(inputs, 'depth');
-    return { ...vol, tons: tonsFromYards(vol.cubic_yards, DENSITY_IMPERIAL) };
+    const density = Number(inputs.density ?? DENSITY_IMPERIAL);
+    return { ...vol, tons: tonsFromYards(vol.cubic_yards, density) };
   } else {
     const vol = rectVolumeMetric(inputs, 'depth_mm');
-    return { ...vol, tons: tonsFromMeters(vol.cubic_meters, DENSITY_METRIC) };
+    const density = Number(inputs.density ?? DENSITY_METRIC);
+    return { ...vol, tons: tonsFromMeters(vol.cubic_meters, density) };
   }
 }
 
@@ -88,6 +90,18 @@ export const gravelCalculator: CalculatorConfig = {
       onlyIn: 'imperial',
       helpText: 'Driveways: 4–6 in. Paths: 2–4 in. Decorative: 2–3 in.',
     },
+    {
+      id: 'density',
+      label: 'Material Density',
+      type: 'number',
+      unit: 'tons/yd³',
+      min: 0.1,
+      max: 5,
+      step: 0.01,
+      defaultValue: 1.4,
+      onlyIn: 'imperial',
+      helpText: 'Default is 1.4 tons/yd³. Actual density varies by moisture and material type.',
+    },
     // ── Metric ────────────────────────────────────────
     {
       id: 'length_m',
@@ -129,6 +143,19 @@ export const gravelCalculator: CalculatorConfig = {
       onlyIn: 'metric',
       helpText: 'Driveways: 100–150 mm. Paths: 50–100 mm.',
     },
+    {
+      id: 'density',
+      label: 'Material Density',
+      type: 'number',
+      unit: 't/m³',
+      min: 0.1,
+      max: 5,
+      step: 0.01,
+      defaultValue: 1.52,
+      defaultValueMetric: 1.52,
+      onlyIn: 'metric',
+      helpText: 'Default is 1.52 t/m³. Actual density varies by moisture and material type.',
+    }
   ],
   outputs: [
     {
@@ -144,7 +171,7 @@ export const gravelCalculator: CalculatorConfig = {
       label: 'Tons of Gravel',
       unit: 'tons',
       format: 'weight',
-      description: 'Based on ~1.4 tons per cubic yard (standard gravel)',
+      description: 'Calculated using the provided material density',
     },
     {
       id: 'cubic_feet',
@@ -198,8 +225,8 @@ export const gravelCalculator: CalculatorConfig = {
     },
     {
       label: 'Calculate tons of gravel',
-      formula: 'Tons = Cubic Yards × 1.4',
-      description: 'Standard gravel weighs approximately 2,800 lbs per cubic yard (1.4 short tons)',
+      formula: 'Tons = Cubic Yards × Density',
+      description: 'Tonnage depends on material density, which varies by moisture and exact material type.',
     },
   ],
   faq: [

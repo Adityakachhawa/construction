@@ -14,10 +14,12 @@ const DENSITY_METRIC   = 1.2;
 function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   if (unitSystem === 'imperial') {
     const vol = rectVolumeImperial(inputs, 'depth');
-    return { ...vol, tons: tonsFromYards(vol.cubic_yards, DENSITY_IMPERIAL) };
+    const density = Number(inputs.density ?? DENSITY_IMPERIAL);
+    return { ...vol, tons: tonsFromYards(vol.cubic_yards, density) };
   } else {
     const vol = rectVolumeMetric(inputs, 'depth_mm');
-    return { ...vol, tons: tonsFromMeters(vol.cubic_meters, DENSITY_METRIC) };
+    const density = Number(inputs.density ?? DENSITY_METRIC);
+    return { ...vol, tons: tonsFromMeters(vol.cubic_meters, density) };
   }
 }
 
@@ -90,6 +92,18 @@ export const topsoilCalculator: CalculatorConfig = {
       onlyIn: 'imperial',
       helpText: 'New lawn: 4–6 in. Raised garden bed: 8–12 in. Topdressing: 1–2 in.',
     },
+    {
+      id: 'density',
+      label: 'Material Density',
+      type: 'number',
+      unit: 'tons/yd³',
+      min: 0.1,
+      max: 5,
+      step: 0.01,
+      defaultValue: 1.1,
+      onlyIn: 'imperial',
+      helpText: 'Default is 1.1 tons/yd³. Actual density varies by moisture and material type.',
+    },
     // ── Metric ────────────────────────────────────────
     {
       id: 'length_m',
@@ -131,6 +145,19 @@ export const topsoilCalculator: CalculatorConfig = {
       onlyIn: 'metric',
       helpText: 'New lawn: 100–150 mm. Raised garden bed: 200–300 mm. Topdressing: 25–50 mm.',
     },
+    {
+      id: 'density',
+      label: 'Material Density',
+      type: 'number',
+      unit: 't/m³',
+      min: 0.1,
+      max: 5,
+      step: 0.01,
+      defaultValue: 1.2,
+      defaultValueMetric: 1.2,
+      onlyIn: 'metric',
+      helpText: 'Default is 1.2 t/m³. Actual density varies by moisture and material type.',
+    }
   ],
   outputs: [
     {
@@ -146,7 +173,7 @@ export const topsoilCalculator: CalculatorConfig = {
       label: 'Tons of Topsoil',
       unit: 'tons',
       format: 'weight',
-      description: 'Based on ~1.1 tons per cubic yard (screened topsoil)',
+      description: 'Calculated using the provided material density',
     },
     {
       id: 'cubic_feet',
@@ -200,7 +227,7 @@ export const topsoilCalculator: CalculatorConfig = {
     },
     {
       label: 'Calculate weight in tons',
-      formula: 'Tons = Cubic Yards × 1.1',
+      formula: 'Tons = Cubic Yards × Density',
       description: 'Screened topsoil weighs approximately 2,200 lbs per cubic yard (1.1 short tons)',
     },
   ],

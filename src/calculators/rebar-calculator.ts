@@ -4,11 +4,7 @@ import type {
   CalculatorOutputMap,
   UnitSystem,
 } from './_types';
-
-// #4 rebar (1/2 in): 0.668 lbs/ft — most common residential grade
-const REBAR_LBS_PER_FT  = 0.668;
-// Metric: 12mm rebar ≈ 0.888 kg/m
-const REBAR_KG_PER_M    = 0.888;
+import { REBAR_SIZES, REBAR_SIZE_OPTIONS_IMPERIAL, REBAR_SIZE_OPTIONS_METRIC } from './rebar-data';
 
 function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   if (unitSystem === 'imperial') {
@@ -16,20 +12,22 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const widthFt    = Number(inputs.width_ft   ?? 10) + Number(inputs.width_in   ?? 0) / 12;
     const spacingIn  = Number(inputs.spacing    ?? 12);
     const wastePct   = Number(inputs.waste_pct  ?? 10) / 100;
+    const rebarSizeId = String(inputs.rebar_size ?? '4');
+    const rebarSize   = REBAR_SIZES[rebarSizeId] ?? REBAR_SIZES['4'];
 
     const spacingFt  = spacingIn / 12;
     if (spacingFt <= 0 || lengthFt <= 0 || widthFt <= 0) {
-      return { pieces: 0, linear_ft: 0, linear_m: 0, weight_lbs: 0, weight_kg: 0 };
+      return { grid_bars: 0, linear_ft: 0, linear_m: 0, weight_lbs: 0, weight_kg: 0 };
     }
     // Rows run along width, spaced along length; columns run along length, spaced along width
     const rowCount  = Math.floor(lengthFt / spacingFt) + 1;
     const colCount  = Math.floor(widthFt  / spacingFt) + 1;
-    const pieces    = rowCount + colCount;
+    const grid_bars    = rowCount + colCount;
     const linearFt  = Math.round((rowCount * widthFt + colCount * lengthFt) * (1 + wastePct) * 10) / 10;
-    const weightLbs = Math.round(linearFt * REBAR_LBS_PER_FT * 10) / 10;
+    const weightLbs = Math.round(linearFt * rebarSize.weight_lb_per_ft * 10) / 10;
 
     return {
-      pieces,
+      grid_bars,
       linear_ft: linearFt,
       linear_m: Math.round(linearFt * 0.3048 * 10) / 10,
       weight_lbs: weightLbs,
@@ -39,20 +37,22 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const lengthM   = Number(inputs.length_m   ?? 3);
     const widthM    = Number(inputs.width_m    ?? 3);
     const spacingMm = Number(inputs.spacing_mm ?? 300);
-    const wastePct  = Number(inputs.waste_pct  ?? 10) / 100;
+    const wastePct   = Number(inputs.waste_pct  ?? 10) / 100;
+    const rebarSizeId = String(inputs.rebar_size ?? '4');
+    const rebarSize   = REBAR_SIZES[rebarSizeId] ?? REBAR_SIZES['4'];
 
     const spacingM  = spacingMm / 1000;
     if (spacingM <= 0 || lengthM <= 0 || widthM <= 0) {
-      return { pieces: 0, linear_ft: 0, linear_m: 0, weight_lbs: 0, weight_kg: 0 };
+      return { grid_bars: 0, linear_ft: 0, linear_m: 0, weight_lbs: 0, weight_kg: 0 };
     }
     const rowCount  = Math.floor(lengthM / spacingM) + 1;
     const colCount  = Math.floor(widthM  / spacingM) + 1;
-    const pieces    = rowCount + colCount;
+    const grid_bars    = rowCount + colCount;
     const linearM   = Math.round((rowCount * widthM + colCount * lengthM) * (1 + wastePct) * 10) / 10;
-    const weightKg  = Math.round(linearM * REBAR_KG_PER_M * 10) / 10;
+    const weightKg  = Math.round(linearM * rebarSize.weight_kg_per_m * 10) / 10;
 
     return {
-      pieces,
+      grid_bars,
       linear_m: linearM,
       linear_ft: Math.round(linearM / 0.3048 * 10) / 10,
       weight_kg: weightKg,
@@ -66,7 +66,7 @@ export const rebarCalculator: CalculatorConfig = {
   name: 'Rebar Calculator',
   category: 'concrete',
   description:
-    'Calculate how much rebar you need for a concrete slab. Enter slab dimensions and bar spacing to get total linear feet, number of pieces, and estimated weight.',
+    'Calculate how much rebar you need for a concrete slab. Enter slab dimensions and bar spacing to get total linear feet, number of Grid Bars / Lines, and estimated weight.',
   inputs: [
     // ── Imperial ──────────────────────────────────────
     {
@@ -131,6 +131,16 @@ export const rebarCalculator: CalculatorConfig = {
       helpText: 'Common spacing: 12 in residential, 6–8 in driveways, 6 in structural.',
     },
     {
+      id: 'rebar_size',
+      label: 'Rebar Size',
+      type: 'select',
+      options: REBAR_SIZE_OPTIONS_IMPERIAL,
+      defaultValue: '4',
+      onlyIn: 'imperial',
+      required: true,
+      helpText: 'Standard residential is #4 (1/2 in).',
+    },
+    {
       id: 'waste_pct',
       label: 'Waste %',
       type: 'number',
@@ -184,6 +194,16 @@ export const rebarCalculator: CalculatorConfig = {
       helpText: 'Common spacing: 300 mm residential, 150–200 mm driveways.',
     },
     {
+      id: 'rebar_size',
+      label: 'Rebar Size',
+      type: 'select',
+      options: REBAR_SIZE_OPTIONS_METRIC,
+      defaultValue: '4',
+      onlyIn: 'metric',
+      required: true,
+      helpText: 'Standard residential is No. 13 (12.7 mm).',
+    },
+    {
       id: 'waste_pct',
       label: 'Waste %',
       type: 'number',
@@ -212,18 +232,18 @@ export const rebarCalculator: CalculatorConfig = {
       format: 'length',
     },
     {
-      id: 'pieces',
-      label: 'Rebar Pieces',
+      id: 'grid_bars',
+      label: 'Grid Bars / Lines',
       unit: 'bars',
       format: 'number',
-      description: 'Total rows + columns in the grid',
+      description: 'This is the number of straight bars/lines in the reinforcement grid. Actual stock-length purchasing depends on bar lengths, cuts, laps, bends, and project details.',
     },
     {
       id: 'weight_lbs',
       label: 'Estimated Weight',
       unit: 'lbs',
       format: 'weight',
-      description: 'Based on #4 rebar (1/2 in, 0.668 lbs/ft)',
+      description: 'Calculated using the selected rebar size',
     },
     {
       id: 'weight_kg',
@@ -236,17 +256,19 @@ export const rebarCalculator: CalculatorConfig = {
   unitSystems: ['imperial', 'metric'],
   relatedCalculators: ['concrete-slab-calculator', 'deck-footing-calculator', 'retaining-wall-calculator'],
   seo: {
-    title: 'Rebar Calculator — Linear Feet, Pieces & Weight',
+    title: 'Rebar Calculator — Linear Feet, Grid Bars / Lines & Weight',
     description:
-      'Free rebar calculator — enter slab length, width, and bar spacing to calculate total linear feet of rebar, number of pieces, and estimated weight for your concrete project.',
+      'Free rebar calculator — enter slab length, width, and bar spacing to calculate total linear feet of rebar, number of Grid Bars / Lines, and estimated weight for your concrete project.',
     h1: 'Rebar Calculator',
     focusKeyword: 'rebar calculator',
   },
+
+  disclaimer: 'Construction estimate only: Results are based on the dimensions and assumptions entered. This calculator does not perform structural engineering or guarantee local building-code compliance. Verify project-specific requirements with your local building department or a qualified professional.',
   schema: {
     appType: 'Construction Calculator',
     features: [
       'Calculate total rebar linear footage',
-      'Calculate number of rebar pieces',
+      'Calculate number of Grid Bars / Lines',
       'Calculate rebar weight',
       'Adjustable bar spacing',
       'Configurable waste percentage',
@@ -270,8 +292,8 @@ export const rebarCalculator: CalculatorConfig = {
     },
     {
       label: 'Calculate weight',
-      formula: 'Weight (lbs) = Linear ft × 0.668',
-      description: '#4 rebar (most common) weighs 0.668 lbs per linear foot',
+      formula: 'Weight (lbs) = Linear ft × (Weight per ft)',
+      description: 'Weight is dynamically calculated based on selected rebar size',
     },
   ],
   faq: [
