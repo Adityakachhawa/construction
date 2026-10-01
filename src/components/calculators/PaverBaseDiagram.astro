@@ -1,4 +1,4 @@
-﻿---
+---
 interface Props {
   class?: string;
 }
@@ -18,7 +18,7 @@ const { class: className = '' } = Astro.props;
   </div>
   <div class="diagram-box">
     <svg
-      viewBox="0 0 480 300"
+      viewBox="0 0 480 340"
       width="100%"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
@@ -136,26 +136,27 @@ const { class: className = '' } = Astro.props;
         font-size="11" font-weight="700" fill="#16a34a" letter-spacing="-0.3"
         transform="rotate(90 471 155)">Width</text>
 
-      <!-- â”€â”€ LEGEND â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
-      <rect x="330" y="218" width="160" height="60" rx="8"
+      <!-- â”€â”€ LEGEND (right side, under plan view) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+      <rect x="320" y="212" width="152" height="72" rx="8"
         fill="#f8fafc" stroke="#e2e4e8" stroke-width="1"/>
-      <rect x="342" y="230" width="14" height="10" fill="url(#gravelLayerGrad)" rx="1"/>
-      <text x="360" y="239" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#4b5563">Gravel base (4–6 in)</text>
-      <rect x="342" y="248" width="14" height="10" fill="url(#sandLayerGrad)" rx="1"/>
-      <text x="360" y="257" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#4b5563">Sand bedding (1 in)</text>
-      <rect x="342" y="266" width="14" height="8" fill="url(#paverGrad)" rx="1"/>
-      <text x="360" y="274" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#4b5563">Pavers</text>
-      <!-- ── FORMULA CALLOUT ─────────────────────────── -->
-      <rect x="294" y="218" width="176" height="50" rx="6"
-        fill="#f0fdf4" stroke="#16a34a" stroke-width="1"/>
-      <text x="382" y="231" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
-        font-size="8" font-weight="700" fill="#14532d" letter-spacing="0.2">MATERIAL VOLUMES</text>
-      <text x="382" y="244" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
-        font-size="8.5" font-weight="700" fill="#15803d">Gravel = L × W × Base Depth</text>
-      <text x="382" y="257" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
-        font-size="8.5" font-weight="700" fill="#16a34a">Sand = L × W × Sand Depth</text>
-      <text x="382" y="263" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
-        font-size="7.5" fill="#16a34a" opacity="0.8">÷ 27 = cubic yards</text>
+      <rect x="332" y="225" width="14" height="10" fill="url(#gravelLayerGrad)" rx="1"/>
+      <text x="350" y="234" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#4b5563">Gravel base (4–6 in)</text>
+      <rect x="332" y="243" width="14" height="10" fill="url(#sandLayerGrad)" rx="1"/>
+      <text x="350" y="252" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#4b5563">Sand bedding (1 in)</text>
+      <rect x="332" y="261" width="14" height="8" fill="url(#paverGrad)" rx="1"/>
+      <text x="350" y="270" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#4b5563">Pavers</text>
+
+      <!-- ── FORMULA CALLOUT (left side, below cross-section) ───── -->
+      <rect x="50" y="212" width="215" height="70" rx="6"
+        fill="#f0fdf4" stroke="#16a34a" stroke-width="1.25"/>
+      <text x="157" y="228" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9" font-weight="700" fill="#14532d" letter-spacing="0.3">MATERIAL VOLUMES</text>
+      <text x="157" y="246" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9.5" font-weight="700" fill="#15803d">Gravel = L × W × Base Depth</text>
+      <text x="157" y="262" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="9.5" font-weight="700" fill="#16a34a">Sand = L × W × Sand Depth</text>
+      <text x="157" y="276" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8.5" fill="#15803d" opacity="0.85">÷ 27 = cubic yards</text>
     </svg>
   </div>
   <figcaption class="diagram-caption">
@@ -209,7 +210,7 @@ const { class: className = '' } = Astro.props;
   .diagram-svg {
     max-width: 480px;
     height: auto;
-  aspect-ratio: 480 / 300;
+    aspect-ratio: 480 / 340;
     display: block;
   }
 
