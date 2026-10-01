@@ -38,6 +38,7 @@ const outputsJson = JSON.stringify(
     unitMetric:  o.unitMetric ?? '',
     primary:     !!o.primary,
     isEquivalent: !!o.isEquivalent,
+    description: o.description ?? '',
   }))
 );
 ---
@@ -213,6 +214,9 @@ const outputsJson = JSON.stringify(
               <span class="equivalent-label-wrap">
                 <span class="result-secondary-unit" data-output-unit={out.id}>{out.unit ?? ''}</span>
                 <span class="equivalent-name">{out.label}</span>
+                {out.description && (
+                  <span class="equivalent-desc">{out.description}</span>
+                )}
               </span>
             </div>
           ))}
@@ -675,6 +679,14 @@ const outputsJson = JSON.stringify(
     font-size: 0.8125rem;
     color: var(--color-text-muted);
   }
+  .equivalent-desc {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+    font-style: italic;
+    line-height: 1.3;
+    margin-top: 1px;
+  }
   .equivalent-item .result-secondary-number {
     font-size: 1.25rem;
     font-weight: 800;
@@ -981,7 +993,7 @@ const outputsJson = JSON.stringify(
 
   const slug     = widget.dataset.slug ?? '';
   const calcName = widget.dataset.name ?? 'Calculator';
-  const outputs: { id: string; label: string; unit: string; unitMetric: string; primary: boolean; isEquivalent: boolean }[] =
+  const outputs: { id: string; label: string; unit: string; unitMetric: string; primary: boolean; isEquivalent: boolean; description: string }[] =
     JSON.parse(widget.dataset.outputs ?? '[]');
   const formula = formulaRegistry[slug];
   if (!formula) throw new Error(`No formula for "${slug}"`);

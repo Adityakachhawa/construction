@@ -263,7 +263,7 @@ export const gravelCalculator: CalculatorConfig = {
     {
       question: 'Should I add extra gravel when ordering?',
       answer:
-        'Yes — order 5–10% extra to account for compaction, uneven ground, and delivery variation. Gravel compacts roughly 20–30% after installation, so your finished layer will be shallower than the loose depth.',
+        'Yes — order 10–15% extra to account for compaction, uneven ground, and delivery variation. Gravel compacts roughly 20–30% after installation, so your finished layer will be shallower than the loose depth.',
     },
     {
       question: 'How much does a cubic yard of gravel cost?',

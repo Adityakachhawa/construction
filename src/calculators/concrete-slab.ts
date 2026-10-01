@@ -8,16 +8,27 @@ import { rectVolumeImperial, rectVolumeMetric } from './volume-engine';
 
 const FT3_PER_60LB_BAG = 0.45;
 const FT3_PER_80LB_BAG = 0.60;
+// Waste factor kept in sync with wasteFactor.default below (10%)
+const WASTE_FACTOR = 0.10;
 
 function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   const vol = unitSystem === 'imperial'
     ? rectVolumeImperial(inputs, 'thickness')
     : rectVolumeMetric(inputs, 'thickness_mm');
   const ft3 = vol.cubic_feet;
+  // Raw: bag count for the exact calculated volume
+  const raw60 = Math.ceil(ft3 / FT3_PER_60LB_BAG);
+  const raw80 = Math.ceil(ft3 / FT3_PER_80LB_BAG);
+  // Recommended order: includes waste allowance
+  const wasted = ft3 * (1 + WASTE_FACTOR);
+  const order60 = Math.ceil(wasted / FT3_PER_60LB_BAG);
+  const order80 = Math.ceil(wasted / FT3_PER_80LB_BAG);
   return {
     ...vol,
-    bags_60lb: Math.ceil(ft3 / FT3_PER_60LB_BAG),
-    bags_80lb: Math.ceil(ft3 / FT3_PER_80LB_BAG),
+    bags_60lb:       raw60,
+    bags_80lb:       raw80,
+    bags_60lb_order: order60,
+    bags_80lb_order: order80,
   };
 }
 
@@ -156,17 +167,35 @@ export const concreteSlab: CalculatorConfig = {
     },
     {
       id: 'bags_60lb',
-      label: '60 lb Bags',
+      label: '60 lb Bags (raw)',
       unit: 'bags',
       format: 'number',
       isEquivalent: true,
+      description: 'Exact volume only — no waste allowance',
     },
     {
       id: 'bags_80lb',
-      label: '80 lb Bags',
+      label: '80 lb Bags (raw)',
       unit: 'bags',
       format: 'number',
       isEquivalent: true,
+      description: 'Exact volume only — no waste allowance',
+    },
+    {
+      id: 'bags_60lb_order',
+      label: '60 lb Bags (+ 10% waste)',
+      unit: 'bags',
+      format: 'number',
+      isEquivalent: true,
+      description: 'Recommended order quantity including 10% waste allowance',
+    },
+    {
+      id: 'bags_80lb_order',
+      label: '80 lb Bags (+ 10% waste)',
+      unit: 'bags',
+      format: 'number',
+      isEquivalent: true,
+      description: 'Recommended order quantity including 10% waste allowance',
     },
   ],
   formula,

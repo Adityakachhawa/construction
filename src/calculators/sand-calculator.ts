@@ -274,7 +274,7 @@ export const sandCalculator: CalculatorConfig = {
   orderCallout: true,
   wasteFactor: {
     default: 10,
-    range: '10%',
-    notes: 'Account for spillage and spreading variation, especially on sloped or uneven surfaces.',
+    range: '10–15%',
+    notes: 'Account for spillage and spreading variation, especially on sloped or uneven surfaces. Add up to 15% on irregular or sloped areas.',
   },
 };

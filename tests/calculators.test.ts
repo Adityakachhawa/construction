@@ -125,6 +125,49 @@ describe('Category B: Formula Regression Tests (Domain & Mathematical Correctnes
     assert.strictEqual(Math.abs(res['cubic_yards'] - 1.234) < 0.01, true, `Expected ~1.234, got ${res['cubic_yards']}`);
   });
 
+  test('Concrete Slab: raw bag counts derived from exact volume (no waste)', () => {
+    // 10ft x 10ft x 4in = 33.333 ft3
+    // 60lb bags: ceil(33.333 / 0.45) = ceil(74.07) = 75
+    // 80lb bags: ceil(33.333 / 0.60) = ceil(55.56) = 56
+    const formula = formulaRegistry['concrete-slab-calculator'];
+    const res = formula({ length_ft: 10, length_in: 0, width_ft: 10, width_in: 0, thickness: 4 }, 'imperial');
+    assert.strictEqual(res['bags_60lb'], 75, `Raw 60lb bags: expected 75, got ${res['bags_60lb']}`);
+    assert.strictEqual(res['bags_80lb'], 56, `Raw 80lb bags: expected 56, got ${res['bags_80lb']}`);
+  });
+
+  test('Concrete Slab: recommended order bag counts include 10% waste', () => {
+    // 10ft x 10ft x 4in = 33.333 ft3. With 10% waste: 33.333 * 1.10 = 36.667 ft3
+    // 60lb bags: ceil(36.667 / 0.45) = ceil(81.48) = 82
+    // 80lb bags: ceil(36.667 / 0.60) = ceil(61.11) = 62
+    const formula = formulaRegistry['concrete-slab-calculator'];
+    const res = formula({ length_ft: 10, length_in: 0, width_ft: 10, width_in: 0, thickness: 4 }, 'imperial');
+    assert.strictEqual(res['bags_60lb_order'], 82, `Order 60lb bags: expected 82, got ${res['bags_60lb_order']}`);
+    assert.strictEqual(res['bags_80lb_order'], 62, `Order 80lb bags: expected 62, got ${res['bags_80lb_order']}`);
+  });
+
+  test('Concrete Slab: order bag count is always >= raw bag count', () => {
+    const formula = formulaRegistry['concrete-slab-calculator'];
+    const res = formula({ length_ft: 10, length_in: 0, width_ft: 10, width_in: 0, thickness: 4 }, 'imperial');
+    assert.ok(res['bags_60lb_order'] >= res['bags_60lb'],
+      `Order 60lb (${res['bags_60lb_order']}) should be >= raw 60lb (${res['bags_60lb']})`);
+    assert.ok(res['bags_80lb_order'] >= res['bags_80lb'],
+      `Order 80lb (${res['bags_80lb_order']}) should be >= raw 80lb (${res['bags_80lb']})`);
+  });
+
+  test('Concrete Slab: metric mode produces all four bag outputs', () => {
+    // 3m x 3m x 100mm = 0.9 m3 = ~31.78 ft3
+    const formula = formulaRegistry['concrete-slab-calculator'];
+    const res = formula({ length_m: 3, width_m: 3, thickness_mm: 100 }, 'metric');
+    ['bags_60lb', 'bags_80lb', 'bags_60lb_order', 'bags_80lb_order'].forEach((key) => {
+      assert.ok(Number.isFinite(res[key]) && res[key] > 0,
+        `Metric mode: ${key} should be a positive finite number, got ${res[key]}`);
+    });
+    // Order should be >= raw in metric too
+    assert.ok(res['bags_60lb_order'] >= res['bags_60lb']);
+    assert.ok(res['bags_80lb_order'] >= res['bags_80lb']);
+  });
+
+
   test('Gravel Calculator (Domain Assumption: 1.4 tons/yd3)', () => {
     // 10ft x 10ft x 12in = 100 ft3 = 3.70 yd3. 
     // Tons = 3.70 * 1.4 = 5.18
