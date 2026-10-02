@@ -1,0 +1,150 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<figure class={`diagram-figure ${className}`} aria-labelledby="slab-rebar-diagram-caption">
+  <div class="diagram-header">
+    <span class="diagram-badge">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <rect x="1" y="5" width="12" height="7" rx="1" stroke="currentColor" stroke-width="1.2"/>
+        <line x1="1" y1="7.5" x2="13" y2="7.5" stroke="#ef4444" stroke-width="1" stroke-linecap="round"/>
+        <line x1="1" y1="10"  x2="13" y2="10"  stroke="#ef4444" stroke-width="1" stroke-linecap="round"/>
+        <line x1="5"  y1="5"  x2="5"  y2="12" stroke="#ef4444" stroke-width="1" stroke-linecap="round"/>
+        <line x1="9"  y1="5"  x2="9"  y2="12" stroke="#ef4444" stroke-width="1" stroke-linecap="round"/>
+      </svg>
+    </span>
+    <h2 id="slab-rebar-diagram-caption" class="diagram-title">Slab &amp; Reinforcement Diagram</h2>
+  </div>
+  <div class="diagram-box">
+    <svg
+      viewBox="0 0 480 310"
+      width="100%"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-label="Isometric diagram showing a concrete slab with a reinforcing rebar grid, labelled with length, width, thickness, and the volume formula"
+      focusable="false"
+      class="diagram-svg"
+    >
+      <defs>
+        <linearGradient id="srSlabTop" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"  stop-color="#cbd5e1"/>
+          <stop offset="100%" stop-color="#94a3b8"/>
+        </linearGradient>
+        <linearGradient id="srSlabFront" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"  stop-color="#94a3b8"/>
+          <stop offset="100%" stop-color="#64748b"/>
+        </linearGradient>
+        <linearGradient id="srSlabRight" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"  stop-color="#7c8fa3"/>
+          <stop offset="100%" stop-color="#64748b"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Isometric slab body -->
+      <!-- Top face -->
+      <polygon points="90,85 330,85 395,135 155,135"
+        fill="url(#srSlabTop)" stroke="#475569" stroke-width="1.5"/>
+      <!-- Front face -->
+      <polygon points="90,85 90,215 155,215 155,135"
+        fill="url(#srSlabFront)" stroke="#475569" stroke-width="1.5"/>
+      <!-- Right face -->
+      <polygon points="155,135 395,135 395,215 155,215"
+        fill="url(#srSlabRight)" stroke="#475569" stroke-width="1.5"/>
+
+      <!-- Rebar grid on top face (horizontal bars) -->
+      <line x1="106" y1="97.5"  x2="346" y2="97.5"  stroke="#ef4444" stroke-width="2" stroke-linecap="round" opacity="0.9"/>
+      <line x1="122" y1="110"   x2="362" y2="110"   stroke="#ef4444" stroke-width="2" stroke-linecap="round" opacity="0.9"/>
+      <line x1="139" y1="122.5" x2="379" y2="122.5" stroke="#ef4444" stroke-width="2" stroke-linecap="round" opacity="0.9"/>
+
+      <!-- Rebar grid on top face (vertical bars) -->
+      <line x1="138" y1="85" x2="203" y2="135" stroke="#ef4444" stroke-width="2" stroke-linecap="round" opacity="0.85"/>
+      <line x1="198" y1="85" x2="263" y2="135" stroke="#ef4444" stroke-width="2" stroke-linecap="round" opacity="0.85"/>
+      <line x1="258" y1="85" x2="323" y2="135" stroke="#ef4444" stroke-width="2" stroke-linecap="round" opacity="0.85"/>
+      <line x1="318" y1="85" x2="383" y2="135" stroke="#ef4444" stroke-width="2" stroke-linecap="round" opacity="0.85"/>
+
+      <!-- Intersection dots -->
+      <circle cx="154" cy="97.5"  r="3" fill="#dc2626"/>
+      <circle cx="214" cy="97.5"  r="3" fill="#dc2626"/>
+      <circle cx="274" cy="97.5"  r="3" fill="#dc2626"/>
+      <circle cx="334" cy="97.5"  r="3" fill="#dc2626"/>
+      <circle cx="160" cy="110"   r="3" fill="#dc2626"/>
+      <circle cx="220" cy="110"   r="3" fill="#dc2626"/>
+      <circle cx="280" cy="110"   r="3" fill="#dc2626"/>
+      <circle cx="340" cy="110"   r="3" fill="#dc2626"/>
+      <circle cx="166" cy="122.5" r="3" fill="#dc2626"/>
+      <circle cx="226" cy="122.5" r="3" fill="#dc2626"/>
+      <circle cx="286" cy="122.5" r="3" fill="#dc2626"/>
+      <circle cx="346" cy="122.5" r="3" fill="#dc2626"/>
+
+      <!-- Reinforcement label callout -->
+      <line x1="334" y1="97.5" x2="390" y2="52" stroke="#ef4444" stroke-width="1" opacity="0.55"/>
+      <text x="472" y="50" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="10" font-weight="700" fill="#ef4444">Reinforcement</text>
+
+      <!-- LENGTH annotation (top, blue) -->
+      <line x1="90"  y1="85" x2="90"  y2="58" stroke="#0070f3" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="330" y1="85" x2="330" y2="58" stroke="#0070f3" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="90"  y1="65" x2="330" y2="65" stroke="#0070f3" stroke-width="1.75"/>
+      <polygon points="90,65  100,60  100,70" fill="#0070f3"/>
+      <polygon points="330,65 320,60 320,70" fill="#0070f3"/>
+      <text x="210" y="52" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="13" font-weight="700" fill="#0070f3" letter-spacing="-0.3">Length</text>
+
+      <!-- WIDTH annotation (right side, green) -->
+      <line x1="330" y1="85"  x2="418" y2="62"  stroke="#16a34a" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="395" y1="135" x2="418" y2="155" stroke="#16a34a" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="418" y1="62"  x2="418" y2="155" stroke="#16a34a" stroke-width="1.75"/>
+      <polygon points="418,62  413,73  423,73"  fill="#16a34a"/>
+      <polygon points="418,155 413,144 423,144" fill="#16a34a"/>
+      <text x="432" y="113" text-anchor="start" font-family="Inter,system-ui,sans-serif"
+        font-size="13" font-weight="700" fill="#16a34a" letter-spacing="-0.3">Width</text>
+
+      <!-- THICKNESS annotation (left, amber) -->
+      <line x1="90" y1="85"  x2="55" y2="85"  stroke="#d97706" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="90" y1="215" x2="55" y2="215" stroke="#d97706" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>
+      <line x1="62" y1="85"  x2="62" y2="215" stroke="#d97706" stroke-width="1.75"/>
+      <polygon points="62,85  57,96  67,96"  fill="#d97706"/>
+      <polygon points="62,215 57,204 67,204" fill="#d97706"/>
+      <text x="48" y="153" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="13" font-weight="700" fill="#d97706" letter-spacing="-0.3"
+        transform="rotate(-90 48 153)">Thickness</text>
+
+      <!-- FORMULA CALLOUT -->
+      <rect x="115" y="237" width="185" height="40" rx="6"
+        fill="#eff6ff" stroke="#0070f3" stroke-width="1"/>
+      <text x="207" y="249" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8" font-weight="700" fill="#1d4ed8" letter-spacing="0.2">VOLUME FORMULA</text>
+      <text x="207" y="262" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="10" font-weight="800" fill="#1e3a8a">V = L &#xD7; W &#xD7; T</text>
+      <text x="207" y="273" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+        font-size="8" fill="#2563eb">&#xF7; 27 = cu yd  &#xB7;  4 in slab &#x2248; 0.0123 yd&#xB3;/ft&#xB2;</text>
+
+      <!-- Rebar legend (bottom-left) -->
+      <line x1="115" y1="295" x2="135" y2="295" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/>
+      <text x="139" y="299" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#4b5563">Rebar grid (both directions)</text>
+    </svg>
+  </div>
+  <figcaption class="diagram-caption">
+    Concrete slab with reinforcing rebar grid: L &#xD7; W &#xD7; T &#xF7; 27 for cubic yards — rebar bar count calculated per direction at your chosen spacing.
+  </figcaption>
+</figure>
+
+<style>
+  .diagram-figure { margin-top: 3.5rem; }
+  .diagram-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem; }
+  .diagram-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px;
+    background: var(--surface-page); border: 1px solid var(--border-default);
+    color: var(--color-text-secondary); border-radius: 8px; flex-shrink: 0;
+  }
+  .diagram-title { font-size: 1.375rem; font-weight: 800; color: var(--color-text-primary); letter-spacing: -0.03em; }
+  .diagram-box {
+    background: var(--surface-card); border: 1px solid var(--border-default);
+    border-radius: 16px; padding: 2rem; display: flex;
+    justify-content: center; overflow: hidden; box-shadow: var(--shadow-card);
+  }
+  .diagram-svg { max-width: 480px; height: auto; aspect-ratio: 480 / 310; display: block; }
+  .diagram-caption { margin-top: 0.875rem; font-size: 0.8125rem; color: var(--color-text-muted); text-align: center; line-height: 1.5; }
+</style>

@@ -126,78 +126,78 @@ const { class: className = '' } = Astro.props;
       <!-- ══ RIGHT SIDE LEGEND (x=405..510) ══════════════════════════ -->
 
       <!-- Legend title -->
-      <text x="457" y="52" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+      <text x="457" y="48" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
         font-size="8.5" font-weight="700" fill="#374151">Legend</text>
 
       <!-- Grout joint swatch -->
-      <rect x="408" y="58" width="14" height="14" rx="2" fill="#9ca3af" stroke="#6b7280" stroke-width="0.75"/>
-      <text x="428" y="69" font-family="Inter,system-ui,sans-serif"
+      <rect x="408" y="53" width="14" height="14" rx="2" fill="#9ca3af" stroke="#6b7280" stroke-width="0.75"/>
+      <text x="428" y="64" font-family="Inter,system-ui,sans-serif"
         font-size="8" font-weight="600" fill="#374151">Grout joint</text>
 
       <!-- Tile swatch -->
-      <rect x="408" y="78" width="14" height="14" rx="2" fill="url(#gTileA)" stroke="#d1d5db" stroke-width="0.75"/>
-      <text x="428" y="89" font-family="Inter,system-ui,sans-serif"
+      <rect x="408" y="70" width="14" height="14" rx="2" fill="url(#gTileA)" stroke="#d1d5db" stroke-width="0.75"/>
+      <text x="428" y="81" font-family="Inter,system-ui,sans-serif"
         font-size="8" font-weight="600" fill="#374151">Tile</text>
 
       <!-- Divider -->
-      <line x1="405" y1="100" x2="510" y2="100" stroke="#e5e7eb" stroke-width="1"/>
+      <line x1="405" y1="88" x2="510" y2="88" stroke="#e5e7eb" stroke-width="1"/>
 
       <!-- Bag stack: 2 bags labeled 25 lb -->
-      <text x="457" y="115" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+      <text x="457" y="98" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
         font-size="7.5" font-weight="600" fill="#6b7280">0.45 ft³ each</text>
 
-      <!-- Bag 1 (bottom) -->
-      <rect x="407" y="118" width="100" height="28" rx="5"
+      <!-- Bag 1 (top) -->
+      <rect x="407" y="102" width="100" height="28" rx="5"
         fill="url(#gBag)" stroke="#94a3b8" stroke-width="1.25"/>
-      <rect x="412" y="121" width="90" height="22" rx="3"
+      <rect x="412" y="105" width="90" height="22" rx="3"
         fill="none" stroke="#cbd5e1" stroke-width="0.75" stroke-dasharray="3,2"/>
-      <text x="457" y="132" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+      <text x="457" y="116" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
         font-size="9" font-weight="800" fill="#374151">25 lb</text>
-      <text x="457" y="142" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+      <text x="457" y="126" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
         font-size="7" font-weight="600" fill="#6b7280">GROUT</text>
 
-      <!-- Bag 2 (top) -->
-      <rect x="407" y="88" width="100" height="28" rx="5"
+      <!-- Bag 2 (bottom) -->
+      <rect x="407" y="132" width="100" height="28" rx="5"
         fill="url(#gBag)" stroke="#94a3b8" stroke-width="1.25"/>
-      <rect x="412" y="91" width="90" height="22" rx="3"
+      <rect x="412" y="135" width="90" height="22" rx="3"
         fill="none" stroke="#cbd5e1" stroke-width="0.75" stroke-dasharray="3,2"/>
-      <text x="457" y="102" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+      <text x="457" y="146" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
         font-size="9" font-weight="800" fill="#374151">25 lb</text>
-      <text x="457" y="112" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+      <text x="457" y="156" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
         font-size="7" font-weight="600" fill="#6b7280">GROUT</text>
 
       <!-- Divider -->
-      <line x1="405" y1="153" x2="510" y2="153" stroke="#e5e7eb" stroke-width="1"/>
+      <line x1="405" y1="166" x2="510" y2="166" stroke="#e5e7eb" stroke-width="1"/>
 
       <!-- Bags formula box -->
-      <rect x="405" y="158" width="106" height="36" rx="5"
+      <rect x="405" y="171" width="106" height="36" rx="5"
         fill="#f0fdf4" stroke="#16a34a" stroke-width="1.25"/>
-      <text x="458" y="172" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+      <text x="458" y="185" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
         font-size="8" font-weight="700" fill="#15803d">Bags = ⌈Grout ÷ Yield⌉</text>
-      <text x="458" y="183" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+      <text x="458" y="196" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
         font-size="7.5" font-weight="600" fill="#16a34a" opacity="0.9">always round up ⌈ ⌉</text>
-      <text x="458" y="191" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+      <text x="458" y="204" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
         font-size="7" fill="#15803d" opacity="0.8">incl. waste factor</text>
 
       <!-- ══ MAGNIFIED JOINT DETAIL (right panel, below bags formula) ══ -->
-      <line x1="405" y1="200" x2="510" y2="200" stroke="#e5e7eb" stroke-width="1"/>
-      <text x="457" y="212" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+      <line x1="405" y1="211" x2="510" y2="211" stroke="#e5e7eb" stroke-width="1"/>
+      <text x="457" y="223" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
         font-size="8" font-weight="700" fill="#374151">Joint detail ×10</text>
       <!-- Magnified view frame -->
-      <rect x="408" y="217" width="98" height="52" rx="4"
+      <rect x="408" y="228" width="98" height="52" rx="4"
         fill="#f9fafb" stroke="#d97706" stroke-width="1.5"/>
       <!-- Left tile face -->
-      <rect x="411" y="220" width="34" height="46" fill="url(#gTileA)" stroke="#d1d5db" stroke-width="0.75" rx="1"/>
+      <rect x="411" y="231" width="34" height="46" fill="url(#gTileA)" stroke="#d1d5db" stroke-width="0.75" rx="1"/>
       <!-- Grout joint (magnified: 14px wide gap) -->
-      <rect x="445" y="220" width="14" height="46" fill="#9ca3af"/>
+      <rect x="445" y="231" width="14" height="46" fill="#9ca3af"/>
       <!-- Right tile face -->
-      <rect x="459" y="220" width="44" height="46" fill="url(#gTileB)" stroke="#d1d5db" stroke-width="0.75" rx="1"/>
+      <rect x="459" y="231" width="44" height="46" fill="url(#gTileB)" stroke="#d1d5db" stroke-width="0.75" rx="1"/>
       <!-- Joint width double arrow -->
-      <line x1="446" y1="243" x2="458" y2="243" stroke="#d97706" stroke-width="1.5"/>
-      <polygon points="446,243 449,240 449,246" fill="#d97706"/>
-      <polygon points="458,243 455,240 455,246" fill="#d97706"/>
+      <line x1="446" y1="254" x2="458" y2="254" stroke="#d97706" stroke-width="1.5"/>
+      <polygon points="446,254 449,251 449,257" fill="#d97706"/>
+      <polygon points="458,254 455,251 455,257" fill="#d97706"/>
       <!-- Joint width label below frame -->
-      <text x="452" y="281" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
+      <text x="452" y="292" text-anchor="middle" font-family="Inter,system-ui,sans-serif"
         font-size="7.5" font-weight="700" fill="#92400e">Joint width</text>
 
     </svg>
