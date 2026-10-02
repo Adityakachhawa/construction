@@ -9,6 +9,7 @@ import FormulaDisplay from '../../components/calculators/FormulaDisplay.astro';
 import FaqSection from '../../components/calculators/FaqSection.astro';
 import RelatedCalculators from '../../components/calculators/RelatedCalculators.astro';
 import SlabDiagram from '../../components/calculators/SlabDiagram.astro';
+import SlabRebarDiagram from '../../components/calculators/SlabRebarDiagram.astro';
 import GravelDiagram from '../../components/calculators/GravelDiagram.astro';
 import MulchDiagram from '../../components/calculators/MulchDiagram.astro';
 import SandDiagram from '../../components/calculators/SandDiagram.astro';
@@ -50,8 +51,8 @@ import type { GetStaticPaths } from 'astro';
 
 // Diagram lookup — add new slugs here instead of adding more booleans
 const diagramMap: Record<string, any> = {
-  'concrete-slab-calculator':      SlabDiagram,
-  'concrete-slab-rebar-calculator': SlabDiagram,
+  'concrete-slab-calculator':       SlabDiagram,
+  'concrete-slab-rebar-calculator': SlabRebarDiagram,
   'gravel-calculator':             GravelDiagram,
   'mulch-calculator':              MulchDiagram,
   'sand-calculator':               SandDiagram,
