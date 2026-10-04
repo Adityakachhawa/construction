@@ -13,13 +13,16 @@ const hasGuides = publishedGuides.length > 0;
   <div class="footer-inner">
     <!-- Brand column -->
     <div class="footer-brand">
-      <a href="/" class="footer-logo" aria-label="ConstructCalc Home">
-        <svg width="26" height="26" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-          <rect x="2" y="14" width="7" height="12" rx="1.5" fill="var(--color-primary)"/>
-          <rect x="10.5" y="8" width="7" height="18" rx="1.5" fill="var(--color-primary)" opacity="0.75"/>
-          <rect x="19" y="2" width="7" height="24" rx="1.5" fill="var(--color-primary)" opacity="0.5"/>
-        </svg>
-        <span>ConstructCalc</span>
+      <a href="/" class="footer-logo" aria-label="BuildByMath Home">
+        <img
+          class="footer-logo-img"
+          src="/logo-horizontal-light.png"
+          alt="BuildByMath"
+          width="180"
+          height="45"
+          loading="lazy"
+          decoding="async"
+        />
       </a>
       <p class="footer-tagline">
         Accurate material estimates for construction professionals and serious DIYers.
@@ -72,7 +75,7 @@ const hasGuides = publishedGuides.length > 0;
 
   <!-- Bottom bar -->
   <div class="footer-bottom">
-    <p class="footer-copy">&copy; {new Date().getFullYear()} ConstructCalc. All rights reserved.</p>
+    <p class="footer-copy">&copy; {new Date().getFullYear()} BuildByMath. All rights reserved.</p>
     <p class="footer-disclaimer">Results are estimates. Always verify with your supplier and a licensed professional.</p>
   </div>
 </footer>
@@ -113,14 +116,19 @@ const hasGuides = publishedGuides.length > 0;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 1.0625rem;
-    font-weight: 700;
-    color: #fff;
-    letter-spacing: -0.02em;
     margin-bottom: 0.875rem;
     transition: opacity 150ms;
   }
   .footer-logo:hover { opacity: 0.8; }
+
+  .footer-logo-img {
+    display: block;
+    height: 40px;
+    width: auto;
+    max-width: 180px;
+    object-fit: contain;
+    object-position: left center;
+  }
 
   .footer-tagline {
     font-size: 0.875rem;

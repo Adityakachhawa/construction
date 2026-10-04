@@ -3,7 +3,7 @@ title: "Board Foot Calculator Guide: What Is a Board Foot?"
 description: "Understand board feet, how to calculate lumber quantities, and when to use board feet vs. linear feet for your project."
 publishedAt: "2026-06-06"
 updatedAt: "2026-06-13"
-author: "ConstructCalc Team"
+author: "BuildByMath Team"
 tags: ["lumber", "framing", "calculation"]
 relatedCalculators: ["board-foot-calculator", "lumber-calculator", "stud-calculator"]
 draft: false
@@ -100,4 +100,4 @@ An MBF is 1,000 board feet — a common wholesale unit. Large lumber orders are 
 
 ---
 
-**See also:** [Framing Calculation Methodology](/methodology/framing/) — IRC R602 references, stud count formulas, and lumber waste factors behind ConstructCalc framing calculators.
+**See also:** [Framing Calculation Methodology](/methodology/framing/) — IRC R602 references, stud count formulas, and lumber waste factors behind BuildByMath framing calculators.

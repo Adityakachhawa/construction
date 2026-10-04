@@ -8,7 +8,7 @@ import { calculatorRegistry } from '../../data/registry';
 
 const meta = {
   title: buildPageTitle('Concrete Calculation Methodology'),
-  description: 'How ConstructCalc concrete calculators work — ACI 318 formulas, bag yield tables, waste factors, and industry assumptions behind every result.',
+  description: 'How BuildByMath concrete calculators work — ACI 318 formulas, bag yield tables, waste factors, and industry assumptions behind every result.',
   canonical: buildCanonical('/methodology/concrete/'),
   ogType: 'website' as const,
   ogImage: DEFAULT_OG_IMAGE,
@@ -41,7 +41,7 @@ const relatedCalcs = calculatorRegistry.filter((c) =>
       <Breadcrumbs items={breadcrumbs} />
       <div class="header-chip">Concrete</div>
       <h1 class="page-title">Concrete Calculation Methodology</h1>
-      <p class="page-sub">The formulas, ACI 318 references, waste factors, and material assumptions behind every ConstructCalc concrete result.</p>
+      <p class="page-sub">The formulas, ACI 318 references, waste factors, and material assumptions behind every BuildByMath concrete result.</p>
     </div>
   </div>
 
@@ -50,7 +50,7 @@ const relatedCalcs = calculatorRegistry.filter((c) =>
 
       <section class="content-section">
         <h2>Overview</h2>
-        <p>Concrete volume calculations on ConstructCalc follow the same geometry used in industry — plain rectangular/circular volume formulas from field geometry, then converted to the order unit (cubic yards or cubic meters). Every result includes a conservative waste allowance consistent with ACI and PCA field practice.</p>
+        <p>Concrete volume calculations on BuildByMath follow the same geometry used in industry — plain rectangular/circular volume formulas from field geometry, then converted to the order unit (cubic yards or cubic meters). Every result includes a conservative waste allowance consistent with ACI and PCA field practice.</p>
         <p>Our formulas are intentionally simple and verifiable. Complex engineered pours (post-tensioned slabs, high-strength mixes, structural elements per ACI 318 Chapter 26) require a licensed structural engineer; our calculators cover standard residential and light commercial work.</p>
       </section>
 

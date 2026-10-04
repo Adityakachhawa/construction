@@ -3,7 +3,7 @@ title: "Asphalt vs. Concrete Driveway: Cost, Pros, and Cons"
 description: "Full comparison of asphalt vs. concrete driveways — upfront cost, lifespan, maintenance, climate performance, and resale value."
 publishedAt: "2026-06-13"
 updatedAt: "2026-06-13"
-author: "ConstructCalc Team"
+author: "BuildByMath Team"
 tags: ["driveway", "concrete", "asphalt", "cost"]
 relatedCalculators: ["concrete-driveway-calculator", "asphalt-calculator"]
 draft: false
@@ -89,4 +89,4 @@ Asphalt: wait 24–48 hours for light vehicles, 5–7 days for heavy vehicles. C
 
 ---
 
-**See also:** [Concrete Calculation Methodology](/methodology/concrete/) — bag yield tables, mix ratio formulas, slab volume derivations, and ACI 318 references behind ConstructCalc concrete calculators.
+**See also:** [Concrete Calculation Methodology](/methodology/concrete/) — bag yield tables, mix ratio formulas, slab volume derivations, and ACI 318 references behind BuildByMath concrete calculators.

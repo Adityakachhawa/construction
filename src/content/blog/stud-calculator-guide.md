@@ -3,7 +3,7 @@ title: "Stud Calculator Guide: How Many Studs for a Wall?"
 description: "Calculate wall stud quantities for any wall length, height, and spacing. Includes corners, openings, and plate lumber."
 publishedAt: "2026-06-13"
 updatedAt: "2026-06-13"
-author: "ConstructCalc Team"
+author: "BuildByMath Team"
 tags: ["framing", "lumber", "calculation"]
 relatedCalculators: ["stud-calculator", "lumber-calculator", "drywall-calculator"]
 draft: false
@@ -79,4 +79,4 @@ Standard 2×4×8 studs currently run $3.50–$6.00 each at big-box stores, depen
 
 ---
 
-**See also:** [Framing Calculation Methodology](/methodology/framing/) — IRC R602 references, stud count formulas, and lumber waste factors behind ConstructCalc framing calculators.
+**See also:** [Framing Calculation Methodology](/methodology/framing/) — IRC R602 references, stud count formulas, and lumber waste factors behind BuildByMath framing calculators.

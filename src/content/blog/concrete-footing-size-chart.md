@@ -3,7 +3,7 @@ title: "Concrete Footing Size Chart: How Big Should Your Footings Be?"
 description: "Footing size requirements for decks, sheds, walls, and foundations. Charts, formulas, and code references for residential construction."
 publishedAt: "2026-06-10"
 updatedAt: "2026-06-13"
-author: "ConstructCalc Team"
+author: "BuildByMath Team"
 tags: ["concrete", "foundation", "structural"]
 relatedCalculators: ["concrete-footing-calculator", "concrete-bags-calculator", "deck-footing-calculator"]
 draft: false

@@ -3,7 +3,7 @@ title: "French Drain Cost Guide: Materials, Labor, and Installation"
 description: "Everything you need to know about French drain cost — materials, labor, DIY vs. contractor, and how to calculate gravel and pipe quantities."
 publishedAt: "2026-06-05"
 updatedAt: "2026-06-13"
-author: "ConstructCalc Team"
+author: "BuildByMath Team"
 tags: ["drainage", "excavation", "cost"]
 relatedCalculators: ["french-drain-calculator", "gravel-calculator", "excavation-calculator"]
 draft: false
@@ -132,4 +132,4 @@ Yes, by hand-digging. A 50-foot trench at 12" wide × 18" deep is about 25 cubic
 
 ---
 
-**See also:** [Excavation Calculation Methodology](/methodology/excavation/) — volume formulas, bulk density tables, swell/shrink factors, and OSHA trench safety references behind ConstructCalc excavation calculators.
+**See also:** [Excavation Calculation Methodology](/methodology/excavation/) — volume formulas, bulk density tables, swell/shrink factors, and OSHA trench safety references behind BuildByMath excavation calculators.

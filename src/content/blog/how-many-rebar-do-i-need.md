@@ -3,7 +3,7 @@ title: "How Many Rebar Do I Need? Complete Reinforcement Guide"
 description: "Calculate rebar quantity for slabs, walls, and footings. Includes spacing charts, overlap requirements, and grade selection."
 publishedAt: "2026-06-04"
 updatedAt: "2026-06-13"
-author: "ConstructCalc Team"
+author: "BuildByMath Team"
 tags: ["concrete", "rebar", "structural"]
 relatedCalculators: ["rebar-calculator", "concrete-slab-calculator", "concrete-footing-calculator"]
 draft: false
@@ -130,4 +130,4 @@ Deformed rebar has surface ribs (deformations) that mechanically lock to the con
 
 ---
 
-**See also:** [Concrete Calculation Methodology](/methodology/concrete/) — formula derivations, waste factors, and ACI 318 references behind ConstructCalc concrete and rebar calculators.
+**See also:** [Concrete Calculation Methodology](/methodology/concrete/) — formula derivations, waste factors, and ACI 318 references behind BuildByMath concrete and rebar calculators.

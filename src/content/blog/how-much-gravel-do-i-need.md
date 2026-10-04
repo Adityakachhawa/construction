@@ -3,7 +3,7 @@ title: "How Much Gravel Do I Need? Driveway and Landscaping Guide"
 description: "Calculate gravel quantity for driveways, walkways, drainage, and landscaping. With coverage charts, material types, and delivery tips."
 publishedAt: "2026-06-09"
 updatedAt: "2026-06-13"
-author: "ConstructCalc Team"
+author: "BuildByMath Team"
 tags: ["gravel", "excavation", "driveway"]
 relatedCalculators: ["gravel-calculator", "aggregate-calculator", "french-drain-calculator"]
 draft: false
@@ -114,4 +114,4 @@ Gravel itself is $25–$75 per ton depending on material and location. Delivery 
 
 ---
 
-**See also:** [Excavation Calculation Methodology](/methodology/excavation/) — volume formulas, bulk density tables, swell/shrink factors, and coverage calculations behind ConstructCalc excavation and fill calculators.
+**See also:** [Excavation Calculation Methodology](/methodology/excavation/) — volume formulas, bulk density tables, swell/shrink factors, and coverage calculations behind BuildByMath excavation and fill calculators.

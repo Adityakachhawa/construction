@@ -30,27 +30,16 @@ const searchIndex = calculatorRegistry.map(c => ({
   <div class="header-inner">
 
     <!-- Logo -->
-    <a href="/" class="logo" aria-label="ConstructCalc Home">
-      <svg class="logo-icon" width="30" height="30" viewBox="0 0 30 30" fill="none" aria-hidden="true">
-        <rect x="2"  y="15" width="7" height="13" rx="2" fill="url(#logo-g1)"/>
-        <rect x="11" y="9"  width="7" height="19" rx="2" fill="url(#logo-g2)"/>
-        <rect x="20" y="3"  width="7" height="25" rx="2" fill="url(#logo-g3)"/>
-        <defs>
-          <linearGradient id="logo-g1" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
-            <stop offset="0%" stop-color="#f97316"/>
-            <stop offset="100%" stop-color="#c2410c"/>
-          </linearGradient>
-          <linearGradient id="logo-g2" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
-            <stop offset="0%" stop-color="#fb923c"/>
-            <stop offset="100%" stop-color="#ea580c"/>
-          </linearGradient>
-          <linearGradient id="logo-g3" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
-            <stop offset="0%" stop-color="#fdba74"/>
-            <stop offset="100%" stop-color="#f97316"/>
-          </linearGradient>
-        </defs>
-      </svg>
-      <span class="logo-text">ConstructCalc</span>
+    <a href="/" class="logo" aria-label="BuildByMath Home">
+      <img
+        class="logo-img"
+        src="/logo-horizontal-dark.png"
+        alt="BuildByMath"
+        width="200"
+        height="50"
+        loading="eager"
+        decoding="async"
+      />
     </a>
 
     <!-- Desktop nav -->
@@ -184,27 +173,16 @@ const searchIndex = calculatorRegistry.map(c => ({
 
   <div class="mobile-overlay-inner">
     <div class="mobile-overlay-header">
-      <a href="/" class="logo">
-        <svg class="logo-icon" width="24" height="24" viewBox="0 0 30 30" fill="none" aria-hidden="true">
-          <rect x="2"  y="15" width="7" height="13" rx="2" fill="url(#logo-g1-m)"/>
-          <rect x="11" y="9"  width="7" height="19" rx="2" fill="url(#logo-g2-m)"/>
-          <rect x="20" y="3"  width="7" height="25" rx="2" fill="url(#logo-g3-m)"/>
-          <defs>
-            <linearGradient id="logo-g1-m" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
-              <stop offset="0%" stop-color="#f97316"/>
-              <stop offset="100%" stop-color="#c2410c"/>
-            </linearGradient>
-            <linearGradient id="logo-g2-m" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
-              <stop offset="0%" stop-color="#fb923c"/>
-              <stop offset="100%" stop-color="#ea580c"/>
-            </linearGradient>
-            <linearGradient id="logo-g3-m" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
-              <stop offset="0%" stop-color="#fdba74"/>
-              <stop offset="100%" stop-color="#f97316"/>
-            </linearGradient>
-          </defs>
-        </svg>
-        <span class="logo-text">ConstructCalc</span>
+      <a href="/" class="logo" aria-label="BuildByMath Home">
+        <img
+          class="logo-img"
+          src="/logo-horizontal-dark.png"
+          alt="BuildByMath"
+          width="160"
+          height="40"
+          loading="eager"
+          decoding="async"
+        />
       </a>
       <button id="mobile-close" type="button" aria-label="Close navigation" class="mobile-close">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -337,8 +315,6 @@ const searchIndex = calculatorRegistry.map(c => ({
   }
 
   /* Hero child colours on transparent header */
-  .site-header[data-hero]:not([data-scrolled]) .logo,
-  .site-header[data-hero]:not([data-scrolled]) .logo-text { color: #fff; }
   .site-header[data-hero]:not([data-scrolled]) .nav-link { color: rgba(255,255,255,0.88); }
   .site-header[data-hero]:not([data-scrolled]) .nav-link:hover { color: #fff; background: rgba(255,255,255,0.12); }
   .site-header[data-hero]:not([data-scrolled]) .header-search-box {
@@ -372,15 +348,13 @@ const searchIndex = calculatorRegistry.map(c => ({
   }
   .logo:hover { opacity: 0.8; }
 
-  .logo-icon { flex-shrink: 0; transition: transform 200ms ease; }
-  .logo:hover .logo-icon { transform: translateY(-1px); }
-
-  .logo-text {
-    font-weight: 750;
-    font-size: 1.0625rem;
-    color: var(--color-text-primary);
-    letter-spacing: -0.03em;
-    transition: color 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  .logo-img {
+    display: block;
+    height: 36px;
+    width: auto;
+    max-width: 200px;
+    object-fit: contain;
+    object-position: left center;
   }
 
   /* ── Desktop nav ──────────────────────────────────────── */

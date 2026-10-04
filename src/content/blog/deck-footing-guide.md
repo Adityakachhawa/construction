@@ -3,7 +3,7 @@ title: "Deck Footing Calculator Guide: How Many Footings and How Deep"
 description: "How to calculate deck footing sizes, spacing, depth, and concrete volume. Includes IRC tables and soil bearing capacity basics."
 publishedAt: "2026-06-13"
 updatedAt: "2026-06-13"
-author: "ConstructCalc Team"
+author: "BuildByMath Team"
 tags: ["decking", "foundation", "concrete"]
 relatedCalculators: ["deck-footing-calculator", "concrete-bags-calculator", "concrete-footing-calculator"]
 draft: false
@@ -81,4 +81,4 @@ Standard concrete reaches adequate strength for post installation in 24–48 hou
 
 ---
 
-**See also:** [Concrete Calculation Methodology](/methodology/concrete/) — footing volume formulas, bag yield tables, and ACI 318 references behind ConstructCalc concrete calculators.
+**See also:** [Concrete Calculation Methodology](/methodology/concrete/) — footing volume formulas, bag yield tables, and ACI 318 references behind BuildByMath concrete calculators.

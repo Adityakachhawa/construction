@@ -3,7 +3,7 @@ title: "How to Calculate How Much Mulch You Need"
 description: "Calculate mulch quantity for garden beds and landscaping. Coverage charts, depth recommendations, and buying tips."
 publishedAt: "2026-06-13"
 updatedAt: "2026-06-13"
-author: "ConstructCalc Team"
+author: "BuildByMath Team"
 tags: ["landscaping", "excavation", "guide"]
 relatedCalculators: ["mulch-calculator", "topsoil-calculator", "square-footage-calculator"]
 draft: false
@@ -84,4 +84,4 @@ Gravel costs more upfront but doesn't need replacement. Over 10 years, gravel is
 
 ---
 
-**See also:** [Excavation Calculation Methodology](/methodology/excavation/) — volume formulas, bulk density tables, swell/shrink factors, and coverage calculations behind ConstructCalc excavation and fill calculators.
+**See also:** [Excavation Calculation Methodology](/methodology/excavation/) — volume formulas, bulk density tables, swell/shrink factors, and coverage calculations behind BuildByMath excavation and fill calculators.

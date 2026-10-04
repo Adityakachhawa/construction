@@ -3,7 +3,7 @@ title: "How to Calculate Roof Pitch: The Complete Guide"
 description: "Learn how to measure, calculate, and use roof pitch for rafter length, material estimates, and building permit applications."
 publishedAt: "2026-06-03"
 updatedAt: "2026-06-13"
-author: "ConstructCalc Team"
+author: "BuildByMath Team"
 tags: ["roofing", "framing", "calculation"]
 relatedCalculators: ["roof-pitch-calculator", "rafter-calculator", "roofing-calculator"]
 draft: false
@@ -136,4 +136,4 @@ At 6:12 and below, most people can walk on roofing with caution. Above 8:12, saf
 
 ---
 
-**See also:** [Roofing Calculation Methodology](/methodology/roofing/) — slope factor formulas, IRC R905 references, square calculations, and shingle waste factors behind ConstructCalc roofing calculators.
+**See also:** [Roofing Calculation Methodology](/methodology/roofing/) — slope factor formulas, IRC R905 references, square calculations, and shingle waste factors behind BuildByMath roofing calculators.

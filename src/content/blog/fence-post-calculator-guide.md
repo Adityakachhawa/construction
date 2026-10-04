@@ -3,7 +3,7 @@ title: "Fence Post Calculator: Spacing, Depth, and Concrete Guide"
 description: "How to calculate fence post count, spacing, hole depth, and concrete volume for any fence project. IRC guidelines included."
 publishedAt: "2026-06-13"
 updatedAt: "2026-06-13"
-author: "ConstructCalc Team"
+author: "BuildByMath Team"
 tags: ["fencing", "concrete", "guide"]
 relatedCalculators: ["fence-post-calculator", "post-hole-calculator", "concrete-bags-calculator"]
 draft: false
@@ -76,4 +76,4 @@ Fast-setting Quikrete is popular for fence posts — you pour the dry mix in the
 
 ---
 
-**See also:** [Concrete Calculation Methodology](/methodology/concrete/) — bag yield tables, mix ratio formulas, and ACI 318 references behind ConstructCalc concrete calculators.
+**See also:** [Concrete Calculation Methodology](/methodology/concrete/) — bag yield tables, mix ratio formulas, and ACI 318 references behind BuildByMath concrete calculators.

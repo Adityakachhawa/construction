@@ -12,19 +12,19 @@ export const methodologyPages: MethodologyPageMeta[] = [
   {
     slug: 'concrete',
     title: 'Concrete Calculation Methodology',
-    description: 'Formulas, ACI references, waste factors, and assumptions behind ConstructCalc concrete calculators.',
+    description: 'Formulas, ACI references, waste factors, and assumptions behind BuildByMath concrete calculators.',
     label: 'Concrete Methodology',
   },
   {
     slug: 'framing',
     title: 'Framing Calculation Methodology',
-    description: 'Formulas, IRC references, span tables, and assumptions behind ConstructCalc framing and lumber calculators.',
+    description: 'Formulas, IRC references, span tables, and assumptions behind BuildByMath framing and lumber calculators.',
     label: 'Framing Methodology',
   },
   {
     slug: 'roofing',
     title: 'Roofing Calculation Methodology',
-    description: 'Formulas, slope factors, IRC R905 references, and waste assumptions behind ConstructCalc roofing calculators.',
+    description: 'Formulas, slope factors, IRC R905 references, and waste assumptions behind BuildByMath roofing calculators.',
     label: 'Roofing Methodology',
   },
   {

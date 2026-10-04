@@ -3,7 +3,7 @@ title: "Drywall Calculator Guide: How Many Sheets Do You Need?"
 description: "Calculate drywall sheets for any room — walls, ceilings, and odd shapes. Includes waste factors, panel sizes, and ordering tips."
 publishedAt: "2026-06-13"
 updatedAt: "2026-06-13"
-author: "ConstructCalc Team"
+author: "BuildByMath Team"
 tags: ["framing", "drywall", "guide"]
 relatedCalculators: ["drywall-calculator", "stud-calculator", "insulation-calculator"]
 draft: false
@@ -78,4 +78,4 @@ For a complete installation you'll need: joint compound (mud), drywall tape, cor
 
 ---
 
-**See also:** [Framing Calculation Methodology](/methodology/framing/) — IRC R602 references, stud count formulas, and lumber waste factors behind ConstructCalc framing calculators.
+**See also:** [Framing Calculation Methodology](/methodology/framing/) — IRC R602 references, stud count formulas, and lumber waste factors behind BuildByMath framing calculators.

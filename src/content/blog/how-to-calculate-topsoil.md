@@ -3,7 +3,7 @@ title: "How to Calculate Topsoil: Coverage, Depth, and Ordering"
 description: "How much topsoil do you need? Calculate cubic yards for lawns, garden beds, and raised beds with coverage charts and ordering tips."
 publishedAt: "2026-06-12"
 updatedAt: "2026-06-13"
-author: "ConstructCalc Team"
+author: "BuildByMath Team"
 tags: ["topsoil", "landscaping", "excavation"]
 relatedCalculators: ["topsoil-calculator", "mulch-calculator", "gravel-calculator"]
 draft: false
@@ -70,4 +70,4 @@ Bulk delivered topsoil runs $25–$75 per cubic yard depending on quality and yo
 
 ---
 
-**See also:** [Excavation Calculation Methodology](/methodology/excavation/) — volume formulas, bulk density tables, swell/shrink factors, and OSHA trench safety references behind ConstructCalc excavation calculators.
+**See also:** [Excavation Calculation Methodology](/methodology/excavation/) — volume formulas, bulk density tables, swell/shrink factors, and OSHA trench safety references behind BuildByMath excavation calculators.

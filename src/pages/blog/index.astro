@@ -23,12 +23,12 @@ const allTags = [...new Set(allPosts.flatMap(p => (p.data.tags as string[]) ?? [
 const blogSchema = {
   '@context': 'https://schema.org',
   '@type': 'Blog',
-  name: 'ConstructCalc Blog',
+  name: 'BuildByMath Blog',
   description: 'Construction tips, material guides, cost breakdowns, and project planning for contractors and DIYers.',
   url: buildCanonical('/blog/'),
   publisher: {
     '@type': 'Organization',
-    name: 'ConstructCalc',
+    name: 'BuildByMath',
     url: SITE_URL,
   },
   blogPost: allPosts.map(post => {

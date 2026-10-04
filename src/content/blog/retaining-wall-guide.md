@@ -3,7 +3,7 @@ title: "Retaining Wall Calculator Guide: Block Count, Drainage, and Design"
 description: "How to calculate retaining wall blocks, drainage aggregate, and base preparation for segmental retaining walls up to 4 feet."
 publishedAt: "2026-06-13"
 updatedAt: "2026-06-13"
-author: "ConstructCalc Team"
+author: "BuildByMath Team"
 tags: ["masonry", "retaining-wall", "structural"]
 relatedCalculators: ["retaining-wall-calculator", "concrete-block-calculator", "gravel-calculator"]
 draft: false
@@ -86,4 +86,4 @@ Most jurisdictions require permits for retaining walls over 3–4 feet in total 
 
 ---
 
-**See also:** [Masonry Calculation Methodology](/methodology/masonry/) — brick, block, and mortar quantity formulas, waste factors, and industry references behind ConstructCalc masonry calculators.
+**See also:** [Masonry Calculation Methodology](/methodology/masonry/) — brick, block, and mortar quantity formulas, waste factors, and industry references behind BuildByMath masonry calculators.

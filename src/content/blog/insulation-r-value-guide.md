@@ -3,7 +3,7 @@ title: "Insulation R-Value Guide: What You Need and How to Calculate It"
 description: "Complete guide to insulation R-values by climate zone, wall assembly, and material type. With comparison tables and installation tips."
 publishedAt: "2026-06-07"
 updatedAt: "2026-06-13"
-author: "ConstructCalc Team"
+author: "BuildByMath Team"
 tags: ["insulation", "energy", "guide"]
 relatedCalculators: ["insulation-calculator", "drywall-calculator", "stud-calculator"]
 draft: false
@@ -114,4 +114,4 @@ For attics: usually not necessary. You can blow new insulation over old batts if
 
 ---
 
-**See also:** [Framing Calculation Methodology](/methodology/framing/) — IRC R602 references, stud count formulas, and lumber waste factors behind ConstructCalc framing calculators.
+**See also:** [Framing Calculation Methodology](/methodology/framing/) — IRC R602 references, stud count formulas, and lumber waste factors behind BuildByMath framing calculators.

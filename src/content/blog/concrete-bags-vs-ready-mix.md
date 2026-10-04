@@ -3,7 +3,7 @@ title: "Concrete Bags vs. Ready-Mix: Which Should You Use?"
 description: "A complete comparison of bagged concrete vs. ready-mix concrete — cost, convenience, strength, and when to use each one."
 publishedAt: "2026-06-02"
 updatedAt: "2026-06-13"
-author: "ConstructCalc Team"
+author: "BuildByMath Team"
 tags: ["concrete", "materials", "cost"]
 relatedCalculators: ["concrete-bags-calculator", "concrete-slab-calculator"]
 draft: false
@@ -131,4 +131,4 @@ Fast-setting concrete typically reaches the same final strength as standard conc
 
 ---
 
-**See also:** [Concrete Calculation Methodology](/methodology/concrete/) — bag yield tables, mix ratio formulas, slab volume derivations, and ACI 318 references behind ConstructCalc concrete calculators.
+**See also:** [Concrete Calculation Methodology](/methodology/concrete/) — bag yield tables, mix ratio formulas, slab volume derivations, and ACI 318 references behind BuildByMath concrete calculators.

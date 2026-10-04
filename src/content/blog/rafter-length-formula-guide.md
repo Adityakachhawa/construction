@@ -3,7 +3,7 @@ title: "Rafter Length Formula Guide: How to Calculate Roof Rafters"
 description: "How to calculate rafter length, ridge height, bird's mouth dimensions, and total lumber for any roof configuration."
 publishedAt: "2026-06-08"
 updatedAt: "2026-06-13"
-author: "ConstructCalc Team"
+author: "BuildByMath Team"
 tags: ["framing", "roofing", "calculation"]
 relatedCalculators: ["rafter-calculator", "roof-pitch-calculator", "lumber-calculator"]
 draft: false
@@ -129,4 +129,4 @@ Use a speed square and a story pole (a straight stick marked with your rise-per-
 
 ---
 
-**See also:** [Framing Calculation Methodology](/methodology/framing/) — IRC R602 references, rafter length formulas, board-foot calculations, and lumber waste factors behind ConstructCalc framing calculators.
+**See also:** [Framing Calculation Methodology](/methodology/framing/) — IRC R602 references, rafter length formulas, board-foot calculations, and lumber waste factors behind BuildByMath framing calculators.

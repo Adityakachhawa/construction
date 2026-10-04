@@ -3,7 +3,7 @@ title: "Paver Base Calculator: How to Build a Stable Paver Patio"
 description: "How much gravel and sand for a paver patio or walkway. Calculator guide, base depth requirements, and installation tips."
 publishedAt: "2026-06-13"
 updatedAt: "2026-06-13"
-author: "ConstructCalc Team"
+author: "BuildByMath Team"
 tags: ["masonry", "paver", "landscaping"]
 relatedCalculators: ["paver-base-calculator", "gravel-calculator", "sand-calculator"]
 draft: false
@@ -75,4 +75,4 @@ The base will settle unevenly under load and over time. Individual pavers will r
 
 ---
 
-**See also:** [Excavation Calculation Methodology](/methodology/excavation/) — volume formulas, bulk density tables, swell/shrink factors, and OSHA trench safety references behind ConstructCalc excavation calculators.
+**See also:** [Excavation Calculation Methodology](/methodology/excavation/) — volume formulas, bulk density tables, swell/shrink factors, and OSHA trench safety references behind BuildByMath excavation calculators.

@@ -3,7 +3,7 @@ title: "Excavation Cost Guide: Pricing, Equipment, and Planning"
 description: "How much does excavation cost? Complete guide to excavation pricing, equipment rental, soil disposal, and volume calculation."
 publishedAt: "2026-06-11"
 updatedAt: "2026-06-13"
-author: "ConstructCalc Team"
+author: "BuildByMath Team"
 tags: ["excavation", "cost", "guide"]
 relatedCalculators: ["excavation-calculator", "gravel-calculator", "topsoil-calculator"]
 draft: false
@@ -93,4 +93,4 @@ Cut and fill is a grading technique where soil removed from high areas (cut) is 
 
 ---
 
-**See also:** [Excavation Calculation Methodology](/methodology/excavation/) — volume formulas, bulk density tables, swell/shrink factors, and OSHA trench safety references behind ConstructCalc excavation calculators.
+**See also:** [Excavation Calculation Methodology](/methodology/excavation/) — volume formulas, bulk density tables, swell/shrink factors, and OSHA trench safety references behind BuildByMath excavation calculators.

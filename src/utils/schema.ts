@@ -93,7 +93,7 @@ export function buildArticleSchema(opts: {
     dateModified: opts.updatedAt ?? opts.publishedAt,
     author: {
       '@type': 'Person',
-      name: opts.authorName ?? 'ConstructCalc Team',
+      name: opts.authorName ?? 'BuildByMath Team',
     },
     publisher: {
       '@type': 'Organization',

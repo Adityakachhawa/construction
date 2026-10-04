@@ -3,7 +3,7 @@ title: "How Much Concrete Do I Need? Complete Guide"
 description: "Learn exactly how to calculate concrete for any project — slabs, footings, driveways, and columns. With formula walkthrough and ordering tips."
 publishedAt: "2026-06-01"
 updatedAt: "2026-06-13"
-author: "ConstructCalc Team"
+author: "BuildByMath Team"
 tags: ["concrete", "calculation", "guide"]
 relatedCalculators: ["concrete-slab-calculator", "concrete-bags-calculator", "concrete-footing-calculator"]
 draft: false
@@ -121,4 +121,4 @@ Cement is an ingredient in concrete. Concrete = cement + sand + aggregate + wate
 
 ---
 
-**See also:** [Concrete Calculation Methodology](/methodology/concrete/) — the formula derivations, bag yield tables, waste factors, and ACI 318 references behind ConstructCalc concrete calculators.
+**See also:** [Concrete Calculation Methodology](/methodology/concrete/) — the formula derivations, bag yield tables, waste factors, and ACI 318 references behind BuildByMath concrete calculators.
