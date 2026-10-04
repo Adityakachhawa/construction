@@ -1,4 +1,4 @@
-export const SITE_URL = 'https://constructcalc.com';
+export const SITE_URL = 'https://buildbymath.com';
 export const SITE_NAME = 'BuildByMath';
 export const SITE_DESCRIPTION =
   'Free online construction calculators for concrete, framing, decking, fencing, and more.';

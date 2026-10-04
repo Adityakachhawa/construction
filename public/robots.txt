@@ -1,6 +1,6 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://constructcalc.com/sitemap.xml
+Sitemap: https://buildbymath.com/sitemap.xml
 
 Disallow: /api/

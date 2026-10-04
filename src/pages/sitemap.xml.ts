@@ -3,7 +3,7 @@ import { calculatorRegistry } from '../data/registry';
 import { categories } from '../data/categories';
 import { getCollection } from 'astro:content';
 
-const SITE_URL = 'https://constructcalc.com';
+const SITE_URL = 'https://buildbymath.com';
 
 function xmlEntry(url: string, lastmod: string, changefreq: string, priority: string) {
   return `  <url>
