@@ -17,14 +17,14 @@ guides.sort((a, b) => b.data.publishedAt.localeCompare(a.data.publishedAt));
 
 <BaseLayout meta={meta}>
   <div class="max-w-6xl mx-auto px-4 sm:px-6 py-10">
-    <h1 class="text-2xl sm:text-3xl font-bold text-[var(--color-text-primary)]">Construction Guides</h1>
-    <p class="mt-2 text-[var(--color-text-secondary)]">
+    <h1 class="text-2xl sm:text-3xl font-bold text-(--color-text-primary)">Construction Guides</h1>
+    <p class="mt-2 text-(--color-text-secondary)">
       In-depth, step-by-step guides for every stage of your construction project.
     </p>
 
     {guides.length === 0 ? (
-      <div class="mt-12 text-center py-16 rounded-xl border border-dashed border-[var(--color-border)]">
-        <p class="text-[var(--color-text-muted)]">Guides coming soon.</p>
+      <div class="mt-12 text-center py-16 rounded-xl border border-dashed border-(--color-border)">
+        <p class="text-(--color-text-muted)">Guides coming soon.</p>
       </div>
     ) : (
       <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -33,17 +33,17 @@ guides.sort((a, b) => b.data.publishedAt.localeCompare(a.data.publishedAt));
           return (
             <a
               href={`/guides/${slug}/`}
-              class="group flex flex-col gap-3 p-6 rounded-xl border border-[var(--color-border)] bg-white hover:border-[var(--color-primary)] hover:shadow-[var(--shadow-md)] transition-all"
+              class="group flex flex-col gap-3 p-6 rounded-xl border border-(--color-border) bg-white hover:border-(--color-primary) hover:shadow-(--shadow-md) transition-all"
             >
-              <h2 class="font-semibold text-[var(--color-text-primary)] leading-snug group-hover:text-[var(--color-primary)] transition-colors">
+              <h2 class="font-semibold text-(--color-text-primary) leading-snug group-hover:text-(--color-primary) transition-colors">
                 {guide.data.title}
               </h2>
-              <p class="text-sm text-[var(--color-text-secondary)] leading-relaxed flex-1">
+              <p class="text-sm text-(--color-text-secondary) leading-relaxed flex-1">
                 {guide.data.description}
               </p>
-              <div class="flex items-center justify-between text-xs text-[var(--color-text-muted)]">
+              <div class="flex items-center justify-between text-xs text-(--color-text-muted)">
                 {guide.data.readingTime && <span>{guide.data.readingTime} min read</span>}
-                <span class="text-[var(--color-primary)] font-medium">Read guide →</span>
+                <span class="text-(--color-primary) font-medium">Read guide →</span>
               </div>
             </a>
           );
