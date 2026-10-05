@@ -1,0 +1,93 @@
+---
+// src/components/calculators/content/DrywallContent.astro
+---
+
+<div class="calc-content-prose">
+  <h2>How to Use the Drywall Calculator</h2>
+  <p>
+    Planning a drywall project requires precise estimates to avoid multiple trips to the hardware store or wasting money on excess material. Our <strong>free drywall calculator by square footage</strong> takes the guesswork out of the process.
+  </p>
+  <p>To get started:</p>
+  <ol>
+    <li><strong>Measure your surfaces:</strong> Enter the height and width of each wall. You can add up to 50 walls.</li>
+    <li><strong>Select your sheet size:</strong> Choose between standard 4×8 sheets, or larger 4×10 and 4×12 sheets.</li>
+    <li><strong>Get your estimate:</strong> The calculator automatically outputs the estimated number of sheets to order, including a 10% waste allowance.</li>
+  </ol>
+
+  <h2>Can I use this drywall calculator for walls and ceiling?</h2>
+  <p>
+    Yes, but because ceilings and walls typically have different dimensions, they must be calculated separately.
+  </p>
+  <ul>
+    <li><strong>Step 1:</strong> Calculate your walls (e.g., 9 ft height × 12 ft width × 4 walls) and note the estimated materials.</li>
+    <li><strong>Step 2:</strong> Calculate your ceiling separately by treating it as a single wall (e.g., 12 ft length × 12 ft width × 1 wall).</li>
+    <li><strong>Step 3:</strong> Combine the estimates for your total materials.</li>
+  </ul>
+  <p>
+    For a 12×12 room, your four walls (12×9 ft) equal 432 ft². Your ceiling (12×12 ft) equals 144 ft². Calculate them separately, then add the sheet counts and joint compound quantities together for your final order.
+  </p>
+
+  <h2>What the Calculator Estimates</h2>
+  <p>Beyond just sheet count, this tool provides a comprehensive material list for your project:</p>
+  <ul>
+    <li><strong>Drywall Sheets:</strong> The total number of panels to order, factoring in a 10% allowance for waste and cuts.</li>
+    <li><strong>Total Surface Area:</strong> The net area of the walls or other surfaces entered in the current calculation.</li>
+    <li><strong>Joint Compound (Mud):</strong> <strong>How much drywall mud do I need?</strong> We calculate this automatically. The estimate provides the gallons of joint compound based on a coverage assumption of 0.011 gallons per square foot (estimated for a tape coat plus three finish coats). Quantities will vary by finish method.</li>
+    <li><strong>Drywall Tape:</strong> The linear feet of paper or mesh tape needed to finish all seams and corners.</li>
+  </ul>
+
+  <h2>Worked Example: How Many Sheets of Drywall Do I Need?</h2>
+  <p>
+    Let's say you want to drywall a standard 12×12 room with 9-foot ceilings. 
+  </p>
+  <ul>
+    <li>You have four walls. Two are 12×9 ft (108 ft² each), and the other two are also 12×9 ft (108 ft² each).</li>
+    <li>Total wall area = 432 ft².</li>
+    <li>You decide to use standard 4×8 sheets (32 ft² per sheet).</li>
+    <li>432 ÷ 32 = 13.5 sheets net.</li>
+    <li>Add a 10% waste factor: ceil(13.5 × 1.10) = 15. You will need to order <strong>15 sheets</strong>.</li>
+  </ul>
+  <p>If you also include the ceiling (12×12 = 144 ft²), your total area becomes 576 ft². 576 ÷ 32 = 18 sheets net. Adding a 10% waste factor (ceil(18 × 1.10)) brings your total order to <strong>20 sheets</strong>.</p>
+
+  <h2>Common Measurement Considerations</h2>
+  <p>
+    Please note that our current calculator does not have separate input fields to automatically deduct doors and windows. When using a <strong>drywall calculator for a room</strong>, you should manually account for these openings when planning your material quantity. The calculator automatically includes a 10% waste allowance, which helps cover standard cuts and offcuts. However, if your space has unusually large openings—such as double sliding doors or archways—you should subtract those door and window openings manually from your total area if needed to avoid over-ordering.
+  </p>
+</div>
+
+<style>
+  .calc-content-prose {
+    padding: 1.5rem 0;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    font-size: 1.0625rem;
+  }
+  .calc-content-prose h2 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    margin: 2rem 0 1rem;
+    letter-spacing: -0.02em;
+  }
+  .calc-content-prose h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 1.5rem 0 0.75rem;
+  }
+  .calc-content-prose p {
+    margin-bottom: 1.25rem;
+  }
+  .calc-content-prose ul,
+  .calc-content-prose ol {
+    margin: 0 0 1.5rem 1.5rem;
+    padding: 0;
+  }
+  .calc-content-prose li {
+    margin-bottom: 0.5rem;
+  }
+  .calc-content-prose strong {
+    color: var(--color-text-primary);
+    font-weight: 600;
+  }
+</style>
