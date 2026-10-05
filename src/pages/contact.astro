@@ -81,33 +81,112 @@ const breadcrumbs = [
 
         <div class="contact-form-wrap">
           <h2>Send a Message</h2>
-          <form class="contact-form" name="contact" method="POST" action="/contact-success/">
+
+          <!-- Success banner (hidden until submission succeeds) -->
+          <div id="form-success" class="form-banner form-banner--success" role="alert" aria-live="polite" hidden>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            <div>
+              <strong>Message sent!</strong> Thanks for reaching out — we typically reply within 1–2 business days.
+            </div>
+          </div>
+
+          <!-- Error banner (hidden until a submission error occurs) -->
+          <div id="form-error" class="form-banner form-banner--error" role="alert" aria-live="polite" hidden>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <div id="form-error-text">Something went wrong. Please try again.</div>
+          </div>
+
+          <!--
+            action: Formspree endpoint (fallback for non-JS; JS intercepts and uses fetch).
+            The Accept: application/json header in the fetch call tells Formspree to
+            return JSON instead of redirecting, preventing the 405 error.
+          -->
+          <form
+            id="contact-form"
+            class="contact-form"
+            name="contact"
+            method="POST"
+            action="https://formspree.io/f/xppqznyz"
+            novalidate
+            aria-label="Contact form"
+          >
+            <!-- Honeypot: Formspree ignores submissions where this field is filled.
+                 Hidden via CSS — real users never see or fill it. -->
+            <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none" />
+
             <div class="form-group">
-              <label for="name" class="form-label">Your Name</label>
-              <input type="text" id="name" name="name" class="form-input" placeholder="John Smith" required />
+              <label for="name" class="form-label">Your Name <span class="required-mark" aria-hidden="true">*</span></label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                class="form-input"
+                placeholder="John Smith"
+                required
+                autocomplete="name"
+                aria-required="true"
+                aria-describedby="name-error"
+              />
+              <span id="name-error" class="field-error" role="alert" aria-live="polite" hidden>Please enter your name.</span>
             </div>
 
             <div class="form-group">
-              <label for="email" class="form-label">Email Address</label>
-              <input type="email" id="email" name="email" class="form-input" placeholder="you@example.com" required />
+              <label for="email" class="form-label">Email Address <span class="required-mark" aria-hidden="true">*</span></label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                class="form-input"
+                placeholder="you@example.com"
+                required
+                autocomplete="email"
+                aria-required="true"
+                aria-describedby="email-error"
+              />
+              <span id="email-error" class="field-error" role="alert" aria-live="polite" hidden>Please enter a valid email address.</span>
             </div>
 
             <div class="form-group">
-              <label for="subject" class="form-label">Subject</label>
-              <select id="subject" name="subject" class="form-input">
+              <label for="subject" class="form-label">Subject <span class="required-mark" aria-hidden="true">*</span></label>
+              <select
+                id="subject"
+                name="subject"
+                class="form-input"
+                required
+                aria-required="true"
+                aria-describedby="subject-error"
+              >
+                <option value="">— Please select —</option>
                 <option value="formula-error">Report a formula error</option>
                 <option value="suggest-calculator">Suggest a calculator</option>
                 <option value="general">General question</option>
                 <option value="other">Other</option>
               </select>
+              <span id="subject-error" class="field-error" role="alert" aria-live="polite" hidden>Please select a subject.</span>
             </div>
 
             <div class="form-group">
-              <label for="message" class="form-label">Message</label>
-              <textarea id="message" name="message" class="form-input form-textarea" placeholder="Describe your question or issue..." rows="5" required></textarea>
+              <label for="message" class="form-label">Message <span class="required-mark" aria-hidden="true">*</span></label>
+              <textarea
+                id="message"
+                name="message"
+                class="form-input form-textarea"
+                placeholder="Describe your question or issue..."
+                rows="5"
+                required
+                aria-required="true"
+                aria-describedby="message-error"
+              ></textarea>
+              <span id="message-error" class="field-error" role="alert" aria-live="polite" hidden>Please enter a message.</span>
             </div>
 
-            <button type="submit" class="form-submit">Send Message</button>
+            <button type="submit" id="form-submit" class="form-submit" aria-busy="false">
+              <span class="submit-label">Send Message</span>
+              <span class="submit-spinner" aria-hidden="true" hidden>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="spinner-icon"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                Sending…
+              </span>
+            </button>
           </form>
 
           <p class="form-note">We typically respond within 1–2 business days. For urgent formula issues, please include the calculator name and the inputs you used.</p>
@@ -117,6 +196,146 @@ const breadcrumbs = [
     </div>
   </div>
 </BaseLayout>
+
+<script>
+  (function () {
+    const FORMSPREE_URL = 'https://formspree.io/f/xppqznyz';
+
+    const form      = document.getElementById('contact-form') as HTMLFormElement | null;
+    const submitBtn = document.getElementById('form-submit') as HTMLButtonElement | null;
+    const successEl = document.getElementById('form-success') as HTMLElement | null;
+    const errorEl   = document.getElementById('form-error') as HTMLElement | null;
+    const errorText = document.getElementById('form-error-text') as HTMLElement | null;
+
+    if (!form || !submitBtn) return;
+
+    // ─── Helpers ────────────────────────────────────────────────────────────────
+
+    function setFieldError(input: HTMLElement, errorId: string, show: boolean) {
+      const errorEl = document.getElementById(errorId);
+      if (!errorEl) return;
+      if (show) {
+        input.setAttribute('aria-invalid', 'true');
+        errorEl.hidden = false;
+      } else {
+        input.removeAttribute('aria-invalid');
+        errorEl.hidden = true;
+      }
+    }
+
+    function isValidEmail(val: string): boolean {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val.trim());
+    }
+
+    // Clear field error on user input
+    function clearOnInput(id: string, errorId: string) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('input', () => setFieldError(el, errorId, false));
+      el.addEventListener('change', () => setFieldError(el, errorId, false));
+    }
+    clearOnInput('name',    'name-error');
+    clearOnInput('email',   'email-error');
+    clearOnInput('subject', 'subject-error');
+    clearOnInput('message', 'message-error');
+
+    // ─── Client-side validation ─────────────────────────────────────────────────
+
+    function validate(): boolean {
+      let ok = true;
+
+      const nameEl    = document.getElementById('name')    as HTMLInputElement;
+      const emailEl   = document.getElementById('email')   as HTMLInputElement;
+      const subjectEl = document.getElementById('subject') as HTMLSelectElement;
+      const messageEl = document.getElementById('message') as HTMLTextAreaElement;
+
+      if (!nameEl.value.trim()) {
+        setFieldError(nameEl, 'name-error', true);
+        ok = false;
+      }
+      if (!emailEl.value.trim() || !isValidEmail(emailEl.value)) {
+        setFieldError(emailEl, 'email-error', true);
+        ok = false;
+      }
+      if (!subjectEl.value) {
+        setFieldError(subjectEl, 'subject-error', true);
+        ok = false;
+      }
+      if (!messageEl.value.trim()) {
+        setFieldError(messageEl, 'message-error', true);
+        ok = false;
+      }
+
+      return ok;
+    }
+
+    // ─── UI state helpers ────────────────────────────────────────────────────────
+
+    function setSubmitting(busy: boolean) {
+      const label   = submitBtn!.querySelector('.submit-label') as HTMLElement;
+      const spinner = submitBtn!.querySelector('.submit-spinner') as HTMLElement;
+      submitBtn!.disabled = busy;
+      submitBtn!.setAttribute('aria-busy', String(busy));
+      label.hidden   = busy;
+      spinner.hidden = !busy;
+    }
+
+    function showBanner(type: 'success' | 'error', message?: string) {
+      if (successEl) successEl.hidden = type !== 'success';
+      if (errorEl)   errorEl.hidden   = type !== 'error';
+      if (type === 'error' && errorText && message) {
+        errorText.textContent = message;
+      }
+      // Scroll banner into view
+      const banner = type === 'success' ? successEl : errorEl;
+      banner?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function hideBanners() {
+      if (successEl) successEl.hidden = true;
+      if (errorEl)   errorEl.hidden   = true;
+    }
+
+    // ─── Submit handler ──────────────────────────────────────────────────────────
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideBanners();
+
+      if (!validate()) {
+        // Focus the first invalid field for accessibility
+        const firstInvalid = form.querySelector('[aria-invalid="true"]') as HTMLElement | null;
+        firstInvalid?.focus();
+        return;
+      }
+
+      setSubmitting(true);
+
+      try {
+        const data = new FormData(form);
+        const response = await fetch(FORMSPREE_URL, {
+          method: 'POST',
+          body: data,
+          headers: { 'Accept': 'application/json' },
+        });
+
+        if (response.ok) {
+          showBanner('success');
+          form.reset();
+        } else {
+          const json = await response.json().catch(() => ({}));
+          const msg = (json as any)?.errors?.map((err: any) => err.message).join(' ') ||
+                      'Submission failed. Please try again.';
+          showBanner('error', msg);
+        }
+      } catch {
+        showBanner('error', 'Network error — please check your connection and try again.');
+      } finally {
+        setSubmitting(false);
+      }
+    });
+  })();
+</script>
 
 <style>
   .page-header {
@@ -210,6 +429,30 @@ const breadcrumbs = [
     line-height: 1.6;
   }
 
+  /* ── Banners ── */
+  .form-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.625rem;
+    padding: 0.875rem 1rem;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin-bottom: 1.25rem;
+  }
+  .form-banner svg { flex-shrink: 0; margin-top: 0.1em; }
+  .form-banner--success {
+    background: #f0fdf4;
+    border: 1px solid #86efac;
+    color: #166534;
+  }
+  .form-banner--error {
+    background: #fef2f2;
+    border: 1px solid #fca5a5;
+    color: #991b1b;
+  }
+
+  /* ── Form ── */
   .contact-form {
     display: flex;
     flex-direction: column;
@@ -226,6 +469,11 @@ const breadcrumbs = [
     font-size: 0.875rem;
     font-weight: 600;
     color: var(--color-text-primary);
+  }
+
+  .required-mark {
+    color: var(--color-primary);
+    margin-left: 0.125rem;
   }
 
   .form-input {
@@ -246,11 +494,26 @@ const breadcrumbs = [
     box-shadow: 0 0 0 3px var(--color-primary-50);
   }
 
+  .form-input[aria-invalid="true"] {
+    border-color: #ef4444;
+  }
+  .form-input[aria-invalid="true"]:focus {
+    box-shadow: 0 0 0 3px #fee2e2;
+  }
+
   .form-textarea {
     resize: vertical;
     min-height: 120px;
   }
 
+  /* Inline field errors */
+  .field-error {
+    font-size: 0.8125rem;
+    color: #dc2626;
+    font-weight: 500;
+  }
+
+  /* ── Submit button ── */
   .form-submit {
     padding: 0.75rem 1.5rem;
     background: var(--color-primary);
@@ -260,12 +523,33 @@ const breadcrumbs = [
     border: none;
     border-radius: 9999px;
     cursor: pointer;
-    transition: background 150ms, transform 150ms;
+    transition: background 150ms, transform 150ms, opacity 150ms;
     align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
   }
-  .form-submit:hover {
+  .form-submit:hover:not(:disabled) {
     background: var(--color-primary-hover);
     transform: translateY(-1px);
+  }
+  .form-submit:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* Spinner animation */
+  .submit-spinner {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+  .spinner-icon {
+    animation: spin 0.9s linear infinite;
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
   }
 
   .form-note {
