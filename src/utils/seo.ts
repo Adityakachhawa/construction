@@ -56,6 +56,9 @@ export function buildBlogTagMeta(tag: string, postCount: number): MetaProps {
     canonical: buildCanonical(`/blog/tag/${tag}/`),
     ogImage: DEFAULT_OG_IMAGE,
     ogType: 'website',
+    // Tag archive pages are navigation/filtering pages, not primary search landing pages.
+    // Keep them crawlable (follow) so Google can discover linked articles, but exclude from index.
+    noindex: true,
   };
 }
 
