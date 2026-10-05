@@ -47,9 +47,10 @@ import GroutDiagram from '../../components/calculators/GroutDiagram.astro';
 import PostHoleDiagram from '../../components/calculators/PostHoleDiagram.astro';
 import ReferencesSection from '../../components/calculators/ReferencesSection.astro';
 import MethodologyLink from '../../components/calculators/MethodologyLink.astro';
+import DrywallContent from '../../components/calculators/content/DrywallContent.astro';
 import type { GetStaticPaths } from 'astro';
 
-// Diagram lookup — add new slugs here instead of adding more booleans
+// Diagram lookup â€” add new slugs here instead of adding more booleans
 const diagramMap: Record<string, any> = {
   'concrete-slab-calculator':       SlabDiagram,
   'concrete-slab-rebar-calculator': SlabRebarDiagram,
@@ -173,4 +174,5 @@ const intro = calc.seo.intro ?? calc.seo.description;
   {calc.references?.length && (
     <ReferencesSection slot="references" references={calc.references} />
   )}
+  {calc.slug === 'drywall-calculator' && <DrywallContent slot="content" />}
 </CalculatorLayout>
