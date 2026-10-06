@@ -297,7 +297,7 @@ export const concreteSlab: CalculatorConfig = {
     {
       question: 'How much extra concrete should I order?',
       answer:
-        'Most contractors recommend ordering 5–10% extra concrete to account for spillage, uneven subgrade, and formwork variation. Our calculator automatically provides a recommended bag and yardage count that includes a 10% waste allowance.',
+        'Most contractors recommend ordering 5–10% extra concrete to account for spillage, uneven subgrade, and formwork variation. Our calculator automatically provides recommended bag quantities that include a 10% waste allowance. For ready-mix orders, use the calculated cubic-yard volume and discuss the appropriate order quantity with your supplier based on site conditions.',
     },
     {
       question: 'How much does a concrete slab cost?',
