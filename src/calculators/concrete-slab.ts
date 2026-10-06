@@ -230,9 +230,9 @@ export const concreteSlab: CalculatorConfig = {
     },
   ],
   seo: {
-    title: 'Concrete Slab Calculator',
+    title: 'Concrete Slab Calculator — Yards, Bags & Cost',
     description:
-      'Free concrete slab calculator — enter length, width, and thickness to instantly get cubic yards, cubic feet, and cubic meters for your project.',
+      'Free concrete slab calculator by square feet. Enter length, width, and thickness to instantly calculate cubic yards, 80 lb bags, and estimated cost.',
     h1: 'Concrete Slab Calculator',
     focusKeyword: 'concrete slab calculator',
   },
@@ -251,16 +251,17 @@ export const concreteSlab: CalculatorConfig = {
       label: 'Convert thickness to feet',
       formula: 'Thickness (ft) = Thickness (in) ÷ 12',
       description:
-        'Thickness is entered in inches but all three dimensions must share the same unit before multiplying',
+        'Thickness is entered in inches, but length and width are in feet. All dimensions must share the same unit.',
     },
     {
       label: 'Calculate volume in cubic feet',
       formula: 'Volume (ft³) = Length (ft) × Width (ft) × Thickness (ft)',
+      description: 'This is the exact volume before any waste allowance is added.'
     },
     {
-      label: 'Convert to cubic yards',
+      label: 'Calculate concrete calculator cubic yards',
       formula: 'Volume (yd³) = Volume (ft³) ÷ 27',
-      description: 'There are 27 cubic feet in one cubic yard — the standard US ready-mix order unit',
+      description: 'There are 27 cubic feet in one cubic yard, which is the standard US ready-mix order unit.',
     },
     {
       label: 'Convert to cubic meters (optional)',
@@ -269,34 +270,39 @@ export const concreteSlab: CalculatorConfig = {
   ],
   faq: [
     {
-      question: 'How thick should a concrete slab be?',
+      question: 'How much concrete do I need for a slab?',
       answer:
-        'For most residential applications, 4 inches (100 mm) is standard. Driveways typically need 4–6 inches, garage floors 4–6 inches, and structural slabs can be 6–8 inches or more depending on load requirements.',
+        'To find out how much concrete you need, multiply the length by the width to get the square footage, then multiply by the thickness in feet to get cubic feet. Divide by 27 to get cubic yards. Our concrete slab calculator by square feet does this automatically and includes a recommended 10% waste allowance.',
     },
     {
-      question: 'How many bags of concrete do I need for my slab?',
+      question: 'How much concrete do I need for a 10×10 slab?',
       answer:
-        'An 80 lb bag of concrete mix yields about 0.60 cubic feet. Divide your total cubic feet by 0.60 to get the bag count. For larger pours, ordering ready-mix concrete by the cubic yard is more economical than bags.',
+        'A 10×10 slab at a standard 4-inch thickness requires 1.23 cubic yards of concrete (33.33 cubic feet). If you are using bags, you will need exactly 56 of the 80 lb bags, or 62 bags if you include a 10% waste allowance.',
     },
     {
-      question: 'What is a cubic yard of concrete?',
+      question: 'How much concrete do I need for a 12×12 slab?',
       answer:
-        'A cubic yard is 3 ft × 3 ft × 3 ft = 27 cubic feet. Ready-mix concrete in the US is ordered and priced by the cubic yard. One cubic yard weighs approximately 4,000 lbs (1,814 kg).',
+        'A 12×12 slab at 4 inches thick requires 1.78 cubic yards of concrete (48 cubic feet). For an exact pour, you need 80 of the 80 lb bags, but you should order 88 bags to account for 10% waste.',
     },
     {
-      question: 'Should I order extra concrete?',
+      question: 'How many 80 lb bags of concrete do I need?',
       answer:
-        "Yes — most contractors recommend ordering 5–10% extra to account for spillage, uneven subgrade, and formwork variation. Running short mid-pour is far more costly than a little left over.",
+        'One 80 lb bag of concrete mix yields about 0.60 cubic feet. To find your bag count, divide your total cubic feet by 0.60. For example, a project needing 30 cubic feet will require exactly fifty 80 lb bags. Remember to order an extra 10% for spills and uneven subgrades.',
     },
     {
-      question: 'Do I need rebar or wire mesh?',
+      question: 'How do I calculate cubic yards of concrete?',
       answer:
-        "Rebar or welded wire mesh is strongly recommended for slabs larger than 10 × 10 ft, driveways, and any slab subject to heavy loads. Reinforcement doesn't change concrete volume but significantly improves crack resistance.",
+        'First calculate the total volume in cubic feet by multiplying Length (ft) × Width (ft) × Thickness (ft). Since there are 27 cubic feet in a cubic yard, divide your total cubic feet by 27 to get the final cubic yards.',
     },
     {
-      question: 'How do I calculate concrete for an irregular shape?',
+      question: 'How much extra concrete should I order?',
       answer:
-        'Break the area into rectangles, run this calculator for each section, and add the volumes. For example, an L-shaped slab can be split into two rectangles.',
+        'Most contractors recommend ordering 5–10% extra concrete to account for spillage, uneven subgrade, and formwork variation. Our calculator automatically provides a recommended bag and yardage count that includes a 10% waste allowance.',
+    },
+    {
+      question: 'How much does a concrete slab cost?',
+      answer:
+        'Concrete slab costs vary by region, but standard ready-mix concrete typically ranges from $100 to $175 per cubic yard. For a 10×10 slab (1.23 cubic yards), the raw material cost is roughly $123 to $215, not including labor, delivery fees, or site preparation.',
     },
   ],
 };
