@@ -256,9 +256,9 @@ export const rebarCalculator: CalculatorConfig = {
   unitSystems: ['imperial', 'metric'],
   relatedCalculators: ['concrete-slab-calculator', 'deck-footing-calculator', 'retaining-wall-calculator'],
   seo: {
-    title: 'Rebar Calculator — Linear Feet, Grid Bars / Lines & Weight',
+    title: 'Rebar Calculator for Slabs | Spacing, Footage & Weight',
     description:
-      'Free rebar calculator — enter slab length, width, and bar spacing to calculate total linear feet of rebar, number of Grid Bars / Lines, and estimated weight for your concrete project.',
+      'Use our free rebar calculator to estimate how much rebar you need for a concrete slab. Calculate total linear feet, rebar weight, and spacing layout.',
     h1: 'Rebar Calculator',
     focusKeyword: 'rebar calculator',
   },
@@ -298,45 +298,45 @@ export const rebarCalculator: CalculatorConfig = {
   ],
   faq: [
     {
+      question: 'How much rebar do I need?',
+      answer:
+        'The amount of rebar you need depends on your slab dimensions, bar spacing, chosen bar size, and waste percentage. A standard bidirectional grid requires rows and columns calculated by dividing the slab length and width by the spacing. Our calculator computes the total linear footage and estimated weight based on these factors.'
+    },
+    {
       question: 'How much rebar do I need for a concrete slab?',
       answer:
-        'For a 10 × 10 ft slab with 12-inch spacing, you need (⌊10/1⌋+1) rows × 10 ft + (⌊10/1⌋+1) columns × 10 ft = 11 × 10 + 11 × 10 = 220 linear feet of rebar (plus 10% waste = 242 ft). The formula counts bars in both directions — use the calculator above for any slab size and spacing.',
+        'For a typical concrete slab, rebar is laid out in a grid pattern. To find the exact quantity, measure the length and width of the pour and determine the required bar spacing. For example, a 10×10 ft slab with 12-inch spacing requires 22 total grid bars and 242 linear feet of rebar (including 10% waste).'
     },
     {
-      question: 'What is the standard rebar spacing for a concrete slab?',
+      question: 'How much rebar do I need for a slab?',
       answer:
-        'Standard rebar spacing depends on the application: residential slabs and patios 12 inches (300 mm), garage floors and driveways 6–8 inches (150–200 mm), structural slabs 6 inches (150 mm) or less as specified by an engineer. Closer spacing adds strength but increases material cost significantly.',
+        'The exact amount is dictated by the grid layout. First, count the number of bars running the length, and the number of bars running the width. Multiply the number of rows by the width and columns by the length, add the two together, and include a waste factor (typically 10%).'
     },
     {
-      question: 'What size rebar should I use for a concrete slab?',
+      question: 'What spacing should I use for rebar?',
       answer:
-        '#4 rebar (1/2 inch diameter) is the most common choice for residential slabs, driveways, and patios. #3 rebar (3/8 inch) is used for light-duty applications. #5 (5/8 inch) or larger is used for structural slabs, footings, and walls. This calculator uses #4 rebar for weight estimates — adjust if you are using a different size.',
+        'Common spacing and rebar sizes vary by project. Residential examples may use 12-inch spacing and #4 rebar, but actual reinforcement requirements depend on slab design, loads, site conditions, and applicable codes. Verify project-specific requirements with a qualified professional or local building authority.'
     },
     {
-      question: 'How do I calculate rebar spacing for a concrete slab?',
+      question: 'How is rebar weight calculated?',
       answer:
-        'Divide the slab length by the desired spacing to get the number of sections, then add 1 for the starting bar. For a 10-foot slab with 12-inch spacing: 10 ÷ 1 = 10 sections + 1 = 11 bars. Repeat for the other direction. The result is the bar count for a bidirectional grid. This calculator handles both directions automatically.',
+        'Rebar weight is calculated by multiplying the total linear footage of the rebar grid by the specific weight per foot of the chosen rebar size. For example, standard #4 rebar weighs 0.668 pounds per foot. If you need 100 linear feet of #4 rebar, the total estimated weight is 66.8 pounds.'
     },
     {
-      question: 'Do I need rebar in a concrete slab?',
+      question: 'How much rebar do I need for a 30×40 slab?',
       answer:
-        'Rebar is strongly recommended for most slabs. A plain concrete slab will crack under load and temperature changes — rebar holds the pieces together and maintains structural integrity after cracking. Exceptions: very small slabs (under 4 × 4 ft) and garden paths with no vehicle traffic may use wire mesh or fiber reinforcement instead.',
+        'For a 30×40 ft slab using 16-inch spacing and 10% waste, you will need 23 rows and 31 columns, resulting in 54 total grid bars. This equates to 2,035 total linear feet of rebar. If using #4 rebar, the estimated weight would be approximately 1,359.4 lbs.'
     },
     {
-      question: 'How much waste should I add when ordering rebar?',
+      question: 'Can I calculate rebar by square foot?',
       answer:
-        'Add 10% waste to account for bar overlaps (typically 12–18 inches at splices), cuts at edges, and any measurement errors. For slabs with many cut bars at irregular edges, increase to 15%. This calculator applies your chosen waste percentage automatically — the default is 10%.',
+        'While some rough estimates use a fixed amount of rebar per square foot, it is not an accurate or safe method for purchasing material. The exact quantity needed can vary widely based on the dimensions of the slab, the required spacing, and the waste percentage. Our calculator uses the actual dimensions to provide a precise estimate.'
     },
     {
-      question: 'How much does rebar weigh per foot?',
+      question: 'What size rebar should I use?',
       answer:
-        '#3 rebar: 0.376 lbs/ft (0.560 kg/m). #4 rebar: 0.668 lbs/ft (0.994 kg/m). #5 rebar: 1.043 lbs/ft (1.552 kg/m). #6 rebar: 1.502 lbs/ft (2.235 kg/m). This calculator uses #4 rebar weight for estimates. For other sizes, multiply your total linear footage by the weight per foot listed here.',
-    },
-    {
-      question: 'What depth should rebar be placed in a concrete slab?',
-      answer:
-        'Rebar should be placed at the middle to lower-middle of the slab depth. For a 4-inch slab, center the rebar at 2 inches from the bottom (providing 2-inch cover). Use rebar chairs or dobies to hold the bars at the correct height — never lay rebar on the ground before pouring, as it will end up at the bottom with no concrete cover.',
-    },
+        'Common spacing and rebar sizes vary by project. Residential examples may use 12-inch spacing and #4 rebar, but actual reinforcement requirements depend on slab design, loads, site conditions, and applicable codes. Verify project-specific requirements with a qualified professional or local building authority.'
+    }
   ],
   orderCallout: true,
   wasteFactor: {

@@ -49,6 +49,7 @@ import ReferencesSection from '../../components/calculators/ReferencesSection.as
 import MethodologyLink from '../../components/calculators/MethodologyLink.astro';
 import DrywallContent from '../../components/calculators/content/DrywallContent.astro';
 import ConcreteSlabContent from '../../components/calculators/content/ConcreteSlabContent.astro';
+import RebarContent from '../../components/calculators/content/RebarContent.astro';
 import type { GetStaticPaths } from 'astro';
 
 // Diagram lookup â€” add new slugs here instead of adding more booleans
@@ -177,4 +178,5 @@ const intro = calc.seo.intro ?? calc.seo.description;
   )}
   {calc.slug === 'drywall-calculator' && <DrywallContent slot="content" />}
   {calc.slug === 'concrete-slab-calculator' && <ConcreteSlabContent slot="content" />}
+  {calc.slug === 'rebar-calculator' && <RebarContent slot="content" />}
 </CalculatorLayout>

@@ -1,0 +1,109 @@
+---
+// src/components/calculators/content/RebarContent.astro
+---
+
+<div class="calc-content-prose">
+  <h2>How to Use the Rebar Calculator</h2>
+  <p>
+    Whether you are planning a patio, driveway, or concrete slab, our <strong>rebar calculator</strong> makes it easy to estimate your material requirements.
+  </p>
+  <ol>
+    <li><strong>Enter Dimensions:</strong> Input the length and width of your concrete slab.</li>
+    <li><strong>Set Bar Spacing:</strong> Enter the on-center spacing for the rebar grid.</li>
+    <li><strong>Select Rebar Size:</strong> Choose the appropriate bar size (e.g., #4 rebar).</li>
+    <li><strong>Get Your Results:</strong> The calculator instantly outputs the total linear feet of rebar, the number of grid lines, and an estimated weight.</li>
+  </ol>
+
+  <h2>How Much Rebar Do I Need for a Concrete Slab?</h2>
+  <p>
+    The total amount of rebar you need is never a simple guess. It depends on several specific factors:
+  </p>
+  <ul>
+    <li>The <strong>slab length</strong> and <strong>slab width</strong>.</li>
+    <li>The on-center <strong>bar spacing</strong>.</li>
+    <li>The <strong>selected rebar size</strong> (which impacts weight).</li>
+    <li>Your chosen <strong>waste percentage</strong> for overlaps, splices, and edge cuts.</li>
+  </ul>
+  <p>
+    By entering these details into our <strong>rebar calculator for slab</strong> projects, you can generate a useful estimate of your material needs.
+  </p>
+
+  <h2>How Rebar Spacing Is Calculated</h2>
+  <p>
+    Our <strong>rebar spacing calculator</strong> uses a straightforward, grid-based methodology to determine how many bars run in each direction. The math works by calculating the number of rows and columns based on your dimensions and spacing:
+  </p>
+  <ul>
+    <li><strong>Rows</strong> = ⌊Length ÷ Spacing⌋ + 1</li>
+    <li><strong>Columns</strong> = ⌊Width ÷ Spacing⌋ + 1</li>
+    <li><strong>Linear Footage</strong> = (Rows × Width + Columns × Length) × (1 + Waste %)</li>
+  </ul>
+  <p>
+    This formula places one bar at the starting edge and then adds a bar for each calculated spacing interval across the slab. Depending on the slab dimension and spacing, the final bar may not land exactly at the opposite edge.
+  </p>
+
+  <h2>Rebar Weight Calculator</h2>
+  <p>
+    When ordering material, understanding the total weight is critical for delivery and handling. Our <strong>rebar weight calculator</strong> function uses the total calculated linear footage and multiplies it by the standardized weight per foot of your selected bar size. 
+  </p>
+  <p>
+    For example, standard #4 rebar (1/2-inch diameter) weighs 0.668 pounds per linear foot. If your project requires 200 feet of #4 rebar, the total estimated weight would be approximately 133.6 lbs.
+  </p>
+
+  <h2>How to Calculate Rebar by Square Foot</h2>
+  <p>
+    Many DIYers search for a <strong>rebar calculator by square foot</strong>, hoping for a simple multiplier. However, rebar quantity cannot safely be treated as a universal fixed amount per square foot. The actual quantity required changes drastically based on the bar spacing, the slab's length-to-width ratio, and the layout. Our calculator uses the actual slab dimensions and spacing to provide a useful linear footage estimate rather than relying on a flawed square-footage average.
+  </p>
+
+  <h2>Worked Examples</h2>
+  <p>Here are a few example slab dimensions and the resulting rebar quantities using the stated spacing, bar size, and waste settings:</p>
+  <ul>
+    <li><strong>10×10 slab:</strong> With 12-inch spacing, #4 rebar, and 10% waste, you will need 11 rows and 11 columns (22 total Grid Bars / Lines). The calculator returns a total of <strong>242 linear feet</strong> of rebar, with an estimated weight of <strong>161.7 lbs</strong>.</li>
+    <li><strong>12×12 slab:</strong> With 12-inch spacing, #4 rebar, and 10% waste, you will need 13 rows and 13 columns (26 total Grid Bars / Lines). The calculator returns a total of <strong>343.2 linear feet</strong> of rebar, with an estimated weight of <strong>229.3 lbs</strong>.</li>
+    <li><strong>30×40 slab:</strong> With 16-inch spacing, #4 rebar, and 10% waste, you will need 23 rows and 31 columns (54 total Grid Bars / Lines). The calculator returns a total of <strong>2,035 linear feet</strong> of rebar, with an estimated weight of <strong>1,359.4 lbs</strong>.</li>
+  </ul>
+
+  <h2>Waste and Ordering</h2>
+  <p>
+    Our calculator includes an adjustable waste percentage (defaulted to 10%). This allowance can help cover cuts, overlaps, and minor measurement variations. 
+  </p>
+  <p>
+    <em>Please note:</em> This tool provides an estimate of total linear footage and weight. It does not perform detailed stock-length optimization, lap-length design, bends, hooks, or detailed cutting schedules.
+  </p>
+</div>
+
+<style>
+  .calc-content-prose {
+    padding: 1.5rem 0;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    font-size: 1.0625rem;
+  }
+  .calc-content-prose h2 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    margin: 2rem 0 1rem;
+    letter-spacing: -0.02em;
+  }
+  .calc-content-prose h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 1.5rem 0 0.75rem;
+  }
+  .calc-content-prose p {
+    margin-bottom: 1.25rem;
+  }
+  .calc-content-prose ul,
+  .calc-content-prose ol {
+    margin: 0 0 1.5rem 1.5rem;
+    padding: 0;
+  }
+  .calc-content-prose li {
+    margin-bottom: 0.5rem;
+  }
+  .calc-content-prose strong {
+    color: var(--color-text-primary);
+    font-weight: 600;
+  }
+</style>
