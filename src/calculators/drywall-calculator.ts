@@ -5,13 +5,13 @@ import type {
   UnitSystem,
 } from './_types';
 
-// Standard drywall sheet sizes (width Ã— height in feet)
+// Standard drywall sheet sizes (width × height in feet)
 const SHEET_SIZES_FT: Record<string, { w: number; h: number }> = {
   '4x8':  { w: 4, h: 8  },
   '4x10': { w: 4, h: 10 },
   '4x12': { w: 4, h: 12 },
 };
-// Metric equivalents (1.2 m Ã— 2.4/3.0/3.6 m)
+// Metric equivalents (1.2 m × 2.4/3.0/3.6 m)
 const SHEET_SIZES_M: Record<string, { w: number; h: number }> = {
   '4x8':  { w: 1.2, h: 2.44 },
   '4x10': { w: 1.2, h: 3.05 },
@@ -65,7 +65,7 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const sheetsNet      = totalAreaM2 / sheetAreaM2;
     const sheetsWithWaste = Math.ceil(sheetsNet * WASTE_FACTOR);
 
-    // Convert compound to liters (1 gal â‰ˆ 3.785 L)
+    // Convert compound to liters (1 gal ≈ 3.785 L)
     const compoundL  = Math.round(totalAreaM2 * COMPOUND_GAL_PER_SQFT * 10.764 * 3.785 / 10) / 10;
     const tapeM      = Math.round(totalAreaM2 * TAPE_LF_PER_SQFT * 0.3048);
 
@@ -87,9 +87,9 @@ export const drywallCalculator: CalculatorConfig = {
   name: 'Drywall Calculator',
   category: 'framing',
   description:
-    'Calculate how much drywall you need for any room or project. Enter wall dimensions to get total sheets, joint compound, tape, and estimated cost â€” with a 10% waste factor included.',
+    'Calculate how much drywall you need for any room or project. Enter wall dimensions to get total sheets, joint compound, tape, and estimated cost — with a 10% waste factor included.',
   inputs: [
-    // â”€â”€ Imperial â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Imperial ──────────────────────────────────────
     {
       id: 'wall_height_ft',
       label: 'Wall Height',
@@ -152,7 +152,7 @@ export const drywallCalculator: CalculatorConfig = {
       onlyIn: 'imperial',
       helpText: 'Enter 1 if wall_width is the total perimeter of all walls combined.',
     },
-    // â”€â”€ Metric â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Metric ────────────────────────────────────────
     {
       id: 'wall_height_m',
       label: 'Wall Height',
@@ -193,19 +193,19 @@ export const drywallCalculator: CalculatorConfig = {
       required: true,
       onlyIn: 'metric',
     },
-    // â”€â”€ Shared (both unit systems) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Shared (both unit systems) ─────────────────────
     {
       id: 'sheet_size',
       label: 'Sheet Size',
       type: 'select',
       defaultValue: '4x8',
       options: [
-        { value: '4x8',  label: '4 Ã— 8 ft (most common)' },
-        { value: '4x10', label: '4 Ã— 10 ft' },
-        { value: '4x12', label: '4 Ã— 12 ft (fewer seams)' },
+        { value: '4x8',  label: '4 × 8 ft (most common)' },
+        { value: '4x10', label: '4 × 10 ft' },
+        { value: '4x12', label: '4 × 12 ft (fewer seams)' },
       ],
       required: true,
-      helpText: '4Ã—8 is standard residential; 4Ã—12 reduces horizontal seams on 9 ft walls.',
+      helpText: '4×8 is standard residential; 4×12 reduces horizontal seams on 9 ft walls.',
     },
   ],
   outputs: [
@@ -215,7 +215,7 @@ export const drywallCalculator: CalculatorConfig = {
       unit: 'sheets',
       format: 'number',
       primary: true,
-      description: 'Order this quantity â€” includes 10% for cuts and offcuts',
+      description: 'Order this quantity — includes 10% for cuts and offcuts',
     },
     {
       id: 'sheets_net',
@@ -227,14 +227,14 @@ export const drywallCalculator: CalculatorConfig = {
     {
       id: 'total_area_sqft',
       label: 'Total Wall Area',
-      unit: 'ftÂ²',
+      unit: 'ft²',
       format: 'area',
       description: 'Combined area of all walls entered',
     },
     {
       id: 'total_area_sqm',
       label: 'Total Wall Area',
-      unit: 'mÂ²',
+      unit: 'm²',
       format: 'area',
     },
     {
@@ -268,9 +268,9 @@ export const drywallCalculator: CalculatorConfig = {
   unitSystems: ['imperial', 'metric'],
   relatedCalculators: ['concrete-slab-calculator', 'rebar-calculator', 'paver-base-calculator'],
   seo: {
-    title: 'Drywall Calculator â€” Sheets, Mud & Tape Estimator',
+    title: 'Drywall Calculator — Sheets, Mud & Tape Estimator',
     description:
-      'Free drywall calculator â€” enter wall height, width, and sheet size to calculate how many drywall sheets you need, plus joint compound, tape, and estimated project cost.',
+      'Free drywall calculator — enter wall height, width, and sheet size to calculate how many drywall sheets you need, plus joint compound, tape, and estimated project cost.',
     h1: 'Drywall Calculator',
     focusKeyword: 'drywall calculator',
   },
@@ -281,7 +281,7 @@ export const drywallCalculator: CalculatorConfig = {
       'Includes 10% waste factor',
       'Estimate joint compound (mud)',
       'Estimate drywall tape',
-      'Support for 4Ã—8, 4Ã—10, and 4Ã—12 sheet sizes',
+      'Support for 4×8, 4×10, and 4×12 sheet sizes',
       'Imperial and metric support',
       'Cost estimator',
     ],
@@ -289,40 +289,40 @@ export const drywallCalculator: CalculatorConfig = {
   formulaSteps: [
     {
       label: 'Calculate total wall area',
-      formula: 'Total Area = Wall Height Ã— Wall Width Ã— Number of Walls',
-      description: 'Multiply all three inputs â€” subtract door/window openings manually if needed',
+      formula: 'Total Area = Wall Height × Wall Width × Number of Walls',
+      description: 'Multiply all three inputs — subtract door/window openings manually if needed',
     },
     {
       label: 'Calculate net sheets required',
-      formula: 'Sheets (net) = âŒˆTotal Area Ã· Sheet AreaâŒ‰',
-      description: 'Sheet area: 4Ã—8 = 32 ftÂ², 4Ã—10 = 40 ftÂ², 4Ã—12 = 48 ftÂ²',
+      formula: 'Sheets (net) = ⌈Total Area ÷ Sheet Area⌉',
+      description: 'Sheet area: 4×8 = 32 ft², 4×10 = 40 ft², 4×12 = 48 ft²',
     },
     {
       label: 'Apply waste factor',
-      formula: 'Sheets (order) = âŒˆNet Sheets Ã— 1.10âŒ‰',
+      formula: 'Sheets (order) = ⌈Net Sheets × 1.10⌉',
       description: '10% waste accounts for cuts at corners, outlets, and windows',
     },
     {
       label: 'Estimate joint compound',
-      formula: 'Compound (gal) = Total Area Ã— 0.011',
+      formula: 'Compound (gal) = Total Area × 0.011',
       description: 'Provides enough for a tape coat plus three finish coats. Quantities vary by finish method.',
     },
     {
       label: 'Estimate tape',
-      formula: 'Tape (lf) = Total Area Ã— 0.5',
-      description: 'One linear foot of tape per two square feet of drywall â€” approximates seam density',
+      formula: 'Tape (lf) = Total Area × 0.5',
+      description: 'One linear foot of tape per two square feet of drywall — approximates seam density',
     },
   ],
   faq: [
     {
       question: 'How do I calculate how much drywall I need?',
       answer:
-        'Multiply each wall\'s height by its width to get the area, then add all walls together. Divide the total area by the sheet size (32 ftÂ² for a 4Ã—8 sheet, 40 ftÂ² for 4Ã—10, 48 ftÂ² for 4Ã—12) to get the net sheets. Add 10% for waste and round up: Sheets with waste = âŒˆ(Total Area Ã· 32) Ã— 1.10âŒ‰. For a room with four 9Ã—12 ft walls, that\'s 4 Ã— 108 = 432 ftÂ² Ã· 32 = 13.5 net sheets. Multiply by 1.10 for waste (14.85) and round up to get 15 sheets to order.',
+        'Multiply each wall\'s height by its width to get the area, then add all walls together. Divide the total area by the sheet size (32 ft² for a 4×8 sheet, 40 ft² for 4×10, 48 ft² for 4×12) to get the net sheets. Add 10% for waste and round up: Sheets with waste = ⌈(Total Area ÷ 32) × 1.10⌉. For a room with four 9×12 ft walls, that\'s 4 × 108 = 432 ft² ÷ 32 = 13.5 net sheets. Multiply by 1.10 for waste (14.85) and round up to get 15 sheets to order.',
     },
     {
       question: 'What size drywall sheet should I use?',
       answer:
-        '4Ã—8 ft sheets are the most common and easiest to handle â€” one person can carry them. 4Ã—12 ft sheets reduce horizontal seams on 9-foot ceilings (one sheet covers the full height, no butt joint in the middle) which saves finishing time. 4Ã—10 ft is a compromise. Use 4Ã—12 on tall walls if you have help handling them; use 4Ã—8 for repairs, closets, or solo work.',
+        '4×8 ft sheets are the most common and easiest to handle — one person can carry them. 4×12 ft sheets reduce horizontal seams on 9-foot ceilings (one sheet covers the full height, no butt joint in the middle) which saves finishing time. 4×10 ft is a compromise. Use 4×12 on tall walls if you have help handling them; use 4×8 for repairs, closets, or solo work.',
     },
     {
       question: 'How much joint compound (mud) do I need for drywall?',
@@ -332,7 +332,7 @@ export const drywallCalculator: CalculatorConfig = {
     {
       question: 'How much drywall tape do I need?',
       answer:
-        'A good rule of thumb is one linear foot of tape per two square feet of drywall. For a 432 sq ft room, that\'s about 216 linear feet of tape. Paper tape is preferred by professionals for strength; fiberglass mesh tape is easier for beginners. Buy tape in 75â€“500 ft rolls â€” for most rooms, two 150-ft rolls is enough.',
+        'A good rule of thumb is one linear foot of tape per two square feet of drywall. For a 432 sq ft room, that\'s about 216 linear feet of tape. Paper tape is preferred by professionals for strength; fiberglass mesh tape is easier for beginners. Buy tape in 75–500 ft rolls — for most rooms, two 150-ft rolls is enough.',
     },
     {
       question: 'How much waste should I add for drywall?',
@@ -340,25 +340,25 @@ export const drywallCalculator: CalculatorConfig = {
         'Add 10% for typical rectangular rooms with standard door and window placements. Increase to 15% for rooms with many angles, arched openings, or complex ceilings. The waste comes from cut pieces at corners that can\'t be reused, outlet and switch cutouts, and the occasional cracked sheet. This calculator adds 10% automatically.',
     },
     {
-      question: 'How many sheets of drywall do I need for a 12Ã—12 room?',
+      question: 'How many sheets of drywall do I need for a 12×12 room?',
       answer:
-        'A standard 12Ã—12 room with 9-foot ceilings has four walls: 2 walls at 12Ã—9 ft = 216 ftÂ² and 2 walls at 12Ã—9 ft = 216 ftÂ², total 432 ftÂ². At 32 ftÂ² per 4Ã—8 sheet: 432 Ã· 32 = 13.5 net sheets. With a 10% waste factor: âŒˆ13.5 Ã— 1.10âŒ‰ = 15 sheets. The ceiling adds another 144 ftÂ², bringing the total area to 576 ftÂ². 576 Ã· 32 = 18 net sheets. With 10% waste: âŒˆ18 Ã— 1.10âŒ‰ = 20 sheets total for walls and ceiling.',
+        'A standard 12×12 room with 9-foot ceilings has four walls: 2 walls at 12×9 ft = 216 ft² and 2 walls at 12×9 ft = 216 ft², total 432 ft². At 32 ft² per 4×8 sheet: 432 ÷ 32 = 13.5 net sheets. With a 10% waste factor: ⌈13.5 × 1.10⌉ = 15 sheets. The ceiling adds another 144 ft², bringing the total area to 576 ft². 576 ÷ 32 = 18 net sheets. With 10% waste: ⌈18 × 1.10⌉ = 20 sheets total for walls and ceiling.',
     },
     {
       question: 'What thickness of drywall should I use?',
       answer:
-        'Â½-inch (12.7 mm) drywall is standard for interior walls and ceilings in residential construction â€” it fits standard framing at 16 or 24 inches on center. â…-inch (15.9 mm) is used for fire-rated assemblies, garages, and commercial projects. Â¼-inch is for curved walls or laminating over existing drywall. â…œ-inch is rarely used today. Use Â½-inch for most projects unless code requires otherwise.',
+        '½-inch (12.7 mm) drywall is standard for interior walls and ceilings in residential construction — it fits standard framing at 16 or 24 inches on center. ⅝-inch (15.9 mm) is used for fire-rated assemblies, garages, and commercial projects. ¼-inch is for curved walls or laminating over existing drywall. ⅜-inch is rarely used today. Use ½-inch for most projects unless code requires otherwise.',
     },
     {
       question: 'How much does drywall cost?',
       answer:
-        'A standard 4Ã—8 sheet of Â½-inch drywall costs $12â€“$20 depending on brand and region. Specialty types (moisture-resistant, fire-rated) cost more. For a 16-sheet order at $15 per sheet, material cost is $240. Add joint compound ($20â€“$40 for a 5-gallon bucket), tape ($5â€“$15), screws ($10â€“$20), and corner bead ($20â€“$40). Professional installation adds $1.50â€“$3.50 per sq ft for labor on top of materials.',
+        'A standard 4×8 sheet of ½-inch drywall costs $12–$20 depending on brand and region. Specialty types (moisture-resistant, fire-rated) cost more. For a 16-sheet order at $15 per sheet, material cost is $240. Add joint compound ($20–$40 for a 5-gallon bucket), tape ($5–$15), screws ($10–$20), and corner bead ($20–$40). Professional installation adds $1.50–$3.50 per sq ft for labor on top of materials.',
     },
   ],
   orderCallout: true,
   wasteFactor: {
     default: 10,
-    range: '10â€“15%',
-    notes: 'Standard rooms: 10%. Many cuts around windows, doors, or irregular ceilings: 12â€“15%.',
+    range: '10–15%',
+    notes: 'Standard rooms: 10%. Many cuts around windows, doors, or irregular ceilings: 12–15%.',
   },
 };
