@@ -25,6 +25,7 @@ export const gravelCalculator: CalculatorConfig = {
   slug: 'gravel-calculator',
   name: 'Gravel Calculator',
   category: 'excavation',
+  secondaryCategories: ['concrete'],
   description:
     'Calculate how much gravel you need for driveways, paths, and landscaping. Get cubic yards, cubic feet, cubic meters, and tons of gravel instantly.',
   inputs: [

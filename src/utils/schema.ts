@@ -48,6 +48,7 @@ export function buildWebAppSchema(opts: {
   url: string;
   appType: string;
   features: string[];
+  dateModified?: string;
 }) {
   return {
     '@context': 'https://schema.org',
@@ -55,8 +56,9 @@ export function buildWebAppSchema(opts: {
     name: opts.name,
     description: opts.description,
     url: opts.url,
-    applicationCategory: 'UtilitiesApplication',
+    applicationCategory: 'BusinessApplication',
     applicationSubCategory: opts.appType,
+    ...(opts.dateModified ? { dateModified: opts.dateModified } : {}),
     isAccessibleForFree: true,
     operatingSystem: 'Web Browser',
     featureList: opts.features,

@@ -42,6 +42,7 @@ export const concreteFootingCalculator: CalculatorConfig = {
   slug: 'concrete-footing-calculator',
   name: 'Concrete Footing Calculator',
   category: 'concrete',
+  secondaryCategories: ['decking'],
   description:
     'Calculate how much concrete you need for rectangular spread footings, strip footings, and pad footings. Enter length, width, depth, and number of footings for exact cubic yards and an optional cost estimate.',
   inputs: [

@@ -259,7 +259,7 @@ export const concreteSlab: CalculatorConfig = {
       description: 'This is the exact volume before any waste allowance is added.'
     },
     {
-      label: 'Calculate concrete calculator cubic yards',
+      label: 'Convert volume to cubic yards',
       formula: 'Volume (yd³) = Volume (ft³) ÷ 27',
       description: 'There are 27 cubic feet in one cubic yard, which is the standard US ready-mix order unit.',
     },

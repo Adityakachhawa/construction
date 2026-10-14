@@ -37,6 +37,8 @@ export interface OutputField {
   description?: string;
   /** Mark as an equivalent/conversion output (e.g. bag counts from volume). Displayed in a separate Equivalents section. */
   isEquivalent?: boolean;
+  /** Explicit decimal places for formatting (e.g. 0 for discrete units) */
+  decimals?: number;
 }
 
 export interface SeoConfig {
@@ -85,6 +87,8 @@ export interface CalculatorConfig {
   slug: string;
   name: string;
   category: CategorySlug;
+  /** Secondary categories for cross-discipline discovery */
+  secondaryCategories?: CategorySlug[];
   description: string;
   inputs: InputField[];
   outputs: OutputField[];
@@ -99,6 +103,8 @@ export interface CalculatorConfig {
   programmatic?: ProgrammaticConfig;
   /** Show the "order extra" callout on the results panel. Omit or false to hide. */
   orderCallout?: { hint?: string } | true;
+  /** If true, the primary formula output already incorporates waste allowance. */
+  primaryIncludesWaste?: boolean;
   /** Default price per primary unit shown in the cost estimate widget. 0 = empty. */
   defaultPricePerUnit?: number;
   /** ISO date string — when the calculator was last reviewed/updated */

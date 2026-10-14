@@ -375,6 +375,7 @@ export const roofingCalculator: CalculatorConfig = {
     },
   ],
   orderCallout: true,
+  primaryIncludesWaste: true,
   wasteFactor: {
     default: 15,
     range: '10–20%',

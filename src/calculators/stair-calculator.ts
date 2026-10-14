@@ -70,6 +70,7 @@ export const stairCalculator: CalculatorConfig = {
   slug: 'stair-calculator',
   name: 'Stair Calculator',
   category: 'framing',
+  secondaryCategories: ['decking'],
   description:
     'Calculate stair rise, run, number of steps, stringer length, and stair angle for any staircase. Enter total rise, desired riser height, and tread depth to get code-compliant stair dimensions.',
   inputs: [

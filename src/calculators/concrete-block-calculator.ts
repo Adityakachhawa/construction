@@ -284,6 +284,7 @@ export const concreteBlockCalculator: CalculatorConfig = {
     },
   ],
   orderCallout: true,
+  primaryIncludesWaste: true,
   wasteFactor: {
     default: 5,
     range: '3–5%',

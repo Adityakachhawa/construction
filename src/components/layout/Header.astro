@@ -64,7 +64,6 @@ const searchIndex = calculatorRegistry.map(c => ({
             {featuredCalcs.map(calc => (
               <a href={`/calculators/${calc.slug}/`} class="dropdown-item" role="menuitem">
                 <strong class="dropdown-item-name">{calc.name}</strong>
-                <span class="dropdown-item-desc">{calc.description}</span>
               </a>
             ))}
           </div>
@@ -455,18 +454,18 @@ const searchIndex = calculatorRegistry.map(c => ({
   .dropdown-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 2px;
+    gap: 4px;
     padding: 0.625rem;
   }
 
   .dropdown-item {
     display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    padding: 0.625rem 0.75rem;
-    border-radius: 10px;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
     transition: background 120ms;
     position: relative;
+    min-height: 2.25rem;
   }
   .dropdown-item:hover {
     background: var(--color-primary-50);

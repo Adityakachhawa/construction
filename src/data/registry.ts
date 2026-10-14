@@ -212,7 +212,7 @@ export function getCalculatorBySlug(slug: string): CalculatorConfig | undefined 
 }
 
 export function getCalculatorsByCategory(category: string): CalculatorConfig[] {
-  return calculatorRegistry.filter((c) => c.category === category);
+  return calculatorRegistry.filter((c) => c.category === category || c.secondaryCategories?.includes(category as any));
 }
 
 export function getRelatedCalculators(slugs: string[]): CalculatorConfig[] {

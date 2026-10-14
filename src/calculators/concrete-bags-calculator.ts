@@ -75,6 +75,7 @@ export const concreteBagsCalculator: CalculatorConfig = {
   slug: 'concrete-bags-calculator',
   name: 'Concrete Bags Calculator',
   category: 'concrete',
+  secondaryCategories: ['fencing', 'decking'],
   description:
     'Calculate how many bags of concrete you need for slabs, footings, posts, patios, and other projects. Supports 40 lb, 50 lb, 60 lb, and 80 lb bags with adjustable waste factor.',
   inputs: [

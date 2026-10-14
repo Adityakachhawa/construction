@@ -121,6 +121,7 @@ export const postHoleCalculator: CalculatorConfig = {
   slug: 'post-hole-calculator',
   name: 'Post Hole Calculator',
   category: 'concrete',
+  secondaryCategories: ['fencing', 'decking'],
   description:
     'Calculate concrete, gravel, and excavation volume for fence posts, deck posts, pergola posts, and pole foundations. Accounts for post displacement and gravel base so you order the exact number of bags.',
   inputs: [

@@ -87,6 +87,7 @@ export const lumberCalculator: CalculatorConfig = {
   slug: 'lumber-calculator',
   name: 'Lumber Calculator',
   category: 'framing',
+  secondaryCategories: ['decking', 'fencing'],
   description:
     'Calculate lumber quantities, board feet, linear feet, and project cost for any framing or carpentry project. Supports common sizes (2×4 through 2×12) and custom dimensions with adjustable waste percentage.',
   inputs: [

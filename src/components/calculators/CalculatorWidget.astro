@@ -30,6 +30,50 @@ const wasteMultiplier     = 1 + wasteFactorDefault / 100;
 const defaultPrice = calc.defaultPricePerUnit ?? 0;
 const costRange    = calc.costRange ?? null;
 
+function singularizeUnit(unit?: string): string {
+  if (!unit) return 'unit';
+  const map: Record<string, string> = {
+    blocks: 'block',
+    sheets: 'sheet',
+    bundles: 'bundle',
+    rolls: 'roll',
+    boxes: 'box',
+    bags: 'bag',
+    panels: 'panel',
+    boards: 'board',
+    studs: 'stud',
+    posts: 'post',
+    steps: 'step',
+    trucks: 'truck',
+    squares: 'square',
+    tons: 'ton',
+    tonnes: 'tonne',
+    sqft: 'sq ft',
+    sqm: 'sq m',
+    'yd³': 'yd³',
+    'ft³': 'ft³',
+    'm³': 'm³',
+    'cu yd': 'cu yd',
+    'cu ft': 'cu ft',
+    'cu m': 'cu m',
+  };
+  const lower = unit.toLowerCase().trim();
+  if (map[lower]) return map[lower];
+  if (lower.endsWith('boxes')) return unit.slice(0, -2);
+  if (lower.endsWith('s') && !lower.endsWith('ss')) return unit.slice(0, -1);
+  return unit;
+}
+
+const isDiscrete = primaryOutput?.decimals === 0 || [
+  'blocks', 'sheets', 'bundles', 'rolls', 'boxes', 'bags', 'panels', 'boards', 'studs', 'posts', 'steps', 'trucks'
+].includes(primaryOutput?.unit ?? '');
+
+const initialOrderRaw = calc.primaryIncludesWaste
+  ? (defaultOutputs[primaryOutput?.id ?? ''] ?? 0)
+  : (defaultOutputs[primaryOutput?.id ?? ''] ?? 0) * wasteMultiplier;
+const initialOrderQty = isDiscrete ? Math.ceil(initialOrderRaw) : initialOrderRaw;
+const initialOrderDecimals = isDiscrete ? 0 : 2;
+
 const outputsJson = JSON.stringify(
   calc.outputs.map((o) => ({
     id:          o.id,
@@ -52,6 +96,8 @@ const outputsJson = JSON.stringify(
   data-name={calc.name}
   data-waste={wasteFactorDefault}
   data-cost-range={costRange ? JSON.stringify(costRange) : ''}
+  data-primary-includes-waste={calc.primaryIncludesWaste ? 'true' : 'false'}
+  data-discrete={isDiscrete ? 'true' : 'false'}
 >
   <!-- Print-only header -->
   <div class="print-header" aria-hidden="true">
@@ -173,13 +219,7 @@ const outputsJson = JSON.stringify(
   <div class="widget-results" id="results-panel">
     <div style="display:flex; justify-content:space-between; align-items:baseline;">
       <h2 class="widget-panel-label">Results</h2>
-      <div id="validation-error" class="validation-error" style="display:none" aria-live="polite">
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="margin-top:-1px">
-          <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
-          <path d="M8 4v5M8 11.5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-        Invalid input detected
-      </div>
+      <div id="validation-error" class="validation-error" style="display:none" aria-live="polite"></div>
     </div>
 
     <!-- Primary result card -->
@@ -291,7 +331,7 @@ const outputsJson = JSON.stringify(
           <p class="callout-title">
             Recommended Order:&nbsp;
             <span id="order-qty">
-              {formatNumber((defaultOutputs[primaryOutput.id] ?? 0) * wasteMultiplier, 2)}
+              {formatNumber(initialOrderQty, initialOrderDecimals)}
             </span>
             &nbsp;{primaryOutput.unit}
           </p>
@@ -347,7 +387,7 @@ const outputsJson = JSON.stringify(
       <div class="cost-body">
         <div class="cost-input-row">
           <label for="price-per-unit" class="cost-label">
-            Price per {primaryOutput?.unit ?? 'unit'} ($)
+            Price per {singularizeUnit(primaryOutput?.unit)} ($)
           </label>
           <div class="cost-input-wrap">
             <span class="cost-dollar">$</span>
@@ -1106,18 +1146,34 @@ const outputsJson = JSON.stringify(
     });
 
     const errorMsgEl = document.getElementById('validation-error');
-    if (errorMsgEl) errorMsgEl.style.display = isValid ? 'none' : 'flex';
+    if (errorMsgEl) {
+      if (!isValid) {
+        if (!errorMsgEl.firstElementChild) {
+          errorMsgEl.innerHTML = `<svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="margin-top:-1px"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M8 4v5M8 11.5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> Invalid input detected`;
+        }
+        errorMsgEl.style.display = 'flex';
+      } else {
+        errorMsgEl.style.display = 'none';
+        errorMsgEl.textContent = '';
+      }
+    }
 
     if (!isValid) return; // Stop recalculation, preserve last valid result
 
     const inputs  = getInputs();
     const results = formula(inputs, currentUnit);
+    const primaryIncludesWaste = widget.dataset.primaryIncludesWaste === 'true';
+    const isDiscrete = widget.dataset.discrete === 'true';
 
     outputs.forEach(({ id, primary }) => {
       const raw = results[id] ?? 0;
       if (primary) {
         if (primaryValEl) primaryValEl.textContent = fmt(raw, 3);
-        if (orderQty) orderQty.textContent = fmt(raw * wasteMultiplier, 2);
+        if (orderQty) {
+          const orderRaw = primaryIncludesWaste ? raw : raw * wasteMultiplier;
+          const finalOrder = isDiscrete ? Math.ceil(orderRaw) : orderRaw;
+          orderQty.textContent = fmt(finalOrder, isDiscrete ? 0 : 2);
+        }
         updateCost(raw);
         updateCostRange(raw);
       } else {
@@ -1315,7 +1371,21 @@ const outputsJson = JSON.stringify(
 
   // ── Init ──────────────────────────────────────────────
   let restoredUnit: 'imperial' | 'metric' | null = null;
-  if (location.hash) {
+
+  // 1. URL Query Parameter hydration (direct link support e.g. ?length=10&width=10&unit=metric)
+  const searchParams = new URLSearchParams(window.location.search);
+  const queryInputs: Record<string, string> = {};
+  searchParams.forEach((val, key) => {
+    if (key === 'unit' && (val === 'imperial' || val === 'metric')) {
+      restoredUnit = val;
+    } else {
+      queryInputs[key] = val;
+    }
+  });
+
+  if (Object.keys(queryInputs).length > 0) {
+    restoreInputs(queryInputs);
+  } else if (location.hash) {
     try {
       const parsed = JSON.parse(atob(location.hash.slice(1)));
       if (parsed.u === 'imperial' || parsed.u === 'metric') restoredUnit = parsed.u;
