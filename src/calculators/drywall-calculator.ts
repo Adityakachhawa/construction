@@ -361,4 +361,26 @@ export const drywallCalculator: CalculatorConfig = {
     range: '10–15%',
     notes: 'Standard rooms: 10%. Many cuts around windows, doors, or irregular ceilings: 12–15%.',
   },
+  presets: [
+    {
+      label: 'Small Bedroom (10×10, 8\' ceiling)',
+      values: { wall_height_ft: 8, wall_height_in: 0, wall_width_ft: 10, wall_width_in: 0, num_walls: 4, sheet_size: '4x8' },
+      unit: 'imperial',
+    },
+    {
+      label: 'Master Bedroom (12×16, 9\' ceiling)',
+      values: { wall_height_ft: 9, wall_height_in: 0, wall_width_ft: 56, wall_width_in: 0, num_walls: 1, sheet_size: '4x8' },
+      unit: 'imperial',
+    },
+    {
+      label: 'Living Room (16×20, 9\' ceiling)',
+      values: { wall_height_ft: 9, wall_height_in: 0, wall_width_ft: 72, wall_width_in: 0, num_walls: 1, sheet_size: '4x12' },
+      unit: 'imperial',
+    },
+    {
+      label: 'Single Accent Wall (8×14)',
+      values: { wall_height_ft: 8, wall_height_in: 0, wall_width_ft: 14, wall_width_in: 0, num_walls: 1, sheet_size: '4x8' },
+      unit: 'imperial',
+    },
+  ],
 };

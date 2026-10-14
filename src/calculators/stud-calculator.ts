@@ -460,4 +460,40 @@ export const studCalculator: CalculatorConfig = {
       url: 'https://www.awc.org/',
     },
   ],
+  presets: [
+    {
+      label: '10 ft Partition Wall (16" OC)',
+      values: { length_ft: 10, length_in: 0, height_ft: 8, height_in: 0, spacing: '16', openings: 0, opening_width_ft: 3, opening_width_in: 0 },
+      unit: 'imperial',
+    },
+    {
+      label: '12 ft Bedroom Wall (16" OC, 1 door)',
+      values: { length_ft: 12, length_in: 0, height_ft: 8, height_in: 0, spacing: '16', openings: 1, opening_width_ft: 3, opening_width_in: 0 },
+      unit: 'imperial',
+    },
+    {
+      label: '20 ft Exterior Wall (16" OC, 2 windows)',
+      values: { length_ft: 20, length_in: 0, height_ft: 9, height_in: 0, spacing: '16', openings: 2, opening_width_ft: 3, opening_width_in: 0 },
+      unit: 'imperial',
+    },
+    {
+      label: '24 ft Garage Wall (24" OC, 1 door)',
+      values: { length_ft: 24, length_in: 0, height_ft: 9, height_in: 0, spacing: '24', openings: 1, opening_width_ft: 3, opening_width_in: 0 },
+      unit: 'imperial',
+    },
+  ],
+  referenceTable: {
+    title: 'Stud Requirements by Wall Length and Spacing',
+    description: 'Calculations include top/bottom plates, corner framing, and standard 15% jobsite framing factor:',
+    headers: ['Wall Length', '16" OC Field Studs', '16" OC Recommended Order', '24" OC Field Studs', '24" OC Recommended Order'],
+    rows: [
+      ['8 ft', '7', '8', '5', '6'],
+      ['10 ft', '9', '11', '6', '8'],
+      ['12 ft', '10', '12', '7', '9'],
+      ['16 ft', '13', '16', '9', '11'],
+      ['20 ft', '16', '19', '11', '14'],
+      ['24 ft', '19', '23', '13', '16'],
+      ['40 ft', '31', '37', '21', '25'],
+    ],
+  },
 };

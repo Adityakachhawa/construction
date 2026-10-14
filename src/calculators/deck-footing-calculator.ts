@@ -366,4 +366,43 @@ export const deckFootingCalculator: CalculatorConfig = {
         'Rebar is required in many jurisdictions for deck footings deeper than 24 inches or in seismic zones. A single #4 rebar (1/2 inch diameter) centered vertically in the footing is standard. Some codes also require horizontal rebar rings at the top and bottom. Check your local building code before pouring — inspections are typically required before the concrete is poured.',
     },
   ],
+  presets: [
+    {
+      label: '10×10 Deck (10" × 36")',
+      values: { deck_length_ft: 10, deck_length_in: 0, deck_width_ft: 10, deck_width_in: 0, footing_spacing_ft: 8, footing_spacing_in: 0, footing_diameter: 10, footing_depth: 36 },
+      unit: 'imperial',
+    },
+    {
+      label: '12×16 Attached Deck (12" × 42")',
+      values: { deck_length_ft: 16, deck_length_in: 0, deck_width_ft: 12, deck_width_in: 0, footing_spacing_ft: 8, footing_spacing_in: 0, footing_diameter: 12, footing_depth: 42 },
+      unit: 'imperial',
+    },
+    {
+      label: '16×20 Large Deck (12" × 42")',
+      values: { deck_length_ft: 20, deck_length_in: 0, deck_width_ft: 16, deck_width_in: 0, footing_spacing_ft: 8, footing_spacing_in: 0, footing_diameter: 12, footing_depth: 42 },
+      unit: 'imperial',
+    },
+    {
+      label: '20×20 Freestanding (12" × 48")',
+      values: { deck_length_ft: 20, deck_length_in: 0, deck_width_ft: 20, deck_width_in: 0, footing_spacing_ft: 8, footing_spacing_in: 0, footing_diameter: 12, footing_depth: 48 },
+      unit: 'imperial',
+    },
+  ],
+  referenceTable: {
+    title: 'Deck Footing Count & Concrete Volume Reference',
+    description: 'Footing requirements and concrete volumes for common deck dimensions at a standard 36-inch depth (below frost line):',
+    headers: ['Deck Size (ft)', 'Hole Diameter', 'Footing Count', 'Cubic Yards', '80 lb Bags'],
+    rows: [
+      ['10′ × 10′ Deck', '8"', '4', '0.15', '7'],
+      ['10′ × 10′ Deck', '10"', '4', '0.24', '11'],
+      ['12′ × 12′ Deck', '10"', '6', '0.36', '17'],
+      ['12′ × 12′ Deck', '12"', '6', '0.52', '24'],
+      ['12′ × 16′ Deck', '10"', '6', '0.36', '17'],
+      ['12′ × 16′ Deck', '12"', '6', '0.52', '24'],
+      ['16′ × 20′ Deck', '10"', '9', '0.55', '25'],
+      ['16′ × 20′ Deck', '12"', '9', '0.79', '36'],
+      ['20′ × 20′ Deck', '10"', '9', '0.55', '25'],
+      ['20′ × 20′ Deck', '12"', '9', '0.79', '36'],
+    ],
+  },
 };

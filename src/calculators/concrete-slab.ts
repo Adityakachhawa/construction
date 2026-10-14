@@ -305,4 +305,26 @@ export const concreteSlab: CalculatorConfig = {
         'Concrete slab costs vary by region, but standard ready-mix concrete typically ranges from $100 to $175 per cubic yard. For a 10×10 slab (1.23 cubic yards), the raw material cost is roughly $123 to $215, not including labor, delivery fees, or site preparation.',
     },
   ],
+  presets: [
+    {
+      label: '10×10 Patio (4")',
+      values: { length_ft: 10, length_in: 0, width_ft: 10, width_in: 0, thickness: 4 },
+      unit: 'imperial',
+    },
+    {
+      label: '12×20 Carport (4")',
+      values: { length_ft: 20, length_in: 0, width_ft: 12, width_in: 0, thickness: 4 },
+      unit: 'imperial',
+    },
+    {
+      label: '20×20 Garage (4")',
+      values: { length_ft: 20, length_in: 0, width_ft: 20, width_in: 0, thickness: 4 },
+      unit: 'imperial',
+    },
+    {
+      label: '12×40 Driveway (5")',
+      values: { length_ft: 40, length_in: 0, width_ft: 12, width_in: 0, thickness: 5 },
+      unit: 'imperial',
+    },
+  ],
 };

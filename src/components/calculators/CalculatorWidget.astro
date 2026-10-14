@@ -126,6 +126,25 @@ const outputsJson = JSON.stringify(
       )}
     </div>
 
+    {calc.presets && calc.presets.length > 0 && (
+      <div class="preset-section" aria-label="Quick Project Presets">
+        <span class="preset-label">Quick Presets:</span>
+        <div class="preset-pills" role="group" aria-label="Preset options">
+          {calc.presets.map((preset, idx) => (
+            <button
+              type="button"
+              class="preset-pill"
+              data-preset-values={JSON.stringify(preset.values)}
+              data-preset-unit={preset.unit ?? ''}
+              data-preset-idx={idx}
+            >
+              {preset.label}
+            </button>
+          ))}
+        </div>
+      </div>
+    )}
+
     <form id="calc-form" novalidate aria-label={`${calc.name} inputs`}>
       <div class="field-stack">
         {calc.inputs.map((field) => {
@@ -316,6 +335,38 @@ const outputsJson = JSON.stringify(
         </svg>
         Print / PDF
       </button>
+      <button type="button" class="action-btn" id="action-embed" title="Embed this calculator on your website">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M5 4L1 8l4 4M11 4l4 4-4 4M9 2l-2 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span id="embed-label">&lt;/&gt; Embed</span>
+      </button>
+    </div>
+
+    <!-- Embed Modal -->
+    <div id="embed-modal" class="embed-modal" style="display:none;" aria-hidden="true">
+      <div class="embed-backdrop" id="embed-backdrop"></div>
+      <div class="embed-dialog" role="dialog" aria-labelledby="embed-title" aria-modal="true">
+        <div class="embed-dialog-header">
+          <h3 id="embed-title" class="embed-title">Embed this Calculator</h3>
+          <button type="button" class="embed-close" id="embed-close" aria-label="Close embed modal">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <p class="embed-desc">Copy this embed code to place this calculator directly on your website, blog, or supplier catalog:</p>
+        <textarea id="embed-code" class="embed-textarea" readonly rows="4">{`<iframe src="https://buildbymath.com/calculators/${calc.slug}/?embed=true" width="100%" height="620" style="border:1px solid #e2e8f0;border-radius:12px;" loading="lazy"></iframe>\n<p style="font-size:12px;margin-top:4px;">Calculator powered by <a href="https://buildbymath.com/calculators/${calc.slug}/" target="_blank" rel="noopener">BuildByMath.com</a></p>`}</textarea>
+        <div class="embed-dialog-footer">
+          <button type="button" class="action-btn action-btn--primary" id="btn-copy-embed">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <rect x="5" y="2" width="9" height="11" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M2 5h1M2 8h1M2 11h1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span id="copy-embed-label">Copy Embed Code</span>
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- Order callout — enhanced with waste factor range + notes -->
@@ -410,6 +461,16 @@ const outputsJson = JSON.stringify(
         </div>
       </div>
     </details>
+
+    <!-- Powered by BuildByMath.com attribution bar (active only in ?embed=true mode) -->
+    <div class="embed-attribution" id="embed-attribution">
+      <a href={`https://buildbymath.com/calculators/${calc.slug}/`} target="_blank" rel="noopener" class="embed-attribution-link">
+        <span>Powered by <strong>BuildByMath.com</strong></span>
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+          <path d="M2.5 9.5l7-7M4 2.5h5.5V8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
   </div>
 </div>
 
@@ -542,6 +603,55 @@ const outputsJson = JSON.stringify(
     background: var(--surface-card);
     color: var(--color-text-primary);
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  /* Quick Presets row */
+  .preset-section {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.875rem;
+    border-bottom: 1px dashed var(--border-default);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .preset-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .preset-pills {
+    display: flex;
+    gap: 0.375rem;
+    flex-wrap: nowrap;
+  }
+  .preset-pill {
+    padding: 0.25rem 0.625rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    background: var(--color-bg-secondary, #f8fafc);
+    border: 1px solid var(--border-default);
+    border-radius: 9999px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 150ms ease;
+  }
+  .preset-pill:hover {
+    color: var(--color-primary);
+    border-color: var(--color-primary-300, #fdba74);
+    background: #fff;
+  }
+  .preset-pill.active {
+    color: #fff;
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    box-shadow: 0 1px 3px rgba(234, 88, 12, 0.3);
   }
 
   .field-stack { display: flex; flex-direction: column; gap: 1.25rem; }
@@ -808,6 +918,129 @@ const outputsJson = JSON.stringify(
     background: #f0fdf4;
   }
 
+  /* Embed Modal */
+  .embed-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem;
+  }
+  .embed-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(2px);
+  }
+  .embed-dialog {
+    position: relative;
+    z-index: 10;
+    background: #fff;
+    border: 1px solid var(--border-default);
+    border-radius: 16px;
+    padding: 1.5rem;
+    max-width: 34rem;
+    width: 100%;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+  .embed-dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+  }
+  .embed-title {
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .embed-close {
+    padding: 0.375rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text-muted);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .embed-close:hover {
+    color: var(--color-text-primary);
+    background: var(--color-bg-secondary);
+  }
+  .embed-desc {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 1rem;
+    line-height: 1.5;
+  }
+  .embed-textarea {
+    width: 100%;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    padding: 0.75rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-default);
+    background: #f8fafc;
+    color: #334155;
+    resize: none;
+    box-sizing: border-box;
+    margin-bottom: 1rem;
+  }
+  .embed-dialog-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .action-btn--primary {
+    background: var(--color-primary);
+    color: #fff;
+    border-color: var(--color-primary);
+  }
+  .action-btn--primary:hover {
+    background: var(--color-primary-dark, #c2410c);
+    color: #fff;
+    border-color: var(--color-primary-dark, #c2410c);
+  }
+
+  /* Embed attribution */
+  .embed-attribution {
+    display: none;
+    margin-top: 1.25rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border-subtle, #f1f5f9);
+    text-align: center;
+  }
+  :global(.is-embed-mode) .embed-attribution {
+    display: flex;
+    justify-content: center;
+  }
+  .embed-attribution-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.15s ease;
+  }
+  .embed-attribution-link:hover {
+    color: var(--color-primary);
+  }
+  .embed-attribution-link strong {
+    color: var(--color-primary);
+    font-weight: 700;
+  }
+
   /* Order callout — enhanced */
   .result-callout {
     display: flex;
@@ -1028,6 +1261,13 @@ const outputsJson = JSON.stringify(
   const interpretEl  = document.getElementById('result-interpretation') as HTMLElement | null;
   const costRangeLowEl  = document.getElementById('cost-range-low') as HTMLElement | null;
   const costRangeHighEl = document.getElementById('cost-range-high') as HTMLElement | null;
+  const embedBtn       = document.getElementById('action-embed') as HTMLButtonElement | null;
+  const embedModal     = document.getElementById('embed-modal') as HTMLElement | null;
+  const embedClose     = document.getElementById('embed-close') as HTMLButtonElement | null;
+  const embedBackdrop  = document.getElementById('embed-backdrop') as HTMLElement | null;
+  const copyEmbedBtn   = document.getElementById('btn-copy-embed') as HTMLButtonElement | null;
+  const copyEmbedLabel = document.getElementById('copy-embed-label') as HTMLElement | null;
+  const embedCodeArea  = document.getElementById('embed-code') as HTMLTextAreaElement | null;
 
   if (!widget || !form) throw new Error('Calculator DOM missing');
 
@@ -1262,9 +1502,53 @@ const outputsJson = JSON.stringify(
   }
 
   shareBtn?.addEventListener('click', () => {
-    navigator.clipboard.writeText(window.location.href).then(() => {
+    const inputs = getInputs();
+    const url = new URL(window.location.href);
+    url.hash = '';
+    url.searchParams.set('unit', currentUnit);
+    Object.entries(inputs).forEach(([k, v]) => {
+      if (v !== undefined && v !== null && !isNaN(Number(v)) && String(v) !== '') {
+        url.searchParams.set(k, String(v));
+      } else if (typeof v === 'string' && v !== '') {
+        url.searchParams.set(k, v);
+      }
+    });
+    const shareUrl = url.toString();
+    try { window.history.replaceState(null, '', shareUrl); } catch {}
+    navigator.clipboard.writeText(shareUrl).then(() => {
       flashFeedback(shareBtn, shareLabel, 'Copied!', 'Copy link');
     }).catch(() => flashFeedback(shareBtn, shareLabel, 'Link ready', 'Copy link'));
+  });
+
+  function openEmbedModal() {
+    if (!embedModal) return;
+    embedModal.style.display = 'flex';
+    embedModal.setAttribute('aria-hidden', 'false');
+    embedCodeArea?.select();
+  }
+
+  function closeEmbedModal() {
+    if (!embedModal) return;
+    embedModal.style.display = 'none';
+    embedModal.setAttribute('aria-hidden', 'true');
+    embedBtn?.focus();
+  }
+
+  embedBtn?.addEventListener('click', openEmbedModal);
+  embedClose?.addEventListener('click', closeEmbedModal);
+  embedBackdrop?.addEventListener('click', closeEmbedModal);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && embedModal && embedModal.style.display !== 'none') {
+      closeEmbedModal();
+    }
+  });
+
+  copyEmbedBtn?.addEventListener('click', () => {
+    if (!embedCodeArea) return;
+    navigator.clipboard.writeText(embedCodeArea.value).then(() => {
+      flashFeedback(copyEmbedBtn, copyEmbedLabel, 'Copied!', 'Copy Embed Code');
+    }).catch(() => flashFeedback(copyEmbedBtn, copyEmbedLabel, 'Ready', 'Copy Embed Code'));
   });
 
   checklistBtn?.addEventListener('click', () => {
@@ -1363,8 +1647,31 @@ const outputsJson = JSON.stringify(
     btn.addEventListener('click', () => setUnit(btn.dataset.unit as 'imperial' | 'metric'));
   });
 
+  // Preset pills handling
+  const presetPills = widget.querySelectorAll<HTMLButtonElement>('.preset-pill');
+  presetPills.forEach((pill) => {
+    pill.addEventListener('click', () => {
+      try {
+        const rawValues = pill.dataset.presetValues;
+        if (!rawValues) return;
+        const vals = JSON.parse(rawValues);
+        const presetUnit = pill.dataset.presetUnit as 'imperial' | 'metric' | '';
+        if (presetUnit && (presetUnit === 'imperial' || presetUnit === 'metric') && presetUnit !== currentUnit) {
+          setUnit(presetUnit);
+        }
+        restoreInputs(vals);
+        updateResults();
+        presetPills.forEach((p) => p.classList.remove('active'));
+        pill.classList.add('active');
+      } catch (err) {
+        console.error('Failed to apply preset', err);
+      }
+    });
+  });
+
   let debounce: ReturnType<typeof setTimeout>;
   form.addEventListener('input', () => {
+    presetPills.forEach((p) => p.classList.remove('active'));
     clearTimeout(debounce);
     debounce = setTimeout(updateResults, 100);
   });
@@ -1372,8 +1679,11 @@ const outputsJson = JSON.stringify(
   // ── Init ──────────────────────────────────────────────
   let restoredUnit: 'imperial' | 'metric' | null = null;
 
-  // 1. URL Query Parameter hydration (direct link support e.g. ?length=10&width=10&unit=metric)
+  // Check ?embed=true mode
   const searchParams = new URLSearchParams(window.location.search);
+  if (searchParams.get('embed') === 'true') {
+    document.documentElement.classList.add('is-embed-mode');
+  }
   const queryInputs: Record<string, string> = {};
   searchParams.forEach((val, key) => {
     if (key === 'unit' && (val === 'imperial' || val === 'metric')) {

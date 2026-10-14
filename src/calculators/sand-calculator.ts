@@ -277,4 +277,21 @@ export const sandCalculator: CalculatorConfig = {
     range: '10–15%',
     notes: 'Account for spillage and spreading variation, especially on sloped or uneven surfaces. Add up to 15% on irregular or sloped areas.',
   },
+  referenceTable: {
+    title: 'Sand Volume & Weight for Pavers, Sandboxes & Leveling',
+    description: 'Calculated cubic yards, metric tonnes, and US short tons at standard density (1.35 tons per cubic yard):',
+    headers: ['Application / Size', 'Area (sq ft)', 'Depth (in)', 'Cubic Yards', 'Tons (1.35 t/yd³)'],
+    rows: [
+      ['4′ × 4′ Sandbox', '16', '4"', '0.20', '0.27'],
+      ['6′ × 6′ Sandbox', '36', '4"', '0.44', '0.60'],
+      ['10′ × 10′ Paver Bedding', '100', '1"', '0.31', '0.42'],
+      ['10′ × 10′ Paver Bedding', '100', '2"', '0.62', '0.83'],
+      ['12′ × 16′ Patio Bedding', '192', '1"', '0.59', '0.80'],
+      ['12′ × 16′ Patio Bedding', '192', '2"', '1.19', '1.60'],
+      ['16′ × 20′ Large Patio', '320', '1"', '0.99', '1.33'],
+      ['16′ × 20′ Large Patio', '320', '2"', '1.98', '2.67'],
+      ['20′ × 20′ Courtyard Base', '400', '1"', '1.23', '1.67'],
+      ['20′ × 20′ Courtyard Base', '400', '2"', '2.47', '3.33'],
+    ],
+  },
 };

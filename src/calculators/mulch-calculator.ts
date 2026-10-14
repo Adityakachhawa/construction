@@ -249,4 +249,43 @@ export const mulchCalculator: CalculatorConfig = {
     range: '5–10%',
     notes: 'Mulch settles and compresses after watering. Add 5–10% to reach your target finished depth.',
   },
+  presets: [
+    {
+      label: 'Small Flower Bed (5×10 at 3")',
+      values: { length_ft: 10, length_in: 0, width_ft: 5, width_in: 0, depth: 3 },
+      unit: 'imperial',
+    },
+    {
+      label: 'Foundation Border (4×30 at 3")',
+      values: { length_ft: 30, length_in: 0, width_ft: 4, width_in: 0, depth: 3 },
+      unit: 'imperial',
+    },
+    {
+      label: 'Large Landscaping Bed (10×20 at 3")',
+      values: { length_ft: 20, length_in: 0, width_ft: 10, width_in: 0, depth: 3 },
+      unit: 'imperial',
+    },
+    {
+      label: 'Annual Top-Up (10×30 at 2")',
+      values: { length_ft: 30, length_in: 0, width_ft: 10, width_in: 0, depth: 2 },
+      unit: 'imperial',
+    },
+  ],
+  referenceTable: {
+    title: 'Mulch Coverage by Garden Bed Size & Depth',
+    description: 'Bulk cubic yard volumes and bagged mulch counts (standard 2 cu ft bags) for typical landscaping areas:',
+    headers: ['Bed Dimensions (ft)', 'Area (sq ft)', 'Depth (in)', 'Cubic Yards', '2 cu ft Bags'],
+    rows: [
+      ['5′ × 20′ Bed', '100', '2"', '0.62', '9'],
+      ['5′ × 20′ Bed', '100', '3"', '0.93', '13'],
+      ['10′ × 20′ Bed', '200', '2"', '1.23', '17'],
+      ['10′ × 20′ Bed', '200', '3"', '1.85', '25'],
+      ['10′ × 30′ Border', '300', '2"', '1.85', '25'],
+      ['10′ × 30′ Border', '300', '3"', '2.78', '38'],
+      ['20′ × 25′ Lawn Area', '500', '2"', '3.09', '42'],
+      ['20′ × 25′ Lawn Area', '500', '3"', '4.63', '63'],
+      ['Full Yard Landscape', '1,000', '2"', '6.17', '84'],
+      ['Full Yard Landscape', '1,000', '3"', '9.26', '125'],
+    ],
+  },
 };

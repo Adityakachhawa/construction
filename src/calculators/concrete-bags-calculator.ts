@@ -403,4 +403,17 @@ export const concreteBagsCalculator: CalculatorConfig = {
         'Use 10% waste for typical rectangular slabs and straightforward pours. Use 15% for complex forms, curved shapes, irregular footings, or thick pours where estimating exact volume is difficult. Never round down on bags — running out of concrete mid-pour causes cold joints that permanently weaken the structure.',
     },
   ],
+  referenceTable: {
+    title: 'Concrete Bag Quantities by Cubic Yard Volume (+10% Waste)',
+    description: 'Recommended bag counts for common pour volumes with a 10% allowance for form deflection and subgrade unevenness:',
+    headers: ['Pour Volume (yd³)', 'Volume (cu ft)', '40 lb Bags (+10%)', '50 lb Bags (+10%)', '60 lb Bags (+10%)', '80 lb Bags (+10%)'],
+    rows: [
+      ['0.25 yd³', '6.75', '25', '20', '17', '13'],
+      ['0.50 yd³', '13.50', '50', '40', '33', '25'],
+      ['1.00 yd³', '27.00', '99', '80', '66', '50'],
+      ['1.50 yd³', '40.50', '149', '119', '99', '75'],
+      ['2.00 yd³', '54.00', '198', '159', '132', '99'],
+      ['3.00 yd³', '81.00', '297', '238', '198', '149'],
+    ],
+  },
 };

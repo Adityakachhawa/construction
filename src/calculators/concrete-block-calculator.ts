@@ -297,4 +297,39 @@ export const concreteBlockCalculator: CalculatorConfig = {
       url: 'https://masonrysociety.org/',
     },
   ],
+  presets: [
+    {
+      label: '10×4 Garden Wall',
+      values: { length_ft: 10, length_in: 0, height_ft: 4, height_in: 0, waste_pct: 5 },
+      unit: 'imperial',
+    },
+    {
+      label: '20×6 Retaining Wall',
+      values: { length_ft: 20, length_in: 0, height_ft: 6, height_in: 0, waste_pct: 5 },
+      unit: 'imperial',
+    },
+    {
+      label: '30×8 Foundation Wall',
+      values: { length_ft: 30, length_in: 0, height_ft: 8, height_in: 0, waste_pct: 5 },
+      unit: 'imperial',
+    },
+    {
+      label: '40×8 Garage Perimeter',
+      values: { length_ft: 40, length_in: 0, height_ft: 8, height_in: 0, waste_pct: 5 },
+      unit: 'imperial',
+    },
+  ],
+  referenceTable: {
+    title: 'Standard CMU Block & Mortar Estimation Table',
+    description: 'Calculations based on standard 8×8×16 inch hollow concrete masonry units (1.125 blocks per sq ft) with 3/8" mortar joints:',
+    headers: ['Wall Dimensions (ft)', 'Wall Area (sq ft)', 'Net CMU Blocks', 'Order (+5% Waste)', 'Mortar Bags (70 lb)'],
+    rows: [
+      ['10′ × 4′ Wall', '40', '45', '48', '2'],
+      ['20′ × 4′ Wall', '80', '90', '95', '3'],
+      ['20′ × 6′ Wall', '120', '135', '142', '5'],
+      ['30′ × 6′ Wall', '180', '203', '213', '7'],
+      ['40′ × 8′ Wall', '320', '360', '378', '12'],
+      ['50′ × 8′ Wall', '400', '450', '473', '15'],
+    ],
+  },
 };

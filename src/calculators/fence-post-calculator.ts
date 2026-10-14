@@ -307,4 +307,43 @@ export const fencePostCalculator: CalculatorConfig = {
         'Concrete provides the strongest, most stable anchor — recommended for privacy fences, tall fences, and any fence in high-wind areas. Gravel drainage is an alternative for areas with poor drainage or where post rot is a concern — it lets the post breathe and moisture drain. Many professionals use a gravel base (6 inches) with concrete on top for the best of both.',
     },
   ],
+  presets: [
+    {
+      label: '50 ft Garden Fence (8\' spacing)',
+      values: { fence_length_ft: 50, fence_length_in: 0, post_spacing_ft: 8, post_spacing_in: 0, post_depth: 24, gates: 1 },
+      unit: 'imperial',
+    },
+    {
+      label: '100 ft Privacy Fence (8\' spacing)',
+      values: { fence_length_ft: 100, fence_length_in: 0, post_spacing_ft: 8, post_spacing_in: 0, post_depth: 30, gates: 1 },
+      unit: 'imperial',
+    },
+    {
+      label: '150 ft Backyard Run (6\' spacing)',
+      values: { fence_length_ft: 150, fence_length_in: 0, post_spacing_ft: 6, post_spacing_in: 0, post_depth: 30, gates: 2 },
+      unit: 'imperial',
+    },
+    {
+      label: '200 ft Perimeter Run (8\' spacing)',
+      values: { fence_length_ft: 200, fence_length_in: 0, post_spacing_ft: 8, post_spacing_in: 0, post_depth: 36, gates: 2 },
+      unit: 'imperial',
+    },
+  ],
+  referenceTable: {
+    title: 'Fence Post & Concrete Bag Reference Guide',
+    description: 'Post counts, panel sections, and recommended 80 lb concrete bags (at standard 2 bags per post hole):',
+    headers: ['Fence Length', 'Post Spacing', 'Total Posts', 'Fence Sections', '80 lb Concrete Bags'],
+    rows: [
+      ['50 ft', '6 ft OC', '10', '9', '20'],
+      ['50 ft', '8 ft OC', '7', '7', '14'],
+      ['100 ft', '6 ft OC', '18', '17', '36'],
+      ['100 ft', '8 ft OC', '14', '13', '28'],
+      ['150 ft', '6 ft OC', '26', '25', '52'],
+      ['150 ft', '8 ft OC', '20', '19', '40'],
+      ['200 ft', '6 ft OC', '35', '34', '70'],
+      ['200 ft', '8 ft OC', '26', '25', '52'],
+      ['300 ft', '6 ft OC', '51', '50', '102'],
+      ['300 ft', '8 ft OC', '39', '38', '78'],
+    ],
+  },
 };

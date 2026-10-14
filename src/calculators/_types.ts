@@ -83,6 +83,19 @@ export interface CalculatorFaqItem {
 // The actual slug union is defined in data/categories.ts.
 import type { CategorySlug } from '../data/categories';
 
+export interface ReferenceTableConfig {
+  title: string;
+  description?: string;
+  headers: string[];
+  rows: string[][];
+}
+
+export interface CalculatorPreset {
+  label: string;
+  values: Record<string, number | string>;
+  unit?: UnitSystem;
+}
+
 export interface CalculatorConfig {
   slug: string;
   name: string;
@@ -101,6 +114,10 @@ export interface CalculatorConfig {
   disclaimer?: string;
   faq?: CalculatorFaqItem[];
   programmatic?: ProgrammaticConfig;
+  /** 1-click project dimension presets displayed above input fields */
+  presets?: CalculatorPreset[];
+  /** Reusable quick-reference HTML table for Google Featured Snippets */
+  referenceTable?: ReferenceTableConfig;
   /** Show the "order extra" callout on the results panel. Omit or false to hide. */
   orderCallout?: { hint?: string } | true;
   /** If true, the primary formula output already incorporates waste allowance. */

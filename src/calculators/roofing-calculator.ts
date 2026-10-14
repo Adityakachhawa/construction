@@ -398,4 +398,43 @@ export const roofingCalculator: CalculatorConfig = {
       url: 'https://www.nrca.net/',
     },
   ],
+  presets: [
+    {
+      label: 'Shed Roof (12×16, 4:12)',
+      values: { length_ft: 16, length_in: 0, width_ft: 12, width_in: 0, pitch: '4', waste_pct: 10 },
+      unit: 'imperial',
+    },
+    {
+      label: '2-Car Garage (24×24, 4:12)',
+      values: { length_ft: 24, length_in: 0, width_ft: 24, width_in: 0, pitch: '4', waste_pct: 10 },
+      unit: 'imperial',
+    },
+    {
+      label: 'Ranch House (30×50, 6:12)',
+      values: { length_ft: 50, length_in: 0, width_ft: 30, width_in: 0, pitch: '6', waste_pct: 10 },
+      unit: 'imperial',
+    },
+    {
+      label: 'Two-Story Home (32×60, 8:12)',
+      values: { length_ft: 60, length_in: 0, width_ft: 32, width_in: 0, pitch: '8', waste_pct: 15 },
+      unit: 'imperial',
+    },
+  ],
+  referenceTable: {
+    title: 'Roofing Squares & Shingle Bundles by Footprint & Pitch',
+    description: 'Material orders including standard 10% waste allowance for common roof footprints at 4:12 and 6:12 pitch:',
+    headers: ['Footprint (sq ft)', 'Roof Pitch', 'Actual Area (sq ft)', 'Roofing Squares', 'Shingle Bundles (+10% Waste)'],
+    rows: [
+      ['1,000 sq ft', '4:12', '1,054', '10.5', '36 bundles (12 sq)'],
+      ['1,000 sq ft', '6:12', '1,118', '11.2', '39 bundles (13 sq)'],
+      ['1,500 sq ft', '4:12', '1,581', '15.8', '54 bundles (18 sq)'],
+      ['1,500 sq ft', '6:12', '1,677', '16.8', '57 bundles (19 sq)'],
+      ['2,000 sq ft', '4:12', '2,108', '21.1', '72 bundles (24 sq)'],
+      ['2,000 sq ft', '6:12', '2,236', '22.4', '75 bundles (25 sq)'],
+      ['2,500 sq ft', '4:12', '2,635', '26.4', '87 bundles (29 sq)'],
+      ['2,500 sq ft', '6:12', '2,795', '28.0', '93 bundles (31 sq)'],
+      ['3,000 sq ft', '4:12', '3,162', '31.6', '105 bundles (35 sq)'],
+      ['3,000 sq ft', '6:12', '3,354', '33.5', '111 bundles (37 sq)'],
+    ],
+  },
 };

@@ -50,6 +50,9 @@ import MethodologyLink from '../../components/calculators/MethodologyLink.astro'
 import DrywallContent from '../../components/calculators/content/DrywallContent.astro';
 import ConcreteSlabContent from '../../components/calculators/content/ConcreteSlabContent.astro';
 import RebarContent from '../../components/calculators/content/RebarContent.astro';
+import ReferenceTable from '../../components/calculators/ReferenceTable.astro';
+import RelatedGuides from '../../components/calculators/RelatedGuides.astro';
+import { getCollection } from 'astro:content';
 import type { GetStaticPaths } from 'astro';
 
 // Diagram lookup â€” add new slugs here instead of adding more booleans
@@ -144,6 +147,21 @@ const breadcrumbs = [
 const relatedCalcs = getRelatedCalculators(calc.relatedCalculators);
 const Diagram = diagramMap[calc.slug];
 const intro = calc.seo.intro ?? calc.seo.description;
+
+const allBlogPosts = await getCollection('blog', ({ data }) => !data.draft);
+const relatedGuides = allBlogPosts
+  .filter((post) => {
+    const relCalcs = post.data.relatedCalculators ?? [];
+    const tags = post.data.tags ?? [];
+    const shortSlug = calc.slug.replace('-calculator', '');
+    return (
+      relCalcs.includes(calc.slug) ||
+      tags.includes(calc.category) ||
+      tags.includes(shortSlug)
+    );
+  })
+  .sort((a, b) => b.data.publishedAt.localeCompare(a.data.publishedAt))
+  .slice(0, 3);
 ---
 
 <CalculatorLayout
@@ -166,8 +184,16 @@ const intro = calc.seo.intro ?? calc.seo.description;
     <FormulaDisplay slot="explainer" steps={calc.formulaSteps} />
   )}
 
+  {calc.referenceTable && (
+    <ReferenceTable slot="table" table={calc.referenceTable} />
+  )}
+
   {calc.faq?.length && (
     <FaqSection slot="faq" items={calc.faq} />
+  )}
+
+  {relatedGuides.length > 0 && (
+    <RelatedGuides slot="guides" posts={relatedGuides} />
   )}
 
   {relatedCalcs.length > 0 && (

@@ -283,4 +283,43 @@ export const gravelCalculator: CalculatorConfig = {
     high: 75,
     unit: 'per cubic yard (material only)',
   },
+  presets: [
+    {
+      label: '10×10 Patio Base (4")',
+      values: { length_ft: 10, length_in: 0, width_ft: 10, width_in: 0, depth: 4, density: 1.4 },
+      unit: 'imperial',
+    },
+    {
+      label: '10×20 Parking Pad (4")',
+      values: { length_ft: 20, length_in: 0, width_ft: 10, width_in: 0, depth: 4, density: 1.4 },
+      unit: 'imperial',
+    },
+    {
+      label: '12×40 Driveway (4")',
+      values: { length_ft: 40, length_in: 0, width_ft: 12, width_in: 0, depth: 4, density: 1.4 },
+      unit: 'imperial',
+    },
+    {
+      label: '3×30 Walkway (3")',
+      values: { length_ft: 30, length_in: 0, width_ft: 3, width_in: 0, depth: 3, density: 1.4 },
+      unit: 'imperial',
+    },
+  ],
+  referenceTable: {
+    title: 'Common Driveway, Patio & Walkway Gravel Quantities',
+    description: 'Estimated cubic yards and tons for standard project dimensions based on typical crushed stone density (1.4 tons per cubic yard):',
+    headers: ['Project Size (ft)', 'Area (sq ft)', 'Depth (in)', 'Volume (yd³)', 'Weight (Tons at 1.4 t/yd³)'],
+    rows: [
+      ['10′ × 10′ Patio', '100', '3"', '0.93', '1.30'],
+      ['10′ × 10′ Patio', '100', '4"', '1.23', '1.73'],
+      ['10′ × 20′ Parking Pad', '200', '3"', '1.85', '2.59'],
+      ['10′ × 20′ Parking Pad', '200', '4"', '2.47', '3.46'],
+      ['12′ × 20′ Carport Base', '240', '3"', '2.22', '3.11'],
+      ['12′ × 20′ Carport Base', '240', '4"', '2.96', '4.15'],
+      ['12′ × 40′ Driveway', '480', '3"', '4.44', '6.22'],
+      ['12′ × 40′ Driveway', '480', '4"', '5.93', '8.30'],
+      ['20′ × 20′ Garage Apron', '400', '3"', '3.70', '5.19'],
+      ['20′ × 20′ Garage Apron', '400', '4"', '4.94', '6.91'],
+    ],
+  },
 };

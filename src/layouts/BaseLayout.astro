@@ -21,6 +21,11 @@ const { meta, schemas = [], currentPath = Astro.url.pathname, heroPage = false }
   <head>
     <MetaTags {...meta} />
     {schemas.length > 0 && <SchemaOrg schema={schemas} />}
+    <script is:inline>
+      if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('embed') === 'true') {
+        document.documentElement.classList.add('is-embed-mode');
+      }
+    </script>
   </head>
   <body>
     <a href="#main-content" class="skip-link">Skip to content</a>
@@ -47,6 +52,19 @@ const { meta, schemas = [], currentPath = Astro.url.pathname, heroPage = false }
         top: 0.5rem;
         outline: 2px solid #fff;
         outline-offset: 2px;
+      }
+      :global(html.is-embed-mode) header,
+      :global(html.is-embed-mode) footer,
+      :global(html.is-embed-mode) .skip-link,
+      :global(html.is-embed-mode) #scroll-progress,
+      :global(html.is-embed-mode) #mobile-backdrop,
+      :global(html.is-embed-mode) #mobile-overlay {
+        display: none !important;
+      }
+      :global(html.is-embed-mode) body {
+        background: transparent !important;
+        margin: 0 !important;
+        padding: 0 !important;
       }
     </style>
   </body>

@@ -61,10 +61,12 @@ const updatedLabel = lastUpdated
     <div class="calc-container-narrow">
       <slot name="diagram" />
       <slot name="explainer" />
+      <slot name="table" />
       <slot name="faq" />
       <slot name="references" />
     </div>
     <div class="calc-container">
+      <slot name="guides" />
       <slot name="related" />
     </div>
     <div class="calc-container-narrow">
@@ -172,6 +174,19 @@ const updatedLabel = lastUpdated
   .calc-support {
     padding: 1rem 0 4rem;
     background: var(--surface-page);
+  }
+
+  :global(html.is-embed-mode) .calc-page-header,
+  :global(html.is-embed-mode) .calc-support {
+    display: none !important;
+  }
+  :global(html.is-embed-mode) .calc-body {
+    padding: 0.5rem 0 !important;
+    background: transparent !important;
+  }
+  :global(html.is-embed-mode) .calc-container {
+    padding: 0 0.5rem !important;
+    max-width: 100% !important;
   }
 </style>
 
