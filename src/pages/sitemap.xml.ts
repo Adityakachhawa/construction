@@ -24,7 +24,6 @@ export const GET: APIRoute = async () => {
   const CURRENT_DATE = new Date().toISOString().split('T')[0];
 
   const posts = await getCollection('blog', ({ data }) => !data.draft);
-  const collectionGuides = await getCollection('guides', ({ data }) => !data.draft);
 
   const staticPages = [
     xmlEntry(`${SITE_URL}/`, CURRENT_DATE, 'weekly', '1.0'),
@@ -116,19 +115,12 @@ export const GET: APIRoute = async () => {
     return xmlEntry(`${SITE_URL}/blog/${slug}/`, lastmod, 'weekly', '0.7');
   });
 
-  // Collection-driven guides (/guides/[slug])
-  const collectionGuidePages = collectionGuides.map((guide) => {
-    const slug = guide.id.replace(/\.[^.]+$/, '');
-    const lastmod = (guide.data.updatedAt ?? guide.data.publishedAt ?? CURRENT_DATE) as string;
-    return xmlEntry(`${SITE_URL}/guides/${slug}/`, lastmod, 'monthly', '0.7');
-  });
-
   // Blog tag pages (/blog/tag/*) are intentionally excluded from the sitemap.
   // They are noindex,follow navigation pages and should not be submitted to Google.
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${[...staticPages, ...methodologyPages, ...guidePages, ...collectionGuidePages, ...calculatorPages, ...slabSizePages, ...gravelSizePages, ...pierSizePages, ...blockWallSizePages, ...mulchSizePages, ...categoryPages, ...blogPages].join('\n')}
+${[...staticPages, ...methodologyPages, ...guidePages, ...calculatorPages, ...slabSizePages, ...gravelSizePages, ...pierSizePages, ...blockWallSizePages, ...mulchSizePages, ...categoryPages, ...blogPages].join('\n')}
 </urlset>`;
 
   return new Response(xml, {
