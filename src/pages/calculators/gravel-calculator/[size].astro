@@ -1,0 +1,994 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/layout/Breadcrumbs.astro';
+import CalculatorWidget from '../../../components/calculators/CalculatorWidget.astro';
+import GravelDiagram from '../../../components/calculators/GravelDiagram.astro';
+import { gravelCalculator } from '../../../calculators/gravel-calculator';
+import {
+  gravelDimensions,
+  getGravelMetrics,
+  getGravelDepthTable,
+  type GravelDimension,
+} from '../../../data/gravel-dimensions';
+import { buildCanonical, type MetaProps } from '../../../utils/seo';
+import { buildBreadcrumbList, buildFaqSchema } from '../../../utils/schema';
+import type { CalculatorConfig } from '../../../calculators/_types';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  return gravelDimensions.map((gravel) => ({
+    params: { size: gravel.slug },
+    props: { gravel },
+  }));
+};
+
+type Props = {
+  gravel: GravelDimension;
+};
+
+const { gravel } = Astro.props;
+
+const metrics4 = getGravelMetrics(gravel.length, gravel.width, 4);
+const metrics6 = getGravelMetrics(gravel.length, gravel.width, 6);
+const depthTable = getGravelDepthTable(gravel.length, gravel.width);
+
+// Pre-configure the calculator widget for this gravel project size
+const configuredCalc: CalculatorConfig = {
+  ...gravelCalculator,
+  inputs: gravelCalculator.inputs.map((input) => {
+    if (input.id === 'length_ft') return { ...input, defaultValue: gravel.length };
+    if (input.id === 'width_ft') return { ...input, defaultValue: gravel.width };
+    if (input.id === 'depth') return { ...input, defaultValue: gravel.recommendedDepth };
+    return input;
+  }),
+};
+
+// Adjacent sizes for internal linking
+const prevGravel = gravel.adjacentSizes.prev
+  ? gravelDimensions.find((g) => g.slug === gravel.adjacentSizes.prev)
+  : null;
+const nextGravel = gravel.adjacentSizes.next
+  ? gravelDimensions.find((g) => g.slug === gravel.adjacentSizes.next)
+  : null;
+
+// SEO Metadata
+const pageTitle = `How Much Gravel for a ${gravel.length}x${gravel.width} Driveway or Pad? (Tons & Yards Chart) | BuildByMath`;
+const metaDescription = `Calculate exact gravel tons and cubic yards for a ${gravel.name} area (${gravel.areaSqFt} sq ft). Needs ${metrics4.tonsCrushedStone} tons (${metrics4.cuYdsWithWaste} yd³) at 4" or ${metrics6.tonsCrushedStone} tons at 6". Full depth chart and 3-layer driveway guide.`;
+const canonical = buildCanonical(`/calculators/gravel-calculator/${gravel.slug}/`);
+
+const meta: MetaProps = {
+  title: pageTitle,
+  description: metaDescription,
+  canonical,
+  ogType: 'website',
+};
+
+const breadcrumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Excavation & Aggregate', href: '/category/excavation/' },
+  { name: 'Gravel Calculator', href: '/calculators/gravel-calculator/' },
+  { name: `${gravel.name} Area`, href: `/calculators/gravel-calculator/${gravel.slug}/` },
+];
+
+// Dynamic FAQs with exact calculations
+const faqs = [
+  {
+    question: `How many tons of gravel do I need for a ${gravel.length}x${gravel.width} area at 4 inches deep?`,
+    answer: `For a ${gravel.name} area (${gravel.areaSqFt} sq ft) at a standard 4-inch depth, you need ${metrics4.tonsCrushedStone} tons of #57 crushed stone (or ${metrics4.tonsCrusherRun} tons of dense grade crusher run). This calculation factors in a 10% allowance for subbase settling and compaction. At 4 inches, the volume equals ${metrics4.cuYds} net cubic yards (${metrics4.cuYdsWithWaste} cubic yards recommended order).`,
+  },
+  {
+    question: `How many cubic yards of gravel is a ${gravel.length}x${gravel.width} area?`,
+    answer: `At a 4-inch depth, a ${gravel.name} area measures exactly ${metrics4.cuYds} net cubic yards (order ${metrics4.cuYdsWithWaste} cubic yards with 10% compaction). If installing a heavy 6-inch subbase layer, you will need ${metrics6.cuYds} net cubic yards (order ${metrics6.cuYdsWithWaste} cubic yards). The formula is: (${gravel.length} ft × ${gravel.width} ft × [depth in inches ÷ 12]) ÷ 27.`,
+  },
+  {
+    question: `How many dump truck loads of gravel do I need for a ${gravel.length}x${gravel.width} project?`,
+    answer: `A standard tri-axle dump truck carries between 12 and 14 tons of crushed gravel, while a tandem-axle truck holds 7 to 8 tons. For a 4-inch depth on a ${gravel.name} area (${metrics4.tonsCrushedStone} tons total), you will need ${gravel.truckloads}. Ordering in full truckloads significantly lowers delivery surcharges.`,
+  },
+  {
+    question: `How much does gravel cost for a ${gravel.length}x${gravel.width} driveway or pad?`,
+    answer: `Crushed stone (#57 limestone or granite) generally costs $30 to $55 per ton delivered. For a 4-inch depth (${metrics4.tonsCrushedStone} tons), material will cost roughly $${Math.round(metrics4.tonsCrushedStone * 30)} to $${Math.round(metrics4.tonsCrushedStone * 55)}. For a 6-inch depth (${metrics6.tonsCrushedStone} tons), budget approximately $${Math.round(metrics6.tonsCrushedStone * 30)} to $${Math.round(metrics6.tonsCrushedStone * 55)} for stone delivery.`,
+  },
+];
+
+const schemas = [
+  buildBreadcrumbList(breadcrumbs),
+  buildFaqSchema(faqs),
+];
+---
+
+<BaseLayout meta={meta} schemas={schemas}>
+  <div class="gravel-page">
+    <div class="gravel-container">
+      <Breadcrumbs items={breadcrumbs} />
+
+      <!-- Page Header -->
+      <header class="gravel-header">
+        <div class="header-badge-row">
+          <span class="badge badge-accent">Exact Area Guide</span>
+          <span class="badge badge-neutral">{gravel.areaSqFt} Sq Ft</span>
+          <span class="badge badge-category">{gravel.useCase}</span>
+        </div>
+        <h1 class="gravel-h1">How Many Tons & Yards of Gravel for a {gravel.name} Area?</h1>
+        <p class="gravel-lead">
+          Calculate the exact crushed stone tonnage, cubic yardage, dump truck loads, and depth requirements for a <strong>{gravel.name} gravel driveway, parking pad, or shed foundation</strong> ({gravel.areaSqFt} sq ft).
+        </p>
+      </header>
+
+      <!-- Instant Answer Box (Above the Fold) -->
+      <section class="instant-answer-box" aria-label="Instant Calculation Summary">
+        <div class="answer-header">
+          <div class="answer-badge">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M10 2L12.5 7.5L18.5 8.5L14 13L15 19L10 16L5 19L6 13L1.5 8.5L7.5 7.5L10 2Z" fill="currentColor"/>
+            </svg>
+            <span>Instant Gravel Estimate — {gravel.name} Area ({gravel.areaSqFt} sq ft)</span>
+          </div>
+          <span class="answer-rule">Includes 10% compaction & grade allowance</span>
+        </div>
+
+        <div class="answer-grid">
+          <!-- 4-Inch Depth Card -->
+          <div class="answer-card" class:list={[{ 'card-recommended': gravel.recommendedDepth === 4 }]}>
+            <div class="card-top">
+              <div class="depth-tag">4-Inch Depth (Standard Layer)</div>
+              {gravel.recommendedDepth === 4 && <span class="recom-badge">Standard Resurfacing & Pads</span>}
+            </div>
+            <div class="card-main-stat">
+              <span class="stat-number">{metrics4.tonsCrushedStone}</span>
+              <span class="stat-unit">Tons of Gravel</span>
+            </div>
+            <p class="stat-sub">
+              Recommended order: <strong>{metrics4.cuYdsWithWaste} yd³</strong> (exact net: {metrics4.cuYds} yd³ / {metrics4.cuFt} cu ft)
+            </p>
+            <div class="card-aggregate-breakdown">
+              <div class="agg-item">
+                <span class="agg-ton">{metrics4.tonsCrusherRun} tons</span>
+                <span class="agg-type">Crusher Run (#411)</span>
+              </div>
+              <div class="agg-divider">•</div>
+              <div class="agg-item">
+                <span class="agg-ton">{metrics4.tonsPeaGravel} tons</span>
+                <span class="agg-type">Pea Gravel</span>
+              </div>
+            </div>
+            <p class="card-use"><strong>Best for:</strong> Driveway resurfacing, top-dressing existing stone, walkways, and shed pads.</p>
+          </div>
+
+          <!-- 6-Inch Depth Card -->
+          <div class="answer-card" class:list={[{ 'card-recommended': gravel.recommendedDepth === 6 }]}>
+            <div class="card-top">
+              <div class="depth-tag">6-Inch Depth (Heavy Base Layer)</div>
+              {gravel.recommendedDepth === 6 && <span class="recom-badge">Recommended for Vehicle Pads</span>}
+            </div>
+            <div class="card-main-stat">
+              <span class="stat-number">{metrics6.tonsCrushedStone}</span>
+              <span class="stat-unit">Tons of Gravel</span>
+            </div>
+            <p class="stat-sub">
+              Recommended order: <strong>{metrics6.cuYdsWithWaste} yd³</strong> (exact net: {metrics6.cuYds} yd³ / {metrics6.cuFt} cu ft)
+            </p>
+            <div class="card-aggregate-breakdown">
+              <div class="agg-item">
+                <span class="agg-ton">{metrics6.tonsCrusherRun} tons</span>
+                <span class="agg-type">Crusher Run (#411)</span>
+              </div>
+              <div class="agg-divider">•</div>
+              <div class="agg-item">
+                <span class="agg-ton">{metrics6.tonsPeaGravel} tons</span>
+                <span class="agg-type">Pea Gravel</span>
+              </div>
+            </div>
+            <p class="card-use"><strong>Best for:</strong> Brand-new driveway installations over dirt, RV/boat pads, and heavy truck parking.</p>
+          </div>
+        </div>
+
+        <!-- Truckload Delivery Advice Banner -->
+        <div class="delivery-advice-banner">
+          <svg class="advice-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <rect x="1" y="3" width="15" height="13" rx="2"/>
+            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+            <circle cx="5.5" cy="18.5" r="2.5"/>
+            <circle cx="18.5" cy="18.5" r="2.5"/>
+          </svg>
+          <div>
+            <strong>Dump Truck Delivery Guide:</strong> {gravel.truckloads} based on standard 12–14 ton tri-axle capacities.
+          </div>
+        </div>
+      </section>
+
+      <!-- Interactive Calculator Section -->
+      <section class="calculator-embed-section">
+        <div class="section-title-wrap">
+          <h2 class="section-h2">Customize Your {gravel.name} Gravel Calculation</h2>
+          <p class="section-sub">
+            The calculator below is pre-configured for a <strong>{gravel.length}′ × {gravel.width}′</strong> area. Adjust depth, stone density, or price per ton to calculate exact requirements:
+          </p>
+        </div>
+
+        <div class="calculator-card-wrapper">
+          <CalculatorWidget calc={configuredCalc} />
+        </div>
+      </section>
+
+      <!-- Gravel Visual Diagram -->
+      <div class="gravel-diagram-wrap">
+        <GravelDiagram />
+      </div>
+
+      <!-- Pre-Calculated Depth Reference Table -->
+      <section class="depth-table-section">
+        <div class="section-title-wrap">
+          <h2 class="section-h2">{gravel.name} Gravel Depth & Material Reference Chart</h2>
+          <p class="section-sub">
+            Quick reference comparing cubic yards and tonnage across common aggregate types for {gravel.areaSqFt} square feet:
+          </p>
+        </div>
+
+        <div class="table-container">
+          <table class="reference-table">
+            <thead>
+              <tr>
+                <th>Gravel Depth</th>
+                <th>Application / Purpose</th>
+                <th>Net Cu Yds</th>
+                <th>Order (Yds + 10%)</th>
+                <th>#57 Stone (1.4 t/yd³)</th>
+                <th>Crusher Run (1.5 t/yd³)</th>
+                <th>Pea Gravel (1.35 t/yd³)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {depthTable.map((row) => {
+                const label =
+                  row.depthInches === 2
+                    ? 'Light Top Dressing / Maintenance'
+                    : row.depthInches === 3
+                    ? 'Walkway, Patio, Garden Bed'
+                    : row.depthInches === 4
+                    ? 'Standard Resurfacing & Shed Pad'
+                    : row.depthInches === 6
+                    ? 'New Driveway Base / RV Pad'
+                    : 'Heavy Equipment Roadbed / Subbase';
+                const isRecommended = row.depthInches === gravel.recommendedDepth;
+                return (
+                  <tr class:list={[{ 'row-highlight': isRecommended }]}>
+                    <td>
+                      <strong>{row.depthInches} Inches</strong>
+                      {isRecommended && <span class="pill-recom">Recommended</span>}
+                    </td>
+                    <td>{label}</td>
+                    <td>{row.cuYds} yd³</td>
+                    <td><strong class="text-primary">{row.cuYdsWithWaste} yd³</strong></td>
+                    <td><strong>{row.tonsCrushedStone} tons</strong></td>
+                    <td>{row.tonsCrusherRun} tons</td>
+                    <td>{row.tonsPeaGravel} tons</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <p class="table-footnote">
+          * Tonnage estimates factor in a 10% allowance for subbase compaction and track irregularities. Standard crushed stone is calculated at 2,800 lbs/yd³ (1.4 tons/yd³); crusher run/dense grade at 3,000 lbs/yd³ (1.5 tons/yd³).
+        </p>
+      </section>
+
+      <!-- Layered Driveway Engineering Guide -->
+      <section class="engineering-guide-section">
+        <h2 class="section-h2">The 3-Layer Gravel Driveway Engineering Rule</h2>
+        <p class="section-sub">
+          Laying gravel directly on top of bare topsoil inevitably causes rutting, potholes, and sinking. Professional civil roadbuilders construct gravel driveways in three structured layers:
+        </p>
+
+        <div class="layers-grid">
+          <div class="layer-card">
+            <div class="layer-step">Layer 0</div>
+            <h3 class="layer-title">Geotextile Subgrade Fabric</h3>
+            <p class="layer-text">
+              Roll out heavy-duty non-woven geotextile fabric (6–8 oz) over stripped subsoil. This prevents crushed rock from sinking into the subgrade while allowing groundwater to drain freely without turning stone to mud.
+            </p>
+          </div>
+
+          <div class="layer-card">
+            <div class="layer-step">Layer 1</div>
+            <h3 class="layer-title">Base Layer: #3 or #4 Ballast Stone (4"–6")</h3>
+            <p class="layer-text">
+              Coarse, fractured 2" to 3" rock creates an interlocking structural foundation. This layer bridges soft ground, prevents wheel rutting, and provides internal void space for subsurface stormwater runoff.
+            </p>
+          </div>
+
+          <div class="layer-card">
+            <div class="layer-step">Layer 2</div>
+            <h3 class="layer-title">Middle Layer: #57 Crushed Stone (2"–3")</h3>
+            <p class="layer-text">
+              Angular 3/4" clean crushed limestone or granite bridges the large gaps between the ballast stones. This creates a stable intermediate transition layer that will not shift under braking or steering.
+            </p>
+          </div>
+
+          <div class="layer-card">
+            <div class="layer-step">Layer 3</div>
+            <h3 class="layer-title">Surface Layer: #411 Crusher Run (2")</h3>
+            <p class="layer-text">
+              Also known as dense grade aggregate (DGA) or road bond. Contains 3/4" crushed rock blended with stone dust. When watered and compacted with a vibratory roller, the fines bind into a hard, cement-like surface crust. Crown the center 1/2" per foot toward side ditches.
+            </p>
+          </div>
+        </div>
+
+        <div class="project-notes-box">
+          <h3 class="notes-title">Site Preparation Notes for {gravel.name} ({gravel.useCase})</h3>
+          <p>{gravel.notes}</p>
+        </div>
+      </section>
+
+      <!-- Cost Breakdown Section -->
+      <section class="cost-estimate-section">
+        <h2 class="section-h2">Estimated Material Cost for a {gravel.name} Area</h2>
+        <div class="cost-cards-grid">
+          <div class="cost-card">
+            <span class="cost-type">4-Inch Depth (Delivered Material)</span>
+            <div class="cost-range">
+              ${Math.round(metrics4.tonsCrushedStone * 30)} – ${Math.round(metrics4.tonsCrushedStone * 55)}
+            </div>
+            <p class="cost-desc">Estimated material cost for {metrics4.tonsCrushedStone} tons of #57 stone delivered by tri-axle dump truck ($30 to $55 per ton depending on distance from local quarry).</p>
+          </div>
+
+          <div class="cost-card cost-card-pro">
+            <span class="cost-type">6-Inch Heavy Base (Delivered Material)</span>
+            <div class="cost-range">
+              ${Math.round(metrics6.tonsCrushedStone * 30)} – ${Math.round(metrics6.tonsCrushedStone * 55)}
+            </div>
+            <p class="cost-desc">Estimated material cost for {metrics6.tonsCrushedStone} tons of structural stone delivered. If hiring a mini-excavator or skid steer operator for grading and rolling, add $600 to $1,500.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Adjacent Sizes Navigation -->
+      <section class="adjacent-nav-section" aria-label="Adjacent Gravel Sizes">
+        <h2 class="section-h2">Explore Other Gravel Driveway & Pad Sizes</h2>
+        <div class="adjacent-links-row">
+          {prevGravel && (
+            <a href={`/calculators/gravel-calculator/${prevGravel.slug}/`} class="adjacent-link prev-link">
+              <span class="adj-arrow">←</span>
+              <div>
+                <span class="adj-label">Previous Size</span>
+                <strong class="adj-name">{prevGravel.name} Area ({prevGravel.useCase})</strong>
+              </div>
+            </a>
+          )}
+          <a href="/calculators/gravel-calculator/" class="adjacent-link hub-link">
+            <div>
+              <span class="adj-label">Custom Areas</span>
+              <strong class="adj-name">Main Gravel Calculator</strong>
+            </div>
+          </a>
+          <a href="/calculators/paver-base-calculator/" class="adjacent-link hub-link">
+            <div>
+              <span class="adj-label">Paver Subbase</span>
+              <strong class="adj-name">Paver Base Calculator</strong>
+            </div>
+          </a>
+          {nextGravel && (
+            <a href={`/calculators/gravel-calculator/${nextGravel.slug}/`} class="adjacent-link next-link">
+              <div>
+                <span class="adj-label">Next Size</span>
+                <strong class="adj-name">{nextGravel.name} Area ({nextGravel.useCase})</strong>
+              </div>
+              <span class="adj-arrow">→</span>
+            </a>
+          )}
+        </div>
+
+        <!-- Quick Jump Grid to All 12 Sizes -->
+        <div class="all-sizes-chips-wrap">
+          <p class="chips-title">All Pre-Calculated Gravel Sizes:</p>
+          <div class="chips-grid">
+            {gravelDimensions.map((g) => (
+              <a
+                href={`/calculators/gravel-calculator/${g.slug}/`}
+                class="size-chip"
+                class:list={[{ 'chip-active': g.slug === gravel.slug }]}
+              >
+                <strong>{g.name}</strong> ({g.areaSqFt} sq ft)
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ Section -->
+      <section class="faq-section" aria-label="Frequently Asked Questions">
+        <h2 class="section-h2">Frequently Asked Questions: {gravel.name} Gravel Area</h2>
+        <div class="faq-list">
+          {faqs.map((faq) => (
+            <details class="faq-item">
+              <summary class="faq-question">
+                <span>{faq.question}</span>
+                <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </summary>
+              <div class="faq-answer">
+                <p>{faq.answer}</p>
+              </div>
+            </details>
+          ))}
+        </div>
+      </section>
+    </div>
+  </div>
+</BaseLayout>
+
+<script is:inline define:vars={{ length: gravel.length, width: gravel.width, depth: gravel.recommendedDepth }}>
+  // Ensure the embedded widget displays the exact dimensions for this landing page
+  window.addEventListener('DOMContentLoaded', () => {
+    const lenInput = document.getElementById('field-length_ft');
+    const widInput = document.getElementById('field-width_ft');
+    const depthInput = document.getElementById('field-depth');
+    if (lenInput && widInput && !window.location.search && !window.location.hash) {
+      let changed = false;
+      if (lenInput.value !== String(length)) {
+        lenInput.value = length;
+        changed = true;
+      }
+      if (widInput.value !== String(width)) {
+        widInput.value = width;
+        changed = true;
+      }
+      if (depthInput && depthInput.value !== String(depth)) {
+        depthInput.value = depth;
+        changed = true;
+      }
+      if (changed) {
+        lenInput.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }
+  });
+</script>
+
+<style>
+  .gravel-page {
+    padding: 1.5rem 0 4rem;
+    background: var(--surface-bg, #fbfbfa);
+  }
+  .gravel-container {
+    max-width: 68rem;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+  }
+  .gravel-header {
+    margin: 1.25rem 0 2rem;
+  }
+  .header-badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.875rem;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.625rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  .badge-accent {
+    background: #fefce8;
+    color: #a16207;
+    border: 1px solid #fef08a;
+  }
+  .badge-neutral {
+    background: #f3f4f6;
+    color: #4b5563;
+    border: 1px solid #e5e7eb;
+  }
+  .badge-category {
+    background: #f0fdf4;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+  }
+  .gravel-h1 {
+    font-size: 2rem;
+    line-height: 1.2;
+    font-weight: 800;
+    color: var(--color-text-primary, #111827);
+    margin: 0 0 0.75rem;
+    letter-spacing: -0.025em;
+  }
+  @media (min-width: 640px) {
+    .gravel-h1 {
+      font-size: 2.5rem;
+    }
+  }
+  .gravel-lead {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: var(--color-text-secondary, #4b5563);
+    max-width: 52rem;
+    margin: 0;
+  }
+
+  /* Instant Answer Box */
+  .instant-answer-box {
+    background: #ffffff;
+    border: 2px solid #ca8a04;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    box-shadow: 0 8px 24px -4px rgba(202, 138, 4, 0.12);
+  }
+  .answer-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #fef08a;
+    margin-bottom: 1.25rem;
+  }
+  .answer-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9375rem;
+    font-weight: 800;
+    color: #854d0e;
+  }
+  .answer-rule {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #713f12;
+    background: #fef9c3;
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+  }
+  .answer-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  @media (min-width: 768px) {
+    .answer-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .answer-card {
+    background: #fafaf9;
+    border: 1px solid #e7e5e4;
+    border-radius: 12px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+  }
+  .card-recommended {
+    background: #fefce8;
+    border: 1.5px solid #eab308;
+  }
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .depth-tag {
+    font-size: 0.875rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #1c1917;
+  }
+  .recom-badge {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    background: #ca8a04;
+    color: #ffffff;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+  .card-main-stat {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+  .stat-number {
+    font-size: 2.25rem;
+    font-weight: 900;
+    color: #ca8a04;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-unit {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #44403c;
+  }
+  .stat-sub {
+    font-size: 0.8125rem;
+    color: #78716c;
+    margin: 0 0 1rem;
+  }
+  .card-aggregate-breakdown {
+    background: #ffffff;
+    border: 1px solid #e7e5e4;
+    border-radius: 8px;
+    padding: 0.625rem 0.875rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin-bottom: 0.875rem;
+  }
+  .agg-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .agg-ton {
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: #1c1917;
+    font-variant-numeric: tabular-nums;
+  }
+  .agg-type {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: #78716c;
+  }
+  .agg-divider {
+    font-size: 1rem;
+    color: #d6d3d1;
+  }
+  .card-use {
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    color: #44403c;
+    margin: auto 0 0;
+  }
+
+  .delivery-advice-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+    padding: 0.875rem 1rem;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 10px;
+    color: #166534;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  .advice-icon {
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+    color: #16a34a;
+  }
+
+  /* Section styles */
+  .section-title-wrap {
+    margin-bottom: 1.25rem;
+  }
+  .section-h2 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #111827;
+    letter-spacing: -0.02em;
+    margin: 2.5rem 0 0.5rem;
+  }
+  .section-sub {
+    font-size: 1rem;
+    color: #4b5563;
+    line-height: 1.6;
+    margin: 0;
+  }
+  .calculator-card-wrapper {
+    margin: 1.25rem 0 2rem;
+  }
+  .gravel-diagram-wrap {
+    margin: 2rem 0;
+  }
+
+  /* Table styling */
+  .table-container {
+    overflow-x: auto;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: #ffffff;
+    margin: 1rem 0 0.5rem;
+  }
+  .reference-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+    text-align: left;
+  }
+  .reference-table th {
+    background: #f9fafb;
+    color: #111827;
+    font-weight: 700;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #e5e7eb;
+    white-space: nowrap;
+  }
+  .reference-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f3f4f6;
+    color: #374151;
+  }
+  .reference-table tr:last-child td {
+    border-bottom: none;
+  }
+  .row-highlight {
+    background: #fefce8;
+  }
+  .pill-recom {
+    display: inline-block;
+    margin-left: 0.5rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: #854d0e;
+    background: #fef9c3;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+  .text-primary {
+    color: #ca8a04;
+  }
+  .table-footnote {
+    font-size: 0.8125rem;
+    color: #6b7280;
+    margin: 0.5rem 0 2rem;
+  }
+
+  /* 3-Layer Driveway Guide */
+  .layers-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin: 1.25rem 0 1.5rem;
+  }
+  @media (min-width: 640px) {
+    .layers-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .layer-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1.25rem;
+  }
+  .layer-step {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #ca8a04;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.35rem;
+  }
+  .layer-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 0.5rem;
+  }
+  .layer-text {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: #4b5563;
+    margin: 0;
+  }
+  .project-notes-box {
+    background: #fefce8;
+    border-left: 4px solid #ca8a04;
+    padding: 1.25rem;
+    border-radius: 0 10px 10px 0;
+    margin: 1.5rem 0 2rem;
+  }
+  .notes-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #713f12;
+    margin: 0 0 0.5rem;
+  }
+  .project-notes-box p {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: #854d0e;
+    margin: 0;
+  }
+
+  /* Cost Cards */
+  .cost-cards-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    margin: 1.25rem 0 2.5rem;
+  }
+  @media (min-width: 640px) {
+    .cost-cards-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .cost-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1.25rem;
+  }
+  .cost-card-pro {
+    border-color: #fef08a;
+    background: #fefce8;
+  }
+  .cost-type {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #64748b;
+    margin-bottom: 0.5rem;
+  }
+  .cost-range {
+    font-size: 1.75rem;
+    font-weight: 900;
+    color: #0f172a;
+    margin-bottom: 0.5rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .cost-desc {
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: #475569;
+    margin: 0;
+  }
+
+  /* Adjacent Links Navigation */
+  .adjacent-nav-section {
+    margin: 3rem 0;
+    padding: 2rem 0;
+    border-top: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .adjacent-links-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin: 1.25rem 0 2rem;
+  }
+  @media (min-width: 640px) {
+    .adjacent-links-row {
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+  }
+  .adjacent-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: all 150ms ease;
+  }
+  .adjacent-link:hover {
+    border-color: #ca8a04;
+    box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.06);
+    transform: translateY(-1px);
+  }
+  .adj-arrow {
+    font-size: 1.25rem;
+    color: #ca8a04;
+    font-weight: 800;
+  }
+  .adj-label {
+    display: block;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #6b7280;
+  }
+  .adj-name {
+    display: block;
+    font-size: 0.875rem;
+    color: #111827;
+  }
+
+  /* All sizes chips */
+  .all-sizes-chips-wrap {
+    margin-top: 1.5rem;
+  }
+  .chips-title {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: #4b5563;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.75rem;
+  }
+  .chips-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .size-chip {
+    display: inline-block;
+    padding: 0.35rem 0.65rem;
+    font-size: 0.8125rem;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    color: #374151;
+    text-decoration: none;
+    transition: all 120ms ease;
+  }
+  .size-chip:hover {
+    border-color: #ca8a04;
+    color: #ca8a04;
+  }
+  .chip-active {
+    background: #fefce8;
+    border-color: #ca8a04;
+    color: #a16207;
+    font-weight: 700;
+  }
+
+  /* FAQs */
+  .faq-section {
+    margin: 3rem 0 2rem;
+  }
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
+  .faq-item {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .faq-question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #111827;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+  }
+  .faq-question::-webkit-details-marker {
+    display: none;
+  }
+  .faq-chevron {
+    flex-shrink: 0;
+    color: #9ca3af;
+    transition: transform 200ms ease;
+  }
+  .faq-item[open] .faq-chevron {
+    transform: rotate(180deg);
+    color: #ca8a04;
+  }
+  .faq-answer {
+    padding: 0 1.25rem 1.25rem;
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: #4b5563;
+  }
+  .faq-answer p {
+    margin: 0;
+  }
+</style>

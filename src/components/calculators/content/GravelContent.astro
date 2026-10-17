@@ -1,0 +1,274 @@
+---
+// src/components/calculators/content/GravelContent.astro
+import { gravelDimensions, getGravelMetrics } from '../../../data/gravel-dimensions';
+
+function getShortUse(useCase: string): string {
+  if (useCase.includes('Driveway')) return 'Driveway';
+  if (useCase.includes('Pad')) return 'Parking Pad';
+  if (useCase.includes('Shed')) return 'Shed Pad';
+  if (useCase.includes('Patio')) return 'Patio Area';
+  return 'Area';
+}
+---
+
+<div class="calc-content-prose">
+  <h2>How to Use the Gravel Calculator</h2>
+  <p>
+    Whether you are building a new rural driveway, pouring a shed base, or top-dressing an existing gravel lane, this calculator provides exact cubic yards and aggregate tonnage factoring in material density and compaction:
+  </p>
+  <ol>
+    <li><strong>Enter Project Dimensions:</strong> Input your project length and width in feet or meters. For long driveways, verify accurate wheel-path widths (typically 10 to 12 feet for residential lanes).</li>
+    <li><strong>Specify Layer Depth:</strong> Use 2 inches for surface replenishment or top dressing, 4 inches for shed pads and standard resurfacing, or 6 to 8 inches for brand-new driveway construction over native subgrade.</li>
+    <li><strong>Review Tonnage & Truckloads:</strong> Review both cubic yards and tons for your chosen aggregate density. Contractors recommend ordering 10% extra to compensate for subgrade settling and mechanical compaction.</li>
+  </ol>
+
+  <!-- Popular Gravel Sizes Grid -->
+  <h2>Popular Gravel Driveway & Pad Sizes (Quick Reference)</h2>
+  <p>
+    Planning a driveway, parking pad, or shed foundation with standard dimensions? Explore our exact-dimension calculation guides complete with tonnage charts, cubic yardage, dump truck counts, and depth recommendations:
+  </p>
+
+  <div class="gravel-sizes-grid">
+    {gravelDimensions.map((gravel) => {
+      const m4 = getGravelMetrics(gravel.length, gravel.width, 4);
+      const m6 = getGravelMetrics(gravel.length, gravel.width, 6);
+      const shortLabel = getShortUse(gravel.useCase);
+      const anchorTitle = `${gravel.name} ${shortLabel} (${m4.tonsCrushedStone} – ${m6.tonsCrushedStone} Tons)`;
+      return (
+        <a
+          href={`/calculators/gravel-calculator/${gravel.slug}/`}
+          class="gravel-size-card"
+          title={`Gravel calculator and tonnage chart for a ${gravel.name} area`}
+        >
+          <div class="gravel-card-top">
+            <span class="gravel-card-dim">{gravel.name}</span>
+            <span class="gravel-card-sqft">{gravel.areaSqFt} sq ft</span>
+          </div>
+          <strong class="gravel-card-anchor">{anchorTitle}</strong>
+          <p class="gravel-card-desc">{gravel.useCase}</p>
+          <div class="gravel-card-footer">
+            <span class="gravel-card-badge">{m4.cuYdsWithWaste} – {m6.cuYdsWithWaste} yd³</span>
+            <span class="gravel-card-cta">View Guide →</span>
+          </div>
+        </a>
+      );
+    })}
+  </div>
+
+  <h2>Common Gravel Project Dimensions & Tonnage Reference Table</h2>
+  <p>
+    Reference table showing cubic yards and estimated tonnage across 12 standard project dimensions. Tonnage is calculated at 1.4 tons per cubic yard (#57 crushed stone) with a 10% compaction allowance:
+  </p>
+
+  <div class="table-container">
+    <table class="reference-table">
+      <thead>
+        <tr>
+          <th>Project Size (ft)</th>
+          <th>Typical Application</th>
+          <th>Area (sq ft)</th>
+          <th>4" Depth (Tons)</th>
+          <th>6" Depth (Tons)</th>
+          <th>4" Order (yd³)</th>
+          <th>6" Order (yd³)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {gravelDimensions.map((gravel) => {
+          const m4 = getGravelMetrics(gravel.length, gravel.width, 4);
+          const m6 = getGravelMetrics(gravel.length, gravel.width, 6);
+          return (
+            <tr>
+              <td>
+                <a
+                  href={`/calculators/gravel-calculator/${gravel.slug}/`}
+                  class="table-size-link"
+                >
+                  <strong>{gravel.name} Area</strong>
+                </a>
+              </td>
+              <td>{gravel.useCase}</td>
+              <td>{gravel.areaSqFt}</td>
+              <td><strong>{m4.tonsCrushedStone} t</strong></td>
+              <td><strong>{m6.tonsCrushedStone} t</strong></td>
+              <td>{m4.cuYdsWithWaste} yd³</td>
+              <td>{m6.cuYdsWithWaste} yd³</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Gravel Aggregate Types & Density Comparison</h2>
+  <p>
+    Different stone types have distinct bulk densities that affect how many tons you need per cubic yard:
+  </p>
+  <ul>
+    <li><strong>#57 Crushed Stone (1.40 tons/yd³ / ~2,800 lbs):</strong> Angular 1/2" to 1" clean crushed limestone or granite without stone dust. Ideal for drainage layers, French drains, and intermediate driveway support.</li>
+    <li><strong>#411 Crusher Run / Dense Grade (1.50 tons/yd³ / ~3,000 lbs):</strong> Blended mix of 3/4" crushed rock down to fine stone dust. When wetted and rolled, it forms a tight, interlocking, cement-like driving surface that resists washboarding.</li>
+    <li><strong>Pea Gravel (1.35 tons/yd³ / ~2,700 lbs):</strong> Smooth, rounded 3/8" river pebbles. Excellent for decorative pathways, dog runs, and playground groundcover, but too mobile for heavy vehicle parking.</li>
+    <li><strong>#3 & #4 Ballast Stone (1.45 tons/yd³ / ~2,900 lbs):</strong> Large 2" to 3" fractured rock used as the bottom foundation layer for driveways built over soft, clay-rich subgrade soils.</li>
+  </ul>
+</div>
+
+<style>
+  .calc-content-prose {
+    padding: 1.5rem 0;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    font-size: 1.0625rem;
+  }
+  .calc-content-prose h2 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    margin: 2.25rem 0 1rem;
+    letter-spacing: -0.02em;
+  }
+  .calc-content-prose h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 1.5rem 0 0.75rem;
+  }
+  .calc-content-prose p {
+    margin-bottom: 1.25rem;
+  }
+  .calc-content-prose ul,
+  .calc-content-prose ol {
+    margin: 0 0 1.5rem 1.5rem;
+    padding: 0;
+  }
+  .calc-content-prose li {
+    margin-bottom: 0.5rem;
+  }
+  .calc-content-prose strong {
+    color: var(--color-text-primary);
+    font-weight: 600;
+  }
+
+  /* Popular Gravel Sizes Grid */
+  .gravel-sizes-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin: 1.5rem 0 2.5rem;
+  }
+  @media (min-width: 640px) {
+    .gravel-sizes-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 960px) {
+    .gravel-sizes-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .gravel-size-card {
+    background: #ffffff;
+    border: 1px solid var(--color-border, #e5e7eb);
+    border-radius: 12px;
+    padding: 1.125rem;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    transition: all 150ms ease;
+  }
+  .gravel-size-card:hover {
+    border-color: #ca8a04;
+    box-shadow: 0 6px 16px -2px rgba(202, 138, 4, 0.15);
+    transform: translateY(-2px);
+  }
+  .gravel-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.375rem;
+  }
+  .gravel-card-dim {
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: var(--color-text-primary, #111827);
+  }
+  .gravel-card-sqft {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-muted, #6b7280);
+    background: var(--color-bg-secondary, #f3f4f6);
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+  }
+  .gravel-card-anchor {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #a16207;
+    margin-bottom: 0.375rem;
+    line-height: 1.35;
+  }
+  .gravel-card-desc {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary, #4b5563);
+    line-height: 1.4;
+    margin: 0 0 0.875rem;
+    flex-grow: 1;
+  }
+  .gravel-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 0.625rem;
+    border-top: 1px solid var(--color-border-subtle, #f3f4f6);
+    font-size: 0.75rem;
+  }
+  .gravel-card-badge {
+    color: var(--color-text-muted, #6b7280);
+    font-weight: 500;
+  }
+  .gravel-card-cta {
+    color: #ca8a04;
+    font-weight: 700;
+  }
+
+  /* Table Container */
+  .table-container {
+    overflow-x: auto;
+    margin: 1.5rem 0 2rem;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+  }
+  .reference-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+    text-align: left;
+    background: white;
+  }
+  .reference-table th {
+    background: var(--color-bg-secondary);
+    color: var(--color-text-primary);
+    font-weight: 700;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--color-border);
+    white-space: nowrap;
+  }
+  .reference-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--color-border-subtle);
+    color: var(--color-text-secondary);
+  }
+  .reference-table tr:last-child td {
+    border-bottom: none;
+  }
+  .reference-table tr:hover td {
+    background: var(--color-bg-subtle, #f9fafb);
+  }
+  .table-size-link {
+    color: #a16207;
+    text-decoration: none;
+  }
+  .table-size-link:hover {
+    text-decoration: underline;
+  }
+</style>

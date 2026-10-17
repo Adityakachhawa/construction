@@ -1,0 +1,902 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/layout/Breadcrumbs.astro';
+import CalculatorWidget from '../../../components/calculators/CalculatorWidget.astro';
+import ConcreteColumnDiagram from '../../../components/calculators/ConcreteColumnDiagram.astro';
+import { concreteColumnCalculator } from '../../../calculators/concrete-column-calculator';
+import {
+  pierDimensions,
+  getPierMetrics,
+  getPierDepthTable,
+  type PierDimension,
+} from '../../../data/pier-dimensions';
+import { buildCanonical, type MetaProps } from '../../../utils/seo';
+import { buildBreadcrumbList, buildFaqSchema } from '../../../utils/schema';
+import type { CalculatorConfig } from '../../../calculators/_types';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  return pierDimensions.map((pier) => ({
+    params: { diameter: pier.slug },
+    props: { pier },
+  }));
+};
+
+type Props = {
+  pier: PierDimension;
+};
+
+const { pier } = Astro.props;
+
+const metrics36 = getPierMetrics(pier.diameterInches, 36);
+const metrics48 = getPierMetrics(pier.diameterInches, 48);
+const depthTable = getPierDepthTable(pier.diameterInches);
+
+// Pre-configure the calculator widget for this diameter
+const configuredCalc: CalculatorConfig = {
+  ...concreteColumnCalculator,
+  inputs: concreteColumnCalculator.inputs.map((input) => {
+    if (input.id === 'diameter_in') return { ...input, defaultValue: pier.diameterInches };
+    if (input.id === 'height_ft') return { ...input, defaultValue: 4 };
+    if (input.id === 'columns') return { ...input, defaultValue: 1 };
+    return input;
+  }),
+};
+
+// Adjacent diameters for internal linking
+const prevPier = pier.adjacentSizes.prev
+  ? pierDimensions.find((p) => p.slug === pier.adjacentSizes.prev)
+  : null;
+const nextPier = pier.adjacentSizes.next
+  ? pierDimensions.find((p) => p.slug === pier.adjacentSizes.next)
+  : null;
+
+// SEO Metadata
+const pageTitle = `How Much Concrete for a ${pier.diameterInches}-Inch Sonotube / Pier? (80lb & 60lb Bag Chart) | BuildByMath`;
+const metaDescription = `Calculate exact concrete bags and yards for a ${pier.name} Sonotube pier. Needs ${metrics36.bags80Single} bags (80 lb) at 36" depth or ${metrics48.bags80Single} bags at 48" depth per pier. Full frost depth chart and IRC code guide.`;
+const canonical = buildCanonical(`/calculators/concrete-column-calculator/${pier.slug}/`);
+
+const meta: MetaProps = {
+  title: pageTitle,
+  description: metaDescription,
+  canonical,
+  ogType: 'website',
+};
+
+const breadcrumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Concrete Calculators', href: '/category/concrete/' },
+  { name: 'Concrete Column Calculator', href: '/calculators/concrete-column-calculator/' },
+  { name: `${pier.name} Sonotube Pier`, href: `/calculators/concrete-column-calculator/${pier.slug}/` },
+];
+
+// Dynamic FAQs with exact calculations
+const faqs = [
+  {
+    question: `How many 80 lb bags of concrete do I need for a ${pier.diameterInches}-inch Sonotube 4 feet deep?`,
+    answer: `For a single ${pier.diameterInches}-inch diameter Sonotube poured 4 feet (48 inches) deep, you need ${metrics48.bags80Single} eighty-pound bags of concrete (or ${metrics48.bags60Single} sixty-pound bags), factoring in a 10% safety margin for hole bell-out. The exact volume is ${metrics48.cuFtSingle} cubic feet (${metrics48.cuYdsSingle} cubic yards). For a standard 4-pier deck project, you will need ${metrics48.bags80FourPiers} eighty-pound bags total.`,
+  },
+  {
+    question: `How many bags of concrete for a ${pier.diameterInches}-inch Sonotube 3 feet (36 inches) deep?`,
+    answer: `A ${pier.diameterInches}-inch Sonotube 3 feet deep requires ${metrics36.bags80Single} eighty-pound bags of concrete (or ${metrics36.bags60Single} sixty-pound bags) per pier. The net volume per hole is ${metrics36.cuFtSingle} cubic feet. If pouring 4 piers, you will need ${metrics36.bags80FourPiers} eighty-pound bags; for 6 piers, you will need ${metrics36.bags80SixPiers} eighty-pound bags.`,
+  },
+  {
+    question: `How deep should a ${pier.diameterInches}-inch concrete pier be?`,
+    answer: `Under International Residential Code (IRC Section R403.1.4), exterior concrete footings and piers must extend below the local frost line to prevent frost heave from lifting and cracking the structure. In southern US states, minimum depth is typically 12" to 24", while northern states and Canada require 36", 42", 48", or even 60" deep piers. Consult our US Frost Depth Guide to find the exact code depth for your state.`,
+  },
+  {
+    question: `Should I use 60 lb or 80 lb bags of concrete for Sonotubes?`,
+    answer: `Standard 80-lb bags yield approximately 0.60 cubic feet of mixed concrete, while 60-lb bags yield 0.45 cubic feet. For a ${pier.diameterInches}-inch pier, 80-lb bags require mixing fewer total sacks (${metrics48.bags80Single} bags at 4 ft vs. ${metrics48.bags60Single} bags of 60-lb), reducing overall bag opening and mixing time. Use high-strength 4,000 PSI concrete (such as Quikrete 5000) for structural durability.`,
+  },
+];
+
+const schemas = [
+  buildBreadcrumbList(breadcrumbs),
+  buildFaqSchema(faqs),
+];
+---
+
+<BaseLayout meta={meta} schemas={schemas}>
+  <div class="pier-page">
+    <div class="pier-container">
+      <Breadcrumbs items={breadcrumbs} />
+
+      <!-- Page Header -->
+      <header class="pier-header">
+        <div class="header-badge-row">
+          <span class="badge badge-accent">Sonotube Form Guide</span>
+          <span class="badge badge-neutral">{pier.diameterInches}" Diameter</span>
+          <span class="badge badge-category">{pier.useCase}</span>
+        </div>
+        <h1 class="pier-h1">How Many Bags of Concrete for a {pier.name} Sonotube Pier?</h1>
+        <p class="pier-lead">
+          Calculate the exact 80-lb and 60-lb bag counts, cubic feet, cubic yardage, and frost-depth requirements for a <strong>{pier.name} diameter cylindrical concrete pier or Sonotube form</strong>.
+        </p>
+      </header>
+
+      <!-- Instant Answer Box (Above the Fold) -->
+      <section class="instant-answer-box" aria-label="Instant Calculation Summary">
+        <div class="answer-header">
+          <div class="answer-badge">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M10 2L12.5 7.5L18.5 8.5L14 13L15 19L10 16L5 19L6 13L1.5 8.5L7.5 7.5L10 2Z" fill="currentColor"/>
+            </svg>
+            <span>Instant Concrete Estimate — {pier.name} Pier</span>
+          </div>
+          <span class="answer-rule">Includes 10% hole allowance</span>
+        </div>
+
+        <div class="answer-grid">
+          <!-- 36-Inch (3 ft) Depth Card -->
+          <div class="answer-card">
+            <div class="card-top">
+              <div class="depth-tag">36-Inch Depth (3 Feet)</div>
+              <span class="depth-sub">Moderate Frost Line</span>
+            </div>
+            <div class="card-main-stat">
+              <span class="stat-number">{metrics36.bags80Single}</span>
+              <span class="stat-unit">Bags (80 lb) / Pier</span>
+            </div>
+            <p class="stat-sub">
+              Net volume: <strong>{metrics36.cuFtSingle} ft³</strong> ({metrics36.cuYdsSingle} yd³) per hole • Or <strong>{metrics36.bags60Single}</strong> 60-lb bags
+            </p>
+            <div class="multi-pier-summary">
+              <div class="pier-calc-row">
+                <span>4 Piers Total:</span>
+                <strong>{metrics36.bags80FourPiers} bags (80 lb)</strong>
+              </div>
+              <div class="pier-calc-row">
+                <span>6 Piers Total:</span>
+                <strong>{metrics36.bags80SixPiers} bags (80 lb)</strong>
+              </div>
+            </div>
+            <p class="card-use"><strong>Typical zone:</strong> Mid-Atlantic, Lower Midwest, Pacific Northwest, and High Elevation South.</p>
+          </div>
+
+          <!-- 48-Inch (4 ft) Depth Card -->
+          <div class="answer-card card-recommended">
+            <div class="card-top">
+              <div class="depth-tag">48-Inch Depth (4 Feet)</div>
+              <span class="recom-badge">Deep Northern Frost Line</span>
+            </div>
+            <div class="card-main-stat">
+              <span class="stat-number">{metrics48.bags80Single}</span>
+              <span class="stat-unit">Bags (80 lb) / Pier</span>
+            </div>
+            <p class="stat-sub">
+              Net volume: <strong>{metrics48.cuFtSingle} ft³</strong> ({metrics48.cuYdsSingle} yd³) per hole • Or <strong>{metrics48.bags60Single}</strong> 60-lb bags
+            </p>
+            <div class="multi-pier-summary">
+              <div class="pier-calc-row">
+                <span>4 Piers Total:</span>
+                <strong>{metrics48.bags80FourPiers} bags (80 lb)</strong>
+              </div>
+              <div class="pier-calc-row">
+                <span>6 Piers Total:</span>
+                <strong>{metrics48.bags80SixPiers} bags (80 lb)</strong>
+              </div>
+            </div>
+            <p class="card-use"><strong>Typical zone:</strong> Upper Midwest, New England, Northeast, and Rocky Mountain regions.</p>
+          </div>
+        </div>
+
+        <!-- Frost Guide Integration Callout -->
+        <div class="frost-callout-banner">
+          <svg class="frost-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M4.93 19.07L19.07 4.93"/>
+          </svg>
+          <div class="frost-text">
+            <strong>Check Your State's Building Code Frost Depth:</strong> Building inspectors enforce strict footing depths to stop winter frost heave from cracking decks and porches. Look up your county's IRC requirement in our <a href="/guides/frost-depth/" class="frost-link">US Frost Depth Reference Table by State →</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Interactive Calculator Section -->
+      <section class="calculator-embed-section">
+        <div class="section-title-wrap">
+          <h2 class="section-h2">Customize Your {pier.name} Pier Calculation</h2>
+          <p class="section-sub">
+            The calculator below is pre-set for a <strong>{pier.diameterInches}-inch diameter</strong> form tube. Enter your exact hole depth and number of piers to calculate total concrete volume and bag counts:
+          </p>
+        </div>
+
+        <div class="calculator-card-wrapper">
+          <CalculatorWidget calc={configuredCalc} />
+        </div>
+      </section>
+
+      <!-- Concrete Column Visual Diagram -->
+      <div class="pier-diagram-wrap">
+        <ConcreteColumnDiagram />
+      </div>
+
+      <!-- Pre-Calculated Depth Chart (24" to 60") -->
+      <section class="depth-chart-section">
+        <div class="section-title-wrap">
+          <h2 class="section-h2">{pier.name} Sonotube Concrete Bag Chart by Depth</h2>
+          <p class="section-sub">
+            Concrete volume and 80-lb bag requirements for a {pier.diameterInches}" round tube across standard hole depths and pier quantities (includes 10% safety margin):
+          </p>
+        </div>
+
+        <div class="table-container">
+          <table class="reference-table">
+            <thead>
+              <tr>
+                <th>Hole Depth</th>
+                <th>Cu Ft / Pier</th>
+                <th>1 Pier (80 lb)</th>
+                <th>4 Piers (80 lb)</th>
+                <th>6 Piers (80 lb)</th>
+                <th>8 Piers (80 lb)</th>
+                <th>1 Pier (60 lb)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {depthTable.map((row) => {
+                const isHighlight = row.depthInches === 36 || row.depthInches === 48;
+                return (
+                  <tr class:list={[{ 'row-highlight': isHighlight }]}>
+                    <td>
+                      <strong>{row.depthInches}" ({row.depthFeet} ft)</strong>
+                      {row.depthInches === 48 && <span class="pill-recom">Standard 4ft</span>}
+                    </td>
+                    <td>{row.cuFtSingle} ft³</td>
+                    <td><strong class="text-primary">{row.bags80Single} bags</strong></td>
+                    <td><strong>{row.bags80FourPiers} bags</strong></td>
+                    <td><strong>{row.bags80SixPiers} bags</strong></td>
+                    <td>{row.bags80EightPiers} bags</td>
+                    <td>{row.bags60Single} bags</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <p class="table-footnote">
+          * Bag quantities are rounded up to the nearest full sack. Calculations assume 0.60 cu ft per 80-lb bag and 0.45 cu ft per 60-lb bag with a 10% allowance for hole irregularity and bell bases.
+        </p>
+      </section>
+
+      <!-- Engineering & Structural Code Notes -->
+      <section class="code-specs-section">
+        <h2 class="section-h2">Structural Code & Reinforcement for a {pier.name} Pier</h2>
+        <p class="section-sub">
+          Engineering recommendations per <strong>IRC Section R403</strong> (Footings and Foundations) and <strong>ACI 318</strong>:
+        </p>
+
+        <div class="specs-grid">
+          <div class="spec-card">
+            <div class="spec-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M4.93 19.07L19.07 4.93"/></svg>
+            </div>
+            <h3 class="spec-title">Frost Depth Code (IRC R403.1.4)</h3>
+            <p class="spec-text">Footings must be placed a minimum of 12 inches below undisturbed soil and below the local frost depth line to protect the structure against soil expansion and frost heave.</p>
+          </div>
+
+          <div class="spec-card">
+            <div class="spec-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>
+            </div>
+            <h3 class="spec-title">Rebar Reinforcement</h3>
+            <p class="spec-text">{pier.standardRebar}. Maintain at least 1.5 inches of concrete cover between rebar and the inner tube wall to prevent moisture ingress and steel corrosion.</p>
+          </div>
+
+          <div class="spec-card">
+            <div class="spec-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 7h7l-5.5 4.5 2 7.5-6.5-5-6.5 5 2-7.5-5.5-4.5h7z"/></svg>
+            </div>
+            <h3 class="spec-title">Estimated Axial Load Capacity</h3>
+            <p class="spec-text">{pier.maxAxialLoadLbs}. Actual load capacity depends on native soil bearing pressure (typically 1,500 to 2,500 PSF) and concrete compressive strength.</p>
+          </div>
+
+          <div class="spec-card">
+            <div class="spec-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <h3 class="spec-title">Concrete Mix Spec (3000 vs 4000 PSI)</h3>
+            <p class="spec-text">Use 3,500 to 4,000 PSI commercial high-strength concrete for piers supporting elevated structures. Read our <a href="/guides/compare-concrete-mixes/" class="text-primary underline">Concrete Mix Comparison Guide</a> for cure time and strength charts.</p>
+          </div>
+        </div>
+
+        <div class="project-notes-box">
+          <h3 class="notes-title">Application Notes for {pier.name} Piers ({pier.useCase})</h3>
+          <p>{pier.notes}</p>
+        </div>
+      </section>
+
+      <!-- Adjacent Diameters Navigation -->
+      <section class="adjacent-nav-section" aria-label="Adjacent Sonotube Diameters">
+        <h2 class="section-h2">Explore Other Sonotube & Pier Diameters</h2>
+        <div class="adjacent-links-row">
+          {prevPier && (
+            <a href={`/calculators/concrete-column-calculator/${prevPier.slug}/`} class="adjacent-link prev-link">
+              <span class="adj-arrow">←</span>
+              <div>
+                <span class="adj-label">Smaller Diameter</span>
+                <strong class="adj-name">{prevPier.name} Sonotube ({prevPier.useCase})</strong>
+              </div>
+            </a>
+          )}
+          <a href="/calculators/concrete-column-calculator/" class="adjacent-link hub-link">
+            <div>
+              <span class="adj-label">Custom Columns</span>
+              <strong class="adj-name">Main Column Calculator</strong>
+            </div>
+          </a>
+          <a href="/calculators/deck-footing-calculator/" class="adjacent-link hub-link">
+            <div>
+              <span class="adj-label">Deck Foundations</span>
+              <strong class="adj-name">Deck Footing Calculator</strong>
+            </div>
+          </a>
+          {nextPier && (
+            <a href={`/calculators/concrete-column-calculator/${nextPier.slug}/`} class="adjacent-link next-link">
+              <div>
+                <span class="adj-label">Larger Diameter</span>
+                <strong class="adj-name">{nextPier.name} Sonotube ({nextPier.useCase})</strong>
+              </div>
+              <span class="adj-arrow">→</span>
+            </a>
+          )}
+        </div>
+
+        <!-- Quick Jump Grid to All 7 Diameters -->
+        <div class="all-sizes-chips-wrap">
+          <p class="chips-title">All Standard Sonotube Tube Diameters:</p>
+          <div class="chips-grid">
+            {pierDimensions.map((p) => (
+              <a
+                href={`/calculators/concrete-column-calculator/${p.slug}/`}
+                class="size-chip"
+                class:list={[{ 'chip-active': p.slug === pier.slug }]}
+              >
+                <strong>{p.name}</strong> ({p.diameterInches}" tube)
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ Section -->
+      <section class="faq-section" aria-label="Frequently Asked Questions">
+        <h2 class="section-h2">Frequently Asked Questions: {pier.name} Sonotube Pier</h2>
+        <div class="faq-list">
+          {faqs.map((faq) => (
+            <details class="faq-item">
+              <summary class="faq-question">
+                <span>{faq.question}</span>
+                <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </summary>
+              <div class="faq-answer">
+                <p>{faq.answer}</p>
+              </div>
+            </details>
+          ))}
+        </div>
+      </section>
+    </div>
+  </div>
+</BaseLayout>
+
+<script is:inline define:vars={{ diameter: pier.diameterInches }}>
+  // Ensure the embedded widget displays the exact diameter for this landing page
+  window.addEventListener('DOMContentLoaded', () => {
+    const diamInput = document.getElementById('field-diameter_in');
+    if (diamInput && !window.location.search && !window.location.hash) {
+      if (diamInput.value !== String(diameter)) {
+        diamInput.value = diameter;
+        diamInput.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }
+  });
+</script>
+
+<style>
+  .pier-page {
+    padding: 1.5rem 0 4rem;
+    background: var(--surface-bg, #fbfbfa);
+  }
+  .pier-container {
+    max-width: 68rem;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+  }
+  .pier-header {
+    margin: 1.25rem 0 2rem;
+  }
+  .header-badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.875rem;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.625rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  .badge-accent {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+  }
+  .badge-neutral {
+    background: #f3f4f6;
+    color: #4b5563;
+    border: 1px solid #e5e7eb;
+  }
+  .badge-category {
+    background: #fff7ed;
+    color: #c2410c;
+    border: 1px solid #ffedd5;
+  }
+  .pier-h1 {
+    font-size: 2rem;
+    line-height: 1.2;
+    font-weight: 800;
+    color: var(--color-text-primary, #111827);
+    margin: 0 0 0.75rem;
+    letter-spacing: -0.025em;
+  }
+  @media (min-width: 640px) {
+    .pier-h1 {
+      font-size: 2.5rem;
+    }
+  }
+  .pier-lead {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: var(--color-text-secondary, #4b5563);
+    max-width: 52rem;
+    margin: 0;
+  }
+
+  /* Instant Answer Box */
+  .instant-answer-box {
+    background: #ffffff;
+    border: 2px solid #2563eb;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    box-shadow: 0 8px 24px -4px rgba(37, 99, 235, 0.12);
+  }
+  .answer-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #dbeafe;
+    margin-bottom: 1.25rem;
+  }
+  .answer-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9375rem;
+    font-weight: 800;
+    color: #1e40af;
+  }
+  .answer-rule {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #1e3a8a;
+    background: #dbeafe;
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+  }
+  .answer-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  @media (min-width: 768px) {
+    .answer-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .answer-card {
+    background: #fafaf9;
+    border: 1px solid #e7e5e4;
+    border-radius: 12px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+  }
+  .card-recommended {
+    background: #eff6ff;
+    border: 1.5px solid #3b82f6;
+  }
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .depth-tag {
+    font-size: 0.875rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #1c1917;
+  }
+  .depth-sub {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: #6b7280;
+  }
+  .recom-badge {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    background: #2563eb;
+    color: #ffffff;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+  .card-main-stat {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+  .stat-number {
+    font-size: 2.25rem;
+    font-weight: 900;
+    color: #2563eb;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-unit {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #1e3a8a;
+  }
+  .stat-sub {
+    font-size: 0.8125rem;
+    color: #4b5563;
+    margin: 0 0 1rem;
+  }
+  .multi-pier-summary {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 0.625rem 0.875rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-bottom: 0.875rem;
+  }
+  .pier-calc-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8125rem;
+    color: #374151;
+  }
+  .pier-calc-row strong {
+    color: #111827;
+  }
+  .card-use {
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    color: #44403c;
+    margin: auto 0 0;
+  }
+
+  .frost-callout-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+    padding: 0.875rem 1rem;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 10px;
+    color: #166534;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  .frost-icon {
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+    color: #16a34a;
+  }
+  .frost-link {
+    color: #15803d;
+    font-weight: 700;
+    text-decoration: underline;
+  }
+  .frost-link:hover {
+    color: #166534;
+  }
+
+  /* Section styles */
+  .section-title-wrap {
+    margin-bottom: 1.25rem;
+  }
+  .section-h2 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #111827;
+    letter-spacing: -0.02em;
+    margin: 2.5rem 0 0.5rem;
+  }
+  .section-sub {
+    font-size: 1rem;
+    color: #4b5563;
+    line-height: 1.6;
+    margin: 0;
+  }
+  .calculator-card-wrapper {
+    margin: 1.25rem 0 2rem;
+  }
+  .pier-diagram-wrap {
+    margin: 2rem 0;
+  }
+
+  /* Table styling */
+  .table-container {
+    overflow-x: auto;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: #ffffff;
+    margin: 1rem 0 0.5rem;
+  }
+  .reference-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+    text-align: left;
+  }
+  .reference-table th {
+    background: #f9fafb;
+    color: #111827;
+    font-weight: 700;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #e5e7eb;
+    white-space: nowrap;
+  }
+  .reference-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f3f4f6;
+    color: #374151;
+  }
+  .reference-table tr:last-child td {
+    border-bottom: none;
+  }
+  .row-highlight {
+    background: #eff6ff;
+  }
+  .pill-recom {
+    display: inline-block;
+    margin-left: 0.5rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: #1d4ed8;
+    background: #dbeafe;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+  .text-primary {
+    color: #2563eb;
+  }
+  .table-footnote {
+    font-size: 0.8125rem;
+    color: #6b7280;
+    margin: 0.5rem 0 2rem;
+  }
+
+  /* Specs Grid */
+  .specs-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin: 1.25rem 0 1.5rem;
+  }
+  @media (min-width: 640px) {
+    .specs-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .spec-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1.25rem;
+  }
+  .spec-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 8px;
+    background: #eff6ff;
+    color: #2563eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+  }
+  .spec-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 0.5rem;
+  }
+  .spec-text {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: #4b5563;
+    margin: 0;
+  }
+  .project-notes-box {
+    background: #f8fafc;
+    border-left: 4px solid #2563eb;
+    padding: 1.25rem;
+    border-radius: 0 10px 10px 0;
+    margin: 1.5rem 0 2rem;
+  }
+  .notes-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 0.5rem;
+  }
+  .project-notes-box p {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: #334155;
+    margin: 0;
+  }
+
+  /* Adjacent Links Navigation */
+  .adjacent-nav-section {
+    margin: 3rem 0;
+    padding: 2rem 0;
+    border-top: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .adjacent-links-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin: 1.25rem 0 2rem;
+  }
+  @media (min-width: 640px) {
+    .adjacent-links-row {
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+  }
+  .adjacent-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: all 150ms ease;
+  }
+  .adjacent-link:hover {
+    border-color: #2563eb;
+    box-shadow: 0 4px 12px -2px rgba(37, 99, 235, 0.12);
+    transform: translateY(-1px);
+  }
+  .adj-arrow {
+    font-size: 1.25rem;
+    color: #2563eb;
+    font-weight: 800;
+  }
+  .adj-label {
+    display: block;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #6b7280;
+  }
+  .adj-name {
+    display: block;
+    font-size: 0.875rem;
+    color: #111827;
+  }
+
+  /* All sizes chips */
+  .all-sizes-chips-wrap {
+    margin-top: 1.5rem;
+  }
+  .chips-title {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: #4b5563;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.75rem;
+  }
+  .chips-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .size-chip {
+    display: inline-block;
+    padding: 0.35rem 0.65rem;
+    font-size: 0.8125rem;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    color: #374151;
+    text-decoration: none;
+    transition: all 120ms ease;
+  }
+  .size-chip:hover {
+    border-color: #2563eb;
+    color: #2563eb;
+  }
+  .chip-active {
+    background: #eff6ff;
+    border-color: #2563eb;
+    color: #1d4ed8;
+    font-weight: 700;
+  }
+
+  /* FAQs */
+  .faq-section {
+    margin: 3rem 0 2rem;
+  }
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
+  .faq-item {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .faq-question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #111827;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+  }
+  .faq-question::-webkit-details-marker {
+    display: none;
+  }
+  .faq-chevron {
+    flex-shrink: 0;
+    color: #9ca3af;
+    transition: transform 200ms ease;
+  }
+  .faq-item[open] .faq-chevron {
+    transform: rotate(180deg);
+    color: #2563eb;
+  }
+  .faq-answer {
+    padding: 0 1.25rem 1.25rem;
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: #4b5563;
+  }
+  .faq-answer p {
+    margin: 0;
+  }
+</style>

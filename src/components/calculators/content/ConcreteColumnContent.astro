@@ -1,0 +1,275 @@
+---
+// src/components/calculators/content/ConcreteColumnContent.astro
+import { pierDimensions, getPierMetrics } from '../../../data/pier-dimensions';
+---
+
+<div class="calc-content-prose">
+  <h2>How to Use the Concrete Column & Sonotube Calculator</h2>
+  <p>
+    Whether you are pouring deck footings, pole barn columns, pergola piers, or sign bases, this calculator determines the exact concrete volume in cubic yards, cubic feet, and 80-lb / 60-lb bags for cylindrical form tubes:
+  </p>
+  <ol>
+    <li><strong>Enter Tube Diameter:</strong> Select or input the inside diameter of your cardboard form tube (Sonotube) in inches or millimeters.</li>
+    <li><strong>Specify Hole Depth:</strong> Enter your total pier depth. In freezing climates, this must extend beneath your local building code frost line (typically 36" to 48" deep in northern states).</li>
+    <li><strong>Set Pier Quantity:</strong> Enter the number of identical piers to get an immediate project total including cubic yardage and bags.</li>
+  </ol>
+
+  <!-- Popular Sonotube Diameters Grid -->
+  <h2>Popular Sonotube & Pier Diameters (Quick Reference)</h2>
+  <p>
+    Builders and deck installers routinely use standard form tube diameters. Explore our exact-diameter guides complete with 80-lb and 60-lb bag charts, frost depth requirements, and rebar recommendations:
+  </p>
+
+  <div class="pier-sizes-grid">
+    {pierDimensions.map((pier) => {
+      const m36 = getPierMetrics(pier.diameterInches, 36);
+      const m48 = getPierMetrics(pier.diameterInches, 48);
+      const anchorTitle = `${pier.name} Sonotube Pier (${m36.bags80Single} – ${m48.bags80Single} Bags @ 3–4ft)`;
+      return (
+        <a
+          href={`/calculators/concrete-column-calculator/${pier.slug}/`}
+          class="pier-size-card"
+          title={`Concrete calculator and bag chart for a ${pier.name} Sonotube pier`}
+        >
+          <div class="pier-card-top">
+            <span class="pier-card-dim">{pier.name} Tube</span>
+            <span class="pier-card-sub">{pier.diameterInches}" diameter</span>
+          </div>
+          <strong class="pier-card-anchor">{anchorTitle}</strong>
+          <p class="pier-card-desc">{pier.useCase}</p>
+          <div class="pier-card-footer">
+            <span class="pier-card-badge">{m48.cuFtSingle} ft³ @ 4ft</span>
+            <span class="pier-card-cta">View Guide →</span>
+          </div>
+        </a>
+      );
+    })}
+  </div>
+
+  <h2>Sonotube Pier Concrete Bags & Volume Reference Table</h2>
+  <p>
+    Reference table showing exact concrete requirements per pier across standard cylindrical form tube diameters. Sacks are 80-lb Quikrete bags (0.60 cu ft yield) including a 10% hole irregularity safety margin:
+  </p>
+
+  <div class="table-container">
+    <table class="reference-table">
+      <thead>
+        <tr>
+          <th>Tube Diameter</th>
+          <th>Typical Application</th>
+          <th>3 ft Depth (80 lb)</th>
+          <th>4 ft Depth (80 lb)</th>
+          <th>3 ft Volume (ft³)</th>
+          <th>4 ft Volume (ft³)</th>
+          <th>Estimated Load (lbs)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {pierDimensions.map((pier) => {
+          const m36 = getPierMetrics(pier.diameterInches, 36);
+          const m48 = getPierMetrics(pier.diameterInches, 48);
+          return (
+            <tr>
+              <td>
+                <a
+                  href={`/calculators/concrete-column-calculator/${pier.slug}/`}
+                  class="table-size-link"
+                >
+                  <strong>{pier.name} Pier</strong>
+                </a>
+              </td>
+              <td>{pier.useCase}</td>
+              <td><strong>{m36.bags80Single} bags</strong></td>
+              <td><strong>{m48.bags80Single} bags</strong></td>
+              <td>{m36.cuFtSingle} ft³</td>
+              <td>{m48.cuFtSingle} ft³</td>
+              <td>{pier.maxAxialLoadLbs}</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Frost Depth Code & Structural Guidelines</h2>
+  <p>
+    When casting cylindrical concrete piers in the ground, local building departments enforce strict depth and structural standards:
+  </p>
+  <ul>
+    <li>
+      <strong>IRC Frost Depth Compliance:</strong> Section R403.1.4 of the International Residential Code specifies that all exterior footings must extend below the established frost line. Placing footings above the frost depth risks catastrophic frost heave during winter freezing cycles. Consult our <a href="/guides/frost-depth/" class="guide-link">US Frost Depth Reference Table by State</a> to verify code depths for your county.
+    </li>
+    <li>
+      <strong>Concrete Compressive Strength (3,000 vs 4,000 PSI):</strong> While 2,500 to 3,000 PSI concrete is suitable for lightweight post holes, structural piers supporting habitable room additions and high decks require 3,500 to 4,000 PSI concrete (such as Quikrete 5000) for maximum freeze-thaw durability. Review our <a href="/guides/compare-concrete-mixes/" class="guide-link">Concrete Mix Comparison Guide</a> for slump targets and cure timelines.
+    </li>
+    <li>
+      <strong>Pier Belled Base:</strong> For low-bearing soils (under 1,500 PSF bearing pressure), flare the bottom of the augered hole using a manual bell-bottom tool or install a plastic footing form (like Bigfoot Systems) before setting the Sonotube.
+    </li>
+  </ul>
+</div>
+
+<style>
+  .calc-content-prose {
+    padding: 1.5rem 0;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    font-size: 1.0625rem;
+  }
+  .calc-content-prose h2 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    margin: 2.25rem 0 1rem;
+    letter-spacing: -0.02em;
+  }
+  .calc-content-prose h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 1.5rem 0 0.75rem;
+  }
+  .calc-content-prose p {
+    margin-bottom: 1.25rem;
+  }
+  .calc-content-prose ul,
+  .calc-content-prose ol {
+    margin: 0 0 1.5rem 1.5rem;
+    padding: 0;
+  }
+  .calc-content-prose li {
+    margin-bottom: 0.5rem;
+  }
+  .calc-content-prose strong {
+    color: var(--color-text-primary);
+    font-weight: 600;
+  }
+
+  /* Popular Pier Sizes Grid */
+  .pier-sizes-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin: 1.5rem 0 2.5rem;
+  }
+  @media (min-width: 640px) {
+    .pier-sizes-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 960px) {
+    .pier-sizes-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .pier-size-card {
+    background: #ffffff;
+    border: 1px solid var(--color-border, #e5e7eb);
+    border-radius: 12px;
+    padding: 1.125rem;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    transition: all 150ms ease;
+  }
+  .pier-size-card:hover {
+    border-color: #2563eb;
+    box-shadow: 0 6px 16px -2px rgba(37, 99, 235, 0.15);
+    transform: translateY(-2px);
+  }
+  .pier-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.375rem;
+  }
+  .pier-card-dim {
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: var(--color-text-primary, #111827);
+  }
+  .pier-card-sub {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #2563eb;
+    background: #eff6ff;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+  }
+  .pier-card-anchor {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #1d4ed8;
+    margin-bottom: 0.375rem;
+    line-height: 1.35;
+  }
+  .pier-card-desc {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary, #4b5563);
+    line-height: 1.4;
+    margin: 0 0 0.875rem;
+    flex-grow: 1;
+  }
+  .pier-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 0.625rem;
+    border-top: 1px solid var(--color-border-subtle, #f3f4f6);
+    font-size: 0.75rem;
+  }
+  .pier-card-badge {
+    color: var(--color-text-muted, #6b7280);
+    font-weight: 500;
+  }
+  .pier-card-cta {
+    color: #2563eb;
+    font-weight: 700;
+  }
+
+  /* Table Container */
+  .table-container {
+    overflow-x: auto;
+    margin: 1.5rem 0 2rem;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+  }
+  .reference-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+    text-align: left;
+    background: white;
+  }
+  .reference-table th {
+    background: var(--color-bg-secondary);
+    color: var(--color-text-primary);
+    font-weight: 700;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--color-border);
+    white-space: nowrap;
+  }
+  .reference-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--color-border-subtle);
+    color: var(--color-text-secondary);
+  }
+  .reference-table tr:last-child td {
+    border-bottom: none;
+  }
+  .reference-table tr:hover td {
+    background: var(--color-bg-subtle, #f9fafb);
+  }
+  .table-size-link {
+    color: #2563eb;
+    text-decoration: none;
+  }
+  .table-size-link:hover {
+    text-decoration: underline;
+  }
+  .guide-link {
+    color: #2563eb;
+    font-weight: 600;
+    text-decoration: underline;
+  }
+</style>

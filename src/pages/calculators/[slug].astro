@@ -50,6 +50,8 @@ import MethodologyLink from '../../components/calculators/MethodologyLink.astro'
 import DrywallContent from '../../components/calculators/content/DrywallContent.astro';
 import ConcreteSlabContent from '../../components/calculators/content/ConcreteSlabContent.astro';
 import RebarContent from '../../components/calculators/content/RebarContent.astro';
+import GravelContent from '../../components/calculators/content/GravelContent.astro';
+import ConcreteColumnContent from '../../components/calculators/content/ConcreteColumnContent.astro';
 import ReferenceTable from '../../components/calculators/ReferenceTable.astro';
 import RelatedGuides from '../../components/calculators/RelatedGuides.astro';
 import { getCollection } from 'astro:content';
@@ -206,4 +208,6 @@ const relatedGuides = allBlogPosts
   {calc.slug === 'drywall-calculator' && <DrywallContent slot="content" />}
   {calc.slug === 'concrete-slab-calculator' && <ConcreteSlabContent slot="content" />}
   {calc.slug === 'rebar-calculator' && <RebarContent slot="content" />}
+  {calc.slug === 'gravel-calculator' && <GravelContent slot="content" />}
+  {calc.slug === 'concrete-column-calculator' && <ConcreteColumnContent slot="content" />}
 </CalculatorLayout>

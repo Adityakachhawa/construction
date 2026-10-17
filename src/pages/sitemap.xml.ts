@@ -3,6 +3,8 @@ import { calculatorRegistry } from '../data/registry';
 import { categories } from '../data/categories';
 import { getCollection } from 'astro:content';
 import { slabDimensions } from '../data/slab-dimensions';
+import { gravelDimensions } from '../data/gravel-dimensions';
+import { pierDimensions } from '../data/pier-dimensions';
 
 const SITE_URL = 'https://buildbymath.com';
 
@@ -51,10 +53,30 @@ export const GET: APIRoute = async () => {
     xmlEntry(`${SITE_URL}/calculators/${calc.slug}/`, calc.lastUpdated ?? CURRENT_DATE, 'monthly', '0.9')
   );
 
-  // Programmatic exact-dimension concrete slab calculator pages
+  // Programmatic exact-dimension concrete slab calculator pages (15 sizes)
   const slabSizePages = slabDimensions.map((slab) =>
     xmlEntry(
       `${SITE_URL}/calculators/concrete-slab-calculator/${slab.slug}/`,
+      CURRENT_DATE,
+      'monthly',
+      '0.8'
+    )
+  );
+
+  // Programmatic exact-dimension gravel calculator pages (12 sizes)
+  const gravelSizePages = gravelDimensions.map((gravel) =>
+    xmlEntry(
+      `${SITE_URL}/calculators/gravel-calculator/${gravel.slug}/`,
+      CURRENT_DATE,
+      'monthly',
+      '0.8'
+    )
+  );
+
+  // Programmatic exact-diameter Sonotube / pier calculator pages (7 diameters)
+  const pierSizePages = pierDimensions.map((pier) =>
+    xmlEntry(
+      `${SITE_URL}/calculators/concrete-column-calculator/${pier.slug}/`,
       CURRENT_DATE,
       'monthly',
       '0.8'
@@ -76,7 +98,7 @@ export const GET: APIRoute = async () => {
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${[...staticPages, ...methodologyPages, ...guidePages, ...calculatorPages, ...slabSizePages, ...categoryPages, ...blogPages].join('\n')}
+${[...staticPages, ...methodologyPages, ...guidePages, ...calculatorPages, ...slabSizePages, ...gravelSizePages, ...pierSizePages, ...categoryPages, ...blogPages].join('\n')}
 </urlset>`;
 
   return new Response(xml, {
