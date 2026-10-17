@@ -1,0 +1,991 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/layout/Breadcrumbs.astro';
+import CalculatorWidget from '../../../components/calculators/CalculatorWidget.astro';
+import SlabDiagram from '../../../components/calculators/SlabDiagram.astro';
+import { concreteSlab } from '../../../calculators/concrete-slab';
+import {
+  slabDimensions,
+  getSlabMetrics,
+  getThicknessTable,
+  type SlabDimension,
+} from '../../../data/slab-dimensions';
+import { buildCanonical, type MetaProps } from '../../../utils/seo';
+import { buildBreadcrumbList, buildFaqSchema } from '../../../utils/schema';
+import type { CalculatorConfig } from '../../../calculators/_types';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  return slabDimensions.map((slab) => ({
+    params: { size: slab.slug },
+    props: { slab },
+  }));
+};
+
+type Props = {
+  slab: SlabDimension;
+};
+
+const { slab } = Astro.props;
+
+const metrics4 = getSlabMetrics(slab.length, slab.width, 4);
+const metrics6 = getSlabMetrics(slab.length, slab.width, 6);
+const thicknessTable = getThicknessTable(slab.length, slab.width);
+
+// Pre-configure the calculator widget for this slab size
+const configuredCalc: CalculatorConfig = {
+  ...concreteSlab,
+  inputs: concreteSlab.inputs.map((input) => {
+    if (input.id === 'length_ft') return { ...input, defaultValue: slab.length };
+    if (input.id === 'width_ft') return { ...input, defaultValue: slab.width };
+    if (input.id === 'thickness') return { ...input, defaultValue: slab.recommendedThickness };
+    return input;
+  }),
+};
+
+// Adjacent slabs for internal linking
+const prevSlab = slab.adjacentSizes.prev
+  ? slabDimensions.find((s) => s.slug === slab.adjacentSizes.prev)
+  : null;
+const nextSlab = slab.adjacentSizes.next
+  ? slabDimensions.find((s) => s.slug === slab.adjacentSizes.next)
+  : null;
+
+// SEO Metadata
+const pageTitle = `How Much Concrete for a ${slab.length}x${slab.width} Slab? (4" & 6" Yards + Bag Chart) | BuildByMath`;
+const metaDescription = `Calculate exact concrete for a ${slab.name} slab (${slab.areaSqFt} sq ft). Needs ${metrics4.cuYdsWithWaste} yd³ (4" thick) or ${metrics6.cuYdsWithWaste} yd³ (6" thick) with 10% waste. Full bag counts, cost estimates, and rebar guide.`;
+const canonical = buildCanonical(`/calculators/concrete-slab-calculator/${slab.slug}/`);
+
+const meta: MetaProps = {
+  title: pageTitle,
+  description: metaDescription,
+  canonical,
+  ogType: 'website',
+};
+
+const breadcrumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Concrete Calculators', href: '/category/concrete/' },
+  { name: 'Concrete Slab Calculator', href: '/calculators/concrete-slab-calculator/' },
+  { name: `${slab.name} Slab`, href: `/calculators/concrete-slab-calculator/${slab.slug}/` },
+];
+
+// Dynamic FAQs with exact calculations
+const faqs = [
+  {
+    question: `How many cubic yards of concrete do I need for a ${slab.length}x${slab.width} slab at 4 inches thick?`,
+    answer: `For a ${slab.name} slab at 4 inches thick (${slab.areaSqFt} sq ft), you need exactly ${metrics4.cuYds} cubic yards (${metrics4.cuFt} cubic feet) of concrete. When ordering ready-mix concrete, contractors recommend adding a 10% waste allowance for subbase irregularities and spillage, bringing your recommended order to ${metrics4.cuYdsWithWaste} cubic yards. The formula is: (${slab.length} ft × ${slab.width} ft × 0.333 ft) ÷ 27 = ${metrics4.cuYds} yd³.`,
+  },
+  {
+    question: `How many 80 lb bags of Quikrete do I need for a ${slab.length}x${slab.width} slab?`,
+    answer: `For a 4-inch thick ${slab.name} slab, you will need ${metrics4.bags80WithWaste} eighty-pound bags of concrete (or ${metrics4.bags60WithWaste} sixty-pound bags), which includes a 10% safety margin. If pouring a heavy-duty 6-inch slab, you will need ${metrics6.bags80WithWaste} eighty-pound bags (or ${metrics6.bags60WithWaste} sixty-pound bags). Each standard 80-lb bag yields approximately 0.60 cubic feet of mixed concrete.`,
+  },
+  {
+    question: `Should a ${slab.length}x${slab.width} slab be 4 or 6 inches thick?`,
+    answer: `Choose your slab thickness based on intended use: A 4-inch pour (${metrics4.cuYdsWithWaste} yd³ with waste) is standard for pedestrian patios, walkways, and small garden sheds holding under 100 sq ft. A 5 to 6-inch pour (${metrics6.cuYdsWithWaste} yd³ with waste) reinforced with #4 rebar on an aggregate subbase is strongly recommended for garage floors, carports, RV pads, hot tubs, or any application supporting vehicle axle weights per ACI 302.1R and IRC R506.`,
+  },
+  {
+    question: `How much does a ${slab.length}x${slab.width} concrete slab cost?`,
+    answer: `Ready-mix concrete delivery costs between $125 and $165 per cubic yard. For a 4-inch ${slab.name} slab (${metrics4.cuYdsWithWaste} yd³ ordered), materials will cost approximately $${Math.round(metrics4.cuYdsWithWaste * 125)} to $${Math.round(metrics4.cuYdsWithWaste * 165)}. For a 6-inch slab (${metrics6.cuYdsWithWaste} yd³ ordered), ready-mix concrete runs $${Math.round(metrics6.cuYdsWithWaste * 125)} to $${Math.round(metrics6.cuYdsWithWaste * 165)}. A complete turnkey installation by a concrete contractor (including grading, forms, gravel base, rebar, pour, and finishing) typically ranges from $6.00 to $12.00 per sq ft, or $${Math.round(slab.areaSqFt * 6).toLocaleString()} to $${Math.round(slab.areaSqFt * 12).toLocaleString()} total for ${slab.areaSqFt} sq ft.`,
+  },
+];
+
+const schemas = [
+  buildBreadcrumbList(breadcrumbs),
+  buildFaqSchema(faqs),
+];
+---
+
+<BaseLayout meta={meta} schemas={schemas}>
+  <div class="slab-page">
+    <div class="slab-container">
+      <Breadcrumbs items={breadcrumbs} />
+
+      <!-- Page Header -->
+      <header class="slab-header">
+        <div class="header-badge-row">
+          <span class="badge badge-accent">Exact Dimension Guide</span>
+          <span class="badge badge-neutral">{slab.areaSqFt} Sq Ft</span>
+          <span class="badge badge-category">{slab.category}</span>
+        </div>
+        <h1 class="slab-h1">How Much Concrete Do You Need for a {slab.name} Slab?</h1>
+        <p class="slab-lead">
+          Calculate the exact ready-mix yardage, 80-lb and 60-lb bag counts, subbase gravel, and rebar reinforcement needed for a <strong>{slab.name} concrete slab</strong> ({slab.areaSqFt} sq ft).
+        </p>
+      </header>
+
+      <!-- Instant Answer Box (Above the Fold) -->
+      <section class="instant-answer-box" aria-label="Instant Calculation Summary">
+        <div class="answer-header">
+          <div class="answer-badge">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M10 2L12.5 7.5L18.5 8.5L14 13L15 19L10 16L5 19L6 13L1.5 8.5L7.5 7.5L10 2Z" fill="currentColor"/>
+            </svg>
+            <span>Instant Concrete Estimate — {slab.name} Slab ({slab.areaSqFt} sq ft)</span>
+          </div>
+          <span class="answer-rule">Includes recommended 10% waste factor</span>
+        </div>
+
+        <div class="answer-grid">
+          <!-- 4-Inch Slab Card -->
+          <div class="answer-card" class:list={[{ 'card-recommended': slab.recommendedThickness === 4 }]}>
+            <div class="card-top">
+              <div class="thickness-tag">4-Inch Thick Slab</div>
+              {slab.recommendedThickness === 4 && <span class="recom-badge">Recommended for Patios & Sheds</span>}
+            </div>
+            <div class="card-main-stat">
+              <span class="stat-number">{metrics4.cuYdsWithWaste}</span>
+              <span class="stat-unit">Cubic Yards</span>
+            </div>
+            <p class="stat-net">Exact net volume: <strong>{metrics4.cuYds} yd³</strong> ({metrics4.cuFt} cu ft)</p>
+            <div class="card-bag-breakdown">
+              <div class="bag-item">
+                <span class="bag-count">{metrics4.bags80WithWaste}</span>
+                <span class="bag-type">80 lb bags (+10%)</span>
+              </div>
+              <div class="bag-divider">or</div>
+              <div class="bag-item">
+                <span class="bag-count">{metrics4.bags60WithWaste}</span>
+                <span class="bag-type">60 lb bags (+10%)</span>
+              </div>
+            </div>
+            <p class="card-use"><strong>Standard application:</strong> Pedestrian walkways, back patios, gazebo bases, small garden sheds.</p>
+          </div>
+
+          <!-- 6-Inch Slab Card -->
+          <div class="answer-card" class:list={[{ 'card-recommended': slab.recommendedThickness === 6 }]}>
+            <div class="card-top">
+              <div class="thickness-tag">6-Inch Thick Slab</div>
+              {slab.recommendedThickness === 6 && <span class="recom-badge">Recommended for Garages & Vehicles</span>}
+            </div>
+            <div class="card-main-stat">
+              <span class="stat-number">{metrics6.cuYdsWithWaste}</span>
+              <span class="stat-unit">Cubic Yards</span>
+            </div>
+            <p class="stat-net">Exact net volume: <strong>{metrics6.cuYds} yd³</strong> ({metrics6.cuFt} cu ft)</p>
+            <div class="card-bag-breakdown">
+              <div class="bag-item">
+                <span class="bag-count">{metrics6.bags80WithWaste}</span>
+                <span class="bag-type">80 lb bags (+10%)</span>
+              </div>
+              <div class="bag-divider">or</div>
+              <div class="bag-item">
+                <span class="bag-count">{metrics6.bags60WithWaste}</span>
+                <span class="bag-type">60 lb bags (+10%)</span>
+              </div>
+            </div>
+            <p class="card-use"><strong>Heavy-duty application:</strong> Garage floors, carports, RV pads, hot tub foundations, machinery shops.</p>
+          </div>
+        </div>
+
+        <!-- Ready-Mix Delivery Advice Banner -->
+        <div class="delivery-advice-banner">
+          <svg class="advice-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <rect x="1" y="3" width="15" height="13" rx="2"/>
+            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+            <circle cx="5.5" cy="18.5" r="2.5"/>
+            <circle cx="18.5" cy="18.5" r="2.5"/>
+          </svg>
+          <div>
+            <strong>Ready-Mix Truck vs. Bagged Recommendation:</strong> {slab.readyMixVsBags}
+          </div>
+        </div>
+      </section>
+
+      <!-- Interactive Calculator Section -->
+      <section class="calculator-embed-section">
+        <div class="section-title-wrap">
+          <h2 class="section-h2">Customize Your {slab.name} Slab Calculation</h2>
+          <p class="section-sub">
+            The calculator below is pre-configured for a <strong>{slab.length}′ × {slab.width}′</strong> slab. Modify thickness, waste percentage, or local price per yard to calculate exact costs in real time:
+          </p>
+        </div>
+
+        <div class="calculator-card-wrapper">
+          <CalculatorWidget calc={configuredCalc} />
+        </div>
+      </section>
+
+      <!-- Slab Visual Diagram -->
+      <div class="slab-diagram-wrap">
+        <SlabDiagram />
+      </div>
+
+      <!-- Pre-Calculated Thickness Reference Table -->
+      <section class="thickness-table-section">
+        <div class="section-title-wrap">
+          <h2 class="section-h2">{slab.name} Slab Concrete Volume & Bag Chart</h2>
+          <p class="section-sub">
+            Reference table comparing exact net volume and recommended order amounts across standard residential slab thicknesses for {slab.areaSqFt} square feet:
+          </p>
+        </div>
+
+        <div class="table-container">
+          <table class="reference-table">
+            <thead>
+              <tr>
+                <th>Slab Thickness</th>
+                <th>Recommended For</th>
+                <th>Net Cu Ft</th>
+                <th>Net Cu Yds</th>
+                <th>Order (Yds + 10%)</th>
+                <th>80 lb Bags (+10%)</th>
+                <th>60 lb Bags (+10%)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {thicknessTable.map((row) => {
+                const label =
+                  row.thicknessInches === 4
+                    ? 'Sidewalks, Patios, Light Sheds'
+                    : row.thicknessInches === 5
+                    ? 'Workshops, Carports, Light Trucks'
+                    : row.thicknessInches === 6
+                    ? 'Two-Car Garages, RVs, Hot Tubs'
+                    : 'Heavy Machinery, Farm Slabs';
+                const isRecommended = row.thicknessInches === slab.recommendedThickness;
+                return (
+                  <tr class:list={[{ 'row-highlight': isRecommended }]}>
+                    <td>
+                      <strong>{row.thicknessInches} Inches</strong>
+                      {isRecommended && <span class="pill-recom">Recommended</span>}
+                    </td>
+                    <td>{label}</td>
+                    <td>{row.cuFt} ft³</td>
+                    <td>{row.cuYds} yd³</td>
+                    <td><strong class="text-primary">{row.cuYdsWithWaste} yd³</strong></td>
+                    <td><strong>{row.bags80WithWaste}</strong></td>
+                    <td>{row.bags60WithWaste}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <p class="table-footnote">
+          * Bag calculations assume 0.60 cu ft per 80-lb bag and 0.45 cu ft per 60-lb bag, with a 10% safety allowance for subbase compaction and forms.
+        </p>
+      </section>
+
+      <!-- Engineering & Building Code Specifications -->
+      <section class="code-specs-section">
+        <h2 class="section-h2">Engineering & Code Specifications for a {slab.name} Slab</h2>
+        <p class="section-sub">
+          Guidelines aligned with American Concrete Institute standard <strong>ACI 302.1R</strong> (Guide for Concrete Floor and Slab Construction) and <strong>IRC Section R506</strong>:
+        </p>
+
+        <div class="specs-grid">
+          <div class="spec-card">
+            <div class="spec-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M4.93 19.07L19.07 4.93"/></svg>
+            </div>
+            <h3 class="spec-title">Subbase & Compaction</h3>
+            <p class="spec-text">{slab.subbase}</p>
+          </div>
+
+          <div class="spec-card">
+            <div class="spec-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>
+            </div>
+            <h3 class="spec-title">Rebar & Mesh Reinforcement</h3>
+            <p class="spec-text">{slab.reinforcement}</p>
+          </div>
+
+          <div class="spec-card">
+            <div class="spec-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M12 4v16"/></svg>
+            </div>
+            <h3 class="spec-title">Contraction & Control Joints</h3>
+            <p class="spec-text">{slab.controlJoints}</p>
+          </div>
+
+          <div class="spec-card">
+            <div class="spec-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <h3 class="spec-title">Mix Strength & Curing</h3>
+            <p class="spec-text">Specify 3,500 to 4,000 PSI ready-mix concrete with 5% to 7% air entrainment in cold climates. Moist cure with wet burlap or spray a curing compound (ASTM C309) for a minimum of 7 days before traffic.</p>
+          </div>
+        </div>
+
+        <div class="project-notes-box">
+          <h3 class="notes-title">Project Design Notes for {slab.name} ({slab.useCase})</h3>
+          <p>{slab.notes}</p>
+        </div>
+      </section>
+
+      <!-- Cost Breakdown Section -->
+      <section class="cost-estimate-section">
+        <h2 class="section-h2">Estimated Cost for a {slab.name} Concrete Slab</h2>
+        <div class="cost-cards-grid">
+          <div class="cost-card">
+            <span class="cost-type">DIY / Ready-Mix Delivery Only</span>
+            <div class="cost-range">
+              ${Math.round(metrics4.cuYdsWithWaste * 125)} – ${Math.round(metrics6.cuYdsWithWaste * 165)}
+            </div>
+            <p class="cost-desc">Concrete material cost delivered to your jobsite ($125 to $165 per cubic yard). Excludes wooden forms, rebar, gravel subbase, and tool rental.</p>
+          </div>
+
+          <div class="cost-card cost-card-pro">
+            <span class="cost-type">Turnkey Professional Installation</span>
+            <div class="cost-range">
+              ${Math.round(slab.areaSqFt * 6).toLocaleString()} – ${Math.round(slab.areaSqFt * 12).toLocaleString()}
+            </div>
+            <p class="cost-desc">Typical contractor turnkey rate ($6 to $12 per sq ft for {slab.areaSqFt} sq ft). Covers site excavation, formwork, crushed stone base, rebar grid, pour, screed, and broom finish.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Adjacent Sizes & Breadcrumb Navigation -->
+      <section class="adjacent-nav-section" aria-label="Adjacent Slab Sizes">
+        <h2 class="section-h2">Explore Other Concrete Slab Sizes</h2>
+        <div class="adjacent-links-row">
+          {prevSlab && (
+            <a href={`/calculators/concrete-slab-calculator/${prevSlab.slug}/`} class="adjacent-link prev-link">
+              <span class="adj-arrow">←</span>
+              <div>
+                <span class="adj-label">Previous Size</span>
+                <strong class="adj-name">{prevSlab.name} Slab ({prevSlab.useCase})</strong>
+              </div>
+            </a>
+          )}
+          <a href="/calculators/concrete-slab-calculator/" class="adjacent-link hub-link">
+            <div>
+              <span class="adj-label">Custom Slabs</span>
+              <strong class="adj-name">Main Concrete Slab Calculator</strong>
+            </div>
+          </a>
+          <a href="/calculators/rebar-calculator/" class="adjacent-link hub-link">
+            <div>
+              <span class="adj-label">Reinforcement</span>
+              <strong class="adj-name">Rebar Grid Calculator</strong>
+            </div>
+          </a>
+          {nextSlab && (
+            <a href={`/calculators/concrete-slab-calculator/${nextSlab.slug}/`} class="adjacent-link next-link">
+              <div>
+                <span class="adj-label">Next Size</span>
+                <strong class="adj-name">{nextSlab.name} Slab ({nextSlab.useCase})</strong>
+              </div>
+              <span class="adj-arrow">→</span>
+            </a>
+          )}
+        </div>
+
+        <!-- Quick Jump Grid to All 15 Sizes -->
+        <div class="all-sizes-chips-wrap">
+          <p class="chips-title">All Pre-Calculated Slab Sizes:</p>
+          <div class="chips-grid">
+            {slabDimensions.map((s) => (
+              <a
+                href={`/calculators/concrete-slab-calculator/${s.slug}/`}
+                class="size-chip"
+                class:list={[{ 'chip-active': s.slug === slab.slug }]}
+              >
+                <strong>{s.name}</strong> ({s.areaSqFt} sq ft)
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ Section -->
+      <section class="faq-section" aria-label="Frequently Asked Questions">
+        <h2 class="section-h2">Frequently Asked Questions: {slab.name} Slab</h2>
+        <div class="faq-list">
+          {faqs.map((faq) => (
+            <details class="faq-item">
+              <summary class="faq-question">
+                <span>{faq.question}</span>
+                <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </summary>
+              <div class="faq-answer">
+                <p>{faq.answer}</p>
+              </div>
+            </details>
+          ))}
+        </div>
+      </section>
+    </div>
+  </div>
+</BaseLayout>
+
+<script is:inline define:vars={{ length: slab.length, width: slab.width, thickness: slab.recommendedThickness }}>
+  // Ensure the embedded widget displays the exact dimensions for this landing page
+  window.addEventListener('DOMContentLoaded', () => {
+    const lenInput = document.getElementById('field-length_ft');
+    const widInput = document.getElementById('field-width_ft');
+    const thickInput = document.getElementById('field-thickness');
+    if (lenInput && widInput && !window.location.search && !window.location.hash) {
+      let changed = false;
+      if (lenInput.value !== String(length)) {
+        lenInput.value = length;
+        changed = true;
+      }
+      if (widInput.value !== String(width)) {
+        widInput.value = width;
+        changed = true;
+      }
+      if (thickInput && thickInput.value !== String(thickness)) {
+        thickInput.value = thickness;
+        changed = true;
+      }
+      if (changed) {
+        lenInput.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }
+  });
+</script>
+
+<style>
+  .slab-page {
+    padding: 1.5rem 0 4rem;
+    background: var(--surface-bg, #fbfbfa);
+  }
+  .slab-container {
+    max-width: 68rem;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+  }
+  .slab-header {
+    margin: 1.25rem 0 2rem;
+  }
+  .header-badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.875rem;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.625rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  .badge-accent {
+    background: #fff7ed;
+    color: #ea580c;
+    border: 1px solid #fed7aa;
+  }
+  .badge-neutral {
+    background: #f3f4f6;
+    color: #4b5563;
+    border: 1px solid #e5e7eb;
+  }
+  .badge-category {
+    background: #eff6ff;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+  }
+  .slab-h1 {
+    font-size: 2rem;
+    line-height: 1.2;
+    font-weight: 800;
+    color: var(--color-text-primary, #111827);
+    margin: 0 0 0.75rem;
+    letter-spacing: -0.025em;
+  }
+  @media (min-width: 640px) {
+    .slab-h1 {
+      font-size: 2.5rem;
+    }
+  }
+  .slab-lead {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: var(--color-text-secondary, #4b5563);
+    max-width: 52rem;
+    margin: 0;
+  }
+
+  /* Instant Answer Box */
+  .instant-answer-box {
+    background: #ffffff;
+    border: 2px solid #ea580c;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    box-shadow: 0 8px 24px -4px rgba(234, 88, 12, 0.12);
+  }
+  .answer-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #fed7aa;
+    margin-bottom: 1.25rem;
+  }
+  .answer-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9375rem;
+    font-weight: 800;
+    color: #9a3412;
+  }
+  .answer-rule {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #78350f;
+    background: #ffedd5;
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+  }
+  .answer-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  @media (min-width: 768px) {
+    .answer-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .answer-card {
+    background: #fafaf9;
+    border: 1px solid #e7e5e4;
+    border-radius: 12px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+  }
+  .card-recommended {
+    background: #fffbeb;
+    border: 1.5px solid #f59e0b;
+  }
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .thickness-tag {
+    font-size: 0.875rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #1c1917;
+  }
+  .recom-badge {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    background: #d97706;
+    color: #ffffff;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+  .card-main-stat {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+  .stat-number {
+    font-size: 2.25rem;
+    font-weight: 900;
+    color: #ea580c;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-unit {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #44403c;
+  }
+  .stat-net {
+    font-size: 0.8125rem;
+    color: #78716c;
+    margin: 0 0 1rem;
+  }
+  .card-bag-breakdown {
+    background: #ffffff;
+    border: 1px solid #e7e5e4;
+    border-radius: 8px;
+    padding: 0.625rem 0.875rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.875rem;
+  }
+  .bag-item {
+    display: flex;
+    flex-direction: column;
+  }
+  .bag-count {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #1c1917;
+    font-variant-numeric: tabular-nums;
+  }
+  .bag-type {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: #78716c;
+  }
+  .bag-divider {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #a8a29e;
+  }
+  .card-use {
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    color: #44403c;
+    margin: auto 0 0;
+  }
+
+  .delivery-advice-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+    padding: 0.875rem 1rem;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 10px;
+    color: #166534;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  .advice-icon {
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+    color: #16a34a;
+  }
+
+  /* Section styles */
+  .section-title-wrap {
+    margin-bottom: 1.25rem;
+  }
+  .section-h2 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #111827;
+    letter-spacing: -0.02em;
+    margin: 2.5rem 0 0.5rem;
+  }
+  .section-sub {
+    font-size: 1rem;
+    color: #4b5563;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .calculator-card-wrapper {
+    margin: 1.25rem 0 2rem;
+  }
+  .slab-diagram-wrap {
+    margin: 2rem 0;
+  }
+
+  /* Table styling */
+  .table-container {
+    overflow-x: auto;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: #ffffff;
+    margin: 1rem 0 0.5rem;
+  }
+  .reference-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+    text-align: left;
+  }
+  .reference-table th {
+    background: #f9fafb;
+    color: #111827;
+    font-weight: 700;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #e5e7eb;
+    white-space: nowrap;
+  }
+  .reference-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f3f4f6;
+    color: #374151;
+  }
+  .reference-table tr:last-child td {
+    border-bottom: none;
+  }
+  .row-highlight {
+    background: #fffbeb;
+  }
+  .pill-recom {
+    display: inline-block;
+    margin-left: 0.5rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: #b45309;
+    background: #fef3c7;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+  .text-primary {
+    color: #ea580c;
+  }
+  .table-footnote {
+    font-size: 0.8125rem;
+    color: #6b7280;
+    margin: 0.5rem 0 2rem;
+  }
+
+  /* Specs Grid */
+  .specs-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin: 1.25rem 0 1.5rem;
+  }
+  @media (min-width: 640px) {
+    .specs-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .spec-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1.25rem;
+  }
+  .spec-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 8px;
+    background: #fff7ed;
+    color: #ea580c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+  }
+  .spec-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 0.5rem;
+  }
+  .spec-text {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: #4b5563;
+    margin: 0;
+  }
+  .project-notes-box {
+    background: #f8fafc;
+    border-left: 4px solid #ea580c;
+    padding: 1.25rem;
+    border-radius: 0 10px 10px 0;
+    margin: 1.5rem 0 2rem;
+  }
+  .notes-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 0.5rem;
+  }
+  .project-notes-box p {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: #334155;
+    margin: 0;
+  }
+
+  /* Cost Cards */
+  .cost-cards-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    margin: 1.25rem 0 2.5rem;
+  }
+  @media (min-width: 640px) {
+    .cost-cards-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .cost-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1.25rem;
+  }
+  .cost-card-pro {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+  }
+  .cost-type {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #64748b;
+    margin-bottom: 0.5rem;
+  }
+  .cost-range {
+    font-size: 1.75rem;
+    font-weight: 900;
+    color: #0f172a;
+    margin-bottom: 0.5rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .cost-desc {
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: #475569;
+    margin: 0;
+  }
+
+  /* Adjacent Links Navigation */
+  .adjacent-nav-section {
+    margin: 3rem 0;
+    padding: 2rem 0;
+    border-top: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .adjacent-links-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin: 1.25rem 0 2rem;
+  }
+  @media (min-width: 640px) {
+    .adjacent-links-row {
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+  }
+  .adjacent-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: all 150ms ease;
+  }
+  .adjacent-link:hover {
+    border-color: #ea580c;
+    box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.06);
+    transform: translateY(-1px);
+  }
+  .adj-arrow {
+    font-size: 1.25rem;
+    color: #ea580c;
+    font-weight: 800;
+  }
+  .adj-label {
+    display: block;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #6b7280;
+  }
+  .adj-name {
+    display: block;
+    font-size: 0.875rem;
+    color: #111827;
+  }
+
+  /* All sizes chips */
+  .all-sizes-chips-wrap {
+    margin-top: 1.5rem;
+  }
+  .chips-title {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: #4b5563;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.75rem;
+  }
+  .chips-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .size-chip {
+    display: inline-block;
+    padding: 0.35rem 0.65rem;
+    font-size: 0.8125rem;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    color: #374151;
+    text-decoration: none;
+    transition: all 120ms ease;
+  }
+  .size-chip:hover {
+    border-color: #ea580c;
+    color: #ea580c;
+  }
+  .chip-active {
+    background: #fff7ed;
+    border-color: #ea580c;
+    color: #ea580c;
+    font-weight: 700;
+  }
+
+  /* FAQs */
+  .faq-section {
+    margin: 3rem 0 2rem;
+  }
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
+  .faq-item {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .faq-question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #111827;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+  }
+  .faq-question::-webkit-details-marker {
+    display: none;
+  }
+  .faq-chevron {
+    flex-shrink: 0;
+    color: #9ca3af;
+    transition: transform 200ms ease;
+  }
+  .faq-item[open] .faq-chevron {
+    transform: rotate(180deg);
+    color: #ea580c;
+  }
+  .faq-answer {
+    padding: 0 1.25rem 1.25rem;
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: #4b5563;
+  }
+  .faq-answer p {
+    margin: 0;
+  }
+</style>

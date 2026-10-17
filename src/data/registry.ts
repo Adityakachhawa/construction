@@ -200,7 +200,7 @@ const introMap: Record<string, string> = {
 export const calculatorRegistry: CalculatorConfig[] = _registry.map((calc) => ({
   ...calc,
   relatedCalculators: relatedMap[calc.slug] ?? calc.relatedCalculators,
-  lastUpdated: calc.lastUpdated ?? '2026-06-14',
+  lastUpdated: calc.lastUpdated ?? '2026-10-17',
   seo: {
     ...calc.seo,
     intro: calc.seo.intro ?? introMap[calc.slug],
