@@ -1,0 +1,1012 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/layout/Breadcrumbs.astro';
+import CalculatorWidget from '../../../components/calculators/CalculatorWidget.astro';
+import MulchDiagram from '../../../components/calculators/MulchDiagram.astro';
+import { mulchCalculator } from '../../../calculators/mulch-calculator';
+import {
+  mulchDimensions,
+  getMulchMetrics,
+  getMulchDepthTable,
+  type MulchDimension,
+} from '../../../data/mulch-dimensions';
+import { buildCanonical, type MetaProps } from '../../../utils/seo';
+import { buildBreadcrumbList, buildFaqSchema } from '../../../utils/schema';
+import type { CalculatorConfig } from '../../../calculators/_types';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  return mulchDimensions.map((mulch) => ({
+    params: { size: mulch.slug },
+    props: { mulch },
+  }));
+};
+
+type Props = {
+  mulch: MulchDimension;
+};
+
+const { mulch } = Astro.props;
+
+const metrics2 = getMulchMetrics(mulch.areaSqFt, 2);
+const metrics3 = getMulchMetrics(mulch.areaSqFt, 3);
+const depthTable = getMulchDepthTable(mulch.areaSqFt);
+
+// Pre-configure the calculator widget for this mulch bed size
+const configuredCalc: CalculatorConfig = {
+  ...mulchCalculator,
+  inputs: mulchCalculator.inputs.map((input) => {
+    if (input.id === 'length_ft') return { ...input, defaultValue: mulch.length };
+    if (input.id === 'width_ft') return { ...input, defaultValue: mulch.width };
+    if (input.id === 'depth') return { ...input, defaultValue: mulch.recommendedDepth };
+    return input;
+  }),
+};
+
+// Adjacent sizes for internal linking
+const prevMulch = mulch.adjacentSizes.prev
+  ? mulchDimensions.find((m) => m.slug === mulch.adjacentSizes.prev)
+  : null;
+const nextMulch = mulch.adjacentSizes.next
+  ? mulchDimensions.find((m) => m.slug === mulch.adjacentSizes.next)
+  : null;
+
+// SEO Metadata
+const pageTitle = `How Much Mulch for a ${mulch.label} Area? (2 cu ft Bags vs Bulk Yards) | BuildByMath`;
+const metaDescription = `Calculate exact mulch bags and bulk cubic yards for a ${mulch.label} area (${mulch.areaSqFt} sq ft). Needs ${metrics3.bags2cuft} bags (2 cu ft) or ${metrics3.cuYds} bulk yards at 3" depth. Cost comparison of bagged ($${metrics3.baggedCost}) vs bulk ($${metrics3.bulkMaterialCost}).`;
+const canonical = buildCanonical(`/calculators/mulch-calculator/${mulch.slug}/`);
+
+const meta: MetaProps = {
+  title: pageTitle,
+  description: metaDescription,
+  canonical,
+  ogType: 'website',
+};
+
+const breadcrumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Excavation & Aggregate', href: '/category/excavation/' },
+  { name: 'Mulch Calculator', href: '/calculators/mulch-calculator/' },
+  { name: `${mulch.label} Area`, href: `/calculators/mulch-calculator/${mulch.slug}/` },
+];
+
+// Dynamic FAQs with exact calculations
+const faqs = [
+  {
+    question: `How many bags of mulch do I need for a ${mulch.label} bed?`,
+    answer: `For a ${mulch.label} landscape bed (${mulch.areaSqFt} sq ft) at the recommended 3-inch depth for weed prevention, you need ${metrics3.bags2cuft} standard 2-cubic-foot bags (or ${metrics3.bags1_5cuft} bags if buying 1.5 cu ft bags). If you are simply doing an annual spring color refresh at a 2-inch depth, you will need ${metrics2.bags2cuft} bags (2 cu ft).`,
+  },
+  {
+    question: `How many cubic yards of mulch is a ${mulch.label} area?`,
+    answer: `At a standard 3-inch depth, a ${mulch.label} area (${mulch.areaSqFt} sq ft) requires exactly ${metrics3.cuYds} cubic yards of bulk mulch. At a 2-inch depth, it requires ${metrics2.cuYds} cubic yards. The volume formula is: (Square Footage × [Depth in Inches ÷ 12]) ÷ 27.`,
+  },
+  {
+    question: `Is it cheaper to buy bagged or bulk mulch for a ${mulch.label} area?`,
+    answer: `For this ${mulch.areaSqFt} sq ft area at a 3-inch depth, buying bagged mulch costs approximately $${metrics3.baggedCost} (${metrics3.bags2cuft} bags @ $4.25/bag), while bulk mulch material costs about $${metrics3.bulkMaterialCost} (${metrics3.cuYds} yd³ @ $40/yd³). ${mulch.areaSqFt < 200 ? 'Because the total volume is under 2 cubic yards, bagged mulch is more practical and avoids bulk delivery minimum drop fees ($40–$75).' : 'Bulk mulch provides superior cost savings, saving roughly $' + metrics3.savingsBulk + ' on material compared to bagged mulch.'}`,
+  },
+  {
+    question: `How deep should mulch be applied for a ${mulch.useCase.toLowerCase()}?`,
+    answer: `For general garden beds, a depth of 3 inches is ideal: it stops light from reaching weed seeds and prevents soil moisture evaporation. For annual top-dress maintenance over existing decomposed mulch, apply 1 to 2 inches. Never exceed 4 inches, and always keep mulch 2 to 3 inches away from woody stems and tree root flares to prevent fungal infection.`,
+  },
+];
+
+const schemas = [
+  buildBreadcrumbList(breadcrumbs),
+  buildFaqSchema(faqs),
+];
+---
+
+<BaseLayout meta={meta} schemas={schemas}>
+  <div class="mulch-page">
+    <div class="mulch-container">
+      <Breadcrumbs items={breadcrumbs} />
+
+      <!-- Page Header -->
+      <header class="mulch-header">
+        <div class="header-badge-row">
+          <span class="badge badge-accent">Landscaping Guide</span>
+          <span class="badge badge-neutral">{mulch.areaSqFt} Sq Ft</span>
+          <span class="badge badge-category">{mulch.useCase}</span>
+        </div>
+        <h1 class="mulch-h1">How Many Bags & Yards of Mulch for a {mulch.label} Bed?</h1>
+        <p class="mulch-lead">
+          Calculate the exact 2 cu ft bags, 1.5 cu ft bags, bulk cubic yards, and material costs for a <strong>{mulch.label} landscape bed, garden plot, or tree ring</strong> ({mulch.areaSqFt} sq ft).
+        </p>
+      </header>
+
+      <!-- Instant Answer Box (Above the Fold) -->
+      <section class="instant-answer-box" aria-label="Instant Calculation Summary">
+        <div class="answer-header">
+          <div class="answer-badge">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 11l3 3L22 4"/>
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+            </svg>
+            <span>Instant Materials Summary: {mulch.label} ({mulch.areaSqFt} sq ft)</span>
+          </div>
+          <span class="answer-rule">Standard 2 Cu Ft Bags vs Bulk Cubic Yards</span>
+        </div>
+
+        <div class="metric-grid">
+          <!-- 3-Inch Standard Depth -->
+          <div class="metric-card metric-primary">
+            <div class="metric-label">3" Depth (New Beds & Weeds)</div>
+            <div class="metric-value">{metrics3.bags2cuft} Bags</div>
+            <div class="metric-sub">{metrics3.cuYds} Bulk Cubic Yards ({metrics3.cuFt} cu ft)</div>
+          </div>
+
+          <!-- 2-Inch Annual Refresh -->
+          <div class="metric-card">
+            <div class="metric-label">2" Depth (Annual Refresh)</div>
+            <div class="metric-value">{metrics2.bags2cuft} Bags</div>
+            <div class="metric-sub">{metrics2.cuYds} Bulk Cubic Yards ({metrics2.cuFt} cu ft)</div>
+          </div>
+
+          <!-- Bagged Cost -->
+          <div class="metric-card">
+            <div class="metric-label">Bagged Retail Cost</div>
+            <div class="metric-value">${metrics3.baggedCost}</div>
+            <div class="metric-sub">Based on {metrics3.bags2cuft} bags @ $4.25 / bag</div>
+          </div>
+
+          <!-- Bulk Delivery Cost -->
+          <div class="metric-card">
+            <div class="metric-label">Bulk Material Cost</div>
+            <div class="metric-value">${metrics3.bulkMaterialCost}</div>
+            <div class="metric-sub">Based on {metrics3.cuYds} yd³ @ $40 / cu yd (raw material)</div>
+          </div>
+        </div>
+
+        <!-- Cost Comparison & Tip Callout -->
+        <div class="quick-takeaway">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <p>
+            <strong>Bagged vs. Bulk Buying Rule:</strong> 1 cubic yard of mulch equals exactly <strong>13.5 bags (2.0 cu ft each)</strong>. 
+            {mulch.areaSqFt < 200 ? (
+              <span>For a {mulch.label} bed ({mulch.areaSqFt} sq ft), you need less than 2 cubic yards ({metrics3.bags2cuft} bags). Buying bags at your local home improvement center is more economical than paying the typical $40–$75 local delivery fee for a small bulk dump truck load.</span>
+            ) : (
+              <span>For this {mulch.areaSqFt} sq ft area ({metrics3.cuYds} cubic yards), buying in bulk saves roughly ${metrics3.savingsBulk} on material alone and saves hauling {metrics3.bags2cuft} individual 35-lb plastic bags in your personal vehicle.</span>
+            )}
+          </p>
+        </div>
+      </section>
+
+      <!-- Two-Column Interactive Calculator & Visual Diagram -->
+      <section class="calc-section" aria-label="Interactive Calculator & Diagram">
+        <div class="section-title-wrap">
+          <h2 class="section-h2">Customize Bed Dimensions & Depth</h2>
+          <p class="section-desc">
+            Adjust bed length, width, or depth below to recalculate mulch volumes with instant live updates.
+          </p>
+        </div>
+
+        <div class="calc-diagram-grid">
+          <div class="calc-column">
+            <CalculatorWidget calc={configuredCalc} />
+          </div>
+          <div class="diagram-column">
+            <MulchDiagram />
+            <div class="dimension-summary-card">
+              <h3 class="summary-h3">Coverage Summary for {mulch.label} Bed</h3>
+              <ul class="summary-list">
+                <li><span>Bed Surface Area:</span> <strong>{mulch.areaSqFt} sq ft ({Math.round(mulch.areaSqFt * 0.092903 * 10) / 10} m²)</strong></li>
+                <li><span>Bed Dimensions:</span> <strong>{mulch.length} ft long × {mulch.width} ft wide</strong></li>
+                <li><span>Recommended Depth:</span> <strong>{mulch.recommendedDepth} inches</strong></li>
+                <li><span>2.0 Cu Ft Bags:</span> <strong>{metrics3.bags2cuft} bags (3" depth)</strong></li>
+                <li><span>1.5 Cu Ft Bags:</span> <strong>{metrics3.bags1_5cuft} bags (3" depth)</strong></li>
+                <li><span>Bulk Cubic Yards:</span> <strong>{metrics3.cuYds} yd³ (3" depth)</strong></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Pre-Calculated Depth & Bag Matrix Table -->
+      <section class="table-section" aria-label="Mulch Depth & Bag Comparison Table">
+        <div class="section-title-wrap">
+          <h2 class="section-h2">Mulch Depth & Bag Matrix for a {mulch.label} Area</h2>
+          <p class="section-desc">
+            Compare material volume, bag counts (both 2 cu ft and 1.5 cu ft bags), and bulk cubic yards across standard landscape depths.
+          </p>
+        </div>
+
+        <div class="table-card">
+          <div class="table-responsive">
+            <table class="mulch-table">
+              <thead>
+                <tr>
+                  <th scope="col">Layer Depth</th>
+                  <th scope="col">Application Objective</th>
+                  <th scope="col">Volume (Cu Ft)</th>
+                  <th scope="col">Bulk Cubic Yards</th>
+                  <th scope="col">2.0 Cu Ft Bags</th>
+                  <th scope="col">1.5 Cu Ft Bags</th>
+                  <th scope="col">Bagged Cost ($4.25)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {depthTable.map((row) => (
+                  <tr class={row.depthInches === 3 ? 'row-highlight' : ''}>
+                    <td class="font-bold">
+                      {row.depthLabel}
+                      {row.depthInches === 3 && <span class="table-pill">Recommended</span>}
+                    </td>
+                    <td class="text-sm">
+                      {row.depthInches === 1 && 'Light touch-up over fresh mulch'}
+                      {row.depthInches === 2 && 'Annual spring color refresh'}
+                      {row.depthInches === 3 && 'New garden bed & weed suppression'}
+                      {row.depthInches === 4 && 'Heavy landscape & water retention'}
+                      {row.depthInches === 6 && 'Playground safety cushion (ASTM)'}
+                    </td>
+                    <td class="text-mono">{row.cuFt} ft³</td>
+                    <td class="font-bold text-accent">{row.cuYds} yd³</td>
+                    <td class="font-bold">{row.bags2cuft} bags</td>
+                    <td>{row.bags1_5cuft} bags</td>
+                    <td class="text-mono">${row.baggedCost}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div class="table-footer-note">
+            <span>* Coverage calculations are exact geometric conversions based on 1 cu yd = 27 cu ft. Shredded hardwood, dyed bark, and cedar mulch compress 5% to 8% upon watering and settling.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Landscaping & Mulching Guide -->
+      <section class="guide-section" aria-label="Mulching Best Practices Guide">
+        <div class="section-title-wrap">
+          <h2 class="section-h2">Landscaper Guide: Proper Mulch Application</h2>
+          <p class="section-desc">
+            Essential horticultural techniques to maximize weed suppression, retain soil moisture, and protect plant root health.
+          </p>
+        </div>
+
+        <div class="guide-grid">
+          <!-- Card 1: 3-Inch Rule -->
+          <div class="guide-card">
+            <div class="guide-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              </svg>
+            </div>
+            <h3 class="guide-h3">1. The 3-Inch Golden Rule</h3>
+            <p>
+              For new planting beds or weed-prone garden plots, maintain an even <strong>3-inch layer</strong> of organic shredded mulch. This thickness blocks 90% of sunlight from germinating dormant weed seeds while preventing the top 4 inches of topsoil from drying out during hot summer spells.
+            </p>
+          </div>
+
+          <!-- Card 2: Never Volcano Mulch -->
+          <div class="guide-card">
+            <div class="guide-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+            </div>
+            <h3 class="guide-h3">2. Avoid "Mulch Volcanoes"</h3>
+            <p>
+              Never pile mulch against tree trunks or woody perennial stems. Piling mulch creates a damp harbor for burrowing rodents and fungal pathogens, eventually rotting the bark flare and choking the root collar. Always leave a <strong>2 to 3-inch gap</strong> of clear air around all trunks.
+            </p>
+          </div>
+
+          <!-- Card 3: Mulch Material Types -->
+          <div class="guide-card">
+            <div class="guide-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
+            <h3 class="guide-h3">3. Bark vs. Wood Chips vs. Pine Straw</h3>
+            <p>
+              <strong>Double-shredded hardwood bark</strong> interlocks tightly on slopes and resists blowing in wind. <strong>Pine bark nuggets</strong> break down slowly but float during heavy cloudbursts. <strong>Pine straw</strong> (pine needles) is lightweight and acidic—perfect for azaleas, blueberries, and hydrangeas.
+            </p>
+          </div>
+
+          <!-- Card 4: Weed Barrier Fabric -->
+          <div class="guide-card">
+            <div class="guide-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <line x1="3" y1="9" x2="21" y2="9"/>
+                <line x1="9" y1="21" x2="9" y2="9"/>
+              </svg>
+            </div>
+            <h3 class="guide-h3">4. Geotextile Weed Fabric</h3>
+            <p>
+              Under organic mulch, landscape fabric can eventually clog with decomposed wood, creating a sterile barrier that impedes earthworm circulation. Use heavy non-woven geotextile fabric beneath decorative gravel, but rely on 3 inches of organic mulch over 2 layers of plain unwaxed cardboard in living perennial beds.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Project Notes & Application Details -->
+      <section class="notes-section" aria-label="Bed Application Specifics">
+        <div class="notes-card">
+          <div class="notes-badge">Application Profile: {mulch.useCase}</div>
+          <p class="notes-text">{mulch.notes}</p>
+        </div>
+      </section>
+
+      <!-- Internal Linking & Adjacent Bed Sizes -->
+      <nav class="adjacent-nav" aria-label="Adjacent Bed Sizes">
+        <div class="adjacent-title">Explore Related Landscaping Bed Sizes</div>
+        <div class="adjacent-grid">
+          {prevMulch ? (
+            <a href={`/calculators/mulch-calculator/${prevMulch.slug}/`} class="adjacent-card prev">
+              <span class="adjacent-dir">← Smaller Area</span>
+              <span class="adjacent-name">{prevMulch.label} Bed ({prevMulch.areaSqFt} sq ft)</span>
+              <span class="adjacent-meta">{getMulchMetrics(prevMulch.areaSqFt, 3).bags2cuft} bags • {prevMulch.useCase}</span>
+            </a>
+          ) : (
+            <div class="adjacent-card disabled">
+              <span class="adjacent-dir">Smallest Standard Bed</span>
+              <span class="adjacent-name">5×10 Front Porch Bed</span>
+            </div>
+          )}
+
+          <a href="/calculators/mulch-calculator/" class="adjacent-card hub">
+            <span class="adjacent-dir">Master Tool</span>
+            <span class="adjacent-name">Mulch Calculator</span>
+            <span class="adjacent-meta">Custom dimensions, bag sizes & metric units</span>
+          </a>
+
+          {nextMulch ? (
+            <a href={`/calculators/mulch-calculator/${nextMulch.slug}/`} class="adjacent-card next">
+              <span class="adjacent-dir">Larger Area →</span>
+              <span class="adjacent-name">{nextMulch.label} Bed ({nextMulch.areaSqFt} sq ft)</span>
+              <span class="adjacent-meta">{getMulchMetrics(nextMulch.areaSqFt, 3).bags2cuft} bags • {nextMulch.useCase}</span>
+            </a>
+          ) : (
+            <div class="adjacent-card disabled">
+              <span class="adjacent-dir">Largest Standard Size</span>
+              <span class="adjacent-name">1,000 Sq Ft Full-Yard Overhaul</span>
+            </div>
+          )}
+        </div>
+      </nav>
+
+      <!-- Dynamic FAQs Section -->
+      <section class="faq-section" aria-label="Frequently Asked Questions">
+        <div class="section-title-wrap">
+          <h2 class="section-h2">Frequently Asked Questions: {mulch.label} Mulch Area</h2>
+          <p class="section-desc">
+            Exact bag counts, bulk cubic yards, and cost comparisons calculated for landscaping beds.
+          </p>
+        </div>
+
+        <div class="faq-list">
+          {faqs.map((faq, i) => (
+            <details class="faq-item" open={i === 0}>
+              <summary class="faq-question">
+                <span>{faq.question}</span>
+                <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </summary>
+              <div class="faq-answer">
+                <p>{faq.answer}</p>
+              </div>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      <!-- Bottom Related Calculators & Guides -->
+      <footer class="mulch-footer">
+        <div class="related-strip">
+          <span class="strip-label">Related Landscape & Excavation Tools:</span>
+          <div class="strip-links">
+            <a href="/calculators/topsoil-calculator/">Topsoil Calculator</a>
+            <a href="/calculators/gravel-calculator/">Gravel Calculator</a>
+            <a href="/calculators/sand-calculator/">Sand Calculator</a>
+            <a href="/calculators/paver-base-calculator/">Paver Base Calculator</a>
+            <a href="/calculators/square-footage-calculator/">Square Footage Calculator</a>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .mulch-page {
+    background-color: var(--color-bg, #0d1117);
+    color: var(--color-text, #c9d1d9);
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .mulch-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .mulch-header {
+    margin: 1.5rem 0 2.5rem;
+  }
+
+  .header-badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.65rem;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .badge-accent {
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+  }
+
+  .badge-neutral {
+    background: rgba(148, 163, 184, 0.12);
+    color: #cbd5e1;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+  }
+
+  .badge-category {
+    background: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+  }
+
+  .mulch-h1 {
+    font-size: clamp(1.85rem, 4vw, 2.75rem);
+    font-weight: 800;
+    line-height: 1.2;
+    color: #ffffff;
+    margin: 0 0 1rem;
+    letter-spacing: -0.02em;
+  }
+
+  .mulch-lead {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: #94a3b8;
+    max-width: 850px;
+    margin: 0;
+  }
+
+  .mulch-lead strong {
+    color: #f1f5f9;
+  }
+
+  /* Instant Answer Box */
+  .instant-answer-box {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    border-radius: 16px;
+    padding: 1.75rem;
+    margin-bottom: 3rem;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(56, 189, 248, 0.05);
+  }
+
+  .answer-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+  }
+
+  .answer-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #38bdf8;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  .answer-rule {
+    font-size: 0.8125rem;
+    color: #94a3b8;
+    background: rgba(15, 23, 42, 0.6);
+    padding: 0.25rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid rgba(148, 163, 184, 0.15);
+  }
+
+  .metric-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .metric-card {
+    background: rgba(15, 23, 42, 0.65);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    border-radius: 12px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+
+  .metric-card:hover {
+    border-color: rgba(56, 189, 248, 0.4);
+    transform: translateY(-2px);
+  }
+
+  .metric-primary {
+    background: linear-gradient(135deg, rgba(14, 116, 144, 0.25) 0%, rgba(15, 23, 42, 0.7) 100%);
+    border-color: rgba(56, 189, 248, 0.4);
+  }
+
+  .metric-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+    margin-bottom: 0.5rem;
+  }
+
+  .metric-primary .metric-label {
+    color: #38bdf8;
+  }
+
+  .metric-value {
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1.1;
+    margin-bottom: 0.35rem;
+    font-family: var(--font-mono, monospace);
+  }
+
+  .metric-primary .metric-value {
+    color: #38bdf8;
+  }
+
+  .metric-sub {
+    font-size: 0.8125rem;
+    color: #94a3b8;
+    line-height: 1.4;
+  }
+
+  .quick-takeaway {
+    display: flex;
+    gap: 0.875rem;
+    align-items: flex-start;
+    background: rgba(56, 189, 248, 0.08);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+  }
+
+  .quick-takeaway svg {
+    flex-shrink: 0;
+    color: #38bdf8;
+    margin-top: 0.15rem;
+  }
+
+  .quick-takeaway p {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: #cbd5e1;
+  }
+
+  .quick-takeaway strong {
+    color: #ffffff;
+  }
+
+  /* Section Title Wraps */
+  .section-title-wrap {
+    margin-bottom: 1.75rem;
+  }
+
+  .section-h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 0.5rem;
+  }
+
+  .section-desc {
+    font-size: 0.95rem;
+    color: #94a3b8;
+    margin: 0;
+    max-width: 780px;
+  }
+
+  /* Calc & Diagram Grid */
+  .calc-section {
+    margin-bottom: 3.5rem;
+  }
+
+  .calc-diagram-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  @media (min-width: 900px) {
+    .calc-diagram-grid {
+      grid-template-columns: 1.15fr 0.85fr;
+      align-items: start;
+    }
+  }
+
+  .dimension-summary-card {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-top: 1.25rem;
+  }
+
+  .summary-h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 0.875rem;
+  }
+
+  .summary-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .summary-list li {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    border-bottom: 1px dashed rgba(148, 163, 184, 0.12);
+    padding-bottom: 0.4rem;
+  }
+
+  .summary-list li span {
+    color: #94a3b8;
+  }
+
+  .summary-list li strong {
+    color: #f1f5f9;
+    text-align: right;
+  }
+
+  /* Mulch Table */
+  .table-section {
+    margin-bottom: 3.5rem;
+  }
+
+  .table-card {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  .mulch-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    text-align: left;
+  }
+
+  .mulch-table th {
+    background: rgba(30, 41, 59, 0.8);
+    color: #cbd5e1;
+    font-weight: 600;
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    white-space: nowrap;
+  }
+
+  .mulch-table td {
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    color: #cbd5e1;
+    white-space: nowrap;
+  }
+
+  .mulch-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .row-highlight {
+    background: rgba(56, 189, 248, 0.08);
+  }
+
+  .table-pill {
+    display: inline-block;
+    margin-left: 0.5rem;
+    padding: 0.15rem 0.45rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.15);
+    border-radius: 4px;
+  }
+
+  .font-bold {
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .text-accent {
+    color: #38bdf8;
+  }
+
+  .text-mono {
+    font-family: var(--font-mono, monospace);
+  }
+
+  .text-sm {
+    font-size: 0.8125rem;
+    color: #94a3b8;
+    white-space: normal;
+    min-width: 190px;
+  }
+
+  .table-footer-note {
+    padding: 0.875rem 1.25rem;
+    background: rgba(15, 23, 42, 0.8);
+    border-top: 1px solid rgba(148, 163, 184, 0.15);
+    font-size: 0.8125rem;
+    color: #94a3b8;
+    line-height: 1.5;
+  }
+
+  /* Guide Cards */
+  .guide-section {
+    margin-bottom: 3.5rem;
+  }
+
+  .guide-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .guide-card {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .guide-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: rgba(56, 189, 248, 0.12);
+    color: #38bdf8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+
+  .guide-h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 0.65rem;
+  }
+
+  .guide-card p {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: #94a3b8;
+  }
+
+  .guide-card strong {
+    color: #f1f5f9;
+  }
+
+  /* Application Notes */
+  .notes-section {
+    margin-bottom: 3.5rem;
+  }
+
+  .notes-card {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.7) 100%);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 12px;
+    padding: 1.5rem 1.75rem;
+  }
+
+  .notes-badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #4ade80;
+    margin-bottom: 0.6rem;
+  }
+
+  .notes-text {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #cbd5e1;
+  }
+
+  /* Adjacent Navigation */
+  .adjacent-nav {
+    margin-bottom: 3.5rem;
+  }
+
+  .adjacent-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+    margin-bottom: 1rem;
+  }
+
+  .adjacent-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+
+  .adjacent-card {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    border-radius: 12px;
+    padding: 1.25rem;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.2s ease;
+  }
+
+  .adjacent-card:not(.disabled):hover {
+    border-color: #38bdf8;
+    background: rgba(30, 41, 59, 0.7);
+    transform: translateY(-2px);
+  }
+
+  .adjacent-card.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .adjacent-dir {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #38bdf8;
+    margin-bottom: 0.35rem;
+  }
+
+  .adjacent-name {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 0.25rem;
+  }
+
+  .adjacent-meta {
+    font-size: 0.8rem;
+    color: #94a3b8;
+  }
+
+  /* FAQ List */
+  .faq-section {
+    margin-bottom: 3.5rem;
+  }
+
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .faq-item {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s ease;
+  }
+
+  .faq-item[open] {
+    border-color: rgba(56, 189, 248, 0.4);
+  }
+
+  .faq-question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #ffffff;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .faq-chevron {
+    transition: transform 0.2s ease;
+    color: #38bdf8;
+    flex-shrink: 0;
+  }
+
+  .faq-item[open] .faq-chevron {
+    transform: rotate(180deg);
+  }
+
+  .faq-answer {
+    padding: 0 1.5rem 1.25rem;
+  }
+
+  .faq-answer p {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #94a3b8;
+  }
+
+  /* Footer Strip */
+  .mulch-footer {
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(148, 163, 184, 0.15);
+  }
+
+  .related-strip {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.25rem;
+  }
+
+  .strip-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+  }
+
+  .strip-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .strip-links a {
+    font-size: 0.875rem;
+    color: #38bdf8;
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .strip-links a:hover {
+    color: #7dd3fc;
+    text-decoration: underline;
+  }
+</style>

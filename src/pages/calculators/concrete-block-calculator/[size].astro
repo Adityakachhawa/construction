@@ -1,0 +1,1010 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/layout/Breadcrumbs.astro';
+import CalculatorWidget from '../../../components/calculators/CalculatorWidget.astro';
+import ConcreteBlockDiagram from '../../../components/calculators/ConcreteBlockDiagram.astro';
+import { concreteBlockCalculator } from '../../../calculators/concrete-block-calculator';
+import {
+  blockWallDimensions,
+  getBlockWallMetrics,
+  getBlockSizeComparison,
+  type BlockWallDimension,
+} from '../../../data/block-wall-dimensions';
+import { buildCanonical, type MetaProps } from '../../../utils/seo';
+import { buildBreadcrumbList, buildFaqSchema } from '../../../utils/schema';
+import type { CalculatorConfig } from '../../../calculators/_types';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  return blockWallDimensions.map((wall) => ({
+    params: { size: wall.slug },
+    props: { wall },
+  }));
+};
+
+type Props = {
+  wall: BlockWallDimension;
+};
+
+const { wall } = Astro.props;
+
+const metrics = getBlockWallMetrics(wall.height, wall.length);
+const blockComparison = getBlockSizeComparison(wall.height, wall.length);
+
+// Pre-configure the calculator widget for this wall size
+const configuredCalc: CalculatorConfig = {
+  ...concreteBlockCalculator,
+  inputs: concreteBlockCalculator.inputs.map((input) => {
+    if (input.id === 'length_ft') return { ...input, defaultValue: wall.length };
+    if (input.id === 'height_ft') return { ...input, defaultValue: wall.height };
+    if (input.id === 'waste_pct') return { ...input, defaultValue: 5 };
+    return input;
+  }),
+};
+
+// Adjacent sizes for internal linking
+const prevWall = wall.adjacentSizes.prev
+  ? blockWallDimensions.find((w) => w.slug === wall.adjacentSizes.prev)
+  : null;
+const nextWall = wall.adjacentSizes.next
+  ? blockWallDimensions.find((w) => w.slug === wall.adjacentSizes.next)
+  : null;
+
+// SEO Metadata
+const pageTitle = `How Many Concrete Blocks for a ${wall.height}x${wall.length} Wall? (8x8x16 Block & Mortar Chart) | BuildByMath`;
+const metaDescription = `Calculate exact concrete blocks (CMU), mortar bags, and core fill grout for a ${wall.height}x${wall.length} ft wall (${wall.areaSqFt} sq ft). Needs ${metrics.totalBlocksWithWaste} standard 8x8x16 blocks, ${metrics.mortarBags} bags of Type S mortar, and ${metrics.groutCuYdsSolid} yd³ grout. Full engineering guide and size comparison.`;
+const canonical = buildCanonical(`/calculators/concrete-block-calculator/${wall.slug}/`);
+
+const meta: MetaProps = {
+  title: pageTitle,
+  description: metaDescription,
+  canonical,
+  ogType: 'website',
+};
+
+const breadcrumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Concrete & Masonry', href: '/category/concrete/' },
+  { name: 'Concrete Block Calculator', href: '/calculators/concrete-block-calculator/' },
+  { name: `${wall.name} Wall`, href: `/calculators/concrete-block-calculator/${wall.slug}/` },
+];
+
+// Dynamic FAQs with exact calculations
+const faqs = [
+  {
+    question: `How many concrete blocks do I need for a ${wall.height}x${wall.length} wall?`,
+    answer: `For a ${wall.height} ft high by ${wall.length} ft long concrete block wall (${wall.areaSqFt} sq ft), you need ${metrics.totalBlocksWithWaste} standard 8×8×16 CMU blocks. This includes ${metrics.netBlocks} net blocks plus a standard 5% waste allowance for cuts and corner fitting. The wall stands ${metrics.coursesHigh} courses tall with ${metrics.unitsPerCourse} blocks per horizontal course in a standard running bond pattern.`,
+  },
+  {
+    question: `How many bags of mortar do I need for a ${wall.height}x${wall.length} block wall?`,
+    answer: `You will need ${metrics.mortarBags} bags of 80-lb Type S (or Type N) pre-mixed mortar. One 80-lb bag covers approximately 30 to 35 standard 8×8×16 CMU blocks when laid with standard 3/8-inch bed and head joints. If using 60-lb mortar bags, plan for ${Math.ceil(metrics.totalBlocksWithWaste / 25)} bags.`,
+  },
+  {
+    question: `How much grout do I need to fill the block cores for a ${wall.height}x${wall.length} wall?`,
+    answer: `If grouting 100% of the hollow block cores solid, you will need approximately ${metrics.groutCuYdsSolid} cubic yards (${metrics.groutCuFtSolid} cu ft) of coarse masonry grout. If you are building a partially grouted reinforced wall with vertical rebar every 32 inches, you will need approximately ${metrics.groutCuYdsReinforced32} cubic yards of core grout.`,
+  },
+  {
+    question: `What rebar and reinforcement is required for a ${wall.height}x${wall.length} CMU wall?`,
+    answer: `Per TMS 402 / ACI 530 masonry code standards, reinforced block walls typically require vertical #4 (1/2") or #5 (5/8") rebar placed every 32 to 48 inches on center, which requires ${metrics.verticalRebarBars32} vertical bars (${metrics.verticalRebarLinFt} linear feet including footing overlap). Horizontal joint reinforcement (9-gauge ladder wire) should be bedded into mortar joints every 16 inches vertically (${metrics.reinforcedJoints ?? Math.floor(metrics.coursesHigh / 2)} horizontal courses, or ${metrics.ladderWirePieces} standard 10-ft wire strips).`,
+  },
+];
+
+const schemas = [
+  buildBreadcrumbList(breadcrumbs),
+  buildFaqSchema(faqs),
+];
+---
+
+<BaseLayout meta={meta} schemas={schemas}>
+  <div class="block-page">
+    <div class="block-container">
+      <Breadcrumbs items={breadcrumbs} />
+
+      <!-- Page Header -->
+      <header class="block-header">
+        <div class="header-badge-row">
+          <span class="badge badge-accent">Exact Wall Guide</span>
+          <span class="badge badge-neutral">{wall.areaSqFt} Sq Ft</span>
+          <span class="badge badge-category">{wall.useCase}</span>
+        </div>
+        <h1 class="block-h1">How Many Concrete Blocks Do You Need for a {wall.name} Ft Wall?</h1>
+        <p class="block-lead">
+          Calculate the exact standard 8×8×16 CMU block count, 80-lb mortar bags, core fill grout volume, and rebar reinforcement for a <strong>{wall.height} ft high by {wall.length} ft long block wall</strong> ({wall.areaSqFt} sq ft).
+        </p>
+      </header>
+
+      <!-- Instant Answer Box (Above the Fold) -->
+      <section class="instant-answer-box" aria-label="Instant Calculation Summary">
+        <div class="answer-header">
+          <div class="answer-badge">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 11l3 3L22 4"/>
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+            </svg>
+            <span>Instant Materials Summary: {wall.name} Ft ({wall.areaSqFt} sq ft)</span>
+          </div>
+          <span class="answer-rule">Standard 8×8×16 CMU • ⅜" Mortar Joints • 5% Waste</span>
+        </div>
+
+        <div class="metric-grid">
+          <!-- Primary Metric: Standard CMU Blocks -->
+          <div class="metric-card metric-primary">
+            <div class="metric-label">Standard 8×8×16 Blocks</div>
+            <div class="metric-value">{metrics.totalBlocksWithWaste}</div>
+            <div class="metric-sub">{metrics.netBlocks} net blocks + 5% waste ({metrics.totalBlocksWithWaste - metrics.netBlocks} spare blocks)</div>
+          </div>
+
+          <!-- Secondary Metric: Mortar Bags -->
+          <div class="metric-card">
+            <div class="metric-label">80-lb Type S Mortar Bags</div>
+            <div class="metric-value">{metrics.mortarBags}</div>
+            <div class="metric-sub">~33 blocks per bag @ ⅜" bed & head joints</div>
+          </div>
+
+          <!-- Tertiary Metric: Wall Geometry -->
+          <div class="metric-card">
+            <div class="metric-label">Wall Layout Courses</div>
+            <div class="metric-value">{metrics.coursesHigh} High</div>
+            <div class="metric-sub">{metrics.unitsPerCourse} blocks per horizontal course</div>
+          </div>
+
+          <!-- Quaternary Metric: Core Fill Grout -->
+          <div class="metric-card">
+            <div class="metric-label">Core Fill Grout</div>
+            <div class="metric-value">{metrics.groutCuYdsSolid} yd³</div>
+            <div class="metric-sub">{metrics.groutCuYdsReinforced32} yd³ if grouted @ 32" o.c. only</div>
+          </div>
+        </div>
+
+        <!-- Quick Takeaway Callout -->
+        <div class="quick-takeaway">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <p>
+            <strong>Estimator Rule of Thumb:</strong> 1 square foot of concrete block wall requires exactly <strong>1.125 nominal 8×8×16 CMU blocks</strong>. For a {wall.areaSqFt} sq ft wall, multiply {wall.areaSqFt} × 1.125 = {metrics.netBlocks} net blocks. Always round up and add 5% for chipped edges, end blocks, and half-block cuts at corner jambs.
+          </p>
+        </div>
+      </section>
+
+      <!-- Two-Column Interactive Calculator & Visual Diagram -->
+      <section class="calc-section" aria-label="Interactive Calculator & Diagram">
+        <div class="section-title-wrap">
+          <h2 class="section-h2">Customize Wall Dimensions & Waste</h2>
+          <p class="section-desc">
+            Adjust wall height, length, or waste percentage below to recalculate materials with instant live updates.
+          </p>
+        </div>
+
+        <div class="calc-diagram-grid">
+          <div class="calc-column">
+            <CalculatorWidget calc={configuredCalc} />
+          </div>
+          <div class="diagram-column">
+            <ConcreteBlockDiagram />
+            <div class="dimension-summary-card">
+              <h3 class="summary-h3">Geometry Summary for {wall.name} Ft Wall</h3>
+              <ul class="summary-list">
+                <li><span>Wall Face Area:</span> <strong>{wall.areaSqFt} sq ft ({Math.round(wall.areaSqFt * 0.092903 * 10) / 10} m²)</strong></li>
+                <li><span>Wall Height:</span> <strong>{wall.height} ft ({metrics.coursesHigh} courses @ 8" each)</strong></li>
+                <li><span>Wall Length:</span> <strong>{wall.length} ft ({metrics.unitsPerCourse} units @ 16" each)</strong></li>
+                <li><span>Mortar Mix:</span> <strong>{metrics.mortarBags} bags (80 lb Type S / N)</strong></li>
+                <li><span>Vertical Rebar (#4):</span> <strong>{metrics.verticalRebarBars32} bars @ 32" o.c. ({metrics.verticalRebarLinFt} lin ft)</strong></li>
+                <li><span>Horizontal Ladder Wire:</span> <strong>{metrics.ladderWirePieces} strips (10-ft lengths @ 16" vert)</strong></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Block Size Comparison Table (6x8x16 vs 8x8x16 vs 12x8x16) -->
+      <section class="table-section" aria-label="CMU Block Size Comparison Table">
+        <div class="section-title-wrap">
+          <h2 class="section-h2">CMU Block Size Comparison for a {wall.name} Ft Wall</h2>
+          <p class="section-desc">
+            Compare material counts, weights, mortar demands, and structural applications across the 3 standard American concrete block thicknesses for this {wall.areaSqFt} sq ft wall.
+          </p>
+        </div>
+
+        <div class="table-card">
+          <div class="table-responsive">
+            <table class="block-table">
+              <thead>
+                <tr>
+                  <th scope="col">Nominal Block Size</th>
+                  <th scope="col">Actual Size</th>
+                  <th scope="col">Block Weight</th>
+                  <th scope="col">Net Blocks</th>
+                  <th scope="col">Total (+5%)</th>
+                  <th scope="col">Mortar Bags</th>
+                  <th scope="col">Solid Grout</th>
+                  <th scope="col">Structural Reinforcing</th>
+                </tr>
+              </thead>
+              <tbody>
+                {blockComparison.map((row) => (
+                  <tr class={row.nominalSize.includes('Standard') ? 'row-highlight' : ''}>
+                    <td class="font-bold">
+                      {row.nominalSize}
+                      {row.nominalSize.includes('Standard') && <span class="table-pill">Most Common</span>}
+                    </td>
+                    <td class="text-mono">{row.actualDimensions}</td>
+                    <td>{row.weightLbs} lbs</td>
+                    <td>{row.netBlocks}</td>
+                    <td class="font-bold text-accent">{row.totalBlocks}</td>
+                    <td>{row.mortarBags} bags</td>
+                    <td>{row.groutCuYds100Pct} yd³</td>
+                    <td class="text-sm">{row.rebarSpec}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div class="table-footer-note">
+            <span>* All standard CMU blocks share a uniform 8" × 16" nominal face. Consequently, the total block count ({metrics.totalBlocksWithWaste} units) remains identical across wall thicknesses; only block weight, mortar bed area, and core grout volume change.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Engineering & Construction Guide -->
+      <section class="guide-section" aria-label="Block Wall Construction & Engineering Guide">
+        <div class="section-title-wrap">
+          <h2 class="section-h2">CMU Wall Engineering & Code Requirements</h2>
+          <p class="section-desc">
+            Key structural standards per TMS 402 / ACI 530 and IRC Chapter 4 for a durable, crack-free masonry wall.
+          </p>
+        </div>
+
+        <div class="guide-grid">
+          <!-- Card 1: Running Bond & Jointing -->
+          <div class="guide-card">
+            <div class="guide-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="3" width="20" height="18" rx="2"/>
+                <line x1="2" y1="9" x2="22" y2="9"/>
+                <line x1="2" y1="15" x2="22" y2="15"/>
+                <line x1="8" y1="3" x2="8" y2="9"/>
+                <line x1="16" y1="3" x2="16" y2="9"/>
+                <line x1="12" y1="9" x2="12" y2="15"/>
+                <line x1="6" y1="15" x2="6" y2="21"/>
+                <line x1="18" y1="15" x2="18" y2="21"/>
+              </svg>
+            </div>
+            <h3 class="guide-h3">1. Running Bond & ⅜" Mortar Joints</h3>
+            <p>
+              Concrete masonry units must be laid in a <strong>half-running bond</strong>, where vertical head joints in adjacent courses are staggered by half the block length (8 inches). Mortar joints should be consistently maintained at <strong>⅜ inch (9.5 mm)</strong>. Tool all exterior mortar joints with a concave jointing tool once the mortar becomes thumbprint-hard to compress the cement surface and reject rainwater infiltration.
+            </p>
+          </div>
+
+          <!-- Card 2: Concrete Footing Requirements -->
+          <div class="guide-card">
+            <div class="guide-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 22h16"/>
+                <path d="M2 17h20"/>
+                <path d="M7 17v-5"/>
+                <path d="M17 17v-5"/>
+                <rect x="5" y="7" width="14" height="5" rx="1"/>
+              </svg>
+            </div>
+            <h3 class="guide-h3">2. Poured Footing Depth & Width</h3>
+            <p>
+              A masonry wall requires an unyielding reinforced concrete footing. The footing width must be at least <strong>twice the block thickness</strong> (16" wide for 8" CMU) and a minimum of <strong>8 to 12 inches thick</strong>. The bottom of the footing must sit below your local frost depth to prevent seasonal frost heave from cracking mortar joints.
+            </p>
+          </div>
+
+          <!-- Card 3: Vertical Rebar & Core Grout -->
+          <div class="guide-card">
+            <div class="guide-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="2" x2="12" y2="22"/>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              </svg>
+            </div>
+            <h3 class="guide-h3">3. Vertical Rebar & Grouting</h3>
+            <p>
+              Vertical #4 or #5 rebar dowels must extend up from the footing into the block cores every <strong>32 or 48 inches on center</strong>, plus within 8 inches of all wall corners and door/window openings. Grouted cores must use fine or coarse masonry grout (minimum 2,000 psi) consolidated with a low-diameter mechanical vibrator or puddling stick.
+            </p>
+          </div>
+
+          <!-- Card 4: Top Bond Beam & Horizontal Wire -->
+          <div class="guide-card">
+            <div class="guide-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+              </svg>
+            </div>
+            <h3 class="guide-h3">4. Top Bond Beam & Control Joints</h3>
+            <p>
+              The top course should be constructed using special U-shaped bond beam blocks loaded with two continuous horizontal #4 rebar bars and grouted solid. For walls exceeding 25 feet in length, install a vertical <strong>control joint (CJ) every 20 to 25 feet</strong> using sash blocks with asphaltic gaskets to control shrinkage cracks.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Project Notes & Application Details -->
+      <section class="notes-section" aria-label="Wall Application Specifics">
+        <div class="notes-card">
+          <div class="notes-badge">Application Profile: {wall.useCase}</div>
+          <p class="notes-text">{wall.notes}</p>
+        </div>
+      </section>
+
+      <!-- Internal Linking & Adjacent Wall Sizes -->
+      <nav class="adjacent-nav" aria-label="Adjacent Wall Sizes">
+        <div class="adjacent-title">Explore Related CMU Wall Sizes</div>
+        <div class="adjacent-grid">
+          {prevWall ? (
+            <a href={`/calculators/concrete-block-calculator/${prevWall.slug}/`} class="adjacent-card prev">
+              <span class="adjacent-dir">← Smaller Dimension</span>
+              <span class="adjacent-name">{prevWall.name} Ft Wall ({prevWall.areaSqFt} sq ft)</span>
+              <span class="adjacent-meta">{getBlockWallMetrics(prevWall.height, prevWall.length).totalBlocksWithWaste} blocks • {prevWall.useCase}</span>
+            </a>
+          ) : (
+            <div class="adjacent-card disabled">
+              <span class="adjacent-dir">Smallest Standard Size</span>
+              <span class="adjacent-name">4×10 Garden Wall</span>
+            </div>
+          )}
+
+          <a href="/calculators/concrete-block-calculator/" class="adjacent-card hub">
+            <span class="adjacent-dir">Master Tool</span>
+            <span class="adjacent-name">CMU Block Calculator</span>
+            <span class="adjacent-meta">Custom dimensions, openings & metric units</span>
+          </a>
+
+          {nextWall ? (
+            <a href={`/calculators/concrete-block-calculator/${nextWall.slug}/`} class="adjacent-card next">
+              <span class="adjacent-dir">Larger Dimension →</span>
+              <span class="adjacent-name">{nextWall.name} Ft Wall ({nextWall.areaSqFt} sq ft)</span>
+              <span class="adjacent-meta">{getBlockWallMetrics(nextWall.height, nextWall.length).totalBlocksWithWaste} blocks • {nextWall.useCase}</span>
+            </a>
+          ) : (
+            <div class="adjacent-card disabled">
+              <span class="adjacent-dir">Largest Standard Size</span>
+              <span class="adjacent-name">10×40 Commercial Wall</span>
+            </div>
+          )}
+        </div>
+      </nav>
+
+      <!-- Dynamic FAQs Section -->
+      <section class="faq-section" aria-label="Frequently Asked Questions">
+        <div class="section-title-wrap">
+          <h2 class="section-h2">Frequently Asked Questions: {wall.name} Ft Block Wall</h2>
+          <p class="section-desc">
+            Exact block counts, mortar estimates, and grout requirements answered by structural masonry calculators.
+          </p>
+        </div>
+
+        <div class="faq-list">
+          {faqs.map((faq, i) => (
+            <details class="faq-item" open={i === 0}>
+              <summary class="faq-question">
+                <span>{faq.question}</span>
+                <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </summary>
+              <div class="faq-answer">
+                <p>{faq.answer}</p>
+              </div>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      <!-- Bottom Related Calculators & Guides -->
+      <footer class="block-footer">
+        <div class="related-strip">
+          <span class="strip-label">Related Masonry & Concrete Tools:</span>
+          <div class="strip-links">
+            <a href="/calculators/concrete-slab-calculator/">Concrete Slab Calculator</a>
+            <a href="/calculators/mortar-calculator/">Mortar Calculator</a>
+            <a href="/calculators/grout-calculator/">Grout Calculator</a>
+            <a href="/calculators/retaining-wall-calculator/">Retaining Wall Calculator</a>
+            <a href="/calculators/rebar-calculator/">Rebar Calculator</a>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .block-page {
+    background-color: var(--color-bg, #0d1117);
+    color: var(--color-text, #c9d1d9);
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .block-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .block-header {
+    margin: 1.5rem 0 2.5rem;
+  }
+
+  .header-badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.65rem;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .badge-accent {
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+  }
+
+  .badge-neutral {
+    background: rgba(148, 163, 184, 0.12);
+    color: #cbd5e1;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+  }
+
+  .badge-category {
+    background: rgba(168, 85, 247, 0.15);
+    color: #c084fc;
+    border: 1px solid rgba(168, 85, 247, 0.3);
+  }
+
+  .block-h1 {
+    font-size: clamp(1.85rem, 4vw, 2.75rem);
+    font-weight: 800;
+    line-height: 1.2;
+    color: #ffffff;
+    margin: 0 0 1rem;
+    letter-spacing: -0.02em;
+  }
+
+  .block-lead {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: #94a3b8;
+    max-width: 850px;
+    margin: 0;
+  }
+
+  .block-lead strong {
+    color: #f1f5f9;
+  }
+
+  /* Instant Answer Box */
+  .instant-answer-box {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    border-radius: 16px;
+    padding: 1.75rem;
+    margin-bottom: 3rem;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(56, 189, 248, 0.05);
+  }
+
+  .answer-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+  }
+
+  .answer-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #38bdf8;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  .answer-rule {
+    font-size: 0.8125rem;
+    color: #94a3b8;
+    background: rgba(15, 23, 42, 0.6);
+    padding: 0.25rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid rgba(148, 163, 184, 0.15);
+  }
+
+  .metric-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .metric-card {
+    background: rgba(15, 23, 42, 0.65);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    border-radius: 12px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+
+  .metric-card:hover {
+    border-color: rgba(56, 189, 248, 0.4);
+    transform: translateY(-2px);
+  }
+
+  .metric-primary {
+    background: linear-gradient(135deg, rgba(14, 116, 144, 0.25) 0%, rgba(15, 23, 42, 0.7) 100%);
+    border-color: rgba(56, 189, 248, 0.4);
+  }
+
+  .metric-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+    margin-bottom: 0.5rem;
+  }
+
+  .metric-primary .metric-label {
+    color: #38bdf8;
+  }
+
+  .metric-value {
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1.1;
+    margin-bottom: 0.35rem;
+    font-family: var(--font-mono, monospace);
+  }
+
+  .metric-primary .metric-value {
+    color: #38bdf8;
+  }
+
+  .metric-sub {
+    font-size: 0.8125rem;
+    color: #94a3b8;
+    line-height: 1.4;
+  }
+
+  .quick-takeaway {
+    display: flex;
+    gap: 0.875rem;
+    align-items: flex-start;
+    background: rgba(56, 189, 248, 0.08);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+  }
+
+  .quick-takeaway svg {
+    flex-shrink: 0;
+    color: #38bdf8;
+    margin-top: 0.15rem;
+  }
+
+  .quick-takeaway p {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: #cbd5e1;
+  }
+
+  .quick-takeaway strong {
+    color: #ffffff;
+  }
+
+  /* Section title wraps */
+  .section-title-wrap {
+    margin-bottom: 1.75rem;
+  }
+
+  .section-h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 0.5rem;
+  }
+
+  .section-desc {
+    font-size: 0.95rem;
+    color: #94a3b8;
+    margin: 0;
+    max-width: 780px;
+  }
+
+  /* Calc & Diagram Grid */
+  .calc-section {
+    margin-bottom: 3.5rem;
+  }
+
+  .calc-diagram-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  @media (min-width: 900px) {
+    .calc-diagram-grid {
+      grid-template-columns: 1.15fr 0.85fr;
+      align-items: start;
+    }
+  }
+
+  .dimension-summary-card {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-top: 1.25rem;
+  }
+
+  .summary-h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 0.875rem;
+  }
+
+  .summary-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .summary-list li {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    border-bottom: 1px dashed rgba(148, 163, 184, 0.12);
+    padding-bottom: 0.4rem;
+  }
+
+  .summary-list li span {
+    color: #94a3b8;
+  }
+
+  .summary-list li strong {
+    color: #f1f5f9;
+    text-align: right;
+  }
+
+  /* Block Size Comparison Table */
+  .table-section {
+    margin-bottom: 3.5rem;
+  }
+
+  .table-card {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  .block-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    text-align: left;
+  }
+
+  .block-table th {
+    background: rgba(30, 41, 59, 0.8);
+    color: #cbd5e1;
+    font-weight: 600;
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    white-space: nowrap;
+  }
+
+  .block-table td {
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    color: #cbd5e1;
+    white-space: nowrap;
+  }
+
+  .block-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .row-highlight {
+    background: rgba(56, 189, 248, 0.08);
+  }
+
+  .table-pill {
+    display: inline-block;
+    margin-left: 0.5rem;
+    padding: 0.15rem 0.45rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.15);
+    border-radius: 4px;
+  }
+
+  .font-bold {
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .text-accent {
+    color: #38bdf8;
+  }
+
+  .text-mono {
+    font-family: var(--font-mono, monospace);
+  }
+
+  .text-sm {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    white-space: normal;
+    min-width: 180px;
+  }
+
+  .table-footer-note {
+    padding: 0.875rem 1.25rem;
+    background: rgba(15, 23, 42, 0.8);
+    border-top: 1px solid rgba(148, 163, 184, 0.15);
+    font-size: 0.8125rem;
+    color: #94a3b8;
+    line-height: 1.5;
+  }
+
+  /* Guide Cards */
+  .guide-section {
+    margin-bottom: 3.5rem;
+  }
+
+  .guide-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .guide-card {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .guide-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: rgba(56, 189, 248, 0.12);
+    color: #38bdf8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+
+  .guide-h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 0.65rem;
+  }
+
+  .guide-card p {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: #94a3b8;
+  }
+
+  .guide-card strong {
+    color: #f1f5f9;
+  }
+
+  /* Application Notes */
+  .notes-section {
+    margin-bottom: 3.5rem;
+  }
+
+  .notes-card {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.7) 100%);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 12px;
+    padding: 1.5rem 1.75rem;
+  }
+
+  .notes-badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #c084fc;
+    margin-bottom: 0.6rem;
+  }
+
+  .notes-text {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #cbd5e1;
+  }
+
+  /* Adjacent Navigation */
+  .adjacent-nav {
+    margin-bottom: 3.5rem;
+  }
+
+  .adjacent-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+    margin-bottom: 1rem;
+  }
+
+  .adjacent-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+
+  .adjacent-card {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    border-radius: 12px;
+    padding: 1.25rem;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.2s ease;
+  }
+
+  .adjacent-card:not(.disabled):hover {
+    border-color: #38bdf8;
+    background: rgba(30, 41, 59, 0.7);
+    transform: translateY(-2px);
+  }
+
+  .adjacent-card.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .adjacent-dir {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #38bdf8;
+    margin-bottom: 0.35rem;
+  }
+
+  .adjacent-name {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 0.25rem;
+  }
+
+  .adjacent-meta {
+    font-size: 0.8rem;
+    color: #94a3b8;
+  }
+
+  /* FAQ List */
+  .faq-section {
+    margin-bottom: 3.5rem;
+  }
+
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .faq-item {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s ease;
+  }
+
+  .faq-item[open] {
+    border-color: rgba(56, 189, 248, 0.4);
+  }
+
+  .faq-question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #ffffff;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .faq-chevron {
+    transition: transform 0.2s ease;
+    color: #38bdf8;
+    flex-shrink: 0;
+  }
+
+  .faq-item[open] .faq-chevron {
+    transform: rotate(180deg);
+  }
+
+  .faq-answer {
+    padding: 0 1.5rem 1.25rem;
+  }
+
+  .faq-answer p {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #94a3b8;
+  }
+
+  /* Footer Strip */
+  .block-footer {
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(148, 163, 184, 0.15);
+  }
+
+  .related-strip {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.25rem;
+  }
+
+  .strip-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+  }
+
+  .strip-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .strip-links a {
+    font-size: 0.875rem;
+    color: #38bdf8;
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .strip-links a:hover {
+    color: #7dd3fc;
+    text-decoration: underline;
+  }
+</style>

@@ -1,0 +1,260 @@
+---
+// src/components/calculators/content/ConcreteBlockContent.astro
+import { blockWallDimensions, getBlockWallMetrics } from '../../../data/block-wall-dimensions';
+---
+
+<div class="calc-content-prose">
+  <h2>How to Use the Concrete Block (CMU) Calculator</h2>
+  <p>
+    Whether you are constructing a garden retaining wall, a detached garage wall, or a full perimeter privacy fence, calculating your concrete masonry unit (CMU) requirements accurately prevents mid-job work stoppages and costly mortar reorders:
+  </p>
+  <ol>
+    <li><strong>Enter Wall Dimensions:</strong> Input your wall length and wall height in feet or inches. For stepped walls or changing ground slopes, calculate each level section separately.</li>
+    <li><strong>Specify Waste Percentage:</strong> The standard industry allowance is <strong>5% to 10%</strong>. Use 5% for simple straight runs with experienced masons; increase to 10% for walls with multiple 90-degree corners, window/door jambs, or complex cuts.</li>
+    <li><strong>Review Mortar & Grout Demands:</strong> Along with total 8×8×16 CMU blocks, check your required bags of Type S mortar mix and cubic yards of core-fill grout. Standard estimates assume standard ⅜-inch bed and head joints.</li>
+  </ol>
+
+  <!-- Popular Wall Sizes Grid -->
+  <h2>Popular Concrete Block Wall Dimensions (Quick Reference Guides)</h2>
+  <p>
+    Building a wall with standard dimensions? Explore our comprehensive project guides with exact block counts, courses high, units per course, mortar bags, and structural rebar details:
+  </p>
+
+  <div class="block-sizes-grid">
+    {blockWallDimensions.map((wall) => {
+      const m = getBlockWallMetrics(wall.height, wall.length);
+      const anchorTitle = `${wall.name} Ft Wall (${m.totalBlocksWithWaste} Blocks)`;
+      return (
+        <a
+          href={`/calculators/concrete-block-calculator/${wall.slug}/`}
+          class="block-size-card"
+          title={`Concrete block calculator and materials chart for a ${wall.name} ft wall`}
+        >
+          <div class="block-card-top">
+            <span class="block-card-dim">{wall.name} Ft</span>
+            <span class="block-card-sqft">{wall.areaSqFt} sq ft</span>
+          </div>
+          <strong class="block-card-anchor">{anchorTitle}</strong>
+          <p class="block-card-desc">{wall.useCase}</p>
+          <div class="block-card-footer">
+            <span class="block-card-badge">{m.coursesHigh} courses • {m.mortarBags} mortar bags</span>
+            <span class="block-card-cta">View Guide →</span>
+          </div>
+        </a>
+      );
+    })}
+  </div>
+
+  <h2>Common Concrete Block Wall Dimensions & Materials Reference Table</h2>
+  <p>
+    Quick reference table showing standard 8×8×16 nominal CMU blocks (+5% waste), courses high, units per course, 80-lb Type S mortar bags, and core fill grout for 10 standard wall sizes:
+  </p>
+
+  <div class="table-container">
+    <table class="reference-table">
+      <thead>
+        <tr>
+          <th>Wall Size (H×L ft)</th>
+          <th>Typical Application</th>
+          <th>Area (sq ft)</th>
+          <th>Courses High</th>
+          <th>8×8×16 Blocks (+5%)</th>
+          <th>80-lb Mortar Bags</th>
+          <th>Solid Grout (yd³)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {blockWallDimensions.map((wall) => {
+          const m = getBlockWallMetrics(wall.height, wall.length);
+          return (
+            <tr>
+              <td>
+                <a href={`/calculators/concrete-block-calculator/${wall.slug}/`} class="table-link">
+                  <strong>{wall.name} ft</strong>
+                </a>
+              </td>
+              <td>{wall.useCase}</td>
+              <td>{wall.areaSqFt} sq ft</td>
+              <td>{m.coursesHigh} courses</td>
+              <td><strong>{m.totalBlocksWithWaste}</strong></td>
+              <td>{m.mortarBags} bags</td>
+              <td>{m.groutCuYdsSolid} yd³</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Standard CMU Dimensions and the 1.125 Rule</h2>
+  <p>
+    In North America, standard concrete masonry units are designated by their nominal dimensions: <strong>8 inches high by 8 inches wide by 16 inches long</strong> (an 8×8×16 block). However, their actual manufactured dimensions are <strong>7⅝" × 7⅝" × 15⅝"</strong>. The remaining ⅜ inch in height and length accounts for the standard mortar joint.
+  </p>
+  <p>
+    Because each block plus mortar joint covers exactly 8" × 16" = 128 square inches (0.8889 sq ft) of wall face:
+  </p>
+  <div class="formula-callout">
+    <code>Number of Blocks = Wall Area (sq ft) × 1.125</code>
+  </div>
+  <p>
+    For example, an 8 ft high by 20 ft long garage wall has an area of 160 sq ft. Multiplying 160 × 1.125 yields exactly 180 net blocks. Adding 5% waste gives 189 blocks to order.
+  </p>
+
+  <h2>Mortar Mix Selection: Type S vs. Type N</h2>
+  <p>
+    Selecting the correct mortar type is essential for structural longevity:
+  </p>
+  <ul>
+    <li>
+      <strong>Type S Mortar (Recommended for Most Walls):</strong> Provides high compressive strength (minimum 1,800 psi) and exceptional lateral flexural bond strength. Required by building codes for retaining walls, foundation walls, exterior below-grade walls, and any wall subjected to soil pressure or high wind loads.
+    </li>
+    <li>
+      <strong>Type N Mortar:</strong> Medium strength (minimum 750 psi) with high workability and water retention. Ideal for non-load-bearing interior partitions, above-grade veneer, and decorative garden walls under 4 feet tall in non-seismic zones.
+    </li>
+    <li>
+      <strong>Coverage Rule:</strong> One standard 80-lb pre-mixed bag of Type S or Type N mortar lays approximately <strong>30 to 35 standard 8×8×16 blocks</strong>. For large jobs, masonry cement can be mixed on-site with clean masonry sand at a 1:3 ratio.
+    </li>
+  </ul>
+</div>
+
+<style>
+  .block-sizes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.25rem;
+    margin: 1.5rem 0 2.5rem;
+  }
+
+  .block-size-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem;
+    background: var(--color-surface, rgba(15, 23, 42, 0.6));
+    border: 1px solid var(--color-border, rgba(148, 163, 184, 0.15));
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s ease;
+  }
+
+  .block-size-card:hover {
+    border-color: var(--color-accent, #38bdf8);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .block-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .block-card-dim {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--color-heading, #ffffff);
+  }
+
+  .block-card-sqft {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-accent, #38bdf8);
+    background: rgba(56, 189, 248, 0.1);
+    padding: 0.15rem 0.5rem;
+    border-radius: 9999px;
+  }
+
+  .block-card-anchor {
+    font-size: 0.95rem;
+    color: var(--color-accent, #38bdf8);
+    margin-bottom: 0.35rem;
+    line-height: 1.35;
+  }
+
+  .block-card-desc {
+    font-size: 0.8125rem;
+    color: var(--color-muted, #94a3b8);
+    margin: 0 0 1rem;
+    line-height: 1.4;
+    flex-grow: 1;
+  }
+
+  .block-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--color-border, rgba(148, 163, 184, 0.1));
+    font-size: 0.75rem;
+  }
+
+  .block-card-badge {
+    color: var(--color-muted, #94a3b8);
+    font-weight: 500;
+  }
+
+  .block-card-cta {
+    color: var(--color-accent, #38bdf8);
+    font-weight: 600;
+  }
+
+  .table-container {
+    overflow-x: auto;
+    margin: 1.5rem 0 2.5rem;
+    border: 1px solid var(--color-border, rgba(148, 163, 184, 0.15));
+    border-radius: 10px;
+  }
+
+  .reference-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    text-align: left;
+  }
+
+  .reference-table th {
+    background: rgba(30, 41, 59, 0.8);
+    color: var(--color-heading, #ffffff);
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    border-bottom: 1px solid var(--color-border, rgba(148, 163, 184, 0.2));
+    white-space: nowrap;
+  }
+
+  .reference-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--color-border, rgba(148, 163, 184, 0.1));
+    color: var(--color-text, #cbd5e1);
+    white-space: nowrap;
+  }
+
+  .reference-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .table-link {
+    color: var(--color-accent, #38bdf8);
+    text-decoration: none;
+  }
+
+  .table-link:hover {
+    text-decoration: underline;
+  }
+
+  .formula-callout {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-left: 4px solid var(--color-accent, #38bdf8);
+    padding: 1rem 1.25rem;
+    border-radius: 8px;
+    margin: 1.25rem 0;
+  }
+
+  .formula-callout code {
+    font-family: var(--font-mono, monospace);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #38bdf8;
+  }
+</style>

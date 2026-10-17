@@ -52,6 +52,8 @@ import ConcreteSlabContent from '../../components/calculators/content/ConcreteSl
 import RebarContent from '../../components/calculators/content/RebarContent.astro';
 import GravelContent from '../../components/calculators/content/GravelContent.astro';
 import ConcreteColumnContent from '../../components/calculators/content/ConcreteColumnContent.astro';
+import ConcreteBlockContent from '../../components/calculators/content/ConcreteBlockContent.astro';
+import MulchContent from '../../components/calculators/content/MulchContent.astro';
 import ReferenceTable from '../../components/calculators/ReferenceTable.astro';
 import RelatedGuides from '../../components/calculators/RelatedGuides.astro';
 import { getCollection } from 'astro:content';
@@ -210,4 +212,6 @@ const relatedGuides = allBlogPosts
   {calc.slug === 'rebar-calculator' && <RebarContent slot="content" />}
   {calc.slug === 'gravel-calculator' && <GravelContent slot="content" />}
   {calc.slug === 'concrete-column-calculator' && <ConcreteColumnContent slot="content" />}
+  {calc.slug === 'concrete-block-calculator' && <ConcreteBlockContent slot="content" />}
+  {calc.slug === 'mulch-calculator' && <MulchContent slot="content" />}
 </CalculatorLayout>

@@ -5,6 +5,8 @@ import { getCollection } from 'astro:content';
 import { slabDimensions } from '../data/slab-dimensions';
 import { gravelDimensions } from '../data/gravel-dimensions';
 import { pierDimensions } from '../data/pier-dimensions';
+import { blockWallDimensions } from '../data/block-wall-dimensions';
+import { mulchDimensions } from '../data/mulch-dimensions';
 
 const SITE_URL = 'https://buildbymath.com';
 
@@ -83,6 +85,26 @@ export const GET: APIRoute = async () => {
     )
   );
 
+  // Programmatic exact-dimension CMU block wall calculator pages (10 sizes)
+  const blockWallSizePages = blockWallDimensions.map((wall) =>
+    xmlEntry(
+      `${SITE_URL}/calculators/concrete-block-calculator/${wall.slug}/`,
+      CURRENT_DATE,
+      'monthly',
+      '0.8'
+    )
+  );
+
+  // Programmatic exact-dimension mulch calculator pages (10 sizes)
+  const mulchSizePages = mulchDimensions.map((mulch) =>
+    xmlEntry(
+      `${SITE_URL}/calculators/mulch-calculator/${mulch.slug}/`,
+      CURRENT_DATE,
+      'monthly',
+      '0.8'
+    )
+  );
+
   const categoryPages = categories.map((cat) =>
     xmlEntry(`${SITE_URL}/category/${cat.slug}/`, CURRENT_DATE, 'weekly', '0.8')
   );
@@ -98,7 +120,7 @@ export const GET: APIRoute = async () => {
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${[...staticPages, ...methodologyPages, ...guidePages, ...calculatorPages, ...slabSizePages, ...gravelSizePages, ...pierSizePages, ...categoryPages, ...blogPages].join('\n')}
+${[...staticPages, ...methodologyPages, ...guidePages, ...calculatorPages, ...slabSizePages, ...gravelSizePages, ...pierSizePages, ...blockWallSizePages, ...mulchSizePages, ...categoryPages, ...blogPages].join('\n')}
 </urlset>`;
 
   return new Response(xml, {
