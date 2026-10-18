@@ -224,7 +224,7 @@ const schemas = [
           </p>
         </div>
 
-        <div class="table-container">
+        <div class="table-container table-scroll-wrapper">
           <table class="reference-table">
             <thead>
               <tr>
@@ -449,11 +449,15 @@ const schemas = [
   .gravel-page {
     padding: 1.5rem 0 4rem;
     background: var(--surface-bg, #fbfbfa);
+    min-width: 0;
+    max-width: 100%;
   }
   .gravel-container {
     max-width: 68rem;
+    width: 100%;
     margin: 0 auto;
     padding: 0 1.25rem;
+    min-width: 0;
   }
   .gravel-header {
     margin: 1.25rem 0 2rem;
@@ -549,10 +553,20 @@ const schemas = [
     display: grid;
     grid-template-columns: 1fr;
     gap: 1.25rem;
+    min-width: 0;
+    max-width: 100%;
   }
   @media (min-width: 768px) {
     .answer-grid {
       grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 640px) {
+    .answer-grid {
+      grid-template-columns: 1fr;
+    }
+    .instant-answer-box {
+      padding: 1.25rem 1rem;
     }
   }
   .answer-card {
@@ -688,14 +702,22 @@ const schemas = [
   }
   .calculator-card-wrapper {
     margin: 1.25rem 0 2rem;
+    min-width: 0;
+    max-width: 100%;
   }
   .gravel-diagram-wrap {
     margin: 2rem 0;
+    min-width: 0;
+    max-width: 100%;
   }
 
   /* Table styling */
   .table-container {
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    max-width: 100%;
+    display: block;
     border: 1px solid #e5e7eb;
     border-radius: 12px;
     background: #ffffff;
@@ -752,10 +774,17 @@ const schemas = [
     grid-template-columns: 1fr;
     gap: 1rem;
     margin: 1.25rem 0 1.5rem;
+    min-width: 0;
+    max-width: 100%;
   }
   @media (min-width: 640px) {
     .layers-grid {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+    }
+  }
+  @media (max-width: 640px) {
+    .layers-grid {
+      grid-template-columns: 1fr;
     }
   }
   .layer-card {
@@ -811,10 +840,17 @@ const schemas = [
     grid-template-columns: 1fr;
     gap: 1.25rem;
     margin: 1.25rem 0 2.5rem;
+    min-width: 0;
+    max-width: 100%;
   }
   @media (min-width: 640px) {
     .cost-cards-grid {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+    }
+  }
+  @media (max-width: 640px) {
+    .cost-cards-grid {
+      grid-template-columns: 1fr;
     }
   }
   .cost-card {
@@ -862,10 +898,17 @@ const schemas = [
     grid-template-columns: 1fr;
     gap: 1rem;
     margin: 1.25rem 0 2rem;
+    min-width: 0;
+    max-width: 100%;
   }
   @media (min-width: 640px) {
     .adjacent-links-row {
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+    }
+  }
+  @media (max-width: 640px) {
+    .adjacent-links-row {
+      grid-template-columns: 1fr;
     }
   }
   .adjacent-link {

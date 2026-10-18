@@ -18,7 +18,7 @@
     The reference table below displays grid lines, total linear footage (including 10% waste for lap splices), standard 20-foot stock bar quantities, and estimated steel weight:
   </p>
 
-  <div class="table-container">
+  <div class="table-container table-scroll-wrapper">
     <table class="reference-table">
       <thead>
         <tr>
@@ -145,7 +145,11 @@
     font-weight: 600;
   }
   .table-container {
+    width: 100%;
+    max-width: 100%;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    display: block;
     margin: 1.5rem 0 2rem;
     border: 1px solid var(--color-border);
     border-radius: 12px;

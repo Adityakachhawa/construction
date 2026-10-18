@@ -209,7 +209,7 @@ const schemas = [
         </div>
 
         <div class="table-card">
-          <div class="table-responsive">
+          <div class="table-responsive table-scroll-wrapper">
             <table class="block-table">
               <thead>
                 <tr>
@@ -419,11 +419,15 @@ const schemas = [
     color: var(--color-text, #c9d1d9);
     min-height: 100vh;
     padding: 2rem 1rem 4rem;
+    min-width: 0;
+    max-width: 100%;
   }
 
   .block-container {
     max-width: 1200px;
+    width: 100%;
     margin: 0 auto;
+    min-width: 0;
   }
 
   .block-header {
@@ -526,9 +530,20 @@ const schemas = [
 
   .metric-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
     gap: 1.25rem;
     margin-bottom: 1.5rem;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  @media (max-width: 640px) {
+    .metric-grid {
+      grid-template-columns: 1fr;
+    }
+    .instant-answer-box {
+      padding: 1.25rem 1rem;
+    }
   }
 
   .metric-card {
@@ -638,6 +653,8 @@ const schemas = [
     display: grid;
     grid-template-columns: 1fr;
     gap: 2rem;
+    min-width: 0;
+    max-width: 100%;
   }
 
   @media (min-width: 900px) {
@@ -645,6 +662,12 @@ const schemas = [
       grid-template-columns: 1.15fr 0.85fr;
       align-items: start;
     }
+  }
+
+  .calc-column,
+  .diagram-column {
+    min-width: 0;
+    max-width: 100%;
   }
 
   .dimension-summary-card {
@@ -698,10 +721,16 @@ const schemas = [
     border: 1px solid rgba(148, 163, 184, 0.15);
     border-radius: 14px;
     overflow: hidden;
+    min-width: 0;
+    max-width: 100%;
   }
 
   .table-responsive {
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    max-width: 100%;
+    display: block;
   }
 
   .block-table {
@@ -782,8 +811,16 @@ const schemas = [
 
   .guide-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
     gap: 1.5rem;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  @media (max-width: 640px) {
+    .guide-grid {
+      grid-template-columns: 1fr;
+    }
   }
 
   .guide-card {
@@ -868,8 +905,16 @@ const schemas = [
 
   .adjacent-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
     gap: 1rem;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  @media (max-width: 640px) {
+    .adjacent-grid {
+      grid-template-columns: 1fr;
+    }
   }
 
   .adjacent-card {

@@ -95,6 +95,11 @@
 /* ── Base resets ──────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 
+html, body {
+  max-width: 100%;
+  overflow-x: clip; /* prevents horizontal page scroll while preserving position: sticky */
+}
+
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 80px; /* clears sticky header on anchor links */
@@ -113,8 +118,77 @@ body {
   font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
 }
 
-img, video, svg { max-width: 100%; display: block; }
+main,
+.calculator-layout,
+.calc-page-header,
+.calc-container,
+.calc-container-narrow,
+.calc-body,
+.calc-body-grid,
+.calc-inputs-col,
+.calc-support,
+.widget-shell,
+.widget-inputs,
+.widget-results {
+  min-width: 0;
+  max-width: 100%;
+}
+
+img, video { max-width: 100%; display: block; }
+svg { max-width: 100%; height: auto; display: block; }
 a { color: inherit; text-decoration: none; }
+
+/* ── Diagrams & SVGs Containment ────────────────────────────── */
+.diagram-figure,
+.diagram-box,
+.slab-diagram-wrap,
+.gravel-diagram-wrap,
+.pier-diagram-wrap,
+figure {
+  max-width: 100%;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.diagram-svg,
+.diagram-box svg,
+.diagram-figure svg,
+.slab-diagram-wrap svg,
+.gravel-diagram-wrap svg,
+.pier-diagram-wrap svg {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ── Table Horizontal Scroll & Mobile Containment ─────────────── */
+.table-scroll-wrapper,
+.table-container,
+.table-responsive,
+.ref-table-wrap,
+.comparison-scroll,
+.waste-table,
+.guide-table-wrap {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  display: block;
+}
+
+/* Fallback: any unwrapped <table> */
+table {
+  max-width: 100%;
+}
+
+@media (max-width: 768px) {
+  table th,
+  table td {
+    padding: 0.5rem 0.625rem !important;
+    font-size: 0.85rem !important;
+  }
+}
 
 h1, h2, h3, h4, h5, h6 {
   line-height: 1.2;

@@ -80,18 +80,31 @@ const updatedLabel = lastUpdated
     background: var(--surface-page);
     border-bottom: 1px solid var(--border-default);
     padding: 2rem 0 2.5rem;
+    min-width: 0;
+    max-width: 100%;
   }
 
   .calc-container {
     max-width: 72rem;
+    width: 100%;
     margin: 0 auto;
     padding: 0 1.5rem;
+    min-width: 0;
   }
 
   .calc-container-narrow {
     max-width: 52rem;
+    width: 100%;
     margin: 0 auto;
     padding: 0 1.5rem;
+    min-width: 0;
+  }
+
+  @media (max-width: 640px) {
+    .calc-container,
+    .calc-container-narrow {
+      padding: 0 1rem;
+    }
   }
 
   .header-body {
@@ -99,6 +112,8 @@ const updatedLabel = lastUpdated
     align-items: flex-start;
     gap: 1.25rem;
     margin-top: 1.25rem;
+    min-width: 0;
+    max-width: 100%;
   }
 
   .header-icon {
@@ -114,7 +129,7 @@ const updatedLabel = lastUpdated
     margin-top: 4px;
   }
 
-  .header-text { flex: 1; min-width: 0; }
+  .header-text { flex: 1; min-width: 0; max-width: 100%; }
 
   .header-chips {
     display: flex;
@@ -167,13 +182,18 @@ const updatedLabel = lastUpdated
   .calc-body {
     background: var(--surface-page);
     padding: 2.5rem 0 3rem;
+    min-width: 0;
+    max-width: 100%;
   }
 
-  .calc-body-grid { width: 100%; }
+  .calc-body-grid { width: 100%; min-width: 0; max-width: 100%; }
+  .calc-inputs-col { min-width: 0; max-width: 100%; }
 
   .calc-support {
     padding: 1rem 0 4rem;
     background: var(--surface-page);
+    min-width: 0;
+    max-width: 100%;
   }
 
   :global(html.is-embed-mode) .calc-page-header,

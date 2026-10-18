@@ -51,7 +51,7 @@ import { pierDimensions, getPierMetrics } from '../../../data/pier-dimensions';
     Reference table showing exact concrete requirements per pier across standard cylindrical form tube diameters. Sacks are 80-lb Quikrete bags (0.60 cu ft yield) including a 10% hole irregularity safety margin:
   </p>
 
-  <div class="table-container">
+  <div class="table-container table-scroll-wrapper">
     <table class="reference-table">
       <thead>
         <tr>
@@ -144,21 +144,17 @@ import { pierDimensions, getPierMetrics } from '../../../data/pier-dimensions';
     font-weight: 600;
   }
 
-  /* Popular Pier Sizes Grid */
   .pier-sizes-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1rem;
     margin: 1.5rem 0 2.5rem;
+    min-width: 0;
+    max-width: 100%;
   }
   @media (min-width: 640px) {
     .pier-sizes-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  @media (min-width: 960px) {
-    .pier-sizes-grid {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
     }
   }
   .pier-size-card {
@@ -229,7 +225,11 @@ import { pierDimensions, getPierMetrics } from '../../../data/pier-dimensions';
 
   /* Table Container */
   .table-container {
+    width: 100%;
+    max-width: 100%;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    display: block;
     margin: 1.5rem 0 2rem;
     border: 1px solid var(--color-border);
     border-radius: 12px;

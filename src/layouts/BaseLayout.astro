@@ -35,6 +35,15 @@ const { meta, schemas = [], currentPath = Astro.url.pathname, heroPage = false }
     </main>
     <Footer />
     <style>
+      :global(html),
+      :global(body) {
+        max-width: 100%;
+        overflow-x: clip;
+      }
+      main {
+        min-width: 0;
+        max-width: 100%;
+      }
       .skip-link {
         position: absolute;
         left: 0.5rem;

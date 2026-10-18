@@ -11,7 +11,7 @@ interface Props {
 const { outputs, defaultOutputs } = Astro.props;
 ---
 
-<div class="result-table-wrap" id="secondary-results">
+<div class="result-table-wrap table-scroll-wrapper" id="secondary-results">
   <table class="result-table" aria-label="Detailed results">
     <thead>
       <tr>
@@ -53,7 +53,11 @@ const { outputs, defaultOutputs } = Astro.props;
     background: var(--surface-card);
     border: 1px solid var(--border-default);
     border-radius: 14px;
-    overflow: hidden;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    max-width: 100%;
+    display: block;
     box-shadow: var(--shadow-card);
   }
 

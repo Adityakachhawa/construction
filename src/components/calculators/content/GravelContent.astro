@@ -60,7 +60,7 @@ function getShortUse(useCase: string): string {
     Reference table showing cubic yards and estimated tonnage across 12 standard project dimensions. Tonnage is calculated at 1.4 tons per cubic yard (#57 crushed stone) with a 10% compaction allowance:
   </p>
 
-  <div class="table-container">
+  <div class="table-container table-scroll-wrapper">
     <table class="reference-table">
       <thead>
         <tr>
@@ -148,21 +148,17 @@ function getShortUse(useCase: string): string {
     font-weight: 600;
   }
 
-  /* Popular Gravel Sizes Grid */
   .gravel-sizes-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1rem;
     margin: 1.5rem 0 2.5rem;
+    min-width: 0;
+    max-width: 100%;
   }
   @media (min-width: 640px) {
     .gravel-sizes-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  @media (min-width: 960px) {
-    .gravel-sizes-grid {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
     }
   }
   .gravel-size-card {
@@ -233,7 +229,11 @@ function getShortUse(useCase: string): string {
 
   /* Table Container */
   .table-container {
+    width: 100%;
+    max-width: 100%;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    display: block;
     margin: 1.5rem 0 2rem;
     border: 1px solid var(--color-border);
     border-radius: 12px;
