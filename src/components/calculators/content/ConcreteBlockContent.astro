@@ -118,6 +118,76 @@ import { blockWallDimensions, getBlockWallMetrics } from '../../../data/block-wa
 </div>
 
 <style>
+  .calc-content-prose {
+    width: 100%;
+    max-width: 100%;
+    margin-top: 2.5rem;
+    margin-bottom: 2.5rem;
+    color: #334155;
+    line-height: 1.7;
+    font-size: 1rem;
+  }
+
+  .calc-content-prose h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-top: 2.25rem;
+    margin-bottom: 0.875rem;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+  }
+
+  .calc-content-prose h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-top: 1.75rem;
+    margin-bottom: 0.625rem;
+    line-height: 1.35;
+  }
+
+  .calc-content-prose p {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #334155;
+    margin-bottom: 1rem;
+  }
+
+  .calc-content-prose ul {
+    margin: 0.75rem 0 1.5rem 0;
+    padding-left: 1.75rem;
+    list-style-type: disc;
+  }
+
+  .calc-content-prose ol {
+    margin: 0.75rem 0 1.5rem 0;
+    padding-left: 1.75rem;
+    list-style-type: decimal;
+  }
+
+  .calc-content-prose li {
+    margin-bottom: 0.65rem;
+    padding-left: 0.25rem;
+    line-height: 1.65;
+    color: #334155;
+  }
+
+  .calc-content-prose li strong {
+    color: #0f172a;
+    font-weight: 600;
+  }
+
+  .calc-content-prose a {
+    color: #c2410c;
+    text-decoration: underline;
+    font-weight: 600;
+  }
+
+  .calc-content-prose a:hover {
+    color: #9a3412;
+  }
+
   .block-sizes-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
@@ -137,18 +207,19 @@ import { blockWallDimensions, getBlockWallMetrics } from '../../../data/block-wa
     display: flex;
     flex-direction: column;
     padding: 1.25rem;
-    background: var(--color-surface, rgba(15, 23, 42, 0.6));
-    border: 1px solid var(--color-border, rgba(148, 163, 184, 0.15));
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
     border-radius: 12px;
     text-decoration: none;
     color: inherit;
     transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   }
 
   .block-size-card:hover {
-    border-color: var(--color-accent, #38bdf8);
+    border-color: #ea580c;
     transform: translateY(-2px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 6px 16px -2px rgba(234, 88, 12, 0.12);
   }
 
   .block-card-top {
@@ -161,28 +232,30 @@ import { blockWallDimensions, getBlockWallMetrics } from '../../../data/block-wa
   .block-card-dim {
     font-size: 1.15rem;
     font-weight: 800;
-    color: var(--color-heading, #ffffff);
+    color: #0f172a;
   }
 
   .block-card-sqft {
     font-size: 0.75rem;
     font-weight: 600;
-    color: var(--color-accent, #38bdf8);
-    background: rgba(56, 189, 248, 0.1);
+    color: #c2410c;
+    background: #fff7ed;
+    border: 1px solid #ffedd5;
     padding: 0.15rem 0.5rem;
     border-radius: 9999px;
   }
 
   .block-card-anchor {
     font-size: 0.95rem;
-    color: var(--color-accent, #38bdf8);
+    color: #c2410c;
     margin-bottom: 0.35rem;
     line-height: 1.35;
+    font-weight: 700;
   }
 
   .block-card-desc {
     font-size: 0.8125rem;
-    color: var(--color-muted, #94a3b8);
+    color: #475569;
     margin: 0 0 1rem;
     line-height: 1.4;
     flex-grow: 1;
@@ -193,18 +266,23 @@ import { blockWallDimensions, getBlockWallMetrics } from '../../../data/block-wa
     justify-content: space-between;
     align-items: center;
     padding-top: 0.75rem;
-    border-top: 1px solid var(--color-border, rgba(148, 163, 184, 0.1));
+    border-top: 1px solid #f1f5f9;
     font-size: 0.75rem;
   }
 
   .block-card-badge {
-    color: var(--color-muted, #94a3b8);
+    color: #64748b;
     font-weight: 500;
   }
 
   .block-card-cta {
-    color: var(--color-accent, #38bdf8);
+    color: #ea580c;
     font-weight: 600;
+    white-space: nowrap !important;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
   }
 
   .table-container {
@@ -214,39 +292,58 @@ import { blockWallDimensions, getBlockWallMetrics } from '../../../data/block-wa
     -webkit-overflow-scrolling: touch;
     display: block;
     margin: 1.5rem 0 2.5rem;
-    border: 1px solid var(--color-border, rgba(148, 163, 184, 0.15));
-    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   }
 
   .reference-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
     text-align: left;
+    background: #ffffff;
   }
 
   .reference-table th {
-    background: rgba(30, 41, 59, 0.8);
-    color: var(--color-heading, #ffffff);
-    padding: 0.75rem 1rem;
+    background: #0f172a !important;
+    color: #ffffff !important;
+    padding: 0.875rem 1rem;
     font-weight: 600;
-    border-bottom: 1px solid var(--color-border, rgba(148, 163, 184, 0.2));
+    border-bottom: 1px solid #0f172a;
     white-space: nowrap;
   }
 
   .reference-table td {
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid var(--color-border, rgba(148, 163, 184, 0.1));
-    color: var(--color-text, #cbd5e1);
-    white-space: nowrap;
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid #e2e8f0;
+    color: #1e293b;
+    font-weight: 500;
+    background: #ffffff;
+  }
+
+  .reference-table tbody tr:nth-child(even) td {
+    background: #f8fafc;
+  }
+
+  .reference-table tbody tr:hover td {
+    background: #f1f5f9;
   }
 
   .reference-table tr:last-child td {
     border-bottom: none;
   }
 
+  .reference-table td strong {
+    color: #0f172a;
+    font-weight: 700;
+  }
+
   .table-link {
-    color: var(--color-accent, #38bdf8);
+    color: #ea580c;
+    font-weight: 700;
+    white-space: nowrap;
     text-decoration: none;
   }
 
@@ -254,19 +351,28 @@ import { blockWallDimensions, getBlockWallMetrics } from '../../../data/block-wa
     text-decoration: underline;
   }
 
+  @media (max-width: 768px) {
+    .reference-table th,
+    .reference-table td {
+      padding: 0.625rem 0.75rem;
+    }
+  }
+
   .formula-callout {
-    background: rgba(15, 23, 42, 0.6);
-    border: 1px solid rgba(56, 189, 248, 0.3);
-    border-left: 4px solid var(--color-accent, #38bdf8);
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-left: 4px solid #ea580c;
     padding: 1rem 1.25rem;
-    border-radius: 8px;
+    border-radius: 0.5rem;
     margin: 1.25rem 0;
   }
 
   .formula-callout code {
     font-family: var(--font-mono, monospace);
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #38bdf8;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #9a3412;
+    display: block;
+    overflow-x: auto;
   }
 </style>

@@ -719,12 +719,13 @@ const schemas = [
   }
 
   .table-card {
-    background: rgba(15, 23, 42, 0.6);
-    border: 1px solid rgba(148, 163, 184, 0.15);
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
     border-radius: 14px;
     overflow: hidden;
     min-width: 0;
     max-width: 100%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   }
 
   .table-responsive {
@@ -738,32 +739,43 @@ const schemas = [
   .mulch-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
     text-align: left;
+    background: #ffffff;
   }
 
   .mulch-table th {
-    background: rgba(30, 41, 59, 0.8);
-    color: #cbd5e1;
+    background: #0f172a !important;
+    color: #ffffff !important;
     font-weight: 600;
     padding: 0.875rem 1rem;
-    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    border-bottom: 1px solid #0f172a;
     white-space: nowrap;
   }
 
   .mulch-table td {
     padding: 0.875rem 1rem;
-    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-    color: #cbd5e1;
+    border-bottom: 1px solid #e2e8f0;
+    color: #1e293b;
+    font-weight: 500;
+    background: #ffffff;
     white-space: nowrap;
+  }
+
+  .mulch-table tbody tr:nth-child(even) td {
+    background: #f8fafc;
+  }
+
+  .mulch-table tbody tr:hover td {
+    background: #f1f5f9;
   }
 
   .mulch-table tr:last-child td {
     border-bottom: none;
   }
 
-  .row-highlight {
-    background: rgba(56, 189, 248, 0.08);
+  .row-highlight td {
+    background: #fff7ed !important;
   }
 
   .table-pill {
@@ -771,19 +783,19 @@ const schemas = [
     margin-left: 0.5rem;
     padding: 0.15rem 0.45rem;
     font-size: 0.7rem;
-    font-weight: 600;
-    color: #38bdf8;
-    background: rgba(56, 189, 248, 0.15);
+    font-weight: 700;
+    color: #c2410c;
+    background: #ffedd5;
     border-radius: 4px;
   }
 
   .font-bold {
     font-weight: 700;
-    color: #ffffff;
+    color: #0f172a;
   }
 
   .text-accent {
-    color: #38bdf8;
+    color: #ea580c;
   }
 
   .text-mono {
@@ -791,19 +803,26 @@ const schemas = [
   }
 
   .text-sm {
-    font-size: 0.8125rem;
-    color: #94a3b8;
+    font-size: 0.875rem;
+    color: #334155;
     white-space: normal;
     min-width: 190px;
   }
 
   .table-footer-note {
     padding: 0.875rem 1.25rem;
-    background: rgba(15, 23, 42, 0.8);
-    border-top: 1px solid rgba(148, 163, 184, 0.15);
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
     font-size: 0.8125rem;
-    color: #94a3b8;
+    color: #64748b;
     line-height: 1.5;
+  }
+
+  @media (max-width: 768px) {
+    .mulch-table th,
+    .mulch-table td {
+      padding: 0.625rem 0.75rem;
+    }
   }
 
   /* Guide Cards */

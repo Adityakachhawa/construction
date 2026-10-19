@@ -679,25 +679,38 @@ const schemas = [
     border-collapse: collapse;
     font-size: 0.9375rem;
     text-align: left;
+    background: #ffffff;
   }
   .reference-table th {
-    background: #f9fafb;
-    color: #111827;
-    font-weight: 700;
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid #e5e7eb;
+    background: #0f172a !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid #0f172a;
     white-space: nowrap;
   }
   .reference-table td {
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid #f3f4f6;
-    color: #374151;
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid #e2e8f0;
+    color: #1e293b;
+    font-weight: 500;
+    background: #ffffff;
+  }
+  .reference-table tbody tr:nth-child(even) td {
+    background: #f8fafc;
+  }
+  .reference-table tbody tr:hover td {
+    background: #f1f5f9;
   }
   .reference-table tr:last-child td {
     border-bottom: none;
   }
-  .row-highlight {
-    background: #eff6ff;
+  .reference-table td strong {
+    color: #0f172a;
+    font-weight: 700;
+  }
+  .row-highlight td {
+    background: #eff6ff !important;
   }
   .pill-recom {
     display: inline-block;

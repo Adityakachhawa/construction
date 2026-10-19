@@ -110,37 +110,55 @@ import { pierDimensions, getPierMetrics } from '../../../data/pier-dimensions';
 
 <style>
   .calc-content-prose {
-    padding: 1.5rem 0;
-    color: var(--color-text-secondary);
+    width: 100%;
+    max-width: 100%;
+    margin-top: 2.5rem;
+    margin-bottom: 2.5rem;
+    color: #334155;
     line-height: 1.7;
-    font-size: 1.0625rem;
+    font-size: 1rem;
   }
   .calc-content-prose h2 {
     font-size: 1.5rem;
-    font-weight: 800;
-    color: var(--color-text-primary);
-    margin: 2.25rem 0 1rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-top: 2.25rem;
+    margin-bottom: 0.875rem;
+    line-height: 1.3;
     letter-spacing: -0.02em;
   }
   .calc-content-prose h3 {
-    font-size: 1.25rem;
+    font-size: 1.2rem;
     font-weight: 700;
-    color: var(--color-text-primary);
-    margin: 1.5rem 0 0.75rem;
+    color: #0f172a;
+    margin-top: 1.75rem;
+    margin-bottom: 0.625rem;
+    line-height: 1.35;
   }
   .calc-content-prose p {
-    margin-bottom: 1.25rem;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #334155;
+    margin-bottom: 1rem;
   }
-  .calc-content-prose ul,
+  .calc-content-prose ul {
+    margin: 0.75rem 0 1.5rem 0;
+    padding-left: 1.75rem;
+    list-style-type: disc;
+  }
   .calc-content-prose ol {
-    margin: 0 0 1.5rem 1.5rem;
-    padding: 0;
+    margin: 0.75rem 0 1.5rem 0;
+    padding-left: 1.75rem;
+    list-style-type: decimal;
   }
   .calc-content-prose li {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.65rem;
+    padding-left: 0.25rem;
+    line-height: 1.65;
+    color: #334155;
   }
-  .calc-content-prose strong {
-    color: var(--color-text-primary);
+  .calc-content-prose li strong {
+    color: #0f172a;
     font-weight: 600;
   }
 
@@ -159,7 +177,7 @@ import { pierDimensions, getPierMetrics } from '../../../data/pier-dimensions';
   }
   .pier-size-card {
     background: #ffffff;
-    border: 1px solid var(--color-border, #e5e7eb);
+    border: 1px solid #e2e8f0;
     border-radius: 12px;
     padding: 1.125rem;
     text-decoration: none;
@@ -167,6 +185,7 @@ import { pierDimensions, getPierMetrics } from '../../../data/pier-dimensions';
     display: flex;
     flex-direction: column;
     transition: all 150ms ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   }
   .pier-size-card:hover {
     border-color: #2563eb;
@@ -182,7 +201,7 @@ import { pierDimensions, getPierMetrics } from '../../../data/pier-dimensions';
   .pier-card-dim {
     font-size: 1.125rem;
     font-weight: 800;
-    color: var(--color-text-primary, #111827);
+    color: #0f172a;
   }
   .pier-card-sub {
     font-size: 0.75rem;
@@ -201,7 +220,7 @@ import { pierDimensions, getPierMetrics } from '../../../data/pier-dimensions';
   }
   .pier-card-desc {
     font-size: 0.8125rem;
-    color: var(--color-text-secondary, #4b5563);
+    color: #475569;
     line-height: 1.4;
     margin: 0 0 0.875rem;
     flex-grow: 1;
@@ -211,16 +230,21 @@ import { pierDimensions, getPierMetrics } from '../../../data/pier-dimensions';
     align-items: center;
     justify-content: space-between;
     padding-top: 0.625rem;
-    border-top: 1px solid var(--color-border-subtle, #f3f4f6);
+    border-top: 1px solid #f1f5f9;
     font-size: 0.75rem;
   }
   .pier-card-badge {
-    color: var(--color-text-muted, #6b7280);
+    color: #64748b;
     font-weight: 500;
   }
   .pier-card-cta {
     color: #2563eb;
-    font-weight: 700;
+    font-weight: 600;
+    white-space: nowrap !important;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
   }
 
   /* Table Container */
@@ -231,45 +255,65 @@ import { pierDimensions, getPierMetrics } from '../../../data/pier-dimensions';
     -webkit-overflow-scrolling: touch;
     display: block;
     margin: 1.5rem 0 2rem;
-    border: 1px solid var(--color-border);
+    border: 1px solid #e2e8f0;
     border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   }
   .reference-table {
     width: 100%;
     border-collapse: collapse;
     font-size: 0.9375rem;
     text-align: left;
-    background: white;
+    background: #ffffff;
   }
   .reference-table th {
-    background: var(--color-bg-secondary);
-    color: var(--color-text-primary);
-    font-weight: 700;
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid var(--color-border);
+    background: #0f172a !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid #0f172a;
     white-space: nowrap;
   }
   .reference-table td {
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid var(--color-border-subtle);
-    color: var(--color-text-secondary);
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid #e2e8f0;
+    color: #1e293b;
+    font-weight: 500;
+    background: #ffffff;
+  }
+  .reference-table tbody tr:nth-child(even) td {
+    background: #f8fafc;
+  }
+  .reference-table tbody tr:hover td {
+    background: #f1f5f9;
   }
   .reference-table tr:last-child td {
     border-bottom: none;
   }
-  .reference-table tr:hover td {
-    background: var(--color-bg-subtle, #f9fafb);
+  .reference-table td strong {
+    color: #0f172a;
+    font-weight: 700;
   }
   .table-size-link {
-    color: #2563eb;
+    color: #0284c7;
+    font-weight: 700;
+    white-space: nowrap;
     text-decoration: none;
   }
   .table-size-link:hover {
     text-decoration: underline;
   }
   .guide-link {
-    color: #2563eb;
+    color: #c2410c;
     font-weight: 600;
     text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
+    .reference-table th,
+    .reference-table td {
+      padding: 0.625rem 0.75rem;
+    }
   }
 </style>

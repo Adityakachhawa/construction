@@ -54,9 +54,9 @@ const { table } = Astro.props;
     display: block;
     overflow-x: auto;
     margin: 1rem 0;
-    border: 1px solid var(--color-border);
+    border: 1px solid #e2e8f0;
     border-radius: 12px;
-    background: white;
+    background: #ffffff;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
     -webkit-overflow-scrolling: touch;
   }
@@ -65,32 +65,45 @@ const { table } = Astro.props;
     border-collapse: collapse;
     font-size: 0.9375rem;
     text-align: left;
+    background: #ffffff;
   }
   .reference-table th {
-    background: var(--color-bg-secondary, #f8fafc);
-    color: var(--color-text-primary);
-    font-weight: 700;
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid var(--color-border);
+    background: #0f172a !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid #0f172a;
     white-space: nowrap;
     font-size: 0.8125rem;
     text-transform: uppercase;
     letter-spacing: 0.03em;
   }
   .reference-table td {
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid var(--color-border-subtle, #f1f5f9);
-    color: var(--color-text-secondary);
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid #e2e8f0;
+    color: #1e293b;
+    font-weight: 500;
+    background: #ffffff;
     white-space: nowrap;
+  }
+  .reference-table tbody tr:nth-child(even) td {
+    background: #f8fafc;
+  }
+  .reference-table tbody tr:hover td {
+    background: #f1f5f9;
   }
   .reference-table tr:last-child td {
     border-bottom: none;
   }
-  .reference-table tr:hover td {
-    background: var(--color-bg-subtle, #f8fafc);
-  }
   .reference-table strong {
-    color: var(--color-text-primary);
-    font-weight: 600;
+    color: #0f172a;
+    font-weight: 700;
+  }
+
+  @media (max-width: 768px) {
+    .reference-table th,
+    .reference-table td {
+      padding: 0.625rem 0.75rem;
+    }
   }
 </style>
