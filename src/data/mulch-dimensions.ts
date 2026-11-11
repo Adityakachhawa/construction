@@ -1,3 +1,4 @@
+import { ceilQuantity } from '../calculators/rounding';
 export interface MulchDepthMetrics {
   depthInches: number;
   depthLabel: string;
@@ -27,8 +28,8 @@ export interface MulchDimension {
 export function getMulchMetrics(areaSqFt: number, depthInches: number): MulchDepthMetrics {
   const cuFt = Math.round((areaSqFt * (depthInches / 12)) * 100) / 100;
   const cuYds = Math.round((cuFt / 27) * 100) / 100;
-  const bags2cuft = Math.ceil(cuFt / 2);
-  const bags1_5cuft = Math.ceil(cuFt / 1.5);
+  const bags2cuft = ceilQuantity(cuFt / 2);
+  const bags1_5cuft = ceilQuantity(cuFt / 1.5);
   const baggedCost = Math.round(bags2cuft * 4.25);
   const bulkMaterialCost = Math.round(cuYds * 40);
   const savingsBulk = baggedCost - bulkMaterialCost;

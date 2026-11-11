@@ -128,7 +128,7 @@ No. French drains can curve to follow lot lines, property edges, or obstacles. G
 You'll excavate more soil than you'll put back (the gravel occupies the space the soil came from). Plan to dispose of or spread the extra soil. A 50-foot trench at 12"×18" generates about 3 cubic yards of spoil — roughly 2 pickup truck loads.
 
 **Can I install a French drain myself without a trencher?**
-Yes, by hand-digging. A 50-foot trench at 12" wide × 18" deep is about 25 cubic feet per foot = a significant excavation project. Expect 1–2 full days of hard digging for one person. Most rental yards charge $150–$250 per day for a trencher, which makes it very cost-effective for most projects.
+Yes, by hand-digging. A 50-foot trench at 12" wide × 18" deep is 1.5 cubic feet per linear foot, or 75 cubic feet (2.78 cubic yards) total = a significant excavation project. Expect 1–2 full days of hard digging for one person. Most rental yards charge $150–$250 per day for a trencher, which makes it very cost-effective for most projects.
 
 ---
 

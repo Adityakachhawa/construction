@@ -10,20 +10,22 @@ import { mulchDimensions } from '../data/mulch-dimensions';
 
 const SITE_URL = 'https://buildbymath.com';
 
-function xmlEntry(url: string, lastmod: string, changefreq: string, priority: string) {
+function xmlEntry(url: string, lastmod: string | undefined, changefreq: string, priority: string) {
   return `  <url>
     <loc>${url}</loc>
-    <lastmod>${lastmod}</lastmod>
+    ${lastmod ? `<lastmod>${lastmod}</lastmod>` : ''}
     <changefreq>${changefreq}</changefreq>
     <priority>${priority}</priority>
   </url>`;
 }
 
 export const GET: APIRoute = async () => {
-  // Current build date for fresh crawl freshness
-  const CURRENT_DATE = new Date().toISOString().split('T')[0];
+  // Omit unknown modification dates; builds are not content updates.
+  const CURRENT_DATE = undefined;
 
   const posts = await getCollection('blog', ({ data }) => !data.draft);
+  const guides = await getCollection('guides', ({ data }) => !data.draft);
+  const collectionGuidePages = guides.map(guide => xmlEntry(`${SITE_URL}/guides/${guide.id.replace(/\.[^.]+$/, '')}/`, guide.data.updatedAt ?? guide.data.publishedAt, 'monthly', '0.7'));
 
   const staticPages = [
     xmlEntry(`${SITE_URL}/`, CURRENT_DATE, 'weekly', '1.0'),
@@ -120,7 +122,7 @@ export const GET: APIRoute = async () => {
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${[...staticPages, ...methodologyPages, ...guidePages, ...calculatorPages, ...slabSizePages, ...gravelSizePages, ...pierSizePages, ...blockWallSizePages, ...mulchSizePages, ...categoryPages, ...blogPages].join('\n')}
+${[...staticPages, ...methodologyPages, ...guidePages, ...collectionGuidePages, ...calculatorPages, ...slabSizePages, ...gravelSizePages, ...pierSizePages, ...blockWallSizePages, ...mulchSizePages, ...categoryPages, ...blogPages].join('\n')}
 </urlset>`;
 
   return new Response(xml, {

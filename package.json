@@ -10,7 +10,10 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "test": "node --import tsx --test tests/*.test.ts"
+    "test": "node --import tsx --test tests/*.test.ts",
+    "check": "astro check",
+    "audit:inventory": "node --import tsx scripts/calculator-inventory.ts",
+    "test:site": "python scripts/audit-site.py"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.9",

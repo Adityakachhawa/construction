@@ -1,3 +1,4 @@
+import { ceilQuantity } from './rounding';
 import type {
   CalculatorConfig,
   CalculatorInputMap,
@@ -13,13 +14,13 @@ const BAG_YIELDS: Record<string, number> = {
 };
 
 const BAG_SIZE_OPTIONS = [
-  { value: '10lb',   label: '10 lb bag (0.18 ft³)' },
-  { value: '25lb',   label: '25 lb bag (0.45 ft³)' },
-  { value: '50lb',   label: '50 lb bag (0.90 ft³)' },
+  { value: '10lb',   label: '10 lb bag (0.18 ft³) - unverified yield' },
+  { value: '25lb',   label: '25 lb bag (0.45 ft³) - unverified yield' },
+  { value: '50lb',   label: '50 lb bag (0.90 ft³) - unverified yield' },
   { value: 'custom', label: 'Custom yield' },
 ];
 
-function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
+export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   const bagSizeKey  = String(inputs.bag_size ?? '25lb');
   const yieldPerBag = bagSizeKey === 'custom'
     ? Number(inputs.custom_yield ?? 0.45)
@@ -62,19 +63,20 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     };
   }
 
-  // Grout volume per ft² of tile area (industry standard formula)
-  // Accounts for all joints in one square foot of installed tile
-  const grout_per_sqft = (jointIn / 12) * (depthIn / 12) * (tileLenIn + tileWidIn) / (tileLenIn * tileWidIn);
+  // Approximate joint volume per ft². All tile/joint dimensions are inches.
+  // (L+W)/(L*W) has units 1/in: convert the resulting inches to feet ONCE.
+  // Small-joint approximation; confirm bag yield against the selected product.
+  const grout_per_sqft = jointIn * depthIn * (tileLenIn + tileWidIn) / (12 * tileLenIn * tileWidIn);
 
   const grout_cuft_net = areaSqft * grout_per_sqft;
   const grout_cuft     = grout_cuft_net * (1 + wastePct);
   const grout_cum      = grout_cuft * 0.0283168;
 
   const tileSqft   = (tileLenIn / 12) * (tileWidIn / 12);
-  const tile_count = Math.ceil((areaSqft / tileSqft) * (1 + wastePct));
+  const tile_count = ceilQuantity((areaSqft / tileSqft) * (1 + wastePct));
 
-  const bags_required = Math.ceil(grout_cuft / yieldPerBag);
-  const net_bags      = Math.ceil(grout_cuft_net / yieldPerBag);
+  const bags_required = ceilQuantity(grout_cuft / yieldPerBag);
+  const net_bags      = ceilQuantity(grout_cuft_net / yieldPerBag);
 
   return {
     area_sqft:     Math.round(areaSqft        * 100)    / 100,
@@ -334,18 +336,19 @@ export const groutCalculator: CalculatorConfig = {
     },
     {
       id: 'net_bags',
-      label: 'Bags (net)',
+      label: 'Illustrative Bags (net)',
       unit: 'bags',
       format: 'number',
     },
     {
       id: 'bags_required',
-      label: 'Bags Required',
+      label: 'Illustrative Bag Estimate',
       unit: 'bags',
       format: 'number',
-      description: 'Including waste — order this many',
+      description: 'Assumption-based estimate including waste; verify selected product coverage before ordering',
     },
   ],
+  disclaimer: 'Assumption-based estimate, not a manufacturer coverage or engineering specification. Preset bag yields are unverified. Use Custom with the selected product mixed yield before ordering; verify geometry and waste separately. Volume uses a small-joint approximation for tile grout, not masonry core grout.',
   formula,
   unitSystems: ['imperial', 'metric'],
   relatedCalculators: [
@@ -381,15 +384,15 @@ export const groutCalculator: CalculatorConfig = {
     },
     {
       label: 'Calculate grout volume per square foot',
-      formula: 'Grout/ft² = (Joint Width ÷ 12) × (Tile Depth ÷ 12) × (Tile L + Tile W) ÷ (Tile L × Tile W)',
+      formula: 'Grout/ft² = Joint Width × Tile Depth × (Tile L + Tile W) ÷ (12 × Tile L × Tile W)',
       description:
-        'This is the volume of all grout joints within one square foot of installed tile. Larger tiles have fewer joints per square foot and therefore use less grout per ft² than small mosaic tiles with the same joint width.',
+        'With all dimensions in inches, this is an approximate small-joint volume of grout within one square foot of installed tile. Larger tiles have fewer joints per square foot and therefore use less grout per ft² than small mosaic tiles with the same joint width.',
     },
     {
       label: 'Calculate total grout volume',
       formula: 'Total Grout = Area × Grout per ft²',
       description:
-        'Multiply the tiled area by the per-square-foot grout volume. Example: 100 ft² of 12×12 tile with 1/8″ joints and 3/8″ depth → grout/ft² ≈ 0.0026 ft → net total ≈ 0.26 ft³.',
+        'Multiply the tiled area by the per-square-foot grout volume. Example: 100 ft² of 12×12 tile with 1/8″ joints and 3/8″ depth → grout/ft² ≈ 0.000651 ft → net total ≈ 0.0651 ft³.',
     },
     {
       label: 'Apply waste factor',
@@ -401,29 +404,29 @@ export const groutCalculator: CalculatorConfig = {
       label: 'Calculate bags required',
       formula: 'Bags = ⌈Adjusted Grout ÷ Yield per Bag⌉',
       description:
-        'A standard 25 lb bag yields approximately 0.45 ft³; a 50 lb bag ≈ 0.90 ft³; a 10 lb bag ≈ 0.18 ft³. Always round up — you cannot use a partial bag. Note: use unsanded grout for joints narrower than 1/8″; use sanded grout for joints 1/8″ or wider.',
+        'Bag yields shown in the presets are unverified illustrative assumptions. Select Custom and enter the mixed yield from the chosen grout product data sheet. Confirm bag or kit mass, water addition, tile dimensions, joint width/depth and waste. The small-joint volume approximation does not verify product coverage.',
     },
   ],
   faq: [
     {
       question: 'How do I calculate how much grout I need?',
       answer:
-        'Multiply your tiled area by the grout volume per square foot — which depends on tile size, joint width, and tile thickness. The formula is: Grout/ft² = (Joint Width ÷ 12) × (Tile Depth ÷ 12) × (Tile L + Tile W) ÷ (Tile L × Tile W). This calculator handles all the math once you enter your tile dimensions, joint width, and area.',
+        'Multiply your tiled area by the grout volume per square foot — which depends on tile size, joint width, and tile thickness. The formula is: Grout/ft² = Joint Width × Tile Depth × (Tile L + Tile W) ÷ (12 × Tile L × Tile W). This calculator handles all the math once you enter your tile dimensions, joint width, and area.',
     },
     {
       question: 'What is the difference between sanded and unsanded grout?',
       answer:
-        'Unsanded grout is used for joints narrower than 1/8″ — common for wall tiles, glass tiles, and mosaics where sand particles would scratch the tile surface. Sanded grout is used for joints 1/8″ or wider and is standard for floor tiles and larger format tiles. Using the wrong type can lead to cracking or surface damage.',
+        'Use the selected grout manufacturer instructions for permitted joint widths and tile compatibility. Sanded, unsanded, epoxy and premixed products have different limitations; joint width alone does not select a suitable product.',
     },
     {
       question: 'How much grout do I need for 100 sq ft of 12×12 tile?',
       answer:
-        'With 1/8″ joints and 3/8″ tile depth: grout volume per ft² ≈ 0.0026 ft³, so 100 ft² requires about 0.26 ft³ net. With a standard 25 lb bag (0.45 ft³ yield) and 10% waste, you need 1 bag. Larger joints or thicker tiles will increase this amount.',
+        'With 1/8″ joints and 3/8″ tile depth: grout volume per ft² ≈ 0.000651 ft³, so 100 ft² requires about 0.0651 ft³ net. With the illustrative 25 lb bag assumption (0.45 ft³ yield) and 10% waste, you need 1 bag. Larger joints or thicker tiles will increase this amount.',
     },
     {
       question: 'How wide should grout joints be?',
       answer:
-        'Rectified (precisely cut) tile: 1/16″–1/8″. Standard factory-cut tile: 3/16″–1/4″. Large-format tile (18″+): 3/16″ minimum to allow for lippage. Mosaic tile: follow the mesh backing spacing, typically 1/16″–1/8″. Wider joints improve installation tolerance but show more grout color.',
+        'Choose joint width from the tile and grout manufacturer instructions and the project specification. This calculator estimates volume for the entered width; it does not determine an installation minimum.',
     },
     {
       question: 'What size grout bag do I need?',
@@ -433,7 +436,7 @@ export const groutCalculator: CalculatorConfig = {
     {
       question: 'How long does grout take to cure?',
       answer:
-        'Initial set takes 24–72 hours — avoid foot traffic on floor grout for at least 24 hours. Full cure takes approximately 28 days. Avoid water contact on floor grout joints for at least 72 hours. Sealing grout after cure (typically 1–2 weeks after installation) extends its life significantly.',
+        'Follow the selected grout technical data sheet for curing, traffic, water exposure and sealing. A generic curing time is not valid for all grout products.',
     },
     {
       question: 'Can I use this calculator for epoxy grout?',
@@ -446,7 +449,7 @@ export const groutCalculator: CalculatorConfig = {
         'Sanded grout in a standard 25 lb bag typically costs $12–20. Unsanded grout runs $15–25 per 25 lb bag. Epoxy grout kits are $30–60 each. Prices vary by brand, retailer, and region. For larger jobs, buying 50 lb bags generally offers better value per cubic foot.',
     },
   ],
-  orderCallout: true,
+  orderCallout: { hint: 'Illustrative area allowance only; not a verified material purchase quantity.' },
   wasteFactor: {
     default: 10,
     range: '10–15%',

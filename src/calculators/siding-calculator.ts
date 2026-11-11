@@ -1,3 +1,4 @@
+import { ceilQuantity } from './rounding';
 import type {
   CalculatorConfig,
   CalculatorInputMap,
@@ -5,7 +6,7 @@ import type {
   UnitSystem,
 } from './_types';
 
-function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
+export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   const wastePct = Number(inputs.waste_pct ?? 10) / 100;
 
   if (unitSystem === 'imperial') {
@@ -16,12 +17,12 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const doorSqFt      = Number(inputs.door_area_sqft   ?? 40);
     const panelCovSqFt  = Number(inputs.panel_coverage_sqft ?? 100);
 
-    const gross_area_sqft   = Math.round(heightFt * widthFt * walls * 10) / 10;
-    const opening_area_sqft = Math.round((windowSqFt + doorSqFt) * 10) / 10;
-    const net_area_sqft     = Math.round(Math.max(0, gross_area_sqft - opening_area_sqft) * 10) / 10;
-    const required_area_sqft = Math.round(net_area_sqft * (1 + wastePct) * 10) / 10;
+    const gross_area_sqft   = heightFt * widthFt * walls;
+    const opening_area_sqft = (windowSqFt + doorSqFt);
+    const net_area_sqft     = Math.max(0, gross_area_sqft - opening_area_sqft);
+    const required_area_sqft = net_area_sqft * (1 + wastePct);
     const waste_area_sqft   = Math.round((required_area_sqft - net_area_sqft) * 10) / 10;
-    const panels            = panelCovSqFt > 0 ? Math.ceil(required_area_sqft / panelCovSqFt) : 0;
+    const panels            = panelCovSqFt > 0 ? ceilQuantity(required_area_sqft / panelCovSqFt) : 0;
 
     return {
       gross_area_sqft,
@@ -44,12 +45,12 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const doorSqM       = Number(inputs.door_area_sqm   ?? 3.7);
     const panelCovSqM   = Number(inputs.panel_coverage_sqm ?? 9.3);
 
-    const gross_area_sqm    = Math.round(heightM * widthM * walls * 100) / 100;
-    const opening_area_sqm  = Math.round((windowSqM + doorSqM) * 100) / 100;
-    const net_area_sqm      = Math.round(Math.max(0, gross_area_sqm - opening_area_sqm) * 100) / 100;
-    const required_area_sqm  = Math.round(net_area_sqm * (1 + wastePct) * 100) / 100;
+    const gross_area_sqm    = heightM * widthM * walls;
+    const opening_area_sqm  = (windowSqM + doorSqM);
+    const net_area_sqm      = Math.max(0, gross_area_sqm - opening_area_sqm);
+    const required_area_sqm  = net_area_sqm * (1 + wastePct);
     const waste_area_sqm    = Math.round((required_area_sqm - net_area_sqm) * 100) / 100;
-    const panels            = panelCovSqM > 0 ? Math.ceil(required_area_sqm / panelCovSqM) : 0;
+    const panels            = panelCovSqM > 0 ? ceilQuantity(required_area_sqm / panelCovSqM) : 0;
 
     return {
       gross_area_sqm,

@@ -1,3 +1,4 @@
+import { ceilQuantity } from './rounding';
 import type {
   CalculatorConfig,
   CalculatorInputMap,
@@ -20,7 +21,7 @@ const BAG_SIZE_OPTIONS = [
   { value: 'custom', label: 'Custom yield' },
 ];
 
-function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
+export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   const bagSize      = String(inputs.bag_size ?? '60lb');
   const yieldPerBag  = bagSize === 'custom'
     ? Math.max(0.001, Number(inputs.custom_yield_cuft ?? 0.45))
@@ -53,13 +54,13 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     }
 
     volume_cum  = lengthM * widthM * depthM;
-    volume_cuft = volume_cum * 35.3147;
-    volume_cuyd = volume_cum * 1.30795;
+    volume_cuft = volume_cum / (0.3048 ** 3);
+    volume_cuyd = volume_cum / (0.9144 ** 3);
   }
 
   const waste_volume_cuft = volume_cuft * (1 + wastePct);
-  const bags_required     = Math.ceil(waste_volume_cuft / yieldPerBag);
-  const net_bags          = Math.ceil(volume_cuft / yieldPerBag);
+  const bags_required     = ceilQuantity(waste_volume_cuft / yieldPerBag);
+  const net_bags          = ceilQuantity(volume_cuft / yieldPerBag);
 
   return {
     volume_cuft:  Math.round(volume_cuft  * 100)  / 100,

@@ -25,6 +25,8 @@ export interface InputField {
   onlyIn?: UnitSystem;
   /** ID of the field to visually group with (ft+in pairs) */
   groupWith?: string;
+  /** Independently validated optional material specification, displayed under Advanced. */
+  advanced?: boolean;
 }
 
 export interface OutputField {
@@ -37,6 +39,8 @@ export interface OutputField {
   description?: string;
   /** Mark as an equivalent/conversion output (e.g. bag counts from volume). Displayed in a separate Equivalents section. */
   isEquivalent?: boolean;
+  /** Numeric output flag required before a material estimate can be displayed. */
+  availableWhen?: string;
   /** Explicit decimal places for formatting (e.g. 0 for discrete units) */
   decimals?: number;
 }

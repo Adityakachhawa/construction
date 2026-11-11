@@ -5,7 +5,7 @@ import type {
   UnitSystem,
 } from './_types';
 
-function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
+export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   const gravelPct = Math.max(0, Math.min(1, Number(inputs.gravel_pct ?? 90) / 100));
   const wastePct  = Math.max(0, Math.min(0.3, Number(inputs.waste_pct  ?? 10) / 100));
 

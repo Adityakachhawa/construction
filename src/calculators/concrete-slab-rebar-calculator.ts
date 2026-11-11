@@ -7,7 +7,7 @@ import type {
 import { rectVolumeImperial, rectVolumeMetric } from './volume-engine';
 import { REBAR_SIZES, REBAR_SIZE_OPTIONS_IMPERIAL, REBAR_SIZE_OPTIONS_METRIC } from './rebar-data';
 
-function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
+export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   if (unitSystem === 'imperial') {
     const vol = rectVolumeImperial(inputs, 'thickness');
 

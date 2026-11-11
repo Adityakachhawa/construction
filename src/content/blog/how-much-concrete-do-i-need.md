@@ -38,10 +38,10 @@ A standard backyard patio at 4 inches thick needs approximately:
 
 | Patio Size | Cubic Yards |
 |-----------|-------------|
-| 10×10 ft | 0.62 yd³ |
-| 12×16 ft | 0.89 yd³ |
-| 16×20 ft | 1.48 yd³ |
-| 20×30 ft | 2.22 yd³ |
+| 10×10 ft | 1.23 yd³ |
+| 12×16 ft | 2.37 yd³ |
+| 16×20 ft | 3.95 yd³ |
+| 20×30 ft | 7.41 yd³ |
 
 For patios under 1 cubic yard, bag concrete is usually more cost-effective than ordering ready-mix with a minimum delivery charge. One cubic yard is typically the crossover point.
 

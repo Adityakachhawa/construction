@@ -52,7 +52,7 @@ const nextWall = wall.adjacentSizes.next
 
 // SEO Metadata
 const pageTitle = `How Many Concrete Blocks for a ${wall.height}x${wall.length} Wall? (8x8x16 Block & Mortar Chart) | BuildByMath`;
-const metaDescription = `Calculate exact concrete blocks (CMU), mortar bags, and core fill grout for a ${wall.height}x${wall.length} ft wall (${wall.areaSqFt} sq ft). Needs ${metrics.totalBlocksWithWaste} standard 8x8x16 blocks, ${metrics.mortarBags} bags of Type S mortar, and ${metrics.groutCuYdsSolid} yd³ grout. Full engineering guide and size comparison.`;
+const metaDescription = `Estimate blocks for a ${wall.height}x${wall.length} ft wall (${wall.areaSqFt} sq ft): ${metrics.totalBlocksWithWaste} CMUs with 5% allowance. Compare sizes and review mortar, grout and reinforcement assumptions.`;
 const canonical = buildCanonical(`/calculators/concrete-block-calculator/${wall.slug}/`);
 
 const meta: MetaProps = {
@@ -77,15 +77,15 @@ const faqs = [
   },
   {
     question: `How many bags of mortar do I need for a ${wall.height}x${wall.length} block wall?`,
-    answer: `You will need ${metrics.mortarBags} bags of 80-lb Type S (or Type N) pre-mixed mortar. One 80-lb bag covers approximately 30 to 35 standard 8×8×16 CMU blocks when laid with standard 3/8-inch bed and head joints. If using 60-lb mortar bags, plan for ${Math.ceil(metrics.totalBlocksWithWaste / 25)} bags.`,
+    answer: `Mortar bag estimates require product specifications. Open Advanced in the calculator and enter coverage or mixed yield plus verified consumption per block, matching bag mass, actual block dimensions, joints and bedding. The same product calculation is used on the parent page. Core grout is separate.`,
   },
   {
     question: `How much grout do I need to fill the block cores for a ${wall.height}x${wall.length} wall?`,
-    answer: `If grouting 100% of the hollow block cores solid, you will need approximately ${metrics.groutCuYdsSolid} cubic yards (${metrics.groutCuFtSolid} cu ft) of coarse masonry grout. If you are building a partially grouted reinforced wall with vertical rebar every 32 inches, you will need approximately ${metrics.groutCuYdsReinforced32} cubic yards of core grout.`,
+    answer: `The full-core estimate is ${metrics.groutCuYdsSolid} cubic yards using an assumed 0.28 cubic feet per net block. The partial-fill example is ${metrics.groutCuYdsReinforced32} cubic yards, calculated as 40% of the rounded full-fill volume. A 32-inch bar spacing alone does not establish that fill fraction. Confirm actual core geometry and the approved filled-cell schedule; masonry core grout is not tile grout.`,
   },
   {
     question: `What rebar and reinforcement is required for a ${wall.height}x${wall.length} CMU wall?`,
-    answer: `Per TMS 402 / ACI 530 masonry code standards, reinforced block walls typically require vertical #4 (1/2") or #5 (5/8") rebar placed every 32 to 48 inches on center, which requires ${metrics.verticalRebarBars32} vertical bars (${metrics.verticalRebarLinFt} linear feet including footing overlap). Horizontal joint reinforcement (9-gauge ladder wire) should be bedded into mortar joints every 16 inches vertically (${metrics.reinforcedJoints ?? Math.floor(metrics.coursesHigh / 2)} horizontal courses, or ${metrics.ladderWirePieces} standard 10-ft wire strips).`,
+    answer: `Use the reinforcement schedule from approved plans for vertical bars, horizontal reinforcement, cover, anchorage and splices. The numerical allowances on this page are estimating examples, not code-required reinforcement or a structural design.`,
   },
 ];
 
@@ -109,7 +109,7 @@ const schemas = [
         </div>
         <h1 class="block-h1">How Many Concrete Blocks Do You Need for a {wall.name} Ft Wall?</h1>
         <p class="block-lead">
-          Calculate the exact standard 8×8×16 CMU block count, 80-lb mortar bags, core fill grout volume, and rebar reinforcement for a <strong>{wall.height} ft high by {wall.length} ft long block wall</strong> ({wall.areaSqFt} sq ft).
+          Estimate standard 8×8×16 CMU block count, 80-lb mortar bags, core fill grout volume, and illustrative reinforcement quantities for a <strong>{wall.height} ft high by {wall.length} ft long block wall</strong> ({wall.areaSqFt} sq ft).
         </p>
       </header>
 
@@ -136,9 +136,9 @@ const schemas = [
 
           <!-- Secondary Metric: Mortar Bags -->
           <div class="metric-card">
-            <div class="metric-label">80-lb Type S Mortar Bags</div>
-            <div class="metric-value">{metrics.mortarBags}</div>
-            <div class="metric-sub">~33 blocks per bag @ ⅜" bed & head joints</div>
+            <div class="metric-label">Mortar Bags (Selected Product)</div>
+            <div class="metric-label">Requires product specifications</div>
+            <div class="metric-sub">Enter product data in the calculator below</div>
           </div>
 
           <!-- Tertiary Metric: Wall Geometry -->
@@ -152,7 +152,7 @@ const schemas = [
           <div class="metric-card">
             <div class="metric-label">Core Fill Grout</div>
             <div class="metric-value">{metrics.groutCuYdsSolid} yd³</div>
-            <div class="metric-sub">{metrics.groutCuYdsReinforced32} yd³ if grouted @ 32" o.c. only</div>
+            <div class="metric-sub">{metrics.groutCuYdsReinforced32} yd³ at assumed 40% fill; confirm core geometry</div>
           </div>
         </div>
 
@@ -164,7 +164,7 @@ const schemas = [
             <line x1="12" y1="16" x2="12.01" y2="16"/>
           </svg>
           <p>
-            <strong>Estimator Rule of Thumb:</strong> 1 square foot of concrete block wall requires exactly <strong>1.125 nominal 8×8×16 CMU blocks</strong>. For a {wall.areaSqFt} sq ft wall, multiply {wall.areaSqFt} × 1.125 = {metrics.netBlocks} net blocks. Always round up and add 5% for chipped edges, end blocks, and half-block cuts at corner jambs.
+            <strong>Estimator Rule of Thumb:</strong> 1 square foot of concrete block wall requires exactly <strong>1.125 nominal 8×8×16 CMU blocks</strong>. For a {wall.areaSqFt} sq ft wall, multiply {wall.areaSqFt} × 1.125 = {metrics.netBlocks} net blocks. This estimate adds a 5% order allowance; confirm cuts, openings and wastage against the actual wall layout.
           </p>
         </div>
       </section>
@@ -186,13 +186,14 @@ const schemas = [
             <ConcreteBlockDiagram />
             <div class="dimension-summary-card">
               <h3 class="summary-h3">Geometry Summary for {wall.name} Ft Wall</h3>
+              <p>Reinforcement quantities below are hypothetical allowances, not a reinforcement schedule. Bar lengths do not establish cutting, lap or anchorage requirements; use approved plans.</p>
               <ul class="summary-list">
                 <li><span>Wall Face Area:</span> <strong>{wall.areaSqFt} sq ft ({Math.round(wall.areaSqFt * 0.092903 * 10) / 10} m²)</strong></li>
                 <li><span>Wall Height:</span> <strong>{wall.height} ft ({metrics.coursesHigh} courses @ 8" each)</strong></li>
                 <li><span>Wall Length:</span> <strong>{wall.length} ft ({metrics.unitsPerCourse} units @ 16" each)</strong></li>
-                <li><span>Mortar Mix:</span> <strong>{metrics.mortarBags} bags (80 lb Type S / N)</strong></li>
-                <li><span>Vertical Rebar (#4):</span> <strong>{metrics.verticalRebarBars32} bars @ 32" o.c. ({metrics.verticalRebarLinFt} lin ft)</strong></li>
-                <li><span>Horizontal Ladder Wire:</span> <strong>{metrics.ladderWirePieces} strips (10-ft lengths @ 16" vert)</strong></li>
+                <li><span>Mortar Mix:</span> <strong>Use the product-specific calculator below</strong></li>
+                <li><span>Example Vertical Rebar (#4):</span> <strong>{metrics.verticalRebarBars32} bars @ 32" o.c. ({metrics.verticalRebarLinFt} lin ft)</strong></li>
+                <li><span>Example Horizontal Ladder Wire:</span> <strong>{metrics.ladderWirePieces} strips (10-ft lengths @ 16" vert)</strong></li>
               </ul>
             </div>
           </div>
@@ -204,7 +205,7 @@ const schemas = [
         <div class="section-title-wrap">
           <h2 class="section-h2">CMU Block Size Comparison for a {wall.name} Ft Wall</h2>
           <p class="section-desc">
-            Compare material counts, weights, mortar demands, and structural applications across the 3 standard American concrete block thicknesses for this {wall.areaSqFt} sq ft wall.
+            Compare nominal block geometry for this {wall.areaSqFt} sq ft wall. Mortar coverage must be supplied separately for each block width and bedding method; no universal bags-per-block conversion is assumed. Enter matching product specifications in the calculator. Weights and core-fill volumes also require the selected block specification.
           </p>
         </div>
 
@@ -220,7 +221,7 @@ const schemas = [
                   <th scope="col">Total (+5%)</th>
                   <th scope="col">Mortar Bags</th>
                   <th scope="col">Solid Grout</th>
-                  <th scope="col">Structural Reinforcing</th>
+                  <th scope="col">Reinforcement Selection</th>
                 </tr>
               </thead>
               <tbody>
@@ -234,9 +235,9 @@ const schemas = [
                     <td>{row.weightLbs} lbs</td>
                     <td>{row.netBlocks}</td>
                     <td class="font-bold text-accent">{row.totalBlocks}</td>
-                    <td>{row.mortarBags} bags</td>
+                    <td>Product specifications required</td>
                     <td>{row.groutCuYds100Pct} yd³</td>
-                    <td class="text-sm">{row.rebarSpec}</td>
+                    <td class="text-sm">Use approved reinforcement plans</td>
                   </tr>
                 ))}
               </tbody>
@@ -253,7 +254,7 @@ const schemas = [
         <div class="section-title-wrap">
           <h2 class="section-h2">CMU Wall Engineering & Code Requirements</h2>
           <p class="section-desc">
-            Key structural standards per TMS 402 / ACI 530 and IRC Chapter 4 for a durable, crack-free masonry wall.
+            Planning considerations for material estimates; use approved details and applicable building requirements for structural design.
           </p>
         </div>
 
@@ -274,7 +275,7 @@ const schemas = [
             </div>
             <h3 class="guide-h3">1. Running Bond & ⅜" Mortar Joints</h3>
             <p>
-              Concrete masonry units must be laid in a <strong>half-running bond</strong>, where vertical head joints in adjacent courses are staggered by half the block length (8 inches). Mortar joints should be consistently maintained at <strong>⅜ inch (9.5 mm)</strong>. Tool all exterior mortar joints with a concave jointing tool once the mortar becomes thumbprint-hard to compress the cement surface and reject rainwater infiltration.
+              Follow the specified bond, mortar type, joint dimensions and finishing method for the selected units. The nominal module used for quantity arithmetic does not prescribe a bond or installation detail.
             </p>
           </div>
 
@@ -291,7 +292,7 @@ const schemas = [
             </div>
             <h3 class="guide-h3">2. Poured Footing Depth & Width</h3>
             <p>
-              A masonry wall requires an unyielding reinforced concrete footing. The footing width must be at least <strong>twice the block thickness</strong> (16" wide for 8" CMU) and a minimum of <strong>8 to 12 inches thick</strong>. The bottom of the footing must sit below your local frost depth to prevent seasonal frost heave from cracking mortar joints.
+              Use the approved foundation schedule for footing dimensions, founding depth and reinforcement. Wall thickness alone does not establish a safe footing size.
             </p>
           </div>
 
@@ -305,7 +306,7 @@ const schemas = [
             </div>
             <h3 class="guide-h3">3. Vertical Rebar & Grouting</h3>
             <p>
-              Vertical #4 or #5 rebar dowels must extend up from the footing into the block cores every <strong>32 or 48 inches on center</strong>, plus within 8 inches of all wall corners and door/window openings. Grouted cores must use fine or coarse masonry grout (minimum 2,000 psi) consolidated with a low-diameter mechanical vibrator or puddling stick.
+              Use the approved reinforcement and grout schedule for bar size, spacing, dowels, anchorage, filled cores and grout properties. Follow the specified placement and consolidation procedure; this estimator does not establish these requirements.
             </p>
           </div>
 
@@ -318,7 +319,7 @@ const schemas = [
             </div>
             <h3 class="guide-h3">4. Top Bond Beam & Control Joints</h3>
             <p>
-              The top course should be constructed using special U-shaped bond beam blocks loaded with two continuous horizontal #4 rebar bars and grouted solid. For walls exceeding 25 feet in length, install a vertical <strong>control joint (CJ) every 20 to 25 feet</strong> using sash blocks with asphaltic gaskets to control shrinkage cracks.
+              Use the approved details for bond beams, horizontal reinforcement and control joints. The calculator does not design these details or establish a universal joint spacing.
             </p>
           </div>
         </div>
@@ -375,7 +376,7 @@ const schemas = [
         <div class="section-title-wrap">
           <h2 class="section-h2">Frequently Asked Questions: {wall.name} Ft Block Wall</h2>
           <p class="section-desc">
-            Exact block counts, mortar estimates, and grout requirements answered by structural masonry calculators.
+            Block-count arithmetic, product-dependent mortar estimates and core-grout assumptions explained.
           </p>
         </div>
 

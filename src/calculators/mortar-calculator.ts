@@ -1,3 +1,4 @@
+import { ceilQuantity } from './rounding';
 import type {
   CalculatorConfig,
   CalculatorInputMap,
@@ -30,21 +31,21 @@ const BAG_YIELDS: Record<string, number> = {
 };
 
 const UNIT_TYPE_OPTIONS = [
-  { value: '3/8in_brick', label: 'Standard brick – 3/8″ joints' },
-  { value: '1/2in_brick', label: 'Standard brick – 1/2″ joints' },
-  { value: '3/8in_block', label: 'CMU block – 3/8″ joints' },
-  { value: '1/2in_block', label: 'CMU block – 1/2″ joints' },
-  { value: '3/4in_stone', label: 'Stone/rubble – 3/4″ joints' },
+  { value: '3/8in_brick', label: 'Standard brick – 3/8″ joints (illustrative)' },
+  { value: '1/2in_brick', label: 'Standard brick – 1/2″ joints (illustrative)' },
+  { value: '3/8in_block', label: 'CMU block – 3/8″ joints (illustrative)' },
+  { value: '1/2in_block', label: 'CMU block – 1/2″ joints (illustrative)' },
+  { value: '3/4in_stone', label: 'Stone/rubble – 3/4″ joints (illustrative)' },
   { value: 'custom',      label: 'Custom joint factor' },
 ];
 
 const BAG_SIZE_OPTIONS = [
-  { value: '60lb',   label: '60 lb bag (0.45 ft³)' },
-  { value: '80lb',   label: '80 lb bag (0.60 ft³)' },
+  { value: '60lb',   label: '60 lb bag (0.45 ft³) - unverified yield' },
+  { value: '80lb',   label: '80 lb bag (0.60 ft³) - unverified yield' },
   { value: 'custom', label: 'Custom yield' },
 ];
 
-function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
+export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   const unitType    = String(inputs.unit_type ?? '3/8in_brick');
   const jointFactor = unitType === 'custom'
     ? Number(inputs.custom_joint_factor ?? 0.025)
@@ -79,8 +80,8 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
       return { wall_area_sqft: 0, wall_area_sqm: 0, unit_count: 0, mortar_cuft: 0, mortar_cuyd: 0, mortar_cum: 0, net_bags: 0, bags_required: 0 };
     }
 
-    const lengthFt = lengthM * 3.28084;
-    const heightFt = heightM * 3.28084;
+    const lengthFt = lengthM / 0.3048;
+    const heightFt = heightM / 0.3048;
     wall_area_sqft = lengthFt * heightFt;
     wall_area_sqm  = lengthM * heightM;
   }
@@ -89,9 +90,9 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
   const mortar_cuft     = mortar_cuft_net * (1 + wastePct);
   const mortar_cuyd     = mortar_cuft / 27;
   const mortar_cum      = mortar_cuft * 0.0283168;
-  const unit_count      = Math.ceil(wall_area_sqft * unitCount * (1 + wastePct));
-  const bags_required   = Math.ceil(mortar_cuft / yieldPerBag);
-  const net_bags        = Math.ceil(mortar_cuft_net / yieldPerBag);
+  const unit_count      = ceilQuantity(wall_area_sqft * unitCount * (1 + wastePct));
+  const bags_required   = ceilQuantity(mortar_cuft / yieldPerBag);
+  const net_bags        = ceilQuantity(mortar_cuft_net / yieldPerBag);
 
   return {
     wall_area_sqft: Math.round(wall_area_sqft * 100)  / 100,
@@ -204,7 +205,7 @@ export const mortarCalculator: CalculatorConfig = {
       step: 0.01,
       defaultValue: 0.60,
       onlyIn: 'imperial',
-      helpText: 'Yield per bag in cubic feet. Check bag label.',
+      helpText: 'Enter mixed yield from the selected product data sheet; preset bag yields are unverified assumptions.',
     },
     {
       id: 'waste_pct',
@@ -288,7 +289,7 @@ export const mortarCalculator: CalculatorConfig = {
       step: 0.01,
       defaultValue: 0.60,
       onlyIn: 'metric',
-      helpText: 'Yield per bag in cubic feet. Check bag label.',
+      helpText: 'Enter mixed yield from the selected product data sheet; preset bag yields are unverified assumptions.',
     },
     {
       id: 'waste_pct',
@@ -319,44 +320,45 @@ export const mortarCalculator: CalculatorConfig = {
     },
     {
       id: 'unit_count',
-      label: 'Units Required',
+      label: 'Estimated Units',
       unit: 'units',
       format: 'number',
       description: 'Bricks, blocks, or stones (with waste)',
     },
     {
       id: 'mortar_cuft',
-      label: 'Mortar Volume',
+      label: 'Estimated Mortar Volume',
       unit: 'ft³',
       format: 'volume',
       description: 'Adjusted mortar volume including waste',
     },
     {
       id: 'mortar_cuyd',
-      label: 'Mortar Volume',
+      label: 'Estimated Mortar Volume',
       unit: 'yd³',
       format: 'volume',
     },
     {
       id: 'mortar_cum',
-      label: 'Mortar Volume',
+      label: 'Estimated Mortar Volume',
       unit: 'm³',
       format: 'volume',
     },
     {
       id: 'net_bags',
-      label: 'Bags (net)',
+      label: 'Illustrative Bags (net)',
       unit: 'bags',
       format: 'number',
     },
     {
       id: 'bags_required',
-      label: 'Bags Required',
+      label: 'Illustrative Bag Estimate',
       unit: 'bags',
       format: 'number',
-      description: 'Including waste factor — order this many',
+      description: 'Assumption-based estimate including waste; verify selected product coverage before ordering',
     },
   ],
+  disclaimer: 'Assumption-based estimate, not a manufacturer coverage or engineering specification. Preset bag yields are unverified. Use Custom with the selected product mixed yield before ordering; verify geometry and waste separately. Mortar joint factors and unit counts are illustrative presets; Custom joint factor does not customize the separate unit-count assumption.',
   formula,
   unitSystems: ['imperial', 'metric'],
   relatedCalculators: [
@@ -394,7 +396,7 @@ export const mortarCalculator: CalculatorConfig = {
       label: 'Apply joint factor',
       formula: 'Mortar Volume (net) = Wall Area × Joint Factor',
       description:
-        'The joint factor represents cubic feet of mortar per square foot of wall face. It varies by unit type and joint width: standard 3/8″ brick ≈ 0.025 ft³/ft², CMU block ≈ 0.012 ft³/ft², stone with 3/4″ joints ≈ 0.060 ft³/ft². Use the Custom option for unusual specs.',
+        'The joint factor is cubic feet of mortar per square foot of wall face. The listed factors are illustrative, not verified manufacturer consumption. Use Custom with a factor established for the actual unit dimensions, bedding and joints.',
     },
     {
       label: 'Apply waste factor',
@@ -406,7 +408,7 @@ export const mortarCalculator: CalculatorConfig = {
       label: 'Calculate bags required',
       formula: 'Bags = ⌈Adjusted Mortar ÷ Yield per Bag⌉',
       description:
-        'An 80 lb bag of mortar mix yields approximately 0.60 ft³; a 60 lb bag yields 0.45 ft³. Always round up — you cannot use a partial bag, and running short mid-course causes weak joints.',
+        'Preset yields are unverified assumptions. Enter the selected product mixed yield using the custom option; bag weight alone does not establish yield. Round the resulting order up to whole bags.',
     },
     {
       label: 'Estimate unit count',
@@ -419,27 +421,27 @@ export const mortarCalculator: CalculatorConfig = {
     {
       question: 'How much mortar do I need per square foot of brick wall?',
       answer:
-        'For standard brick with 3/8″ joints, plan on approximately 0.025 ft³ of mortar per square foot of wall face. A 100 ft² wall needs about 2.5 ft³ of net mortar — roughly 5 bags of 80 lb mix before waste.',
+        'The illustrative brick preset assumes 0.025 ft3 per square foot. Under that assumption, a 100 ft2 wall needs 2.5 ft3 net. Confirm the joint-volume factor from actual masonry dimensions and bedding before using it to order.',
     },
     {
       question: 'How many bags of mortar do I need?',
       answer:
-        'An 80 lb bag yields 0.60 ft³. For a 100 ft² standard brick wall: 2.5 ft³ net ÷ 0.60 = 5 bags net. With 15% waste that rounds up to 6 bags. Use this calculator to get an exact count for your wall dimensions.',
+        'Illustrative arithmetic only: 100 ft2 at 0.025 ft3/ft2 gives 2.5 ft3 net. At an assumed 0.60 ft3/bag, ceiling(2.5/0.60) is 5 bags. Adding 15% gives 2.875 ft3 and still 5 bags. These assumptions require product and geometry confirmation.',
     },
     {
       question: 'What type of mortar should I use?',
       answer:
-        'Type S is recommended for below-grade and exterior applications where strength and moisture resistance matter. Type N is the standard general-purpose exterior mortar. Type M is used for load-bearing and below-grade heavy-duty work. Type O is for interior non-load-bearing applications only.',
+        'Select mortar type from the project specification and the masonry/product requirements. Strength alone does not determine compatibility; this calculator does not select a suitable structural or restoration mortar.',
     },
     {
       question: 'How thick should mortar joints be?',
       answer:
-        '3/8″ is the standard joint thickness for both brick and CMU block. A 1/2″ joint is also acceptable for both. Stone joints vary widely — 1/2″ to 3/4″ is typical for ashlar; rubble stone may use joints up to 1″ thick.',
+        'Use the joint thickness specified for the selected masonry system. Preset thickness labels identify estimating assumptions, not permission to change the construction detail.',
     },
     {
       question: 'How do I mix mortar?',
       answer:
-        'Pre-mixed bags: add water per the label — typically 4–5 quarts per 80 lb bag. Site-mixed Type N mortar: 1 part Portland cement + 1 part hydrated lime + 6 parts masonry sand. Mix dry first, then add water gradually until the mix holds its shape but slides cleanly off a trowel.',
+        'Follow the selected mortar product instructions for mixing water, mixing time and working time. Site-mixed mortar must follow the approved project specification; the calculator does not supply a mix design.',
     },
     {
       question: 'How many bricks per square foot?',
@@ -449,7 +451,7 @@ export const mortarCalculator: CalculatorConfig = {
     {
       question: 'How much does mortar cost?',
       answer:
-        'A standard 80 lb bag of mortar mix typically costs $8–$12 at home improvement stores. A 100 ft² brick wall needs roughly 6 bags with waste, putting mortar material cost at $50–$75. Labour and additional materials (brick, block) are separate.',
+        'Use your supplier price and verified product yield for an order estimate. The calculator preset does not establish a universal bag count or current material price.',
     },
     {
       question: 'What is the difference between mortar and grout?',
@@ -457,7 +459,7 @@ export const mortarCalculator: CalculatorConfig = {
         'Mortar is used to bond masonry units together — it fills the joints between bricks, blocks, or stones and provides structural adhesion. Grout fills cavities inside CMU cores or the gaps in tile installations. The two mixes have different proportions and are not interchangeable.',
     },
   ],
-  orderCallout: true,
+  orderCallout: { hint: 'Illustrative area allowance only; not a verified material purchase quantity.' },
   wasteFactor: {
     default: 15,
     range: '10–20%',

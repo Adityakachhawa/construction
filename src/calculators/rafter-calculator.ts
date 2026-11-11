@@ -5,7 +5,7 @@ import type {
   UnitSystem,
 } from './_types';
 
-function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
+export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   if (unitSystem === 'imperial') {
     const riseFt     = Number(inputs.rise_ft  ?? 6)  + Number(inputs.rise_in  ?? 0) / 12;
     const runFt      = Number(inputs.run_ft   ?? 12) + Number(inputs.run_in   ?? 0) / 12;

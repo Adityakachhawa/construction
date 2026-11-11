@@ -1,10 +1,11 @@
+import { ceilQuantity } from './rounding';
 import type { CalculatorInputMap } from './_types';
 
 // Conversion constants
 const FT3_TO_YD3 = 1 / 27;
-const FT3_TO_M3  = 0.0283168;
-const M3_TO_FT3  = 35.3147;
-const M3_TO_YD3  = 1.30795;
+const FT3_TO_M3  = 0.3048 ** 3;
+const M3_TO_FT3  = 1 / FT3_TO_M3;
+const M3_TO_YD3  = M3_TO_FT3 / 27;
 
 export interface RectVolume {
   cubic_yards:  number;
@@ -23,9 +24,9 @@ export function rectVolumeImperial(inputs: CalculatorInputMap, thirdId: string):
   const m3  = ft3 * FT3_TO_M3;
 
   return {
-    cubic_yards:  Math.round(yd3 * 100)  / 100,
-    cubic_feet:   Math.round(ft3 * 100)  / 100,
-    cubic_meters: Math.round(m3  * 1000) / 1000,
+    cubic_yards:  yd3,
+    cubic_feet:   ft3,
+    cubic_meters: m3 ,
   };
 }
 
@@ -40,23 +41,23 @@ export function rectVolumeMetric(inputs: CalculatorInputMap, thirdId: string): R
   const yd3 = m3 * M3_TO_YD3;
 
   return {
-    cubic_meters: Math.round(m3  * 1000) / 1000,
-    cubic_feet:   Math.round(ft3 * 100)  / 100,
-    cubic_yards:  Math.round(yd3 * 100)  / 100,
+    cubic_meters: m3 ,
+    cubic_feet:   ft3,
+    cubic_yards:  yd3,
   };
 }
 
-export const tonsFromYards  = (yd3: number, density: number) => Math.round(yd3 * density * 100) / 100;
-export const tonsFromMeters = (m3:  number, density: number) => Math.round(m3  * density * 100) / 100;
-export const bagsFromFeet   = (ft3: number, bagSize: number) => Math.ceil(ft3 / bagSize);
+export const tonsFromYards  = (yd3: number, density: number) => yd3 * density;
+export const tonsFromMeters = (m3:  number, density: number) => m3  * density;
+export const bagsFromFeet   = (ft3: number, bagSize: number) => ceilQuantity(ft3 / bagSize);
 
 /** Rectangular volume from raw feet dimensions. */
 export function rectVolFt3(lengthFt: number, widthFt: number, depthFt: number): RectVolume {
   const ft3 = lengthFt * widthFt * depthFt;
   return {
-    cubic_feet:   Math.round(ft3 * 100)  / 100,
-    cubic_yards:  Math.round(ft3 * FT3_TO_YD3 * 100)  / 100,
-    cubic_meters: Math.round(ft3 * FT3_TO_M3  * 1000) / 1000,
+    cubic_feet:   ft3,
+    cubic_yards:  ft3 * FT3_TO_YD3,
+    cubic_meters: ft3 * FT3_TO_M3 ,
   };
 }
 
@@ -64,9 +65,9 @@ export function rectVolFt3(lengthFt: number, widthFt: number, depthFt: number): 
 export function rectVolM3(lengthM: number, widthM: number, depthM: number): RectVolume {
   const m3 = lengthM * widthM * depthM;
   return {
-    cubic_meters: Math.round(m3 * 1000) / 1000,
-    cubic_feet:   Math.round(m3 * M3_TO_FT3 * 100)  / 100,
-    cubic_yards:  Math.round(m3 * M3_TO_YD3 * 100)  / 100,
+    cubic_meters: m3,
+    cubic_feet:   m3 * M3_TO_FT3,
+    cubic_yards:  m3 * M3_TO_YD3,
   };
 }
 
@@ -78,9 +79,9 @@ export function cylVolumeImperial(diameterIn: number, depthIn: number): RectVolu
   const yd3 = ft3 * FT3_TO_YD3;
   const m3  = ft3 * FT3_TO_M3;
   return {
-    cubic_yards:  Math.round(yd3 * 1000) / 1000,
-    cubic_feet:   Math.round(ft3 * 1000) / 1000,
-    cubic_meters: Math.round(m3  * 1000) / 1000,
+    cubic_yards:  yd3,
+    cubic_feet:   ft3,
+    cubic_meters: m3 ,
   };
 }
 
@@ -92,8 +93,8 @@ export function cylVolumeMetric(diameterMm: number, depthMm: number): RectVolume
   const ft3 = m3 * M3_TO_FT3;
   const yd3 = m3 * M3_TO_YD3;
   return {
-    cubic_meters: Math.round(m3  * 1000) / 1000,
-    cubic_feet:   Math.round(ft3 * 1000) / 1000,
-    cubic_yards:  Math.round(yd3 * 1000) / 1000,
+    cubic_meters: m3 ,
+    cubic_feet:   ft3,
+    cubic_yards:  yd3,
   };
 }

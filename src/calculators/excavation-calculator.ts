@@ -1,3 +1,4 @@
+import { ceilQuantity } from './rounding';
 import type {
   CalculatorConfig,
   CalculatorInputMap,
@@ -6,7 +7,7 @@ import type {
 } from './_types';
 import { rectVolFt3, rectVolM3 } from './volume-engine';
 
-function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
+export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   const swellPct       = Math.max(0, Number(inputs.swell_pct ?? 20)) / 100;
   const costPerUnit    = Math.max(0, Number(inputs.cost_per_unit ?? 0));
 
@@ -21,8 +22,8 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     }
 
     const vol             = rectVolFt3(lengthFt, widthFt, depthFt);
-    const expanded_yards  = Math.round(vol.cubic_yards * (1 + swellPct) * 100) / 100;
-    const truckloads      = Math.ceil(expanded_yards / truckCapYd3);
+    const expanded_yards  = vol.cubic_yards * (1 + swellPct);
+    const truckloads      = ceilQuantity(expanded_yards / truckCapYd3);
     const cost            = costPerUnit > 0 ? Math.round(expanded_yards * costPerUnit * 100) / 100 : 0;
 
     return { ...vol, expanded_yards, expanded_m3: Math.round(expanded_yards * 0.764555 * 1000) / 1000, truckloads, cost };
@@ -37,8 +38,8 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     }
 
     const vol         = rectVolM3(lengthM, widthM, depthM);
-    const expanded_m3 = Math.round(vol.cubic_meters * (1 + swellPct) * 1000) / 1000;
-    const truckloads  = Math.ceil(expanded_m3 / truckCapM3);
+    const expanded_m3 = vol.cubic_meters * (1 + swellPct);
+    const truckloads  = ceilQuantity(expanded_m3 / truckCapM3);
     const cost        = costPerUnit > 0 ? Math.round(expanded_m3 * costPerUnit * 100) / 100 : 0;
 
     return { ...vol, expanded_m3, expanded_yards: Math.round(expanded_m3 * 1.30795 * 100) / 100, truckloads, cost };

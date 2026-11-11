@@ -49,7 +49,7 @@ const relatedCalcs = calculatorRegistry.filter((c) =>
       <section class="content-section">
         <h2>Overview</h2>
         <p>Masonry estimating involves counting modular units (bricks, CMU blocks, pavers), calculating mortar and grout volumes, and applying appropriate waste allowances for cuts and breakage. Unit dimensions are nominal — actual manufactured dimensions are 3/8 inch smaller on each face to accommodate the standard mortar joint.</p>
-        <p>All formulas follow conventional masonry practice consistent with TMS 402/602 (The Masonry Society) and ASTM standards for concrete masonry units and mortar.</p>
+        <p>These calculators implement geometric and estimating relationships. References to TMS and ASTM provide context; they do not certify the preset consumption factors, product yields or a project design.</p>
       </section>
 
       <section class="content-section">
@@ -92,13 +92,13 @@ const relatedCalcs = calculatorRegistry.filter((c) =>
         <div class="formula-block">
           <code>Mortar (ft³) = Units × Joint volume per unit</code>
         </div>
-        <p>Industry standard: approximately 0.042 ft³ of mortar per standard modular brick (accounts for bed and head joints, ~25% waste from tooling, dropping, and overfill). For CMU: approximately 0.11 ft³ per block for face-shell bedding only.</p>
+        <p>Joint volume must be established from actual masonry dimensions, joint thickness and bedding method. The calculator presets are unverified estimating assumptions, not universal per-brick or per-block requirements. Keep waste separate when comparing estimates.</p>
 
         <h3>Mortar Yield from Bag</h3>
         <div class="formula-block">
           <code>Bags = Total mortar volume / Yield per bag</code>
         </div>
-        <p>Typical yields: 80 lb Type S premixed mortar bag → ~0.45 ft³ mixed. 60 lb bag → ~0.33 ft³.</p>
+        <p>Use the selected product technical data sheet for mixed yield or coverage, bag mass, water addition and masonry geometry. No universal mortar yield is verified here. For example, <a href="https://www.quikrete.com/PDFs/DATA_SHEET-Mortar%20Mix%201102.pdf">QUIKRETE 1102</a> lists up to 13 standard blocks per 80 lb bag; that product-specific coverage is not a universal default or a mixed-volume yield. The Concrete Block Calculator now requires user-supplied coverage or mixed yield plus verified mortar consumption per block; its block count is independent. Tile grout and CMU core grout require separate product specifications.</p>
 
         <h3>Grout Volume (Filled CMU Cells)</h3>
         <div class="formula-block">
@@ -142,7 +142,7 @@ const relatedCalcs = calculatorRegistry.filter((c) =>
             </tbody>
           </table>
         </div>
-        <p>Type S is the most common exterior residential mortar per IRC R607. Type N is acceptable for interior non-structural work. Mix proportions per ASTM C270.</p>
+        <p>Select mortar type and mix requirements from the approved project specification and the selected masonry product instructions. This methodology does not prescribe a mortar type by location alone.</p>
       </section>
 
       <section class="content-section">

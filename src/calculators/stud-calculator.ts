@@ -1,3 +1,4 @@
+import { ceilQuantity } from './rounding';
 import type {
   CalculatorConfig,
   CalculatorInputMap,
@@ -18,7 +19,7 @@ const SPACING_MM: Record<string, number> = {
   '600':  600,
 };
 
-function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
+export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   if (unitSystem === 'imperial') {
     const lengthFt      = Number(inputs.length_ft   ?? 12) + Number(inputs.length_in   ?? 0) / 12;
     const heightFt      = Number(inputs.height_ft   ?? 9)  + Number(inputs.height_in   ?? 0) / 12;
@@ -41,7 +42,7 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     // Per opening: 2 king studs + 2 jack/trimmer studs + cripple studs above header
     // Cripples above header = ⌊opening_width / spacing⌋ + 1
     const cripples_per_opening = openingCount > 0
-      ? Math.ceil(openingWFt / spacingFt) + 1
+      ? ceilQuantity(openingWFt / spacingFt) + 1
       : 0;
     const opening_framing = openingCount * (4 + cripples_per_opening); // 2 king + 2 jack + cripples
 
@@ -74,7 +75,7 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const corner_studs = 4;
 
     const cripples_per_opening = openingCount > 0
-      ? Math.ceil(openingWM / spacingM) + 1
+      ? ceilQuantity(openingWM / spacingM) + 1
       : 0;
     const opening_framing = openingCount * (4 + cripples_per_opening);
 
@@ -163,7 +164,7 @@ export const studCalculator: CalculatorConfig = {
       defaultValue: '16',
       required: true,
       onlyIn: 'imperial',
-      helpText: '16" OC is standard for most residential walls.',
+      helpText: 'Use spacing from approved framing plans; this estimator does not design walls.',
     },
     {
       id: 'openings',
@@ -404,12 +405,12 @@ export const studCalculator: CalculatorConfig = {
     {
       question: 'How many studs do I need for a 12-foot wall?',
       answer:
-        'A 12-foot wall at 16" OC needs ⌊144 ÷ 16⌋ + 1 = 10 field studs, plus 4 corner studs = 14 studs for a wall with no openings. Add a standard door opening (3 ft rough): subtract 2 field studs displaced, add 2 king + 2 jack + 3 cripples = 7 opening studs. Total: 14 − 2 + 7 = 19 studs. Use this calculator for any wall length and opening count.',
+        'A 12-foot wall at 16" OC needs ⌊144 ÷ 16⌋ + 1 = 10 field studs, plus 4 corner studs = 14 studs for a wall with no openings. Add a standard door opening (3 ft rough): subtract 2 field studs displaced, add 2 king + 2 jack + 3 cripples = 7 opening studs. Total: 14 − 2 + 7 = 19 studs. This is the estimator convention, not a placement plan: floor(length/spacing)+1 can omit an end stud on a non-divisible span. Opening and corner allowances require layout review.',
     },
     {
       question: 'What is the standard stud spacing?',
       answer:
-        '16 inches on center (OC) is the most common spacing for residential walls in North America. It accommodates standard 4×8 sheathing and drywall without mid-span seams. 24" OC (advanced framing) uses fewer studs and more insulation — code-compliant for many single-story applications but requires engineering review for load-bearing walls. 12" OC is used for tall walls, heavy loads, or seismic zones.',
+        'Select stud spacing from the approved framing specification, including loads, wall height, lumber grade and sheathing requirements. The available spacings are estimating options, not approval for a particular wall.',
     },
     {
       question: 'What is the difference between king studs, jack studs, and cripple studs?',
@@ -419,12 +420,12 @@ export const studCalculator: CalculatorConfig = {
     {
       question: 'How do I frame a corner with studs?',
       answer:
-        'The standard 3-stud corner uses two studs forming an L-shape at the corner, with a third stud providing a nailing surface for interior drywall. This adds 4 extra studs per wall (2 at each end). An alternative California corner uses only 2 studs with drywall clips — it saves one stud per corner and improves insulation continuity, but requires clips and a slightly different drywall installation sequence.',
+        'The estimator adds four corner studs per wall as an allowance. Actual corner and backing details can require a different count; use the framing plan and do not treat this allowance as an assembly design.',
     },
     {
       question: 'Do I need double top plates?',
       answer:
-        'Yes — load-bearing walls require doubled top plates to transfer load across stud-to-stud gaps and create a continuous structural tie. The double plate is not included in the stud count but requires one additional run of lumber the full wall length. Non-load-bearing partition walls may use a single top plate in some jurisdictions — verify with your local building code.',
+        'Plate count and connection details must follow the approved framing plan and applicable building requirements. Plates are excluded from this stud estimator.',
     },
     {
       question: 'How much waste should I add for wall studs?',
@@ -434,7 +435,7 @@ export const studCalculator: CalculatorConfig = {
     {
       question: 'What length studs do I need for 9-foot ceilings?',
       answer:
-        'For 9-foot finished ceiling height, use 104-5/8 inch precut studs (standard 9-ft stud). With a double top plate (3 inches) and single bottom plate (1.5 inches), the total wall assembly is 9 ft exactly. For 8-foot ceilings, use 92-5/8 inch studs. Precut studs are sold in these lengths at most lumber yards and eliminate the need to cut each stud to length.',
+        'Determine stud cut length from the specified wall assembly, plate thicknesses and finishes. A 104-5/8-inch stud plus 4-1/2 inches of plates totals 109-1/8 inches, not exactly 108 inches. Verify supplier precut dimensions against the plans.',
     },
     {
       question: 'How do I calculate studs for multiple walls?',
@@ -484,16 +485,16 @@ export const studCalculator: CalculatorConfig = {
   ],
   referenceTable: {
     title: 'Stud Requirements by Wall Length and Spacing',
-    description: 'Calculations include top/bottom plates, corner framing, and standard 15% jobsite framing factor:',
+    description: 'Current estimator convention: floor(length/spacing)+1 field studs, no openings, plus 4 corner studs. Order includes 10% extra. This is not a placement plan; non-divisible end spans need layout review and plates are excluded:',
     headers: ['Wall Length', '16" OC Field Studs', '16" OC Recommended Order', '24" OC Field Studs', '24" OC Recommended Order'],
     rows: [
-      ['8 ft', '7', '8', '5', '6'],
-      ['10 ft', '9', '11', '6', '8'],
-      ['12 ft', '10', '12', '7', '9'],
-      ['16 ft', '13', '16', '9', '11'],
-      ['20 ft', '16', '19', '11', '14'],
-      ['24 ft', '19', '23', '13', '16'],
-      ['40 ft', '31', '37', '21', '25'],
+      ['8 ft', '7', '13', '5', '10'],
+      ['10 ft', '8', '14', '6', '11'],
+      ['12 ft', '10', '16', '7', '13'],
+      ['16 ft', '13', '19', '9', '15'],
+      ['20 ft', '16', '22', '11', '17'],
+      ['24 ft', '19', '26', '13', '19'],
+      ['40 ft', '31', '39', '21', '28'],
     ],
   },
 };

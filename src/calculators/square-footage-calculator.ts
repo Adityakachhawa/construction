@@ -5,7 +5,7 @@ import type {
   UnitSystem,
 } from './_types';
 
-function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
+export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   const shape = String(inputs.shape ?? 'rectangle');
 
   let area_sqft: number;

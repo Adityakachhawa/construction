@@ -9,7 +9,7 @@ import { rectVolumeImperial, rectVolumeMetric, tonsFromYards, tonsFromMeters } f
 const DENSITY_IMPERIAL = 1.35;  // tons/yd³
 const DENSITY_METRIC   = 1.46;  // tonnes/m³
 
-function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
+export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   if (unitSystem === 'imperial') {
     const vol = rectVolumeImperial(inputs, 'depth');
     const density = Number(inputs.density ?? DENSITY_IMPERIAL);
@@ -279,7 +279,7 @@ export const sandCalculator: CalculatorConfig = {
   },
   referenceTable: {
     title: 'Sand Volume & Weight for Pavers, Sandboxes & Leveling',
-    description: 'Calculated cubic yards, metric tonnes, and US short tons at standard density (1.35 tons per cubic yard):',
+    description: 'Calculated cubic yards and US short tons at standard density (1.35 tons per cubic yard):',
     headers: ['Application / Size', 'Area (sq ft)', 'Depth (in)', 'Cubic Yards', 'Tons (1.35 t/yd³)'],
     rows: [
       ['4′ × 4′ Sandbox', '16', '4"', '0.20', '0.27'],

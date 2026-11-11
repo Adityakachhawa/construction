@@ -6,7 +6,7 @@ import type {
 } from './_types';
 import { rectVolFt3, rectVolM3 } from './volume-engine';
 
-function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
+export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   if (unitSystem === 'imperial') {
     const lengthFt   = Number(inputs.length_ft ?? 12) + Number(inputs.length_in ?? 0) / 12;
     const widthFt    = Number(inputs.width_ft  ?? 10) + Number(inputs.width_in  ?? 0) / 12;
@@ -308,11 +308,11 @@ export const paverBaseCalculator: CalculatorConfig = {
   },
   referenceTable: {
     title: 'Paver Base Material Quantities (Gravel Subbase + Leveling Sand)',
-    description: 'Material quantities for common patio sizes at standard depths (4-inch gravel base compacted + 1-inch bedding sand):',
+    description: 'Material quantities for common patio sizes at standard depths (4-inch geometric gravel layer + 1-inch bedding sand; sand bags assumed 0.5 ft³ each. Supplier compaction and bag coverage vary):',
     headers: ['Patio Size (ft)', 'Patio Area (sq ft)', '4" Gravel Base (yd³)', 'Gravel Weight (Tons at 1.4 t/yd³)', '1" Sand Bedding (yd³)', 'Sand Bags (50 lb)'],
     rows: [
       ['10′ × 10′ Patio', '100', '1.23', '1.73', '0.31', '17'],
-      ['12′ × 12′ Patio', '144', '1.78', '2.49', '0.44', '25'],
+      ['12′ × 12′ Patio', '144', '1.78', '2.49', '0.44', '24'],
       ['12′ × 16′ Patio', '192', '2.37', '3.32', '0.59', '32'],
       ['16′ × 20′ Patio', '320', '3.95', '5.53', '0.99', '54'],
       ['20′ × 20′ Patio', '400', '4.94', '6.91', '1.23', '67'],

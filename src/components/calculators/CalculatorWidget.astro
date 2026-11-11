@@ -1,5 +1,6 @@
 ---
 import type { CalculatorConfig, UnitSystem } from '../../calculators/_types';
+import { integerFields } from '../../calculators/validation';
 import { formatNumber } from '../../utils/format';
 import ResultTable from './ResultTable.astro';
 
@@ -13,7 +14,7 @@ const defaultUnit: UnitSystem = calc.unitSystems[0] ?? 'imperial';
 const hasMetric   = calc.unitSystems.includes('metric');
 const hasImperial = calc.unitSystems.includes('imperial');
 
-const defaultInputs  = Object.fromEntries(calc.inputs.map((f) => [f.id, f.defaultValue]));
+const defaultInputs  = Object.fromEntries(calc.inputs.filter(f => !f.onlyIn || f.onlyIn === defaultUnit).map((f) => [f.id, f.defaultValue]));
 const defaultOutputs = calc.formula(defaultInputs, defaultUnit);
 
 const primaryOutput       = calc.outputs.find((o) => o.primary) ?? calc.outputs[0];
@@ -82,6 +83,7 @@ const outputsJson = JSON.stringify(
     unitMetric:  o.unitMetric ?? '',
     primary:     !!o.primary,
     isEquivalent: !!o.isEquivalent,
+    availableWhen: o.availableWhen,
     description: o.description ?? '',
   }))
 );
@@ -91,6 +93,7 @@ const outputsJson = JSON.stringify(
   class="widget-shell"
   id="calc-widget"
   data-slug={calc.slug}
+  data-inputs={JSON.stringify(calc.inputs)}
   data-unit={defaultUnit}
   data-outputs={outputsJson}
   data-name={calc.name}
@@ -146,8 +149,11 @@ const outputsJson = JSON.stringify(
     )}
 
     <form id="calc-form" novalidate aria-label={`${calc.name} inputs`}>
-      <div class="field-stack">
-        {calc.inputs.map((field) => {
+      {[false, true].filter(advanced => calc.inputs.some(f => !!f.advanced === advanced)).map(advanced => {
+        const Group = advanced ? "details" : "div";
+        return <Group class="field-stack" data-advanced={advanced || undefined}>
+        {advanced && <summary class="field-label">Advanced: manufacturer-specific mortar coverage (optional)</summary>}
+        {calc.inputs.filter(f => !!f.advanced === advanced).map((field) => {
           if (field.groupWith) return null;
           const subField = calc.inputs.find((f) => f.groupWith === field.id);
           return (
@@ -156,7 +162,7 @@ const outputsJson = JSON.stringify(
               data-only-in={field.onlyIn ?? 'both'}
               style={field.onlyIn && field.onlyIn !== defaultUnit ? 'display:none' : ''}
             >
-              <label for={`field-${field.id}`} class="field-label">
+              <label for={`field-${field.onlyIn ?? 'both'}-${field.id}`} class="field-label">
                 {field.label}
                 {field.required && <span class="field-required" aria-hidden="true">*</span>}
               </label>
@@ -164,10 +170,10 @@ const outputsJson = JSON.stringify(
                 <div class="input-wrap">
                   {field.type === 'select' ? (
                     <select
-                      id={`field-${field.id}`}
+                      id={`field-${field.onlyIn ?? 'both'}-${field.id}`}
                       name={field.id}
                       class="field-input field-select"
-                      aria-describedby={field.helpText ? `help-${field.id}` : undefined}
+                      aria-describedby={field.helpText ? `help-${field.onlyIn ?? 'both'}-${field.id}` : undefined}
                     >
                       {field.options?.map((opt) => (
                         <option value={opt.value} selected={opt.value === String(field.defaultValue)}>
@@ -180,14 +186,14 @@ const outputsJson = JSON.stringify(
                       <input
                         type="number"
                         inputmode="decimal"
-                        id={`field-${field.id}`}
+                        id={`field-${field.onlyIn ?? 'both'}-${field.id}`}
                         name={field.id}
                         min={field.min}
                         max={field.max}
-                        step={field.step ?? 'any'}
+                        step={integerFields.has(field.id) ? 1 : 'any'}
                         value={field.defaultValue}
                         required={field.required}
-                        aria-describedby={field.helpText ? `help-${field.id}` : undefined}
+                        aria-describedby={field.helpText ? `help-${field.onlyIn ?? 'both'}-${field.id}` : undefined}
                         class="field-input"
                       />
                       {field.unit && <span class="field-unit" aria-hidden="true">{field.unit}</span>}
@@ -203,11 +209,12 @@ const outputsJson = JSON.stringify(
                     <input
                       type="number"
                       inputmode="decimal"
-                      id={`field-${subField.id}`}
+                      id={`field-${subField.onlyIn ?? 'both'}-${subField.id}`}
                       name={subField.id}
                       min={subField.min}
                       max={subField.max}
-                      step={subField.step ?? 'any'}
+                      step="any"
+                      aria-label={subField.label}
                       value={subField.defaultValue}
                       class="field-input"
                     />
@@ -216,7 +223,7 @@ const outputsJson = JSON.stringify(
                 )}
               </div>
               {field.helpText && (
-                <p id={`help-${field.id}`} class="field-help">
+                <p id={`help-${field.onlyIn ?? 'both'}-${field.id}`} class="field-help">
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
                     <circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/>
                     <path d="M6 5.5v3M6 4v.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
@@ -227,7 +234,8 @@ const outputsJson = JSON.stringify(
             </div>
           );
         })}
-      </div>
+        </Group>;
+      })}
     </form>
 
     <!-- Print-only inputs summary -->
@@ -291,8 +299,8 @@ const outputsJson = JSON.stringify(
           <div class="result-secondary-grid" id="secondary-results">
             {nonEquivSecondary.map((out) => (
               <div class="result-secondary" data-output-id={out.id}>
-                <span class="result-secondary-number">
-                  {formatNumber(defaultOutputs[out.id] ?? 0, 3)}
+                <span class="result-secondary-number" style={out.availableWhen && !defaultOutputs[out.availableWhen] ? "font-size:0.875rem" : undefined} aria-live={out.availableWhen ? "polite" : undefined}>
+                  {out.availableWhen && !defaultOutputs[out.availableWhen] ? 'Requires product specifications' : formatNumber(defaultOutputs[out.id] ?? 0, 3)}
                 </span>
                 <span class="result-secondary-unit" data-output-unit={out.id}>{out.unit ?? ''}</span>
                 <span class="result-secondary-label">{out.label}</span>
@@ -356,7 +364,7 @@ const outputsJson = JSON.stringify(
           </button>
         </div>
         <p class="embed-desc">Copy this embed code to place this calculator directly on your website, blog, or supplier catalog:</p>
-        <textarea id="embed-code" class="embed-textarea" readonly rows="4">{`<iframe src="https://buildbymath.com/calculators/${calc.slug}/?embed=true" width="100%" height="620" style="border:1px solid #e2e8f0;border-radius:12px;" loading="lazy"></iframe>\n<p style="font-size:12px;margin-top:4px;">Calculator powered by <a href="https://buildbymath.com/calculators/${calc.slug}/" target="_blank" rel="noopener">BuildByMath.com</a></p>`}</textarea>
+        <textarea id="embed-code" aria-label="Calculator embed code" class="embed-textarea" readonly rows="4">{`<iframe title="${calc.name}" src="https://buildbymath.com/calculators/${calc.slug}/?embed=true" width="100%" height="620" style="border:1px solid #e2e8f0;border-radius:12px;" loading="lazy"></iframe>\n<p style="font-size:12px;margin-top:4px;">Calculator powered by <a href="https://buildbymath.com/calculators/${calc.slug}/" target="_blank" rel="noopener">BuildByMath.com</a></p>`}</textarea>
         <div class="embed-dialog-footer">
           <button type="button" class="action-btn action-btn--primary" id="btn-copy-embed">
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -1292,6 +1300,8 @@ const outputsJson = JSON.stringify(
 </style>
 
 <script>
+  import { validateInputs } from '../../calculators/validation';
+  import type { InputField } from '../../calculators/_types';
   import { formulaRegistry } from '../../calculators/client-registry';
   import { interpretRegistry } from '../../calculators/interpret-registry';
 
@@ -1323,7 +1333,7 @@ const outputsJson = JSON.stringify(
 
   const slug     = widget.dataset.slug ?? '';
   const calcName = widget.dataset.name ?? 'Calculator';
-  const outputs: { id: string; label: string; unit: string; unitMetric: string; primary: boolean; isEquivalent: boolean; description: string }[] =
+  const outputs: { id: string; label: string; unit: string; unitMetric: string; primary: boolean; isEquivalent: boolean; description: string; availableWhen?: string }[] =
     JSON.parse(widget.dataset.outputs ?? '[]');
   const formula = formulaRegistry[slug];
   if (!formula) throw new Error(`No formula for "${slug}"`);
@@ -1386,10 +1396,14 @@ const outputsJson = JSON.stringify(
   }
 
   // Read unit pref — support old key for backward compat
-  const savedUnit = (
-    localStorage.getItem(UNITS_KEY) ||
-    localStorage.getItem('cc-unit-system')
-  ) as 'imperial' | 'metric' | null;
+  function storedUnit(): 'imperial' | 'metric' | null {
+    try {
+      const value = localStorage.getItem(UNITS_KEY) || localStorage.getItem('cc-unit-system');
+      return value === 'imperial' || value === 'metric' ? value : null;
+    } catch { return null; }
+  }
+  const savedUnit = storedUnit();
+  const inputFields: InputField[] = JSON.parse(widget.dataset.inputs ?? '[]');
 
   let currentUnit: 'imperial' | 'metric' = savedUnit ||
     (widget.dataset.unit as 'imperial' | 'metric') || 'imperial';
@@ -1400,13 +1414,15 @@ const outputsJson = JSON.stringify(
       const row = el.closest<HTMLElement>('[data-only-in]');
       const onlyIn = row?.dataset.onlyIn;
       if (onlyIn && onlyIn !== 'both' && onlyIn !== currentUnit) return;
-      data[el.name] = el instanceof HTMLSelectElement ? el.value : (el.value === '' ? NaN : Number(el.value));
+      data[el.name] = el instanceof HTMLSelectElement ? el.value : (el.value === '' ? '' : Number(el.value));
     });
     return data;
   }
 
-  function restoreInputs(map: Record<string, unknown>) {
+  function restoreInputs(map: Record<string, unknown>, unit = currentUnit) {
     form.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[name]').forEach((el) => {
+      const onlyIn = el.closest<HTMLElement>('[data-only-in]')?.dataset.onlyIn;
+      if (onlyIn && onlyIn !== 'both' && onlyIn !== unit) return;
       if (map[el.name] !== undefined) el.value = String(map[el.name]);
     });
   }
@@ -1422,7 +1438,11 @@ const outputsJson = JSON.stringify(
     hashDebounceTimer = setTimeout(() => {
       try {
         const encoded = btoa(JSON.stringify({ u: unit, i: inputs }));
-        window.history.replaceState(null, '', '#' + encoded);
+        const url = new URL(window.location.href);
+        inputFields.forEach(field => url.searchParams.delete(field.id));
+        url.searchParams.delete('unit');
+        url.hash = encoded;
+        window.history.replaceState(null, '', url);
       } catch (err) {
         // Silently catch security / quota limits
       }
@@ -1430,45 +1450,30 @@ const outputsJson = JSON.stringify(
   }
 
   function updateResults() {
-    let isValid = true;
+    const validation = validateInputs(inputFields, getInputs(), currentUnit);
     form.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[name]').forEach((el) => {
-      const row = el.closest<HTMLElement>('[data-only-in]');
-      const onlyIn = row?.dataset.onlyIn;
-      if (onlyIn && onlyIn !== 'both' && onlyIn !== currentUnit) {
-        el.classList.remove('invalid-field');
-        return;
-      }
-      
-      const isNumValid = el.type !== 'number' || (el.value !== '' && !isNaN(Number(el.value)));
-      if (!el.checkValidity() || !isNumValid) {
-        isValid = false;
-        el.classList.add('invalid-field');
-      } else {
-        el.classList.remove('invalid-field');
-      }
+      const onlyIn = el.closest<HTMLElement>('[data-only-in]')?.dataset.onlyIn;
+      const active = !onlyIn || onlyIn === 'both' || onlyIn === currentUnit;
+      const invalid = active && !!validation.errors[el.name];
+      el.classList.toggle('invalid-field', invalid);
+      el.setAttribute('aria-invalid', String(invalid));
     });
-
     const errorMsgEl = document.getElementById('validation-error');
     if (errorMsgEl) {
-      if (!isValid) {
-        if (!errorMsgEl.firstElementChild) {
-          errorMsgEl.innerHTML = `<svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="margin-top:-1px"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M8 4v5M8 11.5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> Invalid input detected`;
-        }
-        errorMsgEl.style.display = 'flex';
-      } else {
-        errorMsgEl.style.display = 'none';
-        errorMsgEl.textContent = '';
-      }
+      errorMsgEl.style.display = validation.valid ? 'none' : 'flex';
+      errorMsgEl.textContent = validation.valid ? '' : Object.values(validation.errors)[0] + ' Results show the last valid inputs.';
     }
-
-    if (!isValid) return; // Stop recalculation, preserve last valid result
-
-    const inputs  = getInputs();
+    if (!validation.valid) return null;
+    const inputs = validation.inputs;
     const results = formula(inputs, currentUnit);
+    if (inputs.mortar_mode && inputs.mortar_mode !== "none") {
+      const advanced = form.querySelector<HTMLDetailsElement>("details[data-advanced]");
+      if (advanced) advanced.open = true;
+    }
     const primaryIncludesWaste = widget.dataset.primaryIncludesWaste === 'true';
     const isDiscrete = widget.dataset.discrete === 'true';
 
-    outputs.forEach(({ id, primary }) => {
+    outputs.forEach(({ id, primary, availableWhen }) => {
       const raw = results[id] ?? 0;
       if (primary) {
         if (primaryValEl) primaryValEl.textContent = fmt(raw, 3);
@@ -1482,24 +1487,27 @@ const outputsJson = JSON.stringify(
       } else {
         // Works for both card and table layouts — both use [data-output-id]
         const el = widget.querySelector<HTMLElement>(`[data-output-id="${id}"] .result-secondary-number`);
-        if (el) el.textContent = fmt(raw, 3);
+        if (el) {
+          el.textContent = availableWhen && !results[availableWhen] ? 'Requires product specifications' : fmt(raw, 3);
+          if (availableWhen) el.style.fontSize = results[availableWhen] ? '' : '0.875rem';
+        }
       }
     });
 
     updateInterpretation(results, inputs);
 
-    try { localStorage.setItem(INPUTS_KEY, JSON.stringify(inputs)); } catch {}
+    try { localStorage.setItem(INPUTS_KEY, JSON.stringify({ u: currentUnit, i: inputs })); } catch {}
     debounceUpdateHash(currentUnit, inputs);
+    return { inputs, results };
   }
 
   function updateCost(primaryVal?: number) {
     if (!costTotal || !priceInput) return;
     const price = parseFloat(priceInput.value) || 0;
     if (primaryVal === undefined) {
-      const inputs = getInputs();
-      const results = formula(inputs, currentUnit);
-      const primary = outputs.find((o) => o.primary);
-      primaryVal = primary ? (results[primary.id] ?? 0) : 0;
+      // Revalidate immediately, including edits still awaiting the input debounce.
+      updateResults();
+      return;
     }
     const total = Number.isFinite(primaryVal * price) ? primaryVal * price : 0;
     costTotal.textContent = `$${total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -1543,7 +1551,7 @@ const outputsJson = JSON.stringify(
   function setUnit(unit: 'imperial' | 'metric') {
     currentUnit = unit;
     widget.dataset.unit = unit;
-    localStorage.setItem(UNITS_KEY, unit);
+    try { localStorage.setItem(UNITS_KEY, unit); } catch {}
     widget.querySelectorAll<HTMLButtonElement>('.unit-btn').forEach((btn) => {
       btn.setAttribute('aria-pressed', btn.dataset.unit === unit ? 'true' : 'false');
     });
@@ -1562,8 +1570,11 @@ const outputsJson = JSON.stringify(
   }
 
   shareBtn?.addEventListener('click', () => {
-    const inputs = getInputs();
+    const state = updateResults();
+    if (!state) return;
+    const { inputs } = state;
     const url = new URL(window.location.href);
+    inputFields.forEach(field => url.searchParams.delete(field.id));
     url.hash = '';
     url.searchParams.set('unit', currentUnit);
     Object.entries(inputs).forEach(([k, v]) => {
@@ -1612,10 +1623,12 @@ const outputsJson = JSON.stringify(
   });
 
   checklistBtn?.addEventListener('click', () => {
-    const inputs  = getInputs();
-    const results = formula(inputs, currentUnit);
+    const state = updateResults();
+    if (!state) return;
+    const { results } = state;
     const lines: string[] = [`Order checklist — ${calcName}`, ''];
-    outputs.forEach(({ id, label, unit, unitMetric }) => {
+    outputs.forEach(({ id, label, unit, unitMetric, availableWhen }) => {
+      if (availableWhen && !results[availableWhen]) { lines.push(`${label}: Requires product specifications`); return; }
       const raw = results[id] ?? 0;
       const unitLabel = currentUnit === 'metric' && unitMetric ? unitMetric : unit;
       lines.push(`□  ${label}: ${fmt(raw, 2)} ${unitLabel}`.trimEnd());
@@ -1627,11 +1640,13 @@ const outputsJson = JSON.stringify(
   });
 
   copyResultsBtn?.addEventListener('click', () => {
-    const inputs  = getInputs();
-    const results = formula(inputs, currentUnit);
+    const state = updateResults();
+    if (!state) return;
+    const { results } = state;
     const lines: string[] = [calcName, ''];
 
-    outputs.forEach(({ id, label, unit, unitMetric }) => {
+    outputs.forEach(({ id, label, unit, unitMetric, availableWhen }) => {
+      if (availableWhen && !results[availableWhen]) { lines.push(`${label}: Requires product specifications`); return; }
       const raw = results[id] ?? 0;
       const unitLabel = currentUnit === 'metric' && unitMetric ? unitMetric : unit;
       lines.push(`${label}: ${fmt(raw, 2)}${unitLabel ? ' ' + unitLabel : ''}`.trimEnd());
@@ -1663,6 +1678,8 @@ const outputsJson = JSON.stringify(
   });
 
   printBtn?.addEventListener('click', () => {
+    const state = updateResults();
+    if (!state) return;
     const printUrl  = document.getElementById('print-url');
     const printDate = document.getElementById('print-date');
     if (printUrl)  printUrl.textContent  = window.location.href;
@@ -1682,7 +1699,7 @@ const outputsJson = JSON.stringify(
         const labelText = row.querySelector('.field-label')?.childNodes[0]?.textContent?.trim() ?? '';
         const vals = Array.from(row.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[name]'))
           .map((inp) => {
-            const v = inp.value;
+            const v = state.inputs[inp.name] ?? inp.value;
             const unit = inp.closest('.input-wrap')?.querySelector('.field-unit')?.textContent ?? '';
             return `${v}${unit ? ' ' + unit : ''}`;
           }).join(' ');
@@ -1738,6 +1755,7 @@ const outputsJson = JSON.stringify(
   });
 
   let debounce: ReturnType<typeof setTimeout>;
+  form.addEventListener('submit', (event) => { event.preventDefault(); updateResults(); });
   form.addEventListener('input', () => {
     presetPills.forEach((p) => p.classList.remove('active'));
     clearTimeout(debounce);
@@ -1756,7 +1774,7 @@ const outputsJson = JSON.stringify(
   searchParams.forEach((val, key) => {
     if (key === 'unit' && (val === 'imperial' || val === 'metric')) {
       restoredUnit = val;
-    } else {
+    } else if (inputFields.some(field => field.id === key)) {
       queryInputs[key] = val;
     }
   });
@@ -1764,17 +1782,30 @@ const outputsJson = JSON.stringify(
   const isProgrammaticPage = window.location.pathname.replace(/\/$/, '').split('/').length > 3;
 
   if (Object.keys(queryInputs).length > 0) {
-    restoreInputs(queryInputs);
+    restoreInputs(queryInputs, restoredUnit ?? currentUnit);
   } else if (location.hash) {
     try {
       const parsed = JSON.parse(atob(location.hash.slice(1)));
-      if (parsed.u === 'imperial' || parsed.u === 'metric') restoredUnit = parsed.u;
-      if (parsed.i && typeof parsed.i === 'object') restoreInputs(parsed.i);
+      if (parsed.u === 'imperial' || parsed.u === 'metric') {
+        const compatible = !restoredUnit || restoredUnit === parsed.u;
+        restoredUnit ??= parsed.u;
+        if (compatible && parsed.i && typeof parsed.i === 'object') restoreInputs(parsed.i, restoredUnit);
+      }
     } catch {}
   } else if (!isProgrammaticPage) {
     try {
       const saved = localStorage.getItem(INPUTS_KEY);
-      if (saved) restoreInputs(JSON.parse(saved));
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.i && (parsed.u === 'imperial' || parsed.u === 'metric')) {
+          const compatible = !restoredUnit || restoredUnit === parsed.u;
+          restoredUnit ??= parsed.u;
+          if (compatible) restoreInputs(parsed.i, restoredUnit);
+        } else if (!restoredUnit && savedUnit) {
+          restoredUnit = savedUnit;
+          restoreInputs(parsed, savedUnit); // Legacy maps require a known matching unit.
+        }
+      }
     } catch {}
   }
 
@@ -1784,11 +1815,11 @@ const outputsJson = JSON.stringify(
   } catch {}
 
   // Persist resolved unit under new key (migrates old cc-unit-system silently)
-  if (savedUnit && !localStorage.getItem(UNITS_KEY)) {
+  if (savedUnit) {
     try { localStorage.setItem(UNITS_KEY, savedUnit); } catch {}
   }
 
-  const unitToUse: 'imperial' | 'metric' = restoredUnit ?? savedUnit ??
+  const unitToUse: 'imperial' | 'metric' = restoredUnit ?? (isProgrammaticPage ? null : savedUnit) ??
     (widget.dataset.unit as 'imperial' | 'metric') ?? 'imperial';
 
   if (unitToUse !== (widget.dataset.unit as 'imperial' | 'metric')) {

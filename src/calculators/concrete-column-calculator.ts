@@ -9,7 +9,7 @@ import { cylVolumeImperial, cylVolumeMetric, bagsFromFeet } from './volume-engin
 // 80 lb bag yields ~0.60 ft³ of concrete
 const BAG_CUBIC_FEET = 0.60;
 
-function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
+export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   if (unitSystem === 'imperial') {
     const diameterIn = Number(inputs.diameter_in ?? 10);
     const heightIn   = Number(inputs.height_ft   ?? 4) * 12 + Number(inputs.height_in ?? 0);

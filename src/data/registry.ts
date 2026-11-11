@@ -128,13 +128,13 @@ const introMap: Record<string, string> = {
   'concrete-footing-calculator':
     'Calculate concrete volume for continuous footings, pad footings, and grade beams. Enter footing length, width, and depth to get cubic yards plus a recommended order quantity with waste included. Footing dimensions should follow your local IRC frost-depth and bearing requirements.',
   'concrete-column-calculator':
-    'Work out the concrete needed to fill round or square columns, piers, and tube forms. Enter the diameter (or side) and height and the calculator returns volume per column and for your full count. Useful for deck piers, porch posts, and Sonotube pours.',
+    'Work out the concrete needed to fill round columns, piers, and tube forms. Enter the diameter and height and the calculator returns volume per column and for your full count. Useful for deck piers, porch posts, and Sonotube pours.',
   'concrete-driveway-calculator':
     'Estimate concrete volume and material cost for a driveway slab. Enter the driveway length, width, and thickness (typically 4 inches for cars, 5–6 inches for heavier vehicles) to get cubic yards and an order quantity with waste. Pair it with the rebar calculator for reinforcement planning.',
   'concrete-block-calculator':
-    'Calculate how many concrete blocks (CMUs) you need for a wall, plus the mortar to lay them. Enter wall dimensions and block size to get block count, courses, and mortar volume. Works for standard 8×8×16 block and other common sizes.',
+    'Calculate how many concrete blocks (CMUs) you need for a wall, plus an approximate mortar bag count. Enter wall dimensions for nominal 8×16-inch imperial or 200×400-mm metric block faces. These are different modules, not exact unit equivalents.',
   'rebar-calculator':
-    'Plan rebar for a concrete slab or footing: total linear feet, number of bars, and estimated weight. Enter the slab dimensions and your bar spacing (12 in is typical for residential, 6–8 in for driveways) and the calculator lays out a bidirectional grid with a waste allowance. Weights are based on #4 (½ in) rebar.',
+    'Plan rebar for a concrete slab or footing: total linear feet, number of bars, and estimated weight. Enter the slab dimensions and your bar spacing (12 in is typical for residential, 6–8 in for driveways) and the calculator lays out a bidirectional grid with a waste allowance. Select a bar size to use its corresponding nominal weight.',
   'concrete-slab-rebar-calculator':
     'Get concrete volume and rebar quantities for any reinforced slab in a single step. Enter slab dimensions, thickness, and rebar spacing — the calculator returns cubic yards of concrete alongside total rebar linear footage, piece count, and weight. Eliminates the need to run the slab and rebar calculators separately.',
   'gravel-calculator':
@@ -156,7 +156,7 @@ const introMap: Record<string, string> = {
   'fence-post-calculator':
     'Work out fence posts, sections, and concrete for a straight run of fence. Enter the total fence length and your post spacing to get post count, number of sections, and the recommended hole depth. Pair it with the post hole calculator to size the concrete per hole.',
   'deck-footing-calculator':
-    'Estimate the number of deck footings and the concrete to fill them. Enter your deck dimensions and beam/joist layout to get footing count and total concrete volume. Footing size and spacing should follow your local code and the loads your deck will carry.',
+    'Estimate the number of deck footings and the concrete to fill them. Enter your deck dimensions and grid spacing to estimate a full rectangular support grid and concrete volume. Ledger attachments and beam layouts are not modeled. Footing size and spacing should follow your local code and the loads your deck will carry.',
   'retaining-wall-calculator':
     'Calculate blocks, courses, gravel base, and backfill for a segmental retaining wall. Enter the wall length and height plus your block dimensions to size every component. For walls over about 4 feet, check whether your jurisdiction requires an engineered design.',
   'paver-base-calculator':
@@ -170,7 +170,7 @@ const introMap: Record<string, string> = {
   'plywood-calculator':
     'Work out how many sheets of plywood or OSB you need for floors, walls, or roofs. Enter the area to cover and your sheet size to get sheet count with a waste allowance. Covers sheathing, subfloor, and underlayment jobs.',
   'drywall-calculator':
-    'Estimate drywall sheets, joint compound, and tape for a room or whole project. Enter wall and ceiling dimensions and your sheet size to get sheet count plus the mud and tape to finish it. Includes a waste factor for cuts and offcuts.',
+    'Estimate drywall sheets, joint compound, and tape for a room or whole project. Enter wall dimensions and wall count and your sheet size to get sheet count plus the mud and tape to finish it. Includes a waste factor for cuts and offcuts.',
   'insulation-calculator':
     'Calculate insulation coverage for walls, attics, and floors by area. Enter the space dimensions to get the square footage to insulate and how many batts or bags that takes. Helps you hit a target R-value without over-buying.',
   'siding-calculator':
@@ -184,23 +184,23 @@ const introMap: Record<string, string> = {
   'rafter-calculator':
     'Calculate rafter length, overhang, roof angle, and slope from rise and run using the Pythagorean method. Enter rise, run, and any overhang to get the full rafter length to cut. Pairs with the roof pitch calculator for laying out a roof from scratch.',
   'stair-calculator':
-    'Lay out a code-compliant staircase: number of risers and treads, exact riser height, total run, stringer length, and stair angle. Enter your total rise and preferred riser height and the calculator divides it into even steps. Default riser and tread targets follow common IRC limits (max 7¾ in riser, min 10 in tread).',
+    'Estimate a straight staircase: number of risers and treads, exact riser height, total run, stringer length, and stair angle. Enter your total rise and preferred riser height and the calculator divides it into even steps. Default riser and tread targets follow common IRC limits (max 7¾ in riser, min 10 in tread).',
   'flooring-calculator':
     'Estimate flooring by area and by the box for any room. Enter the room dimensions and your box coverage to get square footage, the amount needed with waste, and how many boxes to buy. Works for laminate, hardwood, vinyl plank, and tile.',
   'square-footage-calculator':
-    'Calculate the square footage of a room or area, with support for combining multiple rectangles. Enter length and width to get area in square feet and square meters. The starting point for flooring, paint, tiling, and most material estimates.',
+    'Calculate the square footage of a room or area, for a rectangle, square, circle, or triangle (isosceles for perimeter). Enter the shape dimensions to get area in square feet and square meters. The starting point for flooring, paint, tiling, and most material estimates.',
   'asphalt-calculator':
     'Estimate hot-mix asphalt by weight for a driveway or lot, in tons. Enter the area and paving thickness and the calculator uses asphalt density to convert volume to tons for ordering. Compare it against the concrete driveway calculator when choosing a surface.',
   'mortar-calculator':
     'Calculate the mortar needed to lay brick or block, in bags and volume. Enter the wall area or unit count and the calculator estimates mortar based on typical joint sizes. Pairs with the concrete block and brick calculators for a full masonry order.',
   'grout-calculator':
-    'Estimate tile grout by weight for floors and walls. Enter the tile size, joint width, and area, and the calculator returns the grout volume and bag weight needed to fill the joints. Accurate joint-fill math means fewer mid-job supply runs.',
+    'Estimate tile grout volume and bag counts for floors and walls. Enter the tile size, joint width, and area, and the calculator returns the grout volume and bags needed to fill the joints. Accurate joint-fill math means fewer mid-job supply runs.',
 };
 
 export const calculatorRegistry: CalculatorConfig[] = _registry.map((calc) => ({
   ...calc,
   relatedCalculators: relatedMap[calc.slug] ?? calc.relatedCalculators,
-  lastUpdated: calc.lastUpdated ?? '2026-10-17',
+  lastUpdated: '2026-11-10',
   seo: {
     ...calc.seo,
     intro: calc.seo.intro ?? introMap[calc.slug],

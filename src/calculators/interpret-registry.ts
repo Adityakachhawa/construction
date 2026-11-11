@@ -1,3 +1,4 @@
+import { ceilQuantity } from './rounding';
 import type { CalculatorOutputMap, CalculatorInputMap, UnitSystem } from './_types';
 
 export type InterpretFn = (
@@ -14,14 +15,14 @@ function fmt(n: number, decimals = 2): string {
 const STANDARD_LUMBER_LENGTHS = [8, 10, 12, 14, 16, 18, 20, 22, 24];
 
 function nextLumberLength(ft: number): number {
-  return STANDARD_LUMBER_LENGTHS.find((l) => l >= ft) ?? Math.ceil(ft / 2) * 2;
+  return STANDARD_LUMBER_LENGTHS.find((l) => l >= ft) ?? ceilQuantity(ft / 2) * 2;
 }
 
 export const interpretRegistry: Record<string, InterpretFn> = {
   'concrete-slab-calculator': (outputs, _inputs, _unit) => {
     const yd3 = outputs.cubic_yards ?? 0;
     const ft3 = outputs.cubic_feet ?? 0;
-    const bags80 = Math.ceil(ft3 / 0.60);
+    const bags80 = ceilQuantity(ft3 / 0.60);
     const lines: string[] = [];
     lines.push(
       `You'll need approximately ${fmt(yd3)} cubic yard${yd3 !== 1 ? 's' : ''} of concrete for this slab.`
@@ -48,7 +49,7 @@ export const interpretRegistry: Record<string, InterpretFn> = {
   'concrete-footing-calculator': (outputs, _inputs, _unit) => {
     const yd3 = outputs.cubic_yards ?? 0;
     const ft3 = outputs.cubic_feet ?? 0;
-    const bags80 = Math.ceil(ft3 / 0.60);
+    const bags80 = ceilQuantity(ft3 / 0.60);
     return [
       `This footing requires approximately ${fmt(yd3)} cubic yard${yd3 !== 1 ? 's' : ''} of concrete.`,
       bags80 > 0
@@ -74,18 +75,9 @@ export const interpretRegistry: Record<string, InterpretFn> = {
     return lines;
   },
 
-  'concrete-bags-calculator': (outputs, _inputs, _unit) => {
-    const bags60 = outputs.bags_60lb ?? 0;
-    const bags80 = outputs.bags_80lb ?? 0;
-    const lines: string[] = [];
-    if (bags80 > 0) {
-      lines.push(`You'll need approximately ${fmt(bags80, 0)} bags of 80 lb mix for this project.`);
-    }
-    if (bags60 > 0 && bags80 > 0) {
-      lines.push(`Alternatively, ${fmt(bags60, 0)} bags of 60 lb mix — easier to handle solo, especially for overhead or stair access.`);
-    }
-    return lines;
-  },
+  'concrete-bags-calculator': (outputs) => [
+    `Order ${fmt(outputs.bags_required ?? 0, 0)} bags at the selected yield; this includes the entered waste allowance.`,
+  ],
 
   'rafter-calculator': (outputs, _inputs, _unit) => {
     const totalFt = outputs.total_rafter_ft ?? 0;
@@ -107,7 +99,7 @@ export const interpretRegistry: Record<string, InterpretFn> = {
     if (total <= 0) return [];
     return [
       `This wall requires ${fmt(total, 0)} studs: ${fmt(field, 0)} field studs, ${fmt(corner, 0)} corner studs, and ${fmt(opening, 0)} opening framing studs.`,
-      `Order ${fmt(Math.ceil(total * 1.1), 0)} studs to include a 10% allowance for miscuts and splits.`,
+      `Order ${fmt(ceilQuantity(total * 1.1), 0)} studs to include a 10% allowance for miscuts and splits.`,
     ];
   },
 
@@ -135,10 +127,10 @@ export const interpretRegistry: Record<string, InterpretFn> = {
   },
 
   'drywall-calculator': (outputs, _inputs, _unit) => {
-    const sheets = outputs.sheets ?? outputs.drywall_sheets ?? 0;
+    const sheets = outputs.sheets_with_waste ?? 0;
     if (sheets <= 0) return [];
     return [
-      `You need approximately ${fmt(Math.ceil(sheets), 0)} drywall sheets for this project.`,
+      `You need approximately ${fmt(ceilQuantity(sheets), 0)} drywall sheets for this project.`,
       'A standard 4×8 sheet weighs about 57 lbs (5/8") — plan for at least two people for lifting and hanging.',
     ];
   },
@@ -148,16 +140,16 @@ export const interpretRegistry: Record<string, InterpretFn> = {
     if (bf <= 0) return [];
     return [
       `This project requires approximately ${fmt(bf)} board feet of lumber.`,
-      'Add 10–15% for end cuts, knots, and supplier selection waste.',
+      'The selected waste allowance is already included in the board count.',
     ];
   },
 
   'plywood-calculator': (outputs, _inputs, _unit) => {
-    const sheets = outputs.sheets ?? outputs.plywood_sheets ?? 0;
+    const sheets = outputs.sheets_waste ?? 0;
     if (sheets <= 0) return [];
     return [
-      `You need approximately ${fmt(Math.ceil(sheets), 0)} sheets of plywood.`,
-      'A standard 4×8 sheet covers 32 sq ft. Add 10% for waste at cuts and irregular edges.',
+      `You need approximately ${fmt(ceilQuantity(sheets), 0)} sheets of plywood.`,
+      'A standard 4×8 sheet covers 32 sq ft. The selected waste allowance is already included.',
     ];
   },
 
@@ -171,7 +163,7 @@ export const interpretRegistry: Record<string, InterpretFn> = {
     if (tons < 5) {
       lines.push('Small loads can be purchased in bulk bags from home improvement stores or via a mini-dump delivery.');
     } else {
-      lines.push(`A standard dump truck carries 10–14 tons. You'll need approximately ${Math.ceil(tons / 12)} truck load${Math.ceil(tons / 12) !== 1 ? 's' : ''}.`);
+      lines.push(`A standard dump truck carries 10–14 tons. You'll need approximately ${ceilQuantity(tons / 12)} truck load${ceilQuantity(tons / 12) !== 1 ? 's' : ''}.`);
     }
     return lines;
   },
@@ -191,21 +183,21 @@ export const interpretRegistry: Record<string, InterpretFn> = {
 
   'insulation-calculator': (outputs, _inputs, _unit) => {
     const sqft = outputs.area_sqft ?? outputs.coverage_sqft ?? 0;
-    const bags = outputs.bags ?? 0;
+    const bags = outputs.rolls_required ?? 0;
     if (sqft <= 0 && bags <= 0) return [];
     const lines: string[] = [];
     if (sqft > 0) lines.push(`This project covers approximately ${fmt(sqft, 0)} sq ft of insulation.`);
-    if (bags > 0) lines.push(`You'll need approximately ${fmt(Math.ceil(bags), 0)} bags for this coverage area.`);
+    if (bags > 0) lines.push(`You'll need approximately ${fmt(ceilQuantity(bags), 0)} packages for this coverage area.`);
     return lines;
   },
 
   'mortar-calculator': (outputs, _inputs, _unit) => {
-    const bags = outputs.bags ?? outputs.mortar_bags ?? 0;
-    const ft3 = outputs.cubic_feet ?? 0;
+    const bags = outputs.bags_required ?? 0;
+    const ft3 = outputs.mortar_cuft ?? 0;
     if (bags <= 0 && ft3 <= 0) return [];
     const lines: string[] = [];
-    if (bags > 0) lines.push(`You'll need approximately ${fmt(Math.ceil(bags), 0)} bags of mortar mix.`);
-    lines.push('Mix mortar in small batches — standard mortar workability is 1–2 hours depending on temperature and humidity.');
+    if (bags > 0) lines.push(`Illustrative estimate: ${fmt(ceilQuantity(bags), 0)} bags under the entered factor and yield; verify product coverage before ordering.`);
+    lines.push('Follow the selected product instructions for mixing and working time.');
     return lines;
   },
 
@@ -216,7 +208,7 @@ export const interpretRegistry: Record<string, InterpretFn> = {
     const lines: string[] = [
       `Your floor requires approximately ${fmt(sqft, 0)} sq ft of flooring material.`,
     ];
-    if (boxes > 0) lines.push(`That's approximately ${fmt(Math.ceil(boxes), 0)} boxes based on the coverage per box.`);
+    if (boxes > 0) lines.push(`That's approximately ${fmt(ceilQuantity(boxes), 0)} boxes based on the coverage per box.`);
     lines.push('Diagonal or herringbone installations require 15% waste instead of 10%.');
     return lines;
   },
@@ -236,7 +228,7 @@ export const interpretRegistry: Record<string, InterpretFn> = {
     return [
       `This paving project requires approximately ${fmt(tons)} tons of asphalt.`,
       tons > 10
-        ? `A standard paving truck carries 20–25 tons. Plan for ${Math.ceil(tons / 22)} truck load${Math.ceil(tons / 22) !== 1 ? 's' : ''}.`
+        ? `A standard paving truck carries 20–25 tons. Plan for ${ceilQuantity(tons / 22)} truck load${ceilQuantity(tons / 22) !== 1 ? 's' : ''}.`
         : 'Small areas can be patched with bag asphalt mix available at home improvement stores.',
     ];
   },

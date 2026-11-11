@@ -11,7 +11,7 @@ const DENSITY_IMPERIAL = 2.025; // tons/yd³
 // Metric: ~2.4 tonnes/m³
 const DENSITY_METRIC   = 2.4;   // tonnes/m³
 
-function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
+export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   if (unitSystem === 'imperial') {
     const vol = rectVolumeImperial(inputs, 'thickness');
     const density = Number(inputs.density ?? DENSITY_IMPERIAL);

@@ -1,3 +1,4 @@
+import { ceilQuantity } from './rounding';
 import type {
   CalculatorConfig,
   CalculatorInputMap,
@@ -6,31 +7,17 @@ import type {
 } from './_types';
 
 // Rafter/pitch factors: √(1 + (pitch/12)²)
-const PITCH_FACTORS: Record<string, number> = {
-  '0':  1.000,
-  '2':  1.014,
-  '3':  1.031,
-  '4':  1.054,
-  '5':  1.083,
-  '6':  1.118,
-  '7':  1.158,
-  '8':  1.202,
-  '9':  1.250,
-  '10': 1.302,
-  '12': 1.414,
-  '14': 1.537,
-  '16': 1.667,
-};
 
 // ~2 fasteners per sq ft is the standard for exposed-fastener metal roofing
 const FASTENERS_PER_SQFT = 2;
 const FASTENERS_PER_SQM  = FASTENERS_PER_SQFT / 0.092903;
 
 function getPitchFactor(pitchKey: string): number {
-  return PITCH_FACTORS[pitchKey] ?? 1.118;
+  const pitch = Number(pitchKey);
+  return Math.hypot(1, (Number.isFinite(pitch) && pitch >= 0 ? pitch : 6) / 12);
 }
 
-function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
+export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   const pitchKey    = String(inputs.pitch ?? '6');
   const wastePct    = Number(inputs.waste_pct ?? 10) / 100;
   const pitchFactor = getPitchFactor(pitchKey);
@@ -53,11 +40,11 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const slopeWidthFt   = (widthFt / 2) * pitchFactor; // one slope side
     const panelCoverFt   = panelCoverIn / 12;
     // Panels per slope: columns = ⌈length / panel_cover⌉, rows = ⌈slopeWidth / panel_length⌉
-    const panelCols      = Math.ceil(lengthFt / panelCoverFt);
-    const panelRows      = Math.ceil(slopeWidthFt / panelLengthFt);
+    const panelCols      = ceilQuantity(lengthFt / panelCoverFt);
+    const panelRows      = ceilQuantity(slopeWidthFt / panelLengthFt);
     const panels         = panelCols * panelRows * 2; // × 2 for both slopes
 
-    const fasteners      = Math.ceil(material_area_sqft * FASTENERS_PER_SQFT);
+    const fasteners      = ceilQuantity(material_area_sqft * FASTENERS_PER_SQFT);
 
     return {
       panels,
@@ -86,11 +73,11 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
 
     const slopeWidthM    = (widthM / 2) * pitchFactor;
     const panelCoverM    = panelCoverMm / 1000;
-    const panelCols      = Math.ceil(lengthM / panelCoverM);
-    const panelRows      = Math.ceil(slopeWidthM / panelLengthM);
+    const panelCols      = ceilQuantity(lengthM / panelCoverM);
+    const panelRows      = ceilQuantity(slopeWidthM / panelLengthM);
     const panels         = panelCols * panelRows * 2;
 
-    const fasteners      = Math.ceil(material_area_sqm * FASTENERS_PER_SQM);
+    const fasteners      = ceilQuantity(material_area_sqm * FASTENERS_PER_SQM);
 
     return {
       panels,

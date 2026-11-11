@@ -1,3 +1,4 @@
+import { ceilQuantity } from '../calculators/rounding';
 export interface PierDepthMetrics {
   depthInches: number;
   depthFeet: number;
@@ -41,14 +42,14 @@ export function getPierMetrics(diameterInches: number, depthInches: number): Pie
     depthFeet,
     cuFtSingle: Math.round(cuFtSingle * 100) / 100,
     cuYdsSingle: Math.round(cuYdsSingle * 1000) / 1000,
-    bags80Single: Math.ceil(cuFtWithWaste / 0.60),
-    bags60Single: Math.ceil(cuFtWithWaste / 0.45),
-    bags80FourPiers: Math.ceil((cuFtWithWaste * 4) / 0.60),
-    bags60FourPiers: Math.ceil((cuFtWithWaste * 4) / 0.45),
-    bags80SixPiers: Math.ceil((cuFtWithWaste * 6) / 0.60),
-    bags60SixPiers: Math.ceil((cuFtWithWaste * 6) / 0.45),
-    bags80EightPiers: Math.ceil((cuFtWithWaste * 8) / 0.60),
-    bags60EightPiers: Math.ceil((cuFtWithWaste * 8) / 0.45),
+    bags80Single: ceilQuantity(cuFtWithWaste / 0.60),
+    bags60Single: ceilQuantity(cuFtWithWaste / 0.45),
+    bags80FourPiers: ceilQuantity((cuFtWithWaste * 4) / 0.60),
+    bags60FourPiers: ceilQuantity((cuFtWithWaste * 4) / 0.45),
+    bags80SixPiers: ceilQuantity((cuFtWithWaste * 6) / 0.60),
+    bags60SixPiers: ceilQuantity((cuFtWithWaste * 6) / 0.45),
+    bags80EightPiers: ceilQuantity((cuFtWithWaste * 8) / 0.60),
+    bags60EightPiers: ceilQuantity((cuFtWithWaste * 8) / 0.45),
   };
 }
 

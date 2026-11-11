@@ -22,3 +22,10 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# Reproducible local audit evidence (keep reports and audit scripts)
+audit/*.log
+audit/*.json
+audit/*.png
+audit/*.diff
+audit/predeploy/

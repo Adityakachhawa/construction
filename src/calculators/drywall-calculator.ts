@@ -1,3 +1,4 @@
+import { ceilQuantity } from './rounding';
 import type {
   CalculatorConfig,
   CalculatorInputMap,
@@ -25,7 +26,7 @@ const COMPOUND_GAL_PER_SQFT = 0.011;
 // Tape: ~1 linear foot of tape per 2 sq ft of drywall (seams every 4 ft on 4-ft sheets)
 const TAPE_LF_PER_SQFT = 0.5;
 
-function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
+export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   const sheetKey = String(inputs.sheet_size ?? '4x8');
 
   if (unitSystem === 'imperial') {
@@ -38,7 +39,7 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
 
     const totalAreaSqFt  = wallHeightFt * wallWidthFt * numWalls;
     const sheetsNet      = totalAreaSqFt / sheetAreaSqFt;
-    const sheetsWithWaste = Math.ceil(sheetsNet * WASTE_FACTOR);
+    const sheetsWithWaste = ceilQuantity(sheetsNet * WASTE_FACTOR);
 
     const compoundGal  = Math.round(totalAreaSqFt * COMPOUND_GAL_PER_SQFT * 10) / 10;
     const tapeLf       = Math.round(totalAreaSqFt * TAPE_LF_PER_SQFT);
@@ -46,7 +47,7 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     return {
       total_area_sqft:     Math.round(totalAreaSqFt * 10) / 10,
       total_area_sqm:      Math.round(totalAreaSqFt * 0.092903 * 10) / 10,
-      sheets_net:          Math.ceil(sheetsNet),
+      sheets_net:          ceilQuantity(sheetsNet),
       sheets_with_waste:   sheetsWithWaste,
       compound_gallons:    compoundGal,
       compound_liters:     Math.round(compoundGal * 3.78541 * 10) / 10,
@@ -63,16 +64,16 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
 
     const totalAreaM2    = wallHeightM * wallWidthM * numWalls;
     const sheetsNet      = totalAreaM2 / sheetAreaM2;
-    const sheetsWithWaste = Math.ceil(sheetsNet * WASTE_FACTOR);
+    const sheetsWithWaste = ceilQuantity(sheetsNet * WASTE_FACTOR);
 
     // Convert compound to liters (1 gal ≈ 3.785 L)
-    const compoundL  = Math.round(totalAreaM2 * COMPOUND_GAL_PER_SQFT * 10.764 * 3.785 / 10) / 10;
-    const tapeM      = Math.round(totalAreaM2 * TAPE_LF_PER_SQFT * 0.3048);
+    const compoundL  = Math.round(totalAreaM2 / (0.3048 ** 2) * COMPOUND_GAL_PER_SQFT * 3.785411784 * 10) / 10;
+    const tapeM      = Math.round(totalAreaM2 / (0.3048 ** 2) * TAPE_LF_PER_SQFT * 0.3048);
 
     return {
       total_area_sqm:      Math.round(totalAreaM2 * 10) / 10,
       total_area_sqft:     Math.round(totalAreaM2 * 10.7639 * 10) / 10,
-      sheets_net:          Math.ceil(sheetsNet),
+      sheets_net:          ceilQuantity(sheetsNet),
       sheets_with_waste:   sheetsWithWaste,
       compound_liters:     compoundL,
       compound_gallons:    Math.round(compoundL / 3.78541 * 10) / 10,

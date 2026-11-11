@@ -1,3 +1,4 @@
+import { ceilQuantity } from './rounding';
 import type {
   CalculatorConfig,
   CalculatorInputMap,
@@ -8,7 +9,7 @@ import { rectVolFt3, rectVolM3 } from './volume-engine';
 
 const WASTE_FACTOR = 1.10; // 10% waste
 
-function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
+export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   if (unitSystem === 'imperial') {
     const wallLenFt   = Number(inputs.wall_length_ft ?? 20) + Number(inputs.wall_length_in ?? 0) / 12;
     const wallHtFt    = Number(inputs.wall_height_ft ?? 3)  + Number(inputs.wall_height_in  ?? 0) / 12;
@@ -18,10 +19,10 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const gravelDepIn = Number(inputs.gravel_depth   ?? 6);
     const backfillIn  = Number(inputs.backfill_depth ?? 12);
 
-    const courses        = blockHtIn > 0 ? Math.ceil((wallHtFt * 12) / blockHtIn) : 0;
-    const blocksPerCourse = blockLenIn > 0 ? Math.ceil((wallLenFt * 12) / blockLenIn) : 0;
+    const courses        = blockHtIn > 0 ? ceilQuantity((wallHtFt * 12) / blockHtIn) : 0;
+    const blocksPerCourse = blockLenIn > 0 ? ceilQuantity((wallLenFt * 12) / blockLenIn) : 0;
     const blocksNet      = courses * blocksPerCourse;
-    const blocks         = Math.ceil(blocksNet * WASTE_FACTOR);
+    const blocks         = ceilQuantity(blocksNet * WASTE_FACTOR);
 
     const gravel   = rectVolFt3(wallLenFt, blockDepIn / 12, gravelDepIn / 12);
     const backfill = rectVolFt3(wallLenFt, wallHtFt, backfillIn / 12);
@@ -45,10 +46,10 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const gravelDepMm = Number(inputs.gravel_depth_mm ?? 150);
     const backfillMm  = Number(inputs.backfill_depth_mm ?? 300);
 
-    const courses        = blockHtMm > 0 ? Math.ceil((wallHtM * 1000) / blockHtMm) : 0;
-    const blocksPerCourse = blockLenMm > 0 ? Math.ceil((wallLenM * 1000) / blockLenMm) : 0;
+    const courses        = blockHtMm > 0 ? ceilQuantity((wallHtM * 1000) / blockHtMm) : 0;
+    const blocksPerCourse = blockLenMm > 0 ? ceilQuantity((wallLenM * 1000) / blockLenMm) : 0;
     const blocksNet      = courses * blocksPerCourse;
-    const blocks         = Math.ceil(blocksNet * WASTE_FACTOR);
+    const blocks         = ceilQuantity(blocksNet * WASTE_FACTOR);
 
     const gravel   = rectVolM3(wallLenM, blockDepMm / 1000, gravelDepMm / 1000);
     const backfill = rectVolM3(wallLenM, wallHtM,  backfillMm / 1000);

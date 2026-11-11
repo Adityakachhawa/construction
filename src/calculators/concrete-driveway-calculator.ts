@@ -6,7 +6,7 @@ import type {
 } from './_types';
 import { rectVolumeImperial, rectVolumeMetric } from './volume-engine';
 
-function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
+export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   if (unitSystem === 'imperial') {
     const vol         = rectVolumeImperial(inputs, 'thickness');
     const costPerYard = Number(inputs.cost_per_yard ?? 0);

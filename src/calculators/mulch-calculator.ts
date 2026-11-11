@@ -8,7 +8,7 @@ import { rectVolumeImperial, rectVolumeMetric, bagsFromFeet } from './volume-eng
 
 const BAG_CUBIC_FEET = 2;
 
-function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
+export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   if (unitSystem === 'imperial') {
     const vol = rectVolumeImperial(inputs, 'depth');
     return { ...vol, bags: bagsFromFeet(vol.cubic_feet, BAG_CUBIC_FEET) };

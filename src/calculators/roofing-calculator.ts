@@ -1,3 +1,4 @@
+import { ceilQuantity } from './rounding';
 import type {
   CalculatorConfig,
   CalculatorInputMap,
@@ -7,21 +8,6 @@ import type {
 
 // Rafter factor: actual slope length per unit of horizontal run
 // factor = √(1 + (pitch/12)²)
-const PITCH_FACTORS: Record<string, number> = {
-  '0':  1.000,  // flat
-  '2':  1.014,
-  '3':  1.031,
-  '4':  1.054,
-  '5':  1.083,
-  '6':  1.118,
-  '7':  1.158,
-  '8':  1.202,
-  '9':  1.250,
-  '10': 1.302,
-  '12': 1.414,
-  '14': 1.537,
-  '16': 1.667,
-};
 
 // 1 roofing square = 100 ft²; 1 m² = 10.7639 ft²
 const SQFT_PER_SQM   = 10.7639;
@@ -29,10 +15,11 @@ const SQFT_PER_SQUARE = 100;
 const BUNDLES_PER_SQUARE = 3;  // standard 3-tab or architectural shingles
 
 function getPitchFactor(pitchKey: string): number {
-  return PITCH_FACTORS[pitchKey] ?? 1.118; // default 6:12
+  const pitch = Number(pitchKey);
+  return Math.hypot(1, (Number.isFinite(pitch) && pitch >= 0 ? pitch : 6) / 12);
 }
 
-function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
+export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   const pitchKey  = String(inputs.pitch ?? '6');
   const wastePct  = Number(inputs.waste_pct ?? 10) / 100;
   const pitchFactor = getPitchFactor(pitchKey);
@@ -41,11 +28,11 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const lengthFt = Number(inputs.length_ft ?? 40) + Number(inputs.length_in ?? 0) / 12;
     const widthFt  = Number(inputs.width_ft  ?? 30) + Number(inputs.width_in  ?? 0) / 12;
 
-    const footprint_sqft    = Math.round(lengthFt * widthFt * 10) / 10;
-    const roof_area_sqft    = Math.round(footprint_sqft * pitchFactor * 10) / 10;
-    const material_area_sqft = Math.round(roof_area_sqft * (1 + wastePct) * 10) / 10;
-    const squares           = Math.round(material_area_sqft / SQFT_PER_SQUARE * 100) / 100;
-    const bundles           = Math.ceil(squares * BUNDLES_PER_SQUARE);
+    const footprint_sqft    = lengthFt * widthFt;
+    const roof_area_sqft    = footprint_sqft * pitchFactor;
+    const material_area_sqft = roof_area_sqft * (1 + wastePct);
+    const squares           = material_area_sqft / SQFT_PER_SQUARE;
+    const bundles           = ceilQuantity(squares * BUNDLES_PER_SQUARE);
     const underlayment_sqft = material_area_sqft;
 
     return {
@@ -63,13 +50,13 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const lengthM = Number(inputs.length_m ?? 12);
     const widthM  = Number(inputs.width_m  ?? 9);
 
-    const footprint_sqm    = Math.round(lengthM * widthM * 100) / 100;
-    const roof_area_sqm    = Math.round(footprint_sqm * pitchFactor * 100) / 100;
-    const material_area_sqm = Math.round(roof_area_sqm * (1 + wastePct) * 100) / 100;
+    const footprint_sqm    = lengthM * widthM;
+    const roof_area_sqm    = footprint_sqm * pitchFactor;
+    const material_area_sqm = roof_area_sqm * (1 + wastePct);
     // Convert to ft² for square/bundle calculation (roofing square is always 100 ft²)
     const materialSqFt     = material_area_sqm * SQFT_PER_SQM;
-    const squares          = Math.round(materialSqFt / SQFT_PER_SQUARE * 100) / 100;
-    const bundles          = Math.ceil(squares * BUNDLES_PER_SQUARE);
+    const squares          = materialSqFt / SQFT_PER_SQUARE;
+    const bundles          = ceilQuantity(squares * BUNDLES_PER_SQUARE);
     const underlayment_sqm = material_area_sqm;
 
     return {
@@ -423,18 +410,18 @@ export const roofingCalculator: CalculatorConfig = {
   referenceTable: {
     title: 'Roofing Squares & Shingle Bundles by Footprint & Pitch',
     description: 'Material orders including standard 10% waste allowance for common roof footprints at 4:12 and 6:12 pitch:',
-    headers: ['Footprint (sq ft)', 'Roof Pitch', 'Actual Area (sq ft)', 'Roofing Squares', 'Shingle Bundles (+10% Waste)'],
+    headers: ['Footprint (sq ft)', 'Roof Pitch', 'Actual Area (sq ft)', 'Roofing Squares (+10%)', 'Shingle Bundles (+10% Waste)'],
     rows: [
-      ['1,000 sq ft', '4:12', '1,054', '10.5', '36 bundles (12 sq)'],
-      ['1,000 sq ft', '6:12', '1,118', '11.2', '39 bundles (13 sq)'],
-      ['1,500 sq ft', '4:12', '1,581', '15.8', '54 bundles (18 sq)'],
-      ['1,500 sq ft', '6:12', '1,677', '16.8', '57 bundles (19 sq)'],
-      ['2,000 sq ft', '4:12', '2,108', '21.1', '72 bundles (24 sq)'],
-      ['2,000 sq ft', '6:12', '2,236', '22.4', '75 bundles (25 sq)'],
-      ['2,500 sq ft', '4:12', '2,635', '26.4', '87 bundles (29 sq)'],
-      ['2,500 sq ft', '6:12', '2,795', '28.0', '93 bundles (31 sq)'],
-      ['3,000 sq ft', '4:12', '3,162', '31.6', '105 bundles (35 sq)'],
-      ['3,000 sq ft', '6:12', '3,354', '33.5', '111 bundles (37 sq)'],
+      ['1,000 sq ft', '4:12', '1,054', '11.60', '35 bundles'],
+      ['1,000 sq ft', '6:12', '1,118', '12.30', '37 bundles'],
+      ['1,500 sq ft', '4:12', '1,581', '17.39', '53 bundles'],
+      ['1,500 sq ft', '6:12', '1,677', '18.45', '56 bundles'],
+      ['2,000 sq ft', '4:12', '2,108', '23.19', '70 bundles'],
+      ['2,000 sq ft', '6:12', '2,236', '24.60', '74 bundles'],
+      ['2,500 sq ft', '4:12', '2,635', '28.99', '87 bundles'],
+      ['2,500 sq ft', '6:12', '2,795', '30.75', '93 bundles'],
+      ['3,000 sq ft', '4:12', '3,162', '34.79', '105 bundles'],
+      ['3,000 sq ft', '6:12', '3,354', '36.90', '111 bundles'],
     ],
   },
 };

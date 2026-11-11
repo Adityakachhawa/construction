@@ -1,3 +1,4 @@
+import { ceilQuantity } from './rounding';
 import type {
   CalculatorConfig,
   CalculatorInputMap,
@@ -19,7 +20,7 @@ const BAG_SIZE_OPTIONS = [
   { value: '80lb', label: '80 lb bag (0.60 ft³)' },
 ];
 
-function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
+export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   const bagSizeKey  = String(inputs.bag_size ?? '80lb');
   const yieldPerBag = BAG_YIELDS[bagSizeKey] ?? 0.60;
   const wastePct    = Number(inputs.waste_pct ?? 10) / 100;
@@ -60,8 +61,8 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const concrete_cuft   = Math.round(concrete_cuft_each_with_waste * numHoles * 100) / 100;
     const concrete_cuyd   = Math.round(concrete_cuft / 27 * 100) / 100;
     const concrete_cum    = Math.round(concrete_cuft * 0.0283168 * 1000) / 1000;
-    const bags_per_hole   = Math.ceil(concrete_cuft_each_with_waste / yieldPerBag);
-    const bags_required   = Math.ceil(concrete_cuft_each_with_waste * numHoles / yieldPerBag);
+    const bags_per_hole   = ceilQuantity(concrete_cuft_each_with_waste / yieldPerBag);
+    const bags_required   = ceilQuantity(concrete_cuft_each_with_waste * numHoles / yieldPerBag);
     const cost            = costPerBag > 0 ? Math.round(bags_required * costPerBag * 100) / 100 : 0;
 
     return {
@@ -94,18 +95,18 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
 
     const concrete_cum_each              = Math.max(0, hole_cum_each - gravel_cum_each - post_disp_cum);
     const concrete_cum_each_with_waste   = concrete_cum_each * (1 + wastePct);
-    const concrete_cuft_each_with_waste_metric = concrete_cum_each_with_waste * 35.3147;
+    const concrete_cuft_each_with_waste_metric = concrete_cum_each_with_waste / (0.3048 ** 3);
 
     const excavation_cum  = Math.round(hole_cum_each * numHoles * 1000) / 1000;
-    const excavation_cuft = Math.round(excavation_cum * 35.3147 * 100) / 100;
-    const excavation_cuyd = Math.round(excavation_cum * 1.30795 * 100) / 100;
-    const gravel_cuft     = Math.round(gravel_cum_each * numHoles * 35.3147 * 100) / 100;
+    const excavation_cuft = Math.round(excavation_cum / (0.3048 ** 3) * 100) / 100;
+    const excavation_cuyd = Math.round(excavation_cum / (0.9144 ** 3) * 100) / 100;
+    const gravel_cuft     = Math.round(gravel_cum_each * numHoles / (0.3048 ** 3) * 100) / 100;
     const gravel_cuyd     = Math.round(gravel_cuft / 27 * 100) / 100;
     const concrete_cum    = Math.round(concrete_cum_each_with_waste * numHoles * 1000) / 1000;
     const concrete_cuft   = Math.round(concrete_cuft_each_with_waste_metric * numHoles * 100) / 100;
     const concrete_cuyd   = Math.round(concrete_cuft / 27 * 100) / 100;
-    const bags_per_hole   = Math.ceil(concrete_cuft_each_with_waste_metric / yieldPerBag);
-    const bags_required   = Math.ceil(concrete_cuft_each_with_waste_metric * numHoles / yieldPerBag);
+    const bags_per_hole   = ceilQuantity(concrete_cuft_each_with_waste_metric / yieldPerBag);
+    const bags_required   = ceilQuantity(concrete_cuft_each_with_waste_metric * numHoles / yieldPerBag);
     const cost            = costPerBag > 0 ? Math.round(bags_required * costPerBag * 100) / 100 : 0;
 
     return {
@@ -188,7 +189,7 @@ export const postHoleCalculator: CalculatorConfig = {
       defaultValue: 4,
       required: true,
       onlyIn: 'imperial',
-      helpText: 'Post width (for square posts, enter the side length). Used to subtract post displacement from concrete volume.',
+      helpText: 'Actual square-post side length, not its nominal lumber size: a nominal 4×4 is commonly 3.5 inches. Used to subtract displacement.',
     },
     {
       id: 'gravel_depth_in',
@@ -455,7 +456,7 @@ export const postHoleCalculator: CalculatorConfig = {
       label: 'Subtract post displacement',
       formula: 'Post Displacement = Post Width² × (Depth − Gravel Depth)',
       description:
-        'A 4×4 post (3.5″ actual = 0.292 ft side) displaces 0.292² × 2.5 ft ≈ 0.213 ft³ of concrete space; using nominal for conservative estimate',
+        'A 4×4 post (3.5″ actual = 0.292 ft side) displaces 0.292² × 2.5 ft ≈ 0.213 ft³ of concrete space; enter actual dimensions; a larger nominal size subtracts too much concrete',
     },
     {
       label: 'Calculate concrete volume per hole',
@@ -467,7 +468,7 @@ export const postHoleCalculator: CalculatorConfig = {
       label: 'Calculate bags required',
       formula: 'Bags per Hole = ⌈Concrete per Hole ÷ Yield per Bag⌉',
       description:
-        '80 lb bag = 0.60 ft³ → 1.27 ÷ 0.60 = 2.11 → 3 bags per hole; total = bags per hole × number of holes',
+        '80 lb bag = 0.60 ft³ → 1.27 ÷ 0.60 = 2.11 → 3 bags per hole; total = ceiling of combined unrounded concrete volume / bag yield when sharing mixed concrete across holes',
     },
   ],
   faq: [

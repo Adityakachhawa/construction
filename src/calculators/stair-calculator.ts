@@ -1,3 +1,4 @@
+import { ceilQuantity } from './rounding';
 import type {
   CalculatorConfig,
   CalculatorInputMap,
@@ -5,7 +6,7 @@ import type {
   UnitSystem,
 } from './_types';
 
-function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
+export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   if (unitSystem === 'imperial') {
     const totalRiseFt   = Number(inputs.total_rise_ft ?? 9) + Number(inputs.total_rise_in ?? 0) / 12;
     const desiredRiserIn = Number(inputs.riser_height_in ?? 7.5);
@@ -16,7 +17,7 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     }
 
     const totalRiseIn    = totalRiseFt * 12;
-    const risers         = Math.ceil(totalRiseIn / desiredRiserIn);
+    const risers         = ceilQuantity(totalRiseIn / desiredRiserIn);
     const actual_riser_in = Math.round((totalRiseIn / risers) * 1000) / 1000;
     const treads         = risers - 1;
     const total_run_in   = treads * treadDepthIn;
@@ -45,7 +46,7 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     }
 
     const totalRiseMm    = totalRiseM * 1000;
-    const risers         = Math.ceil(totalRiseMm / desiredRiserMm);
+    const risers         = ceilQuantity(totalRiseMm / desiredRiserMm);
     const actual_riser_mm = Math.round(totalRiseMm / risers);
     const treads         = risers - 1;
     const total_run_mm   = treads * treadDepthMm;

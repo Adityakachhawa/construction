@@ -1,3 +1,4 @@
+import { ceilQuantity } from './rounding';
 import type {
   CalculatorConfig,
   CalculatorInputMap,
@@ -11,18 +12,18 @@ const FT3_PER_80LB_BAG = 0.60;
 // Waste factor kept in sync with wasteFactor.default below (10%)
 const WASTE_FACTOR = 0.10;
 
-function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
+export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   const vol = unitSystem === 'imperial'
     ? rectVolumeImperial(inputs, 'thickness')
     : rectVolumeMetric(inputs, 'thickness_mm');
   const ft3 = vol.cubic_feet;
   // Raw: bag count for the exact calculated volume
-  const raw60 = Math.ceil(ft3 / FT3_PER_60LB_BAG);
-  const raw80 = Math.ceil(ft3 / FT3_PER_80LB_BAG);
+  const raw60 = ceilQuantity(ft3 / FT3_PER_60LB_BAG);
+  const raw80 = ceilQuantity(ft3 / FT3_PER_80LB_BAG);
   // Recommended order: includes waste allowance
   const wasted = ft3 * (1 + WASTE_FACTOR);
-  const order60 = Math.ceil(wasted / FT3_PER_60LB_BAG);
-  const order80 = Math.ceil(wasted / FT3_PER_80LB_BAG);
+  const order60 = ceilQuantity(wasted / FT3_PER_60LB_BAG);
+  const order80 = ceilQuantity(wasted / FT3_PER_80LB_BAG);
   return {
     ...vol,
     bags_60lb:       raw60,

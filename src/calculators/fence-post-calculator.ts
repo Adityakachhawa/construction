@@ -1,3 +1,4 @@
+import { ceilQuantity } from './rounding';
 import type {
   CalculatorConfig,
   CalculatorInputMap,
@@ -10,7 +11,7 @@ import type {
 const MIN_DEPTH_IN  = 24;
 const MIN_DEPTH_MM  = 610;
 
-function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
+export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   if (unitSystem === 'imperial') {
     const fenceLengthFt = Number(inputs.fence_length_ft ?? 100);
     const fenceLengthIn = Number(inputs.fence_length_in ?? 0);
@@ -24,7 +25,7 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
 
     const spacingClamped = Math.max(spacingFtFull, 0.5);
     // Posts = sections + 1 (corner/end posts), then add one post per gate opening
-    const sections  = Math.ceil(totalLengthFt / spacingClamped);
+    const sections  = ceilQuantity(totalLengthFt / spacingClamped);
     const posts     = sections + 1 + gates;
     const postHoles = posts;
     const recDepth  = Math.max(postDepthIn, MIN_DEPTH_IN);
@@ -42,7 +43,7 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const gates         = Number(inputs.gates ?? 0);
 
     const spacingClamped = Math.max(spacingM, 0.1);
-    const sections  = Math.ceil(fenceLengthM / spacingClamped);
+    const sections  = ceilQuantity(fenceLengthM / spacingClamped);
     const posts     = sections + 1 + gates;
     const postHoles = posts;
     const recDepth  = Math.max(postDepthMm, MIN_DEPTH_MM);
@@ -279,7 +280,7 @@ export const fencePostCalculator: CalculatorConfig = {
     {
       question: 'How deep should fence post holes be?',
       answer:
-        'Post holes should be at least 1/3 of the total post length, with a minimum of 24 inches (610 mm). For a 6-foot fence using 8-foot posts, dig at least 2 feet deep (1/3 of 8 ft). In cold climates, always dig below the local frost line — which can be 36–48 inches in northern regions.',
+        'Post holes should be at least 1/3 of the total post length, with a minimum of 24 inches (610 mm). For a 6-foot fence using 8-foot posts, note that one-third of an 8-foot post is 32 inches, leaving 64 inches above ground; select post length and depth from the approved fence specification. In cold climates, always dig below the local frost line — which can be 36–48 inches in northern regions.',
     },
     {
       question: 'What is the fence post hole depth calculator formula?',
@@ -299,7 +300,7 @@ export const fencePostCalculator: CalculatorConfig = {
     {
       question: 'How much concrete do I need per fence post?',
       answer:
-        'A typical fence post hole (12 inches diameter × 24 inches deep) needs about 0.2 cubic feet of concrete, or roughly one 50-lb bag of fast-setting concrete mix. Larger holes need proportionally more — use the concrete slab calculator to compute the exact volume for your hole dimensions.',
+        'A 12-inch diameter × 24-inch deep hole has a gross volume of 1.571 ft³. With a 3.5-inch square post, no gravel base and no waste, concrete fill is 1.401 ft³: 3 bags at 0.60 ft³ (80 lb) or 4 at 0.375 ft³ (50 lb). Use the Post Hole Calculator for gravel, waste and multiple holes.',
     },
     {
       question: 'Should I set fence posts in concrete or gravel?',
@@ -331,11 +332,11 @@ export const fencePostCalculator: CalculatorConfig = {
   ],
   referenceTable: {
     title: 'Fence Post & Concrete Bag Reference Guide',
-    description: 'Post counts, panel sections, and recommended 80 lb concrete bags (at standard 2 bags per post hole):',
+    description: 'Straight fence with both end posts, no gates. Bag column is an illustrative allowance of 2 bags per hole, not a hole-volume calculation; use the Post Hole Calculator for your dimensions:',
     headers: ['Fence Length', 'Post Spacing', 'Total Posts', 'Fence Sections', '80 lb Concrete Bags'],
     rows: [
       ['50 ft', '6 ft OC', '10', '9', '20'],
-      ['50 ft', '8 ft OC', '7', '7', '14'],
+      ['50 ft', '8 ft OC', '8', '7', '16'],
       ['100 ft', '6 ft OC', '18', '17', '36'],
       ['100 ft', '8 ft OC', '14', '13', '28'],
       ['150 ft', '6 ft OC', '26', '25', '52'],

@@ -1,3 +1,4 @@
+import { ceilQuantity } from './rounding';
 import type {
   CalculatorConfig,
   CalculatorInputMap,
@@ -5,7 +6,7 @@ import type {
   UnitSystem,
 } from './_types';
 
-function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
+export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   if (unitSystem === 'imperial') {
     const lengthFt = Number(inputs.length_ft ?? 0) + Number(inputs.length_in ?? 0) / 12;
     const widthFt  = Number(inputs.width_ft  ?? 0) + Number(inputs.width_in  ?? 0) / 12;
@@ -16,11 +17,11 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
       return { area_sqft: 0, area_sqm: 0, adjusted_area_sqft: 0, net_rolls: 0, rolls_required: 0, estimated_coverage_sqft: 0 };
     }
 
-    const area_sqft           = Math.round(lengthFt * widthFt * 100) / 100;
-    const area_sqm            = Math.round(area_sqft * 0.092903 * 100) / 100;
-    const adjusted_area_sqft  = Math.round(area_sqft * (1 + wastePct) * 100) / 100;
-    const net_rolls           = Math.ceil(area_sqft / coverage);
-    const rolls_required      = Math.ceil(adjusted_area_sqft / coverage);
+    const area_sqft           = lengthFt * widthFt;
+    const area_sqm            = area_sqft * 0.092903;
+    const adjusted_area_sqft  = area_sqft * (1 + wastePct);
+    const net_rolls           = ceilQuantity(area_sqft / coverage);
+    const rolls_required      = ceilQuantity(adjusted_area_sqft / coverage);
     const estimated_coverage_sqft = Math.round(rolls_required * coverage * 10) / 10;
 
     return { area_sqft, area_sqm, adjusted_area_sqft, net_rolls, rolls_required, estimated_coverage_sqft };
@@ -34,11 +35,11 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
       return { area_sqft: 0, area_sqm: 0, adjusted_area_sqft: 0, net_rolls: 0, rolls_required: 0, estimated_coverage_sqft: 0 };
     }
 
-    const area_sqm            = Math.round(length_m * width_m * 100) / 100;
-    const area_sqft           = Math.round(area_sqm * 10.7639 * 100) / 100;
+    const area_sqm            = length_m * width_m;
+    const area_sqft           = area_sqm * 10.7639;
     const adjusted_area_sqm   = area_sqm * (1 + wastePct);
-    const net_rolls           = Math.ceil(area_sqm / coverage);
-    const rolls_required      = Math.ceil(adjusted_area_sqm / coverage);
+    const net_rolls           = ceilQuantity(area_sqm / coverage);
+    const rolls_required      = ceilQuantity(adjusted_area_sqm / coverage);
     const estimated_coverage_sqm = rolls_required * coverage;
 
     return {

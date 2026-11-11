@@ -2,16 +2,18 @@
 title: "Concrete Footing Size Chart: How Big Should Your Footings Be?"
 description: "Footing size requirements for decks, sheds, walls, and foundations. Charts, formulas, and code references for residential construction."
 publishedAt: "2026-06-10"
-updatedAt: "2026-06-13"
+updatedAt: "2026-11-10"
 author: "BuildByMath Team"
 tags: ["concrete", "foundation", "structural"]
 relatedCalculators: ["concrete-footing-calculator", "concrete-bags-calculator", "deck-footing-calculator"]
 draft: false
 ---
+> **Sizing tables need project-specific verification.** The dimensional examples below estimate material only. The listed footing diameters and soil values have not been verified for your loads, soil, adopted code, or jurisdiction and must not be used as approved structural sizes. Obtain the footing and support schedule from your approved plans. The [AWC deck guide](https://web-media.awc.org/wp-content/uploads/2022/02/17210514/AWC-DCA62015-DeckGuide-1804.pdf) explains why the framing layout and tributary loads matter.
+
 
 Footing size is one of the most commonly underspecified elements in residential construction. Under-sized footings settle, tip, or fail — causing damage that's extremely expensive to repair. This guide covers how to size footings correctly for common residential applications.
 
-> **Quick Answer:** Footing area = Load ÷ Soil bearing capacity. For residential work, assume 1,500 psf if soil type is unknown. Always extend below your local frost line — the most common and most expensive footing mistake is going too shallow.
+> **Quick Answer:** Footing area = Load ÷ Soil bearing capacity. For residential work, use the allowable bearing pressure established for the site. Always extend below your local frost line — the most common and most expensive footing mistake is going too shallow.
 
 ## What Is a Footing?
 
@@ -31,7 +33,7 @@ Soil bearing capacity for common soil types:
 - Gravel: 4,000–8,000 psf
 - Bedrock: 10,000+ psf
 
-If you don't know your soil type, use **1,500 psf as a conservative default** for residential work.
+If you don't know your soil type, obtain a site-specific allowable bearing value; **1,500 psf is not a guaranteed safe default**.
 
 ## Deck Footing Sizes
 
@@ -39,34 +41,19 @@ Deck footings support specific posts that carry tributary areas of the deck. IRC
 
 ### Deck Post Footing Diameter (Round Footings)
 
-For 1,500 psf soil bearing (conservative), 1-story deck:
+Use the footing schedule from approved plans. Required inputs include tributary loads, framing layout, site bearing pressure and the applicable code. This article does not provide a verified diameter-selection table.
 
-| Tributary Area | Footing Diameter |
-|---------------|-----------------|
-| Up to 25 sq ft | 10 inches |
-| Up to 50 sq ft | 14 inches |
-| Up to 75 sq ft | 18 inches |
-| Up to 100 sq ft | 20 inches |
-
-**Tributary area** = the area of deck each post supports. For a simple rectangular deck with 4 posts, divide total area by 4.
+**Tributary area** is the deck area carried by a support; dividing total area equally among posts is not valid for every framing layout.
 
 Use our [Deck Footing Calculator](/calculators/deck-footing-calculator/) to calculate concrete volume per footing.
 
 ## Foundation Wall Footing Sizes
 
-For residential bearing wall foundations, the IRC specifies minimum footing widths based on the number of stories supported:
-
-| Stories Supported | Footing Width | Footing Thickness |
-|------------------|--------------|------------------|
-| 1 story | 12" wide | 6" thick |
-| 2 stories | 15" wide | 7" thick |
-| 3 stories | 23" wide | 8" thick |
-
-These are minimum IRC requirements. Local amendments may require larger footings. Always check with your local building department.
+Obtain footing width, thickness and reinforcement from the approved foundation schedule. Story count alone does not establish these dimensions. No universal IRC minimum-size table is provided here.
 
 ## Footing Depth: The Frost Line
 
-Footings must extend below the local frost depth — the depth to which the ground freezes in your region. Frost heave can lift a footing and everything above it.
+Use the approved founding depth and frost-protection detail. Regional depth estimates do not replace site-specific requirements.
 
 Approximate frost depths:
 - Deep South (FL, south TX, AZ): 0–12 inches
@@ -97,13 +84,13 @@ Use our [Concrete Footing Calculator](/calculators/concrete-footing-calculator/)
 ## Frequently Asked Questions
 
 **Do I need rebar in residential footings?**
-Most building codes require at minimum 2 continuous horizontal bars in all footings. Common specifications: 2–3 #4 bars running the length of the footing, with wire ties at corners.
+Use the approved reinforcement schedule for bar size, count, spacing, cover, anchorage and splices. This material estimator does not establish reinforcement requirements.
 
 **What's the minimum footing size for a fence post?**
-Fence posts typically don't require engineered footings. A 10-inch diameter hole, 24–30 inches deep (below frost), filled with concrete provides adequate support for standard wood or vinyl fence panels.
+Use the approved fence/post specification and local requirements for wind, soil and embedment. This page does not establish a universal minimum hole diameter or depth.
 
 **Can I pour a footing in cold weather?**
-Yes, with precautions. The concrete mix temperature must be above 50°F when placed. Use heated water or add calcium chloride accelerant (not in concrete with rebar — it causes corrosion). Protect the fresh pour from freezing for at least 7 days.
+Use the concrete supplier and approved cold-weather placement and curing plan. Do not select additives, placement temperature or protection duration from a generic rule.
 
 **What happens if my footing is too shallow?**
 Frost heave lifts the footing, which can crack the foundation, rack door and window frames, and damage finishes. The cost of properly deep footings is trivial compared to the cost of fixing frost heave damage.

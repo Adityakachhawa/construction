@@ -1,3 +1,4 @@
+import { ceilQuantity } from '../calculators/rounding';
 export interface SlabMetrics {
   thicknessInches: number;
   cuFt: number;
@@ -38,10 +39,10 @@ export function getSlabMetrics(length: number, width: number, thicknessInches: n
     cuFt: Math.round(cuFt * 100) / 100,
     cuYds: Math.round(cuYds * 100) / 100,
     cuYdsWithWaste: Math.round(cuYdsWithWaste * 100) / 100,
-    bags80Raw: Math.ceil(cuFt / 0.60),
-    bags80WithWaste: Math.ceil(cuFtWithWaste / 0.60),
-    bags60Raw: Math.ceil(cuFt / 0.45),
-    bags60WithWaste: Math.ceil(cuFtWithWaste / 0.45),
+    bags80Raw: ceilQuantity(cuFt / 0.60),
+    bags80WithWaste: ceilQuantity(cuFtWithWaste / 0.60),
+    bags60Raw: ceilQuantity(cuFt / 0.45),
+    bags60WithWaste: ceilQuantity(cuFtWithWaste / 0.45),
   };
 }
 

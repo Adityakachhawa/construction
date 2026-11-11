@@ -5,7 +5,7 @@ import type {
   UnitSystem,
 } from './_types';
 
-function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
+export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   const quantity = Math.max(1, Math.round(Number(inputs.quantity ?? 1)));
 
   let thicknessIn: number;
@@ -19,7 +19,7 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
   } else {
     thicknessIn = Number(inputs.thickness_mm ?? 25.4) / 25.4;
     widthIn     = Number(inputs.width_mm ?? 152.4) / 25.4;
-    lengthFt    = Number(inputs.length_m ?? 2.4) * 3.28084;
+    lengthFt    = Number(inputs.length_m ?? 2.4) / 0.3048;
   }
 
   if (thicknessIn <= 0 || widthIn <= 0 || lengthFt <= 0) {

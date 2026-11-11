@@ -6,7 +6,7 @@ import type {
 } from './_types';
 import { REBAR_SIZES, REBAR_SIZE_OPTIONS_IMPERIAL, REBAR_SIZE_OPTIONS_METRIC } from './rebar-data';
 
-function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
+export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   if (unitSystem === 'imperial') {
     const lengthFt   = Number(inputs.length_ft  ?? 10) + Number(inputs.length_in  ?? 0) / 12;
     const widthFt    = Number(inputs.width_ft   ?? 10) + Number(inputs.width_in   ?? 0) / 12;

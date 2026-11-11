@@ -38,20 +38,20 @@ export function formatWithUnit(
 const CONVERSIONS = {
   // Length
   ftToM: 0.3048,
-  mToFt: 3.28084,
+  mToFt: 1 / 0.3048,
   inToCm: 2.54,
-  cmToIn: 0.393701,
+  cmToIn: 1 / 2.54,
   // Area
-  sqFtToSqM: 0.092903,
-  sqMToSqFt: 10.7639,
+  sqFtToSqM: 0.3048 ** 2,
+  sqMToSqFt: 1 / (0.3048 ** 2),
   // Volume
-  cubicFtToCubicM: 0.0283168,
-  cubicMToCubicFt: 35.3147,
-  cubicYdToCubicM: 0.764555,
-  cubicMToCubicYd: 1.30795,
+  cubicFtToCubicM: 0.3048 ** 3,
+  cubicMToCubicFt: 1 / (0.3048 ** 3),
+  cubicYdToCubicM: 0.9144 ** 3,
+  cubicMToCubicYd: 1 / (0.9144 ** 3),
   // Weight
-  lbsToKg: 0.453592,
-  kgToLbs: 2.20462,
+  lbsToKg: 0.45359237,
+  kgToLbs: 1 / 0.45359237,
 } as const;
 
 export function convertLength(

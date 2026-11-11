@@ -1,3 +1,4 @@
+import { ceilQuantity } from './rounding';
 import type {
   CalculatorConfig,
   CalculatorInputMap,
@@ -5,16 +6,16 @@ import type {
   UnitSystem,
 } from './_types';
 
-function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
+export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   if (unitSystem === 'imperial') {
     const lengthFt   = Number(inputs.length_ft  ?? 12) + Number(inputs.length_in  ?? 0) / 12;
     const widthFt    = Number(inputs.width_ft   ?? 10) + Number(inputs.width_in   ?? 0) / 12;
     const wastePct   = Number(inputs.waste_pct  ?? 10) / 100;
     const boxSqFt    = Number(inputs.box_coverage ?? 20);
 
-    const areaSqFt        = Math.round(lengthFt * widthFt * 10) / 10;
-    const areaWithWaste   = Math.round(areaSqFt * (1 + wastePct) * 10) / 10;
-    const boxes           = boxSqFt > 0 ? Math.ceil(areaWithWaste / boxSqFt) : 0;
+    const areaSqFt        = lengthFt * widthFt;
+    const areaWithWaste   = areaSqFt * (1 + wastePct);
+    const boxes           = boxSqFt > 0 ? ceilQuantity(areaWithWaste / boxSqFt) : 0;
 
     return {
       area_sqft:        areaSqFt,
@@ -28,9 +29,9 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
     const wastePct = Number(inputs.waste_pct ?? 10) / 100;
     const boxSqM   = Number(inputs.box_coverage_m2 ?? 1.85);
 
-    const areaSqM        = Math.round(lengthM * widthM * 100) / 100;
-    const areaWithWaste  = Math.round(areaSqM * (1 + wastePct) * 100) / 100;
-    const boxes          = boxSqM > 0 ? Math.ceil(areaWithWaste / boxSqM) : 0;
+    const areaSqM        = lengthM * widthM;
+    const areaWithWaste  = areaSqM * (1 + wastePct);
+    const boxes          = boxSqM > 0 ? ceilQuantity(areaWithWaste / boxSqM) : 0;
 
     return {
       area_sqm:         areaSqM,

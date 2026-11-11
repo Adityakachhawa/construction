@@ -1,3 +1,4 @@
+import { ceilQuantity } from './rounding';
 import type {
   CalculatorConfig,
   CalculatorInputMap,
@@ -15,7 +16,7 @@ const PRESET_SIZES: Record<string, { thickness: number; width: number }> = {
   'custom': { thickness: 1.5,  width: 3.5  }, // overridden by inputs
 };
 
-function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
+export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   const wastePct      = Number(inputs.waste_pct ?? 10) / 100;
   const costPerBoard  = Number(inputs.cost_per_board ?? 0);
 
@@ -35,7 +36,7 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
       return { total_boards: 0, linear_feet: 0, linear_m: 0, board_feet: 0, volume_cuft: 0, volume_m3: 0, cost: 0 };
     }
 
-    const total_boards    = Math.ceil(quantity * (1 + wastePct));
+    const total_boards    = ceilQuantity(quantity * (1 + wastePct));
     const linear_feet     = Math.round(total_boards * lengthFt * 10) / 10;
     // Board feet = (thickness_in × width_in × length_ft × boards) / 12
     const board_feet      = Math.round(thicknessIn * widthIn * lengthFt * total_boards / 12 * 100) / 100;
@@ -61,12 +62,12 @@ function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Calculator
       return { total_boards: 0, linear_feet: 0, linear_m: 0, board_feet: 0, volume_cuft: 0, volume_m3: 0, cost: 0 };
     }
 
-    const total_boards = Math.ceil(quantity * (1 + wastePct));
+    const total_boards = ceilQuantity(quantity * (1 + wastePct));
     const linear_m     = Math.round(total_boards * lengthM * 10) / 10;
     // Board feet (universal): convert mm to inches first
     const thicknessIn  = thicknessMm / 25.4;
     const widthIn      = widthMm / 25.4;
-    const lengthFt     = lengthM * 3.28084;
+    const lengthFt     = lengthM / 0.3048;
     const board_feet   = Math.round(thicknessIn * widthIn * lengthFt * total_boards / 12 * 100) / 100;
     const volume_m3    = Math.round((widthMm / 1000) * (thicknessMm / 1000) * lengthM * total_boards * 10000) / 10000;
     const cost         = costPerBoard > 0 ? Math.round(total_boards * costPerBoard * 100) / 100 : 0;
