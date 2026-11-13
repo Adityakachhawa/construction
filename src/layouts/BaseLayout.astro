@@ -19,6 +19,13 @@ const { meta, schemas = [], currentPath = Astro.url.pathname, heroPage = false }
 <!doctype html>
 <html lang="en">
   <head>
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-88S0F7NBM4"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { window.dataLayer.push(arguments); }
+      gtag('js', new Date());
+      gtag('config', 'G-88S0F7NBM4');
+    </script>
     <MetaTags {...meta} />
     {schemas.length > 0 && <SchemaOrg schema={schemas} />}
     <script is:inline>
