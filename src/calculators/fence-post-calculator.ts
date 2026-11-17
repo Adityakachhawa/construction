@@ -1,3 +1,4 @@
+import { fenceRuns } from './fence-runs';
 import { ceilQuantity } from './rounding';
 import type {
   CalculatorConfig,
@@ -25,8 +26,9 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
 
     const spacingClamped = Math.max(spacingFtFull, 0.5);
     // Posts = sections + 1 (corner/end posts), then add one post per gate opening
-    const sections  = ceilQuantity(totalLengthFt / spacingClamped);
-    const posts     = sections + 1 + gates;
+    const runs = fenceRuns(inputs, 'imperial', totalLengthFt, spacingClamped);
+    const sections = runs.length ? runs.reduce((sum, run) => sum + run.sections, 0) : ceilQuantity(totalLengthFt / spacingClamped);
+    const posts     = sections + (runs.length || 1 + gates);
     const postHoles = posts;
     const recDepth  = Math.max(postDepthIn, MIN_DEPTH_IN);
 
@@ -43,8 +45,9 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
     const gates         = Number(inputs.gates ?? 0);
 
     const spacingClamped = Math.max(spacingM, 0.1);
-    const sections  = ceilQuantity(fenceLengthM / spacingClamped);
-    const posts     = sections + 1 + gates;
+    const runs = fenceRuns(inputs, 'metric', fenceLengthM, spacingClamped);
+    const sections = runs.length ? runs.reduce((sum, run) => sum + run.sections, 0) : ceilQuantity(fenceLengthM / spacingClamped);
+    const posts     = sections + (runs.length || 1 + gates);
     const postHoles = posts;
     const recDepth  = Math.max(postDepthMm, MIN_DEPTH_MM);
 
@@ -64,6 +67,9 @@ export const fencePostCalculator: CalculatorConfig = {
   description:
     'Calculate how many fence posts you need, post hole count, recommended post depth, and number of fence sections. Supports any fence length and post spacing.',
   inputs: [
+    { id:'gate_layout_ft', label:'Gate positions and widths (optional)', type:'pairs', onlyIn:'imperial', defaultValue:'', helpText:'Enter start from first post x opening width in feet, in order. Example: 24x4, 56x4. This list replaces the gate count.' },
+    { id:'gate_layout_m', label:'Gate positions and widths (optional)', type:'pairs', onlyIn:'metric', defaultValue:'', helpText:'Enter start from first post x opening width in metres, in order. Example: 6x1, 12x1. This list replaces the gate count.' },
+    { id:'spacing_method', label:'Straight-run layout', type:'select', defaultValue:'equal', options:[{value:'equal',label:'Equal spaces'}, {value:'fixed',label:'Fixed spaces with shorter end section'}] },
     // ── Imperial ──────────────────────────────────────
     {
       id: 'fence_length_ft',
@@ -267,6 +273,7 @@ export const fencePostCalculator: CalculatorConfig = {
     },
   ],
   faq: [
+    { question:'How far apart are 14 posts on a straight 100 ft fence?', answer:'Fourteen posts make 13 sections. Equal spacing is 100 ÷ 13, about 7 ft 8 5/16 in. At fixed 8 ft centers, the first twelve spans use 96 ft and the final span is 4 ft. Select the 100 ft straight-run example to compare the marks.' },
     {
       question: 'How many fence posts do I need?',
       answer:
@@ -309,24 +316,25 @@ export const fencePostCalculator: CalculatorConfig = {
     },
   ],
   presets: [
+    {label:'100 ft straight run — compare 13 spaces', unit:'imperial', values:{fence_length_ft:100,fence_length_in:0,post_spacing_ft:8,post_spacing_in:0,gates:0,gate_layout_ft:'',spacing_method:'equal'}},
     {
       label: '50 ft Garden Fence (8\' spacing)',
-      values: { fence_length_ft: 50, fence_length_in: 0, post_spacing_ft: 8, post_spacing_in: 0, post_depth: 24, gates: 1 },
+      values: { gate_layout_ft:'', fence_length_ft: 50, fence_length_in: 0, post_spacing_ft: 8, post_spacing_in: 0, post_depth: 24, gates: 1 },
       unit: 'imperial',
     },
     {
       label: '100 ft Privacy Fence (8\' spacing)',
-      values: { fence_length_ft: 100, fence_length_in: 0, post_spacing_ft: 8, post_spacing_in: 0, post_depth: 30, gates: 1 },
+      values: { gate_layout_ft:'', fence_length_ft: 100, fence_length_in: 0, post_spacing_ft: 8, post_spacing_in: 0, post_depth: 30, gates: 1 },
       unit: 'imperial',
     },
     {
       label: '150 ft Backyard Run (6\' spacing)',
-      values: { fence_length_ft: 150, fence_length_in: 0, post_spacing_ft: 6, post_spacing_in: 0, post_depth: 30, gates: 2 },
+      values: { gate_layout_ft:'', fence_length_ft: 150, fence_length_in: 0, post_spacing_ft: 6, post_spacing_in: 0, post_depth: 30, gates: 2 },
       unit: 'imperial',
     },
     {
       label: '200 ft Perimeter Run (8\' spacing)',
-      values: { fence_length_ft: 200, fence_length_in: 0, post_spacing_ft: 8, post_spacing_in: 0, post_depth: 36, gates: 2 },
+      values: { gate_layout_ft:'', fence_length_ft: 200, fence_length_in: 0, post_spacing_ft: 8, post_spacing_in: 0, post_depth: 36, gates: 2 },
       unit: 'imperial',
     },
   ],

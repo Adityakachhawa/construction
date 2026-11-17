@@ -1,3 +1,4 @@
+import { dimensionRows, listFields } from './dimension-rows';
 import { ceilQuantity } from './rounding';
 import type {
   CalculatorConfig,
@@ -21,15 +22,18 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
 
     const courses        = blockHtIn > 0 ? ceilQuantity((wallHtFt * 12) / blockHtIn) : 0;
     const blocksPerCourse = blockLenIn > 0 ? ceilQuantity((wallLenFt * 12) / blockLenIn) : 0;
-    const blocksNet      = courses * blocksPerCourse;
-    const blocks         = ceilQuantity(blocksNet * WASTE_FACTOR);
-
-    const gravel   = rectVolFt3(wallLenFt, blockDepIn / 12, gravelDepIn / 12);
-    const backfill = rectVolFt3(wallLenFt, wallHtFt, backfillIn / 12);
+    const parts = dimensionRows(inputs.wall_parts_ft);
+    const blocksNet = parts.reduce((sum, [length, height]) =>
+      sum + ceilQuantity(length * 12 / blockLenIn) * ceilQuantity(height * 12 / blockHtIn), courses * blocksPerCourse);
+    const blocks = ceilQuantity(blocksNet * WASTE_FACTOR);
+    const totalLength = parts.reduce((sum, [length]) => sum + length, wallLenFt);
+    const totalArea = parts.reduce((sum, [length, height]) => sum + length * height, wallLenFt * wallHtFt);
+    const gravel = rectVolFt3(totalLength, blockDepIn / 12, gravelDepIn / 12);
+    const backfill = rectVolFt3(totalArea, 1, backfillIn / 12);
 
     return {
       blocks,
-      courses,
+      courses, blocks_per_course: blocksPerCourse,
       gravel_cubic_yards:  gravel.cubic_yards,
       gravel_cubic_feet:   gravel.cubic_feet,
       gravel_cubic_meters: gravel.cubic_meters,
@@ -48,15 +52,18 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
 
     const courses        = blockHtMm > 0 ? ceilQuantity((wallHtM * 1000) / blockHtMm) : 0;
     const blocksPerCourse = blockLenMm > 0 ? ceilQuantity((wallLenM * 1000) / blockLenMm) : 0;
-    const blocksNet      = courses * blocksPerCourse;
-    const blocks         = ceilQuantity(blocksNet * WASTE_FACTOR);
-
-    const gravel   = rectVolM3(wallLenM, blockDepMm / 1000, gravelDepMm / 1000);
-    const backfill = rectVolM3(wallLenM, wallHtM,  backfillMm / 1000);
+    const parts = dimensionRows(inputs.wall_parts_m);
+    const blocksNet = parts.reduce((sum, [length, height]) =>
+      sum + ceilQuantity(length * 1000 / blockLenMm) * ceilQuantity(height * 1000 / blockHtMm), courses * blocksPerCourse);
+    const blocks = ceilQuantity(blocksNet * WASTE_FACTOR);
+    const totalLength = parts.reduce((sum, [length]) => sum + length, wallLenM);
+    const totalArea = parts.reduce((sum, [length, height]) => sum + length * height, wallLenM * wallHtM);
+    const gravel = rectVolM3(totalLength, blockDepMm / 1000, gravelDepMm / 1000);
+    const backfill = rectVolM3(totalArea, 1, backfillMm / 1000);
 
     return {
       blocks,
-      courses,
+      courses, blocks_per_course: blocksPerCourse,
       gravel_cubic_meters: gravel.cubic_meters,
       gravel_cubic_feet:   gravel.cubic_feet,
       gravel_cubic_yards:  gravel.cubic_yards,
@@ -74,6 +81,7 @@ export const retainingWallCalculator: CalculatorConfig = {
   description:
     'Calculate retaining wall blocks, gravel base volume, backfill material, and project cost. Enter wall dimensions and block size to get an accurate material estimate.',
   inputs: [
+    ...listFields('wall_parts', 'Additional wall sections: length x height (ft)', 'Additional wall sections: length x height (m)', 2),
     // ── Imperial ─────────────────────────────────────────
     {
       id: 'wall_length_ft',
@@ -285,6 +293,7 @@ export const retainingWallCalculator: CalculatorConfig = {
     },
   ],
   outputs: [
+    { id:'blocks_per_course', label:'First section units per course', format:'number' },
     {
       id: 'blocks',
       label: 'Blocks Required',
@@ -295,7 +304,7 @@ export const retainingWallCalculator: CalculatorConfig = {
     },
     {
       id: 'courses',
-      label: 'Block Courses',
+      label: 'First section courses',
       unit: 'courses',
       format: 'number',
     },

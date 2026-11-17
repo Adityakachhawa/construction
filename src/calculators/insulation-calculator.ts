@@ -1,3 +1,4 @@
+import { sectionFields, extraArea } from './project-sections';
 import { ceilQuantity } from './rounding';
 import type {
   CalculatorConfig,
@@ -17,7 +18,7 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
       return { area_sqft: 0, area_sqm: 0, adjusted_area_sqft: 0, net_rolls: 0, rolls_required: 0, estimated_coverage_sqft: 0 };
     }
 
-    const area_sqft           = lengthFt * widthFt;
+    const area_sqft           = lengthFt * widthFt + extraArea(inputs.sections_ft);
     const area_sqm            = area_sqft * 0.092903;
     const adjusted_area_sqft  = area_sqft * (1 + wastePct);
     const net_rolls           = ceilQuantity(area_sqft / coverage);
@@ -35,7 +36,7 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
       return { area_sqft: 0, area_sqm: 0, adjusted_area_sqft: 0, net_rolls: 0, rolls_required: 0, estimated_coverage_sqft: 0 };
     }
 
-    const area_sqm            = length_m * width_m;
+    const area_sqm            = length_m * width_m + extraArea(inputs.sections_m);
     const area_sqft           = area_sqm * 10.7639;
     const adjusted_area_sqm   = area_sqm * (1 + wastePct);
     const net_rolls           = ceilQuantity(area_sqm / coverage);
@@ -60,6 +61,7 @@ export const insulationCalculator: CalculatorConfig = {
   description:
     'Calculate insulation rolls or batts required for walls, ceilings, attics, and floors. Enter area dimensions, coverage per roll, and waste percentage to get the exact quantity to order.',
   inputs: [
+    ...sectionFields,
     // ── Imperial ──────────────────────────────────────
     {
       id: 'length_ft',

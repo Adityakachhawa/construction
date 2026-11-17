@@ -16,7 +16,11 @@ for (const calc of calculatorRegistry) for (const unit of calc.unitSystems) {
   for (const field of fields) {
    if (field.advanced) continue; // Independent material validity is covered by block-material.test.ts.
    const check=(v:unknown)=>validateInputs(fields,{...defaults,[field.id]:v},unit);
-   if (field.type==='select') {
+   if (field.type==='rectangles' || field.type==='pairs' || field.type==='dimensions') {
+    assert.ok(check('invalid').errors[field.id]);
+    assert.ok(!check('').errors[field.id]);
+    finite({...defaults,[field.id]:field.columns ? Array(field.columns).fill(1).join('x') : '1x2'});
+   } else if (field.type==='select') {
     for(const option of field.options??[]) finite({...defaults,[field.id]:option.value});
     assert.ok(check('not-an-option').errors[field.id]);
    } else {

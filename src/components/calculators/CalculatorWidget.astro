@@ -2,6 +2,9 @@
 import type { CalculatorConfig, UnitSystem } from '../../calculators/_types';
 import { integerFields } from '../../calculators/validation';
 import { formatNumber } from '../../utils/format';
+import { projectHandoffs } from '../../calculators/project-handoffs';
+import { layoutCalculators } from '../../calculators/project-layout';
+import { isMeasurementSheet } from '../../calculators/order-checklist';
 import ResultTable from './ResultTable.astro';
 
 interface Props {
@@ -184,8 +187,9 @@ const outputsJson = JSON.stringify(
                   ) : (
                     <>
                       <input
-                        type="number"
-                        inputmode="decimal"
+                        type={['rectangles','pairs','dimensions'].includes(field.type) ? 'text' : 'number'}
+                        maxlength={field.type === 'rectangles' ? 500 : undefined}
+                        inputmode={['rectangles','pairs','dimensions'].includes(field.type) ? 'text' : 'decimal'}
                         id={`field-${field.onlyIn ?? 'both'}-${field.id}`}
                         name={field.id}
                         min={field.min}
@@ -222,6 +226,12 @@ const outputsJson = JSON.stringify(
                   </div>
                 )}
               </div>
+              {field.type === 'rectangles' && <div class="rectangle-editor">
+                <input type="number" step="any" min="0" placeholder="Length" aria-label="Section length" />
+                <input type="number" step="any" min="0" placeholder="Width" aria-label="Section width" />
+                <button type="button" data-rect-sign="">Add area</button>
+                <button type="button" data-rect-sign="-">Subtract opening</button>
+              </div>}
               {field.helpText && (
                 <p id={`help-${field.onlyIn ?? 'both'}-${field.id}`} class="field-help">
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
@@ -311,7 +321,10 @@ const outputsJson = JSON.stringify(
     )}
 
     <!-- Action buttons -->
-    <div class="result-actions" id="result-actions">
+    {layoutCalculators.includes(calc.slug) && <details class="project-layout" open><summary>Your layout</summary><div id="project-layout"></div></details>}
+    {calc.inputs.some(f => f.type === "rectangles" || f.type === "dimensions") && <div id="section-summary" hidden></div>}
+    <div id="project-handoffs">{projectHandoffs(calc.slug, defaultInputs, defaultOutputs, defaultUnit).map(link => <a href={link.href}>{link.label}</a>)}</div>
+    <div class="result-actions"  id="result-actions">
       <button type="button" class="action-btn" id="action-share" title="Copy shareable link">
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
           <path d="M10 3l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -319,12 +332,12 @@ const outputsJson = JSON.stringify(
         </svg>
         <span id="share-label">Copy link</span>
       </button>
-      <button type="button" class="action-btn" id="action-checklist" title="Copy order checklist">
+      <button type="button" class="action-btn" id="action-checklist" title={isMeasurementSheet(calc.slug) ? "Copy measurements" : "Copy order checklist"}>
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
           <path d="M6 3h8M6 8h8M6 13h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
           <path d="M3 3l-1 1 .5.5M3 8l-1 1 .5.5M3 13l-1 1 .5.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        <span id="checklist-label">Copy checklist</span>
+        <span id="checklist-label">{isMeasurementSheet(calc.slug) ? "Copy measurements" : "Copy checklist"}</span>
       </button>
       <button type="button" class="action-btn" id="action-copy-results" title="Copy results as text">
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -446,7 +459,7 @@ const outputsJson = JSON.stringify(
       <div class="cost-body">
         <div class="cost-input-row">
           <label for="price-per-unit" class="cost-label">
-            Price per {singularizeUnit(primaryOutput?.unit)} ($)
+            Price per <span id="price-unit" data-default-unit={singularizeUnit(primaryOutput?.unit)}>{singularizeUnit(primaryOutput?.unit)}</span> ($)
           </label>
           <div class="cost-input-wrap">
             <span class="cost-dollar">$</span>
@@ -483,6 +496,19 @@ const outputsJson = JSON.stringify(
 </div>
 
 <style>
+  .rectangle-editor { display:flex; flex-wrap:wrap; gap:.35rem; margin-top:.4rem; }
+  .rectangle-editor input { width:6rem; padding:.35rem; border:1px solid var(--border-default); border-radius:4px; }
+  .rectangle-editor button { padding:.25rem .5rem; cursor:pointer; }
+  .project-layout, #project-handoffs { margin-block: 1rem; }
+  .project-layout { border: 1px solid var(--border-default); border-radius: .75rem; overflow: hidden; }
+  .project-layout summary { cursor: pointer; padding: .8rem 1rem; font-weight: 650; }
+  #project-layout { padding: 0 1rem .8rem; overflow-wrap: anywhere; }
+  #project-layout :global(p) { margin-block: .5rem; line-height: 1.5; }
+  #project-layout :global(p:empty) { display: none; }
+  #project-layout :global(svg) { display: block; max-width: 36rem; margin: .75rem auto; border: 1px solid #cbd8dc; border-radius: .45rem; color: #265769; background: radial-gradient(circle, #d2dfe1 .7px, transparent .85px) 0 0 / 14px 14px, #f8fbfb; stroke-linejoin: round; stroke-linecap: round; }
+  #project-handoffs :global(a) { display: block; padding-block: .25rem; }
+  @media print { #project-handoffs { display: none; } }
+
   /* ── Print header (hidden on screen) ────────────────── */
   .print-header         { display: none; }
   .print-inputs-summary { display: none; }
@@ -1300,6 +1326,11 @@ const outputsJson = JSON.stringify(
 </style>
 
 <script>
+  import { formatNumber } from '../../utils/format';
+  import { purchaseOutputs, isMeasurementSheet } from '../../calculators/order-checklist';
+  import { renderSections } from '../../calculators/section-summary';
+  import { renderLayout } from '../../calculators/project-layout';
+  import { projectHandoffs } from '../../calculators/project-handoffs';
   import { validateInputs } from '../../calculators/validation';
   import type { InputField } from '../../calculators/_types';
   import { formulaRegistry } from '../../calculators/client-registry';
@@ -1348,51 +1379,23 @@ const outputsJson = JSON.stringify(
   } catch {}
 
   const INPUTS_KEY      = `cc-inputs-${slug}`;
-  const PRICE_KEY       = `cc-price-${slug}`;
-  const UNITS_KEY       = 'cc-units';
-  const GLOBAL_PRICES_KEY = 'cc-material-prices';
-
-  // Material key map: calc slug → global price key
-  const MATERIAL_KEY_MAP: Record<string, string> = {
-    'concrete-slab-calculator':        'concrete',
-    'concrete-driveway-calculator':    'concrete',
-    'concrete-footing-calculator':     'concrete',
-    'concrete-bags-calculator':        'concrete',
-    'concrete-block-calculator':       'concrete',
-    'concrete-column-calculator':      'concrete',
-    'post-hole-calculator':            'concrete',
-    'concrete-slab-rebar-calculator':  'concrete',
-    'gravel-calculator':               'gravel',
-    'french-drain-calculator':         'gravel',
-    'aggregate-calculator':            'gravel',
-    'paver-base-calculator':           'gravel',
-    'rebar-calculator':                'rebar',
-    'sand-calculator':                 'sand',
-    'topsoil-calculator':              'topsoil',
-    'mulch-calculator':                'mulch',
-    'asphalt-calculator':              'asphalt',
-    'lumber-calculator':               'lumber',
-    'board-foot-calculator':           'lumber',
-    'plywood-calculator':              'plywood',
-  };
-  const materialKey = MATERIAL_KEY_MAP[slug] ?? null;
-
-  function getGlobalPrice(): number | null {
-    if (!materialKey) return null;
-    try {
-      const prices = JSON.parse(localStorage.getItem(GLOBAL_PRICES_KEY) ?? '{}');
-      const v = prices[materialKey];
-      return typeof v === 'number' && v > 0 ? v : null;
-    } catch { return null; }
-  }
-
-  function saveGlobalPrice(price: number) {
-    if (!materialKey) return;
-    try {
-      const prices = JSON.parse(localStorage.getItem(GLOBAL_PRICES_KEY) ?? '{}');
-      prices[materialKey] = price;
-      localStorage.setItem(GLOBAL_PRICES_KEY, JSON.stringify(prices));
-    } catch {}
+  const UNITS_KEY = 'cc-units';
+  let activePriceKey = '';
+  function restoreProductPrice(inputs: Record<string, string | number>) {
+    if (!priceInput) return;
+    const primary = outputs.find(output => output.primary);
+    if (!primary) return;
+    const unit = currentUnit === 'metric' && primary.unitMetric ? primary.unitMetric : primary.unit;
+    const product = inputFields.filter(field =>
+      (!field.onlyIn || field.onlyIn === currentUnit) && field.id in inputs && (field.type === 'select' || /yield|coverage|bag_weight|block_size/.test(field.id))
+    ).map(field => [field.id, inputs[field.id]]);
+    const key = 'bbm-price-v2:' + JSON.stringify([location.pathname, primary.id, unit, product]);
+    if (key === activePriceKey) return;
+    activePriceKey = key;
+    priceInput.value = priceInput.defaultValue;
+    try { priceInput.value = localStorage.getItem(key) ?? priceInput.defaultValue; } catch {}
+    const label = document.getElementById('price-unit');
+    if (label) label.textContent = unit === primary.unit ? label.dataset.defaultUnit! : unit;
   }
 
   // Read unit pref — support old key for backward compat
@@ -1414,7 +1417,7 @@ const outputsJson = JSON.stringify(
       const row = el.closest<HTMLElement>('[data-only-in]');
       const onlyIn = row?.dataset.onlyIn;
       if (onlyIn && onlyIn !== 'both' && onlyIn !== currentUnit) return;
-      data[el.name] = el instanceof HTMLSelectElement ? el.value : (el.value === '' ? '' : Number(el.value));
+      data[el.name] = el instanceof HTMLSelectElement || el.type === 'text' ? el.value : (el.value === '' ? '' : Number(el.value));
     });
     return data;
   }
@@ -1428,8 +1431,7 @@ const outputsJson = JSON.stringify(
   }
 
   function fmt(n: number, decimals = 3): string {
-    if (!Number.isFinite(n)) n = 0;
-    return n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: decimals });
+    return formatNumber(n, decimals);
   }
 
   let hashDebounceTimer: ReturnType<typeof setTimeout> | null = null;
@@ -1465,6 +1467,7 @@ const outputsJson = JSON.stringify(
     }
     if (!validation.valid) return null;
     const inputs = validation.inputs;
+    restoreProductPrice(inputs);
     const results = formula(inputs, currentUnit);
     if (inputs.mortar_mode && inputs.mortar_mode !== "none") {
       const advanced = form.querySelector<HTMLDetailsElement>("details[data-advanced]");
@@ -1494,7 +1497,26 @@ const outputsJson = JSON.stringify(
       }
     });
 
+    if (['concrete-bags-calculator', 'grout-calculator', 'mortar-calculator'].includes(slug)) {
+      const description = widget.querySelector<HTMLElement>('.result-primary-desc');
+      const bag = inputFields.find(field => field.id === 'bag_size' && (!field.onlyIn || field.onlyIn === currentUnit));
+      const selected = bag?.options?.find(option => option.value === inputs.bag_size)?.label ?? 'Selected bag';
+      if (description) description.textContent = slug === 'concrete-bags-calculator'
+        ? selected + (inputs.bag_size === 'custom' ? ' · ' + fmt(results.yield_per_bag) + ' ft³ per bag' : '') + ' · includes ' + inputs.waste_pct + '% waste.'
+        : selected + (inputs.bag_size === 'custom' ? ' · ' + fmt(Number(inputs.custom_yield)) + ' ft³ per bag' : '') + ' · ' + fmt(results.bags_required) + (results.bags_required === 1 ? ' bag' : ' bags') + ' including ' + inputs.waste_pct + '% waste. Confirm mixed yield on the product label.';
+    }
     updateInterpretation(results, inputs);
+    const sections = document.getElementById('section-summary');
+    if (sections) renderSections(sections, inputs, currentUnit);
+    const layout = document.getElementById('project-layout');
+    if (layout) renderLayout(layout, slug, inputs, results, currentUnit);
+    const handoffs = document.getElementById('project-handoffs');
+    if (handoffs) handoffs.replaceChildren(...projectHandoffs(slug, inputs, results, currentUnit).map(({href,label}) => {
+      const link = document.createElement('a');
+      link.href = href;
+      link.textContent = label;
+      return link;
+    }));
 
     try { localStorage.setItem(INPUTS_KEY, JSON.stringify({ u: currentUnit, i: inputs })); } catch {}
     debounceUpdateHash(currentUnit, inputs);
@@ -1587,6 +1609,7 @@ const outputsJson = JSON.stringify(
     const shareUrl = url.toString();
     try { window.history.replaceState(null, '', shareUrl); } catch {}
     navigator.clipboard.writeText(shareUrl).then(() => {
+      recordAction('calculator_share');
       flashFeedback(shareBtn, shareLabel, 'Copied!', 'Copy link');
     }).catch(() => flashFeedback(shareBtn, shareLabel, 'Link ready', 'Copy link'));
   });
@@ -1626,16 +1649,49 @@ const outputsJson = JSON.stringify(
     const state = updateResults();
     if (!state) return;
     const { results } = state;
-    const lines: string[] = [`Order checklist — ${calcName}`, ''];
-    outputs.forEach(({ id, label, unit, unitMetric, availableWhen }) => {
-      if (availableWhen && !results[availableWhen]) { lines.push(`${label}: Requires product specifications`); return; }
-      const raw = results[id] ?? 0;
-      const unitLabel = currentUnit === 'metric' && unitMetric ? unitMetric : unit;
-      lines.push(`□  ${label}: ${fmt(raw, 2)} ${unitLabel}`.trimEnd());
-    });
-    lines.push('', `Source: ${window.location.href}`);
+    const inputs = state.inputs;
+    const measurements = isMeasurementSheet(slug);
+    const buys = purchaseOutputs(slug, currentUnit === 'metric', inputs.bag_size === 'custom');
+    const buy: string[] = [], measure: string[] = [], assumptions: string[] = [];
+    for (const field of inputFields.filter(field => !field.onlyIn || field.onlyIn === currentUnit)) {
+      if (!/density|yield|bag_size|bag_ft3|bag_litres|coverage|waste|mortar_mode/.test(field.id) && field.type !== 'rectangles') continue;
+      if (field.id.startsWith('custom_yield') && inputs.bag_size !== 'custom') continue;
+      const value = inputs[field.id];
+      if (value === '' || value === undefined) continue;
+      const display = field.options?.find(option => option.value === String(value))?.label ?? value;
+      assumptions.push(`${field.label}: ${display} ${field.unit ?? ''}`.trimEnd());
+    }
+    if (['stud-calculator','deck-footing-calculator'].includes(slug)) {
+      assumptions.push(outputs.find(output => output.primary)!.description);
+    }
+    const metric = currentUnit === 'metric';
+    const nonPreferred = (output: typeof outputs[number]) =>
+      (metric ? /^(ft|in|yd|lf|gal|lb|ac)/ : /^(m[²³]?|mm|kg|L|ha)$/).test(output.unit);
+    for (const output of [...outputs].sort((a,b) => Number(nonPreferred(a)) - Number(nonPreferred(b)))) {
+      const {id, label, unit, unitMetric, availableWhen} = output;
+      if (availableWhen && !results[availableWhen]) {
+        assumptions.push(label + ': Requires product specifications');
+        continue;
+      }
+      const raw = results[id];
+      if (!Number.isFinite(raw)) continue;
+      const unitLabel = metric && unitMetric ? unitMetric : unit;
+      const displayUnit = raw === 1 && /^(bags|sheets|blocks|rolls|panels|posts|boards|studs|tiles)$/.test(unitLabel) ? unitLabel.slice(0,-1) : unitLabel;
+      const row = `${label}: ${fmt(raw, 3)} ${displayUnit}`.trimEnd();
+      if (buys.has(id) && raw > 0) buy.push('□  ' + row);
+      else measure.push(row);
+    }
+    const lines = [(measurements ? 'Measurements' : 'Order checklist') + ' — ' + calcName];
+    if (buy.length) lines.push('', 'Buy', ...buy);
+    if (measure.length) lines.push('', 'Measure or cut / reference', ...measure);
+    if (assumptions.length) lines.push('', 'Assumptions', ...assumptions);
+    const source = new URL(location.href);
+    source.hash = '';
+    source.searchParams.set('unit', currentUnit);
+    for (const [key, value] of Object.entries(inputs)) source.searchParams.set(key, String(value));
+    lines.push('', 'Source: ' + source.href);
     navigator.clipboard.writeText(lines.join('\n')).then(() => {
-      flashFeedback(checklistBtn, checklistLabel, 'Copied!', 'Copy checklist');
+      flashFeedback(checklistBtn, checklistLabel, 'Copied!', measurements ? 'Copy measurements' : 'Copy checklist');
     });
   });
 
@@ -1690,34 +1746,31 @@ const outputsJson = JSON.stringify(
     // Build print inputs summary
     const summaryEl = document.getElementById('print-inputs-summary');
     if (summaryEl) {
-      const rows = Array.from(
-        form.querySelectorAll<HTMLElement>('.field-row')
-      ).filter((row) => {
-        const v = row.dataset.onlyIn;
-        return !v || v === 'both' || v === currentUnit;
-      }).map((row) => {
-        const labelText = row.querySelector('.field-label')?.childNodes[0]?.textContent?.trim() ?? '';
-        const vals = Array.from(row.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[name]'))
-          .map((inp) => {
-            const v = state.inputs[inp.name] ?? inp.value;
-            const unit = inp.closest('.input-wrap')?.querySelector('.field-unit')?.textContent ?? '';
-            return `${v}${unit ? ' ' + unit : ''}`;
-          }).join(' ');
-        return `<tr style="border-bottom:1px solid #eee"><td style="padding:3px 8px 3px 0;font-size:0.75rem;color:#555">${labelText}</td><td style="padding:3px 0;font-size:0.75rem;font-weight:600">${vals}</td></tr>`;
-      });
-      summaryEl.innerHTML = rows.length
-        ? `<p style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#888;margin-bottom:4px">Inputs</p><table style="border-collapse:collapse;width:100%">${rows.join('')}</table>`
-        : '';
+      const table = document.createElement('table');
+      table.createCaption().textContent = 'Inputs';
+      for (const field of inputFields) {
+        if (field.onlyIn && field.onlyIn !== currentUnit) continue;
+        const value = state.inputs[field.id];
+        if (value === undefined || value === '') continue;
+        const row = table.insertRow();
+        row.insertCell().textContent = field.label;
+        const option = field.options?.find(item => item.value === String(value));
+        row.insertCell().textContent = option?.label ?? [value, field.unit].filter(part => part !== undefined).join(' ');
+      }
+      summaryEl.replaceChildren(table);
     }
 
+    recordAction('calculator_print');
     window.print();
   });
 
   priceInput?.addEventListener('input', () => {
-    updateCost();
-    try { localStorage.setItem(PRICE_KEY, priceInput.value); } catch {}
-    const price = parseFloat(priceInput.value);
-    if (!isNaN(price) && price > 0) saveGlobalPrice(price);
+    const state = updateResults();
+    if (!state || !activePriceKey) return;
+    try {
+      if (priceInput.valueAsNumber > 0) localStorage.setItem(activePriceKey, priceInput.value);
+      else localStorage.removeItem(activePriceKey);
+    } catch {}
   });
 
   widget.querySelectorAll<HTMLButtonElement>('.unit-btn').forEach((btn) => {
@@ -1744,7 +1797,8 @@ const outputsJson = JSON.stringify(
           syncUnitLabels();
         }
         // Batch restore inputs before single updateResults calculation
-        restoreInputs(vals);
+        const defaults = Object.fromEntries(inputFields.filter(f => !f.onlyIn || f.onlyIn === currentUnit).map(f => [f.id, f.defaultValue]));
+        restoreInputs({...defaults, ...vals});
         updateResults();
         presetPills.forEach((p) => p.classList.remove('active'));
         pill.classList.add('active');
@@ -1754,12 +1808,41 @@ const outputsJson = JSON.stringify(
     });
   });
 
+  function recordAction(action: string) {
+    const analytics = window as Window & { gtag?: (...args: unknown[]) => void };
+    analytics.gtag?.('event', action, { calculator: slug, unit_system: currentUnit });
+  }
+  form.addEventListener('click', event => {
+    const button = event.target instanceof Element ? event.target.closest<HTMLElement>('[data-rect-sign]') : null;
+    const editor = button?.closest('.rectangle-editor');
+    if (!editor || !button) return;
+    const [length, width] = editor.querySelectorAll<HTMLInputElement>('input');
+    const field = editor.closest('.field-row')?.querySelector<HTMLInputElement>('input[name]');
+    if (!field) return;
+    for (const dimension of [length, width]) {
+      dimension.setCustomValidity(Number(dimension.value) > 0 ? '' : 'Enter a positive dimension.');
+      if (!dimension.reportValidity()) return;
+    }
+    field.value = [field.value, button.dataset.rectSign + length.value + 'x' + width.value].filter(Boolean).join(', ');
+    field.dispatchEvent(new Event('input', { bubbles: true }));
+    length.value = width.value = '';
+  });
+  let recordedCalculation = false;
+  widget.addEventListener('click', event => {
+    const target = event.target instanceof Element ? event.target.closest('button, a') : null;
+    if (target?.closest('#project-handoffs')) recordAction('calculator_handoff');
+  });
   let debounce: ReturnType<typeof setTimeout>;
   form.addEventListener('submit', (event) => { event.preventDefault(); updateResults(); });
   form.addEventListener('input', () => {
     presetPills.forEach((p) => p.classList.remove('active'));
     clearTimeout(debounce);
-    debounce = setTimeout(updateResults, 100);
+    debounce = setTimeout(() => {
+      if (updateResults() && !recordedCalculation) {
+        recordAction('calculator_used');
+        recordedCalculation = true;
+      }
+    }, 100);
   });
 
   // ── Init ──────────────────────────────────────────────
@@ -1789,7 +1872,7 @@ const outputsJson = JSON.stringify(
       if (parsed.u === 'imperial' || parsed.u === 'metric') {
         const compatible = !restoredUnit || restoredUnit === parsed.u;
         restoredUnit ??= parsed.u;
-        if (compatible && parsed.i && typeof parsed.i === 'object') restoreInputs(parsed.i, restoredUnit);
+        if (compatible && parsed.i && typeof parsed.i === 'object') restoreInputs(parsed.i, restoredUnit ?? currentUnit);
       }
     } catch {}
   } else if (!isProgrammaticPage) {
@@ -1800,7 +1883,7 @@ const outputsJson = JSON.stringify(
         if (parsed.i && (parsed.u === 'imperial' || parsed.u === 'metric')) {
           const compatible = !restoredUnit || restoredUnit === parsed.u;
           restoredUnit ??= parsed.u;
-          if (compatible) restoreInputs(parsed.i, restoredUnit);
+          if (compatible) restoreInputs(parsed.i, restoredUnit ?? currentUnit);
         } else if (!restoredUnit && savedUnit) {
           restoredUnit = savedUnit;
           restoreInputs(parsed, savedUnit); // Legacy maps require a known matching unit.
@@ -1808,11 +1891,6 @@ const outputsJson = JSON.stringify(
       }
     } catch {}
   }
-
-  try {
-    const savedPrice = localStorage.getItem(PRICE_KEY) ?? (getGlobalPrice()?.toString() ?? null);
-    if (savedPrice && priceInput) priceInput.value = savedPrice;
-  } catch {}
 
   // Persist resolved unit under new key (migrates old cc-unit-system silently)
   if (savedUnit) {

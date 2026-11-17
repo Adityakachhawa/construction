@@ -1,3 +1,4 @@
+import { sectionFields } from './project-sections';
 import type {
   CalculatorConfig,
   CalculatorInputMap,
@@ -37,6 +38,7 @@ export const concreteDrivewayCalculator: CalculatorConfig = {
   description:
     'Calculate exactly how much concrete you need for a driveway. Enter length, width, and thickness to get cubic yards, cubic feet, cubic meters, and an optional cost estimate.',
   inputs: [
+    ...sectionFields,
     // ── Imperial ──────────────────────────────────────
     {
       id: 'length_ft',

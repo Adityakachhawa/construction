@@ -1,3 +1,4 @@
+import { extraArea } from './project-sections';
 import { ceilQuantity } from './rounding';
 import type { CalculatorInputMap } from './_types';
 
@@ -19,7 +20,7 @@ export function rectVolumeImperial(inputs: CalculatorInputMap, thirdId: string):
   const width  = Number(inputs.width_ft  ?? 0) + Number(inputs.width_in  ?? 0) / 12;
   const thirdFt = Number(inputs[thirdId] ?? 0) / 12;
 
-  const ft3 = length * width * thirdFt;
+  const ft3 = (length * width + extraArea(inputs.sections_ft)) * thirdFt;
   const yd3 = ft3 * FT3_TO_YD3;
   const m3  = ft3 * FT3_TO_M3;
 
@@ -36,7 +37,7 @@ export function rectVolumeMetric(inputs: CalculatorInputMap, thirdId: string): R
   const width  = Number(inputs.width_m  ?? 0);
   const thirdM = Number(inputs[thirdId] ?? 0) / 1000;
 
-  const m3  = length * width * thirdM;
+  const m3  = (length * width + extraArea(inputs.sections_m)) * thirdM;
   const ft3 = m3 * M3_TO_FT3;
   const yd3 = m3 * M3_TO_YD3;
 

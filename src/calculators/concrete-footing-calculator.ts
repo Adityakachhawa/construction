@@ -1,3 +1,4 @@
+import { dimensionRows, listFields } from './dimension-rows';
 import type {
   CalculatorConfig,
   CalculatorInputMap,
@@ -14,13 +15,13 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
     const count      = Math.max(1, Math.round(Number(inputs.count ?? 1)));
     const costPerYd3 = Number(inputs.cost_per_yard ?? 0);
 
-    const single = rectVolFt3(lengthFt, widthFt, depthFt);
-    const cubic_yards  = Math.round(single.cubic_yards  * count * 1000) / 1000;
-    const cubic_feet   = Math.round(single.cubic_feet   * count * 100)  / 100;
-    const cubic_meters = Math.round(single.cubic_meters * count * 1000) / 1000;
+    const single = rectVolFt3(lengthFt * widthFt * depthFt * count + dimensionRows(inputs.extra_parts_ft).reduce((sum, [l,w,d]) => sum + l*w*d, 0), 1, 1);
+    const cubic_yards  = Math.round(single.cubic_yards  * 1000) / 1000;
+    const cubic_feet   = Math.round(single.cubic_feet   * 100)  / 100;
+    const cubic_meters = Math.round(single.cubic_meters * 1000) / 1000;
     const cost         = costPerYd3 > 0 ? Math.round(cubic_yards * costPerYd3 * 100) / 100 : 0;
 
-    return { cubic_yards, cubic_feet, cubic_meters, cost };
+    return { net_volume: single.cubic_feet, cubic_yards, cubic_feet, cubic_meters, cost };
   } else {
     const lengthM   = Number(inputs.length_m  ?? 0.6);
     const widthM    = Number(inputs.width_m   ?? 0.6);
@@ -28,13 +29,13 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
     const count     = Math.max(1, Math.round(Number(inputs.count ?? 1)));
     const costPerM3 = Number(inputs.cost_per_m3 ?? 0);
 
-    const single = rectVolM3(lengthM, widthM, depthM);
-    const cubic_meters = Math.round(single.cubic_meters * count * 1000) / 1000;
-    const cubic_feet   = Math.round(single.cubic_feet   * count * 100)  / 100;
-    const cubic_yards  = Math.round(single.cubic_yards  * count * 1000) / 1000;
+    const single = rectVolM3(lengthM * widthM * depthM * count + dimensionRows(inputs.extra_parts_m).reduce((sum, [l,w,d]) => sum + l*w*d, 0), 1, 1);
+    const cubic_meters = Math.round(single.cubic_meters * 1000) / 1000;
+    const cubic_feet   = Math.round(single.cubic_feet   * 100)  / 100;
+    const cubic_yards  = Math.round(single.cubic_yards  * 1000) / 1000;
     const cost         = costPerM3 > 0 ? Math.round(cubic_meters * costPerM3 * 100) / 100 : 0;
 
-    return { cubic_meters, cubic_feet, cubic_yards, cost };
+    return { net_volume: single.cubic_meters, cubic_meters, cubic_feet, cubic_yards, cost };
   }
 }
 
@@ -46,6 +47,7 @@ export const concreteFootingCalculator: CalculatorConfig = {
   description:
     'Calculate how much concrete you need for rectangular spread footings, strip footings, and pad footings. Enter length, width, depth, and number of footings for exact cubic yards and an optional cost estimate.',
   inputs: [
+    ...listFields('extra_parts', 'Additional sections: length x width x depth (ft)', 'Additional sections: length x width x depth (m)', 3),
     // ── Imperial ──────────────────────────────────────
     {
       id: 'length_ft',

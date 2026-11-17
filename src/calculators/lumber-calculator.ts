@@ -1,3 +1,4 @@
+import { dimensionRows, listFields } from './dimension-rows';
 import { ceilQuantity } from './rounding';
 import type {
   CalculatorConfig,
@@ -36,12 +37,16 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
       return { total_boards: 0, linear_feet: 0, linear_m: 0, board_feet: 0, volume_cuft: 0, volume_m3: 0, cost: 0 };
     }
 
-    const total_boards    = ceilQuantity(quantity * (1 + wastePct));
-    const linear_feet     = Math.round(total_boards * lengthFt * 10) / 10;
-    // Board feet = (thickness_in × width_in × length_ft × boards) / 12
-    const board_feet      = Math.round(thicknessIn * widthIn * lengthFt * total_boards / 12 * 100) / 100;
-    const volume_cuft     = Math.round(board_feet / 12 * 1000) / 1000;
-    const cost            = costPerBoard > 0 ? Math.round(total_boards * costPerBoard * 100) / 100 : 0;
+    const baseBoards = ceilQuantity(quantity * (1 + wastePct));
+    const stock = dimensionRows(inputs.stock_list_ft).map(([t,w,l,q]) => [t,w,l,ceilQuantity(q*(1+wastePct))]);
+    const total_boards = stock.reduce((sum,[,,,q]) => sum+q,baseBoards);
+    const linear = stock.reduce((sum,[,,l,q]) => sum+l*q,lengthFt*baseBoards);
+    const linear_feet = Math.round(linear*10)/10;
+    const baseBF = thicknessIn * widthIn * lengthFt * baseBoards / 12;
+    const bf = stock.reduce((sum,[t,w,l,q]) => sum + t*w*l*q/(12*(1)),baseBF);
+    const board_feet = Math.round(bf*100)/100;
+    const volume_cuft = Math.round(bf/12*1000)/1000;
+    const cost = Math.round(total_boards*costPerBoard*100)/100;
 
     return {
       total_boards,
@@ -62,15 +67,16 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
       return { total_boards: 0, linear_feet: 0, linear_m: 0, board_feet: 0, volume_cuft: 0, volume_m3: 0, cost: 0 };
     }
 
-    const total_boards = ceilQuantity(quantity * (1 + wastePct));
-    const linear_m     = Math.round(total_boards * lengthM * 10) / 10;
-    // Board feet (universal): convert mm to inches first
-    const thicknessIn  = thicknessMm / 25.4;
-    const widthIn      = widthMm / 25.4;
-    const lengthFt     = lengthM / 0.3048;
-    const board_feet   = Math.round(thicknessIn * widthIn * lengthFt * total_boards / 12 * 100) / 100;
-    const volume_m3    = Math.round((widthMm / 1000) * (thicknessMm / 1000) * lengthM * total_boards * 10000) / 10000;
-    const cost         = costPerBoard > 0 ? Math.round(total_boards * costPerBoard * 100) / 100 : 0;
+    const baseBoards = ceilQuantity(quantity * (1 + wastePct));
+    const stock = dimensionRows(inputs.stock_list_m).map(([t,w,l,q]) => [t,w,l,ceilQuantity(q*(1+wastePct))]);
+    const total_boards = stock.reduce((sum,[,,,q]) => sum+q,baseBoards);
+    const linear = stock.reduce((sum,[,,l,q]) => sum+l*q,lengthM*baseBoards);
+    const linear_m = Math.round(linear*10)/10;
+    const baseBF = thicknessMm * widthMm * lengthM / (25.4**2 * 0.3048) * baseBoards / 12;
+    const bf = stock.reduce((sum,[t,w,l,q]) => sum + t*w*l*q/(12*(25.4**2 * 0.3048)),baseBF);
+    const board_feet = Math.round(bf*100)/100;
+    const volume_m3 = Math.round(bf/12*0.3048**3*10000)/10000;
+    const cost = Math.round(total_boards*costPerBoard*100)/100;
 
     return {
       total_boards,
@@ -92,6 +98,7 @@ export const lumberCalculator: CalculatorConfig = {
   description:
     'Calculate lumber quantities, board feet, linear feet, and project cost for any framing or carpentry project. Supports common sizes (2×4 through 2×12) and custom dimensions with adjustable waste percentage.',
   inputs: [
+    ...listFields('stock_list', 'More stock: thickness (in) x width (in) x length (ft) x quantity', 'More stock: thickness (mm) x width (mm) x length (m) x quantity', 4),
     // ── Imperial ──────────────────────────────────────
     {
       id: 'lumber_size',
@@ -188,7 +195,7 @@ export const lumberCalculator: CalculatorConfig = {
     },
     {
       id: 'cost_per_board',
-      label: 'Cost per Board',
+      label: 'Cost per board (same rate for all sizes)',
       type: 'number',
       unit: '$',
       min: 0,
@@ -268,7 +275,7 @@ export const lumberCalculator: CalculatorConfig = {
     },
     {
       id: 'cost_per_board',
-      label: 'Cost per Board',
+      label: 'Cost per board (same rate for all sizes)',
       type: 'number',
       unit: '$',
       min: 0,

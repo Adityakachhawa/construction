@@ -1,3 +1,5 @@
+import { dimensionRows, listFields } from './dimension-rows';
+import { sectionFields } from './project-sections';
 import { ceilQuantity } from './rounding';
 import type {
   CalculatorConfig,
@@ -16,6 +18,13 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
   const vol = unitSystem === 'imperial'
     ? rectVolumeImperial(inputs, 'thickness')
     : rectVolumeMetric(inputs, 'thickness_mm');
+  const parts = dimensionRows(unitSystem === 'imperial' ? inputs.extra_parts_ft : inputs.extra_parts_m);
+  const extra = parts.reduce((sum, [length,width,depth]) => sum + length*width*depth, 0);
+  if (extra > 0) {
+    vol.cubic_feet += unitSystem === 'imperial' ? extra : extra / 0.3048**3;
+    vol.cubic_meters = vol.cubic_feet * 0.3048**3;
+    vol.cubic_yards = vol.cubic_feet / 27;
+  }
   const ft3 = vol.cubic_feet;
   // Raw: bag count for the exact calculated volume
   const raw60 = ceilQuantity(ft3 / FT3_PER_60LB_BAG);
@@ -40,6 +49,8 @@ export const concreteSlab: CalculatorConfig = {
   description:
     'Calculate exactly how much concrete you need for any slab. Enter length, width, and thickness to get cubic yards, cubic feet, and cubic meters instantly.',
   inputs: [
+    ...listFields('extra_parts', 'Extra pour / thickening (incremental depth): length x width x depth (ft)', 'Extra pour / thickening (incremental depth): length x width x depth (m)', 3),
+    ...sectionFields,
     // ── Imperial ──────────────────────────────────────
     {
       id: 'length_ft',

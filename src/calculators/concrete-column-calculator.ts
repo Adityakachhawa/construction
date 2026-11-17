@@ -1,3 +1,4 @@
+import { dimensionRows, listFields } from './dimension-rows';
 import type {
   CalculatorConfig,
   CalculatorInputMap,
@@ -16,13 +17,14 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
     const columns    = Math.max(1, Math.round(Number(inputs.columns ?? 1)));
 
     const single = cylVolumeImperial(diameterIn, heightIn);
-    const bags   = bagsFromFeet(single.cubic_feet * columns, BAG_CUBIC_FEET);
-
+    const total = dimensionRows(inputs.extra_parts_ft).reduce((sum, [diameter, height]) => sum + Math.PI * (diameter/2)**2 * height, single.cubic_feet * columns);
+    const cubic_feet = total;
     return {
-      cubic_yards:  Math.round(single.cubic_yards  * columns * 1000) / 1000,
-      cubic_feet:   Math.round(single.cubic_feet   * columns * 1000) / 1000,
-      cubic_meters: Math.round(single.cubic_meters * columns * 1000) / 1000,
-      bags,
+      net_volume: total,
+      cubic_feet: Math.round(cubic_feet * 1000) / 1000,
+      cubic_yards: Math.round(cubic_feet / 27 * 1000) / 1000,
+      cubic_meters: Math.round(cubic_feet * 0.3048**3 * 1000) / 1000,
+      bags: bagsFromFeet(cubic_feet, BAG_CUBIC_FEET),
     };
   } else {
     const diameterMm = Number(inputs.diameter_mm ?? 250);
@@ -30,13 +32,14 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
     const columns    = Math.max(1, Math.round(Number(inputs.columns ?? 1)));
 
     const single = cylVolumeMetric(diameterMm, heightMm);
-    const bags   = bagsFromFeet(single.cubic_feet * columns, BAG_CUBIC_FEET);
-
+    const total = dimensionRows(inputs.extra_parts_m).reduce((sum, [diameter, height]) => sum + Math.PI * (diameter/2)**2 * height, single.cubic_meters * columns);
+    const cubic_feet = total / 0.3048**3;
     return {
-      cubic_meters: Math.round(single.cubic_meters * columns * 1000) / 1000,
-      cubic_feet:   Math.round(single.cubic_feet   * columns * 1000) / 1000,
-      cubic_yards:  Math.round(single.cubic_yards  * columns * 1000) / 1000,
-      bags,
+      net_volume: total,
+      cubic_feet: Math.round(cubic_feet * 1000) / 1000,
+      cubic_yards: Math.round(cubic_feet / 27 * 1000) / 1000,
+      cubic_meters: Math.round(cubic_feet * 0.3048**3 * 1000) / 1000,
+      bags: bagsFromFeet(cubic_feet, BAG_CUBIC_FEET),
     };
   }
 }
@@ -48,6 +51,7 @@ export const concreteColumnCalculator: CalculatorConfig = {
   description:
     'Calculate how much concrete you need for round columns, piers, and sonotubes. Enter diameter, height, and number of columns to get cubic yards, cubic feet, cubic meters, and 80 lb bags.',
   inputs: [
+    ...listFields('extra_parts', 'Additional columns: diameter x height (ft)', 'Additional columns: diameter x height (m)', 2),
     // ── Imperial ──────────────────────────────────────
     {
       id: 'diameter_in',

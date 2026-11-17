@@ -182,11 +182,11 @@ const introMap: Record<string, string> = {
   'roof-pitch-calculator':
     'Convert between roof pitch, angle, and slope, and get rafter length from rise and run. Enter rise and run to see the X:12 pitch ratio, the angle in degrees, the slope percentage, and the rafter length. The reference tool for reading and communicating roof slope.',
   'rafter-calculator':
-    'Calculate rafter length, overhang, roof angle, and slope from rise and run using the Pythagorean method. Enter rise, run, and any overhang to get the full rafter length to cut. Pairs with the roof pitch calculator for laying out a roof from scratch.',
+    'Calculate rafter length, overhang, roof angle, and slope from rise and run using the Pythagorean method. Enter pitch or angle, horizontal overhang and optionally the building width and centered ridge thickness to estimate slope length. Pairs with the roof pitch calculator for laying out a roof from scratch.',
   'stair-calculator':
-    'Estimate a straight staircase: number of risers and treads, exact riser height, total run, stringer length, and stair angle. Enter your total rise and preferred riser height and the calculator divides it into even steps. Default riser and tread targets follow common IRC limits (max 7¾ in riser, min 10 in tread).',
+    'Estimate a straight staircase: number of risers and treads, exact riser height, total run, stringer length, and stair angle. Enter your total rise and preferred riser height and the calculator divides it into even steps. Enter an available horizontal run to compare tread going, step pitch and cumulative heights.',
   'flooring-calculator':
-    'Estimate flooring by area and by the box for any room. Enter the room dimensions and your box coverage to get square footage, the amount needed with waste, and how many boxes to buy. Works for laminate, hardwood, vinyl plank, and tile.',
+    'Estimate flooring by area and by the box for any room. Enter the room dimensions and your box coverage to get square footage, the amount needed with waste, and how many boxes to buy. Add rooms and subtract openings before rounding to whole boxes for laminate, hardwood, vinyl plank, or tile.',
   'square-footage-calculator':
     'Calculate the square footage of a room or area, for a rectangle, square, circle, or triangle (isosceles for perimeter). Enter the shape dimensions to get area in square feet and square meters. The starting point for flooring, paint, tiling, and most material estimates.',
   'asphalt-calculator':

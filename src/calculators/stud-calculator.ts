@@ -1,3 +1,4 @@
+import { dimensionRows } from './dimension-rows';
 import { ceilQuantity } from './rounding';
 import type {
   CalculatorConfig,
@@ -33,7 +34,10 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
     const field_studs_gross = Math.floor(lengthFt / spacingFt) + 1;
     // Each opening displaces ⌊opening_width / spacing⌋ field studs
     const studs_per_opening = openingCount > 0 ? Math.floor(openingWFt / spacingFt) : 0;
-    const field_studs = Math.max(0, field_studs_gross - openingCount * studs_per_opening);
+    const positioned = dimensionRows(inputs.stud_openings_ft);
+    const displaced = positioned.reduce((sum, [start, width]) =>
+      sum + Math.max(0, Math.ceil((start + width) / spacingFt) - Math.floor(start / spacingFt) - 1), 0);
+    const field_studs = Math.max(0, field_studs_gross - (positioned.length ? displaced : openingCount * studs_per_opening));
 
     // Corner studs: 2 per wall end (king + trimmer approach) = 4 extra per independent wall
     // Standard practice: 3-stud corner assembly = 2 extra beyond the last field stud
@@ -44,7 +48,9 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
     const cripples_per_opening = openingCount > 0
       ? ceilQuantity(openingWFt / spacingFt) + 1
       : 0;
-    const opening_framing = openingCount * (4 + cripples_per_opening); // 2 king + 2 jack + cripples
+    const opening_framing = positioned.length
+      ? positioned.reduce((sum, [, width]) => sum + 5 + ceilQuantity(width / spacingFt), 0)
+      : openingCount * (4 + cripples_per_opening); // 2 king + 2 jack + cripples
 
     const total_studs = field_studs + corner_studs + opening_framing;
 
@@ -70,14 +76,19 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
 
     const field_studs_gross = Math.floor(lengthM / spacingM) + 1;
     const studs_per_opening = openingCount > 0 ? Math.floor(openingWM / spacingM) : 0;
-    const field_studs = Math.max(0, field_studs_gross - openingCount * studs_per_opening);
+    const positioned = dimensionRows(inputs.stud_openings_m);
+    const displaced = positioned.reduce((sum, [start, width]) =>
+      sum + Math.max(0, Math.ceil((start + width) / spacingM) - Math.floor(start / spacingM) - 1), 0);
+    const field_studs = Math.max(0, field_studs_gross - (positioned.length ? displaced : openingCount * studs_per_opening));
 
     const corner_studs = 4;
 
     const cripples_per_opening = openingCount > 0
       ? ceilQuantity(openingWM / spacingM) + 1
       : 0;
-    const opening_framing = openingCount * (4 + cripples_per_opening);
+    const opening_framing = positioned.length
+      ? positioned.reduce((sum, [, width]) => sum + 5 + ceilQuantity(width / spacingM), 0)
+      : openingCount * (4 + cripples_per_opening);
 
     const total_studs = field_studs + corner_studs + opening_framing;
 
@@ -102,6 +113,8 @@ export const studCalculator: CalculatorConfig = {
   description:
     'Calculate how many studs you need to frame a wall. Enter wall length, height, stud spacing, and number of openings to get total studs, corner framing, and opening framing counts.',
   inputs: [
+    { id:'stud_openings_ft', onlyIn:'imperial', type:'pairs', label:'Positioned openings (ft)', defaultValue:'', helpText:'Enter distance from wall start x opening width for each opening, in order. These positions replace the opening count and width. Height is shared.' },
+    { id:'stud_openings_m', onlyIn:'metric', type:'pairs', label:'Positioned openings (m)', defaultValue:'', helpText:'Enter distance from wall start x opening width for each opening, in order. These positions replace the opening count and width. Height is shared.' },
     // ── Imperial ──────────────────────────────────────
     {
       id: 'length_ft',
@@ -204,7 +217,8 @@ export const studCalculator: CalculatorConfig = {
     },
     {
       id: 'opening_height_ft',
-      label: 'Opening Height',
+      label: 'Opening Height (reference only)',
+      helpText: 'Record the opening height for your cut list. This piece-count estimate uses opening width and spacing.',
       type: 'number',
       unit: 'ft',
       min: 0,
@@ -294,7 +308,8 @@ export const studCalculator: CalculatorConfig = {
     },
     {
       id: 'opening_height_m',
-      label: 'Opening Height',
+      label: 'Opening Height (reference only)',
+      helpText: 'Record the opening height for your cut list. This piece-count estimate uses opening width and spacing.',
       type: 'number',
       unit: 'm',
       min: 0,
@@ -303,17 +318,16 @@ export const studCalculator: CalculatorConfig = {
       defaultValue: 2.1,
       defaultValueMetric: 2.1,
       onlyIn: 'metric',
-      helpText: 'Standard door RO: 2.1 m. Window: varies.',
     },
   ],
   outputs: [
     {
       id: 'total_studs',
-      label: 'Total Studs Required',
-      unit: 'studs',
+      label: 'Estimated framing pieces',
+      unit: 'pieces',
       format: 'number',
       primary: true,
-      description: 'Field studs + corner assembly + opening framing',
+      description: 'Includes four extra end/corner pieces per wall. Short opening pieces are counted individually; use your cut list to determine full-length stock.',
     },
     {
       id: 'field_studs',
@@ -324,15 +338,15 @@ export const studCalculator: CalculatorConfig = {
     },
     {
       id: 'corner_studs',
-      label: 'Corner Studs',
+      label: 'End/corner allowance',
       unit: 'studs',
       format: 'number',
       description: '3-stud corner assembly at each end (4 total)',
     },
     {
       id: 'opening_framing',
-      label: 'Opening Framing Studs',
-      unit: 'studs',
+      label: 'Opening pieces (including short cuts)',
+      unit: 'pieces',
       format: 'number',
       description: 'King studs, jack studs, and cripples for all openings',
     },
@@ -443,7 +457,6 @@ export const studCalculator: CalculatorConfig = {
         'Run this calculator once per wall, then add the totals. Shared corners between intersecting walls may let you reduce the count slightly — one wall\'s end studs can serve as the corner assembly for the adjacent wall. In practice, most framers calculate each wall independently and add 10% overall, since lumber is inexpensive relative to labour and a separate trip for a few extra studs costs far more than the boards themselves.',
     },
   ],
-  orderCallout: true,
   wasteFactor: {
     default: 10,
     range: '10–15%',

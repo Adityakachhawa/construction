@@ -1,3 +1,5 @@
+import { dimensionRows, listFields } from './dimension-rows';
+import { sectionFields, extraArea } from './project-sections';
 import { ceilQuantity } from './rounding';
 import type {
   CalculatorConfig,
@@ -21,7 +23,7 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
       return { cubic_yards: 0, cubic_feet: 0, cubic_meters: 0, expanded_yards: 0, expanded_m3: 0, truckloads: 0, cost: 0 };
     }
 
-    const vol             = rectVolFt3(lengthFt, widthFt, depthFt);
+    const vol             = rectVolFt3((lengthFt * widthFt + extraArea(inputs.sections_ft)) * depthFt + dimensionRows(inputs.extra_parts_ft).reduce((sum, [l,w,d]) => sum + l*w*d, 0), 1, 1);
     const expanded_yards  = vol.cubic_yards * (1 + swellPct);
     const truckloads      = ceilQuantity(expanded_yards / truckCapYd3);
     const cost            = costPerUnit > 0 ? Math.round(expanded_yards * costPerUnit * 100) / 100 : 0;
@@ -37,7 +39,7 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
       return { cubic_yards: 0, cubic_feet: 0, cubic_meters: 0, expanded_yards: 0, expanded_m3: 0, truckloads: 0, cost: 0 };
     }
 
-    const vol         = rectVolM3(lengthM, widthM, depthM);
+    const vol         = rectVolM3((lengthM * widthM + extraArea(inputs.sections_m)) * depthM + dimensionRows(inputs.extra_parts_m).reduce((sum, [l,w,d]) => sum + l*w*d, 0), 1, 1);
     const expanded_m3 = vol.cubic_meters * (1 + swellPct);
     const truckloads  = ceilQuantity(expanded_m3 / truckCapM3);
     const cost        = costPerUnit > 0 ? Math.round(expanded_m3 * costPerUnit * 100) / 100 : 0;
@@ -53,6 +55,8 @@ export const excavationCalculator: CalculatorConfig = {
   description:
     'Calculate excavation volume, expanded soil, truckloads, and removal cost for basements, pools, trenches, foundations, and grading projects. Accounts for soil swell factor so you order the right number of trucks.',
   inputs: [
+    ...listFields('extra_parts', 'Additional sections: length x width x depth (ft)', 'Additional sections: length x width x depth (m)', 3),
+    ...sectionFields,
     // ── Imperial ──────────────────────────────────────
     {
       id: 'length_ft',

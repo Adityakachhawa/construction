@@ -20,13 +20,18 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
       return { grid_bars: 0, linear_ft: 0, linear_m: 0, weight_lbs: 0, weight_kg: 0 };
     }
     // Rows run along width, spaced along length; columns run along length, spaced along width
-    const rowCount  = Math.floor(lengthFt / spacingFt) + 1;
-    const colCount  = Math.floor(widthFt  / spacingFt) + 1;
+    const inset = Number(inputs.edge_inset_in || 0) / 12;
+    const clearLength = Math.max(0, lengthFt - 2 * inset);
+    const clearWidth = Math.max(0, widthFt - 2 * inset);
+    const crossSpacing = Number(inputs.cross_spacing_in || 0) / 12 || spacingFt;
+    const rowCount = Math.floor(clearLength / spacingFt) + 1;
+    const colCount = Math.floor(clearWidth / crossSpacing) + 1;
     const grid_bars    = rowCount + colCount;
-    const linearFt  = Math.round((rowCount * widthFt + colCount * lengthFt) * (1 + wastePct) * 10) / 10;
+    const linearFt  = Math.round((rowCount * clearWidth + colCount * clearLength) * (1 + wastePct) * 10) / 10;
     const weightLbs = Math.round(linearFt * rebarSize.weight_lb_per_ft * 10) / 10;
 
     return {
+      rows: rowCount, columns: colCount,
       grid_bars,
       linear_ft: linearFt,
       linear_m: Math.round(linearFt * 0.3048 * 10) / 10,
@@ -45,13 +50,18 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
     if (spacingM <= 0 || lengthM <= 0 || widthM <= 0) {
       return { grid_bars: 0, linear_ft: 0, linear_m: 0, weight_lbs: 0, weight_kg: 0 };
     }
-    const rowCount  = Math.floor(lengthM / spacingM) + 1;
-    const colCount  = Math.floor(widthM  / spacingM) + 1;
+    const inset = Number(inputs.edge_inset_mm || 0) / 1000;
+    const clearLength = Math.max(0, lengthM - 2 * inset);
+    const clearWidth = Math.max(0, widthM - 2 * inset);
+    const crossSpacing = Number(inputs.cross_spacing_mm || 0) / 1000 || spacingM;
+    const rowCount = Math.floor(clearLength / spacingM) + 1;
+    const colCount = Math.floor(clearWidth / crossSpacing) + 1;
     const grid_bars    = rowCount + colCount;
-    const linearM   = Math.round((rowCount * widthM + colCount * lengthM) * (1 + wastePct) * 10) / 10;
+    const linearM   = Math.round((rowCount * clearWidth + colCount * clearLength) * (1 + wastePct) * 10) / 10;
     const weightKg  = Math.round(linearM * rebarSize.weight_kg_per_m * 10) / 10;
 
     return {
+      rows: rowCount, columns: colCount,
       grid_bars,
       linear_m: linearM,
       linear_ft: Math.round(linearM / 0.3048 * 10) / 10,
@@ -68,6 +78,10 @@ export const rebarCalculator: CalculatorConfig = {
   description:
     'Calculate how much rebar you need for a concrete slab. Enter slab dimensions and bar spacing to get total linear feet, number of Grid Bars / Lines, and estimated weight.',
   inputs: [
+    {id:'edge_inset_in',label:'Grid inset on each side (plan dimension)',unit:'in',type:'number',onlyIn:'imperial',min:0, max:10000000,defaultValue:0,helpText:'Measured to the grid boundary. Bar lengths use the same inset at each end.'},
+    {id:'edge_inset_mm',label:'Grid inset on each side (plan dimension)',unit:'mm',type:'number',onlyIn:'metric',min:0, max:10000000,defaultValue:0},
+    { id: 'cross_spacing_in', label: 'Spacing across width (optional)', type: 'number', unit: 'in', onlyIn: 'imperial', defaultValue: 0, min: 0, max:10000000, helpText: 'Zero uses the main spacing in both directions. Enter bar centers from your plan.' },
+    { id: 'cross_spacing_mm', label: 'Spacing across width (optional)', type: 'number', unit: 'mm', onlyIn: 'metric', defaultValue: 0, min: 0, max:10000000, helpText: 'Zero uses the main spacing in both directions. Enter bar centers from your plan.' },
     // ── Imperial ──────────────────────────────────────
     {
       id: 'length_ft',
@@ -217,6 +231,8 @@ export const rebarCalculator: CalculatorConfig = {
     },
   ],
   outputs: [
+    { id: 'rows', label: 'Bars running across width', format: 'number' },
+    { id: 'columns', label: 'Bars running along length', format: 'number' },
     {
       id: 'linear_ft',
       label: 'Total Linear Feet',

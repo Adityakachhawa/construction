@@ -1,3 +1,4 @@
+import { sectionFields, extraArea } from './project-sections';
 import { ceilQuantity } from './rounding';
 import type {
   CalculatorConfig,
@@ -32,7 +33,12 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
   let volume_cuyd: number;
   let volume_cum:  number;
 
-  if (unitSystem === 'imperial') {
+  const direct = Number(unitSystem === 'imperial' ? inputs.pour_ft3 : inputs.pour_m3);
+  if (direct > 0) {
+    volume_cuft = unitSystem === 'imperial' ? direct : direct / 0.3048**3;
+    volume_cum = volume_cuft * 0.3048**3;
+    volume_cuyd = volume_cuft / 27;
+  } else if (unitSystem === 'imperial') {
     const lengthFt = Number(inputs.length_ft ?? 0) + Number(inputs.length_in ?? 0) / 12;
     const widthFt  = Number(inputs.width_ft  ?? 0) + Number(inputs.width_in  ?? 0) / 12;
     const depthFt  = Number(inputs.depth_ft  ?? 0) + Number(inputs.depth_in  ?? 0) / 12;
@@ -41,7 +47,7 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
       return { volume_cuft: 0, volume_cuyd: 0, volume_cum: 0, net_bags: 0, bags_required: 0, yield_per_bag: 0 };
     }
 
-    volume_cuft = lengthFt * widthFt * depthFt;
+    volume_cuft = (lengthFt * widthFt + extraArea(inputs.sections_ft)) * depthFt;
     volume_cuyd = volume_cuft / 27;
     volume_cum  = volume_cuft * 0.0283168;
   } else {
@@ -53,7 +59,7 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
       return { volume_cuft: 0, volume_cuyd: 0, volume_cum: 0, net_bags: 0, bags_required: 0, yield_per_bag: 0 };
     }
 
-    volume_cum  = lengthM * widthM * depthM;
+    volume_cum  = (lengthM * widthM + extraArea(inputs.sections_m)) * depthM;
     volume_cuft = volume_cum / (0.3048 ** 3);
     volume_cuyd = volume_cum / (0.9144 ** 3);
   }
@@ -80,6 +86,9 @@ export const concreteBagsCalculator: CalculatorConfig = {
   description:
     'Calculate how many bags of concrete you need for slabs, footings, posts, patios, and other projects. Supports 40 lb, 50 lb, 60 lb, and 80 lb bags with adjustable waste factor.',
   inputs: [
+    ...sectionFields,
+    {id:'pour_ft3',label:'Known net pour volume (overrides dimensions)',unit:'ft³',type:'number',onlyIn:'imperial',min:0,max:1e10,defaultValue:0},
+    {id:'pour_m3',label:'Known net pour volume (overrides dimensions)',unit:'m³',type:'number',onlyIn:'metric',min:0,max:1e10,defaultValue:0},
     // ── Imperial ──────────────────────────────────────
     {
       id: 'length_ft',
@@ -273,7 +282,6 @@ export const concreteBagsCalculator: CalculatorConfig = {
       label: 'Concrete Volume',
       unit: 'yd³',
       format: 'volume',
-      primary: true,
       description: 'Total volume in cubic yards',
     },
     {
@@ -291,7 +299,8 @@ export const concreteBagsCalculator: CalculatorConfig = {
     },
     {
       id: 'bags_required',
-      label: 'Bags Required',
+      primary: true,
+      label: 'Bags to buy',
       unit: 'bags',
       format: 'number',
       description: 'Bags including waste factor — order this many',

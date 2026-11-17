@@ -1,3 +1,4 @@
+import { sectionFields } from './project-sections';
 import type {
   CalculatorConfig,
   CalculatorInputMap,
@@ -30,6 +31,7 @@ export const aggregateCalculator: CalculatorConfig = {
   description:
     'Calculate how much crushed stone or aggregate you need for driveways, drainage, base layers, and landscaping. Enter length, width, and depth to get cubic yards, cubic feet, cubic meters, and tons.',
   inputs: [
+    ...sectionFields,
     // ── Imperial ──────────────────────────────────────
     {
       id: 'length_ft',

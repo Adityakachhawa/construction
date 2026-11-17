@@ -1,3 +1,4 @@
+import { sectionFields, extraArea } from './project-sections';
 import { ceilQuantity } from './rounding';
 import type {
   CalculatorConfig,
@@ -13,7 +14,7 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
     const wastePct   = Number(inputs.waste_pct  ?? 10) / 100;
     const boxSqFt    = Number(inputs.box_coverage ?? 20);
 
-    const areaSqFt        = lengthFt * widthFt;
+    const areaSqFt        = lengthFt * widthFt + extraArea(inputs.sections_ft);
     const areaWithWaste   = areaSqFt * (1 + wastePct);
     const boxes           = boxSqFt > 0 ? ceilQuantity(areaWithWaste / boxSqFt) : 0;
 
@@ -29,7 +30,7 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
     const wastePct = Number(inputs.waste_pct ?? 10) / 100;
     const boxSqM   = Number(inputs.box_coverage_m2 ?? 1.85);
 
-    const areaSqM        = lengthM * widthM;
+    const areaSqM        = lengthM * widthM + extraArea(inputs.sections_m);
     const areaWithWaste  = areaSqM * (1 + wastePct);
     const boxes          = boxSqM > 0 ? ceilQuantity(areaWithWaste / boxSqM) : 0;
 
@@ -49,6 +50,11 @@ export const flooringCalculator: CalculatorConfig = {
   description:
     'Calculate how much flooring you need for any room. Enter room dimensions, waste percentage, and box coverage to get total square footage, flooring required with waste, and boxes to order.',
   inputs: [
+    ...sectionFields,
+    {id:'tile_length_in',label:'Tile length for grout estimate (optional)',unit:'in',type:'number',onlyIn:'imperial',min:0,max:48,defaultValue:0},
+    {id:'tile_width_in',label:'Tile width for grout estimate (optional)',unit:'in',type:'number',onlyIn:'imperial',min:0,max:48,defaultValue:0},
+    {id:'tile_length_mm',label:'Tile length for grout estimate (optional)',unit:'mm',type:'number',onlyIn:'metric',min:0,max:1200,defaultValue:0},
+    {id:'tile_width_mm',label:'Tile width for grout estimate (optional)',unit:'mm',type:'number',onlyIn:'metric',min:0,max:1200,defaultValue:0},
     // ── Imperial ──────────────────────────────────────
     {
       id: 'length_ft',

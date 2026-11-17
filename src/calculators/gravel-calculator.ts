@@ -1,3 +1,4 @@
+import { sectionFields } from './project-sections';
 import type {
   CalculatorConfig,
   CalculatorInputMap,
@@ -29,6 +30,7 @@ export const gravelCalculator: CalculatorConfig = {
   description:
     'Calculate how much gravel you need for driveways, paths, and landscaping. Get cubic yards, cubic feet, cubic meters, and tons of gravel instantly.',
   inputs: [
+    ...sectionFields,
     // ── Imperial ──────────────────────────────────────
     {
       id: 'length_ft',

@@ -1,6 +1,6 @@
 export type UnitSystem = 'imperial' | 'metric';
 
-export type InputType = 'number' | 'select' | 'radio';
+export type InputType = 'number' | 'select' | 'radio' | 'rectangles' | 'pairs' | 'dimensions';
 
 export interface SelectOption {
   value: string;
@@ -17,6 +17,7 @@ export interface InputField {
   max?: number;
   step?: number;
   options?: SelectOption[];
+  columns?: number;
   defaultValue: number | string;
   defaultValueMetric?: number | string;
   required?: boolean;

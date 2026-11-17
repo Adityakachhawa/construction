@@ -1,3 +1,4 @@
+import { sectionFields, extraArea } from './project-sections';
 import type {
   CalculatorConfig,
   CalculatorInputMap,
@@ -13,8 +14,8 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
     const baseDepIn  = Number(inputs.base_depth  ?? 4);
     const sandDepIn  = Number(inputs.sand_depth  ?? 1);
 
-    const gravel = rectVolFt3(lengthFt, widthFt, baseDepIn / 12);
-    const sand   = rectVolFt3(lengthFt, widthFt, sandDepIn / 12);
+    const gravel = rectVolFt3(lengthFt * widthFt + extraArea(inputs.sections_ft), 1, baseDepIn / 12);
+    const sand   = rectVolFt3(lengthFt * widthFt + extraArea(inputs.sections_ft), 1, sandDepIn / 12);
 
     return {
       gravel_cubic_yards:  gravel.cubic_yards,
@@ -30,8 +31,8 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
     const baseDepMm  = Number(inputs.base_depth_mm ?? 100);
     const sandDepMm  = Number(inputs.sand_depth_mm ?? 25);
 
-    const gravel = rectVolM3(lengthM, widthM, baseDepMm / 1000);
-    const sand   = rectVolM3(lengthM, widthM, sandDepMm / 1000);
+    const gravel = rectVolM3(lengthM * widthM + extraArea(inputs.sections_m), 1, baseDepMm / 1000);
+    const sand   = rectVolM3(lengthM * widthM + extraArea(inputs.sections_m), 1, sandDepMm / 1000);
 
     return {
       gravel_cubic_meters: gravel.cubic_meters,
@@ -51,6 +52,7 @@ export const paverBaseCalculator: CalculatorConfig = {
   description:
     'Calculate gravel base and sand bedding volumes for paver patios, driveways, and walkways. Get cubic yards, cubic feet, and cubic meters for both materials.',
   inputs: [
+    ...sectionFields,
     // ── Imperial ──────────────────────────────────────
     {
       id: 'length_ft',

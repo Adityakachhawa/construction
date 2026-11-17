@@ -70,7 +70,7 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
       return { wall_area_sqft: 0, wall_area_sqm: 0, unit_count: 0, mortar_cuft: 0, mortar_cuyd: 0, mortar_cum: 0, net_bags: 0, bags_required: 0 };
     }
 
-    wall_area_sqft = lengthFt * heightFt;
+    wall_area_sqft = Math.max(0, lengthFt * heightFt - Number(inputs.opening_area_ft || 0));
     wall_area_sqm  = wall_area_sqft * 0.092903;
   } else {
     const lengthM = Number(inputs.length_m ?? 0);
@@ -82,8 +82,8 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
 
     const lengthFt = lengthM / 0.3048;
     const heightFt = heightM / 0.3048;
-    wall_area_sqft = lengthFt * heightFt;
-    wall_area_sqm  = lengthM * heightM;
+    wall_area_sqft = Math.max(0, lengthFt * heightFt - Number(inputs.opening_area_ft || 0));
+    wall_area_sqm  = Math.max(0, lengthM * heightM - Number(inputs.opening_area_m || 0));
   }
 
   const mortar_cuft_net = wall_area_sqft * jointFactor;
@@ -98,9 +98,9 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
     wall_area_sqft: Math.round(wall_area_sqft * 100)  / 100,
     wall_area_sqm:  Math.round(wall_area_sqm  * 100)  / 100,
     unit_count,
-    mortar_cuft:    Math.round(mortar_cuft    * 100)  / 100,
-    mortar_cuyd:    Math.round(mortar_cuyd    * 1000) / 1000,
-    mortar_cum:     Math.round(mortar_cum     * 1000) / 1000,
+    mortar_cuft,
+    mortar_cuyd,
+    mortar_cum,
     net_bags,
     bags_required,
   };
@@ -113,6 +113,8 @@ export const mortarCalculator: CalculatorConfig = {
   description:
     'Calculate mortar volume, bags required, and unit counts for brick, block, stone, and masonry walls. Accounts for joint thickness, unit size, and waste factor.',
   inputs: [
+    { id:'opening_area_ft', label:'Total opening area', type:'number', unit:'ft²', onlyIn:'imperial', min:0, max:10000000, defaultValue:0 },
+    { id:'opening_area_m', label:'Total opening area', type:'number', unit:'m²', onlyIn:'metric', min:0, max:10000000, defaultValue:0 },
     // ── Imperial ──────────────────────────────────────
     {
       id: 'length_ft',
@@ -310,7 +312,6 @@ export const mortarCalculator: CalculatorConfig = {
       label: 'Wall Area',
       unit: 'ft²',
       format: 'area',
-      primary: true,
     },
     {
       id: 'wall_area_sqm',
@@ -327,6 +328,7 @@ export const mortarCalculator: CalculatorConfig = {
     },
     {
       id: 'mortar_cuft',
+      primary: true,
       label: 'Estimated Mortar Volume',
       unit: 'ft³',
       format: 'volume',
@@ -459,7 +461,6 @@ export const mortarCalculator: CalculatorConfig = {
         'Mortar is used to bond masonry units together — it fills the joints between bricks, blocks, or stones and provides structural adhesion. Grout fills cavities inside CMU cores or the gaps in tile installations. The two mixes have different proportions and are not interchangeable.',
     },
   ],
-  orderCallout: { hint: 'Illustrative area allowance only; not a verified material purchase quantity.' },
   wasteFactor: {
     default: 15,
     range: '10–20%',

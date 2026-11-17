@@ -1,3 +1,4 @@
+import { dimensionRows, listFields } from './dimension-rows';
 import type {
   CalculatorConfig,
   CalculatorInputMap,
@@ -24,20 +25,24 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
     }
 
     // Trench volume (bank)
-    const trench_cuft = lengthFt * widthFt * depthFt;
+    const segments = dimensionRows(inputs.extra_parts_ft);
+    const pipeRun = segments.reduce((sum, [l]) => sum + l, lengthFt);
+    const trench_cuft = lengthFt * widthFt * depthFt + segments.reduce((sum, [l,w,d]) => sum + l*w*d, 0);
     const trench_cuyd = trench_cuft / 27;
 
     // Gravel volume
-    const gravel_net_cuft = trench_cuft * gravelPct;
+    const gravel_net_cuft = inputs.gravel_method === 'pipe'
+      ? trench_cuft - Math.PI * (Number(inputs.pipe_diameter_in) / 24) ** 2 * pipeRun
+      : trench_cuft * gravelPct;
     const gravel_cuft  = Math.round(gravel_net_cuft * (1 + wastePct) * 100) / 100;
     const gravel_cuyd  = Math.round(gravel_cuft / 27 * 100) / 100;
     const gravel_cum   = Math.round(gravel_cuft * 0.0283168 * 1000) / 1000;
 
     // Pipe length
-    const pipe_length_ft = Math.round(lengthFt * (1 + wastePct) * 10) / 10;
+    const pipe_length_ft = Math.round(pipeRun * (1 + wastePct) * 10) / 10;
 
     // Filter fabric area: (width + 2×depth) × length × waste factor
-    const fabric_sqft = Math.round((widthFt + 2 * depthFt) * lengthFt * (1 + wastePct) * 100) / 100;
+    const fabric_sqft = Math.round(((widthFt + 2 * depthFt) * lengthFt + segments.reduce((sum, [l,w,d]) => sum + (w+2*d)*l, 0)) * (1 + wastePct) * 100) / 100;
     const fabric_sqm  = Math.round(fabric_sqft * 0.092903 * 100) / 100;
 
     // Excavation volume with over-dig
@@ -71,20 +76,24 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
     }
 
     // Trench volume
-    const trench_cum  = lengthM * widthM * depthM;
+    const segments = dimensionRows(inputs.extra_parts_m);
+    const pipeRun = segments.reduce((sum, [l]) => sum + l, lengthM);
+    const trench_cum  = lengthM * widthM * depthM + segments.reduce((sum, [l,w,d]) => sum + l*w*d, 0);
     const trench_cuyd = trench_cum * 1.30795;
 
     // Gravel volume
-    const gravel_net_cum = trench_cum * gravelPct;
+    const gravel_net_cum = inputs.gravel_method === 'pipe'
+      ? trench_cum - Math.PI * (Number(inputs.pipe_diameter_mm) / 2000) ** 2 * pipeRun
+      : trench_cum * gravelPct;
     const gravel_cum  = Math.round(gravel_net_cum * (1 + wastePct) * 1000) / 1000;
     const gravel_cuyd = Math.round(gravel_cum * 1.30795 * 100) / 100;
     const gravel_cuft = Math.round(gravel_cum * 35.3147 * 100) / 100;
 
     // Pipe length
-    const pipe_length_m = Math.round(lengthM * (1 + wastePct) * 10) / 10;
+    const pipe_length_m = Math.round(pipeRun * (1 + wastePct) * 10) / 10;
 
     // Filter fabric area
-    const fabric_sqm  = Math.round((widthM + 2 * depthM) * lengthM * (1 + wastePct) * 100) / 100;
+    const fabric_sqm  = Math.round(((widthM + 2 * depthM) * lengthM + segments.reduce((sum, [l,w,d]) => sum + (w+2*d)*l, 0)) * (1 + wastePct) * 100) / 100;
     const fabric_sqft = Math.round(fabric_sqm * 10.7639 * 100) / 100;
 
     // Excavation volume with over-dig
@@ -114,6 +123,8 @@ export const frenchDrainCalculator: CalculatorConfig = {
   description:
     'Calculate gravel, perforated pipe, filter fabric, and trench excavation for a French drain system. Accounts for pipe displacement and waste factor so you order the right amounts.',
   inputs: [
+    ...listFields('extra_parts', 'Additional sections: length x width x depth (ft)', 'Additional sections: length x width x depth (m)', 3),
+    { id:'gravel_method', label:'Gravel volume basis', type:'select', defaultValue:'fraction', options:[{value:'fraction',label:'Percentage of trench (includes displacement allowance)'},{value:'pipe',label:'Full trench less pipe outside volume'}] },
     // ── Imperial ──────────────────────────────────────
     {
       id: 'length_ft',
@@ -192,7 +203,7 @@ export const frenchDrainCalculator: CalculatorConfig = {
     },
     {
       id: 'pipe_diameter_in',
-      label: 'Pipe Diameter',
+      label: 'Pipe Outside Diameter',
       type: 'number',
       unit: 'in',
       min: 2,
@@ -272,7 +283,7 @@ export const frenchDrainCalculator: CalculatorConfig = {
     },
     {
       id: 'pipe_diameter_mm',
-      label: 'Pipe Diameter',
+      label: 'Pipe Outside Diameter',
       type: 'number',
       unit: 'mm',
       min: 50,

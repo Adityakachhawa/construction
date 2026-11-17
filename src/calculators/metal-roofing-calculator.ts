@@ -17,8 +17,14 @@ function getPitchFactor(pitchKey: string): number {
   return Math.hypot(1, (Number.isFinite(pitch) && pitch >= 0 ? pitch : 6) / 12);
 }
 
+function panelRowCount(slope: number, length: number, lap: number): number {
+  if (slope <= length) return 1;
+  return length > lap ? 1 + ceilQuantity((slope - length) / (length - lap)) : 0;
+}
+
 export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
-  const pitchKey    = String(inputs.pitch ?? '6');
+  const faces = inputs.roof_shape === "shed" ? 1 : 2;
+  const pitchKey    = String(inputs.pitch === 'custom' ? inputs.custom_pitch ?? 6 : inputs.pitch ?? '6');
   const wastePct    = Number(inputs.waste_pct ?? 10) / 100;
   const pitchFactor = getPitchFactor(pitchKey);
 
@@ -37,12 +43,12 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
     const material_area_sqft = Math.round(roof_area_sqft * (1 + wastePct) * 10) / 10;
 
     // Slope-adjusted rafter length per panel run
-    const slopeWidthFt   = (widthFt / 2) * pitchFactor; // one slope side
+    const slopeWidthFt   = (widthFt / faces) * pitchFactor; // one slope side
     const panelCoverFt   = panelCoverIn / 12;
     // Panels per slope: columns = ⌈length / panel_cover⌉, rows = ⌈slopeWidth / panel_length⌉
     const panelCols      = ceilQuantity(lengthFt / panelCoverFt);
-    const panelRows      = ceilQuantity(slopeWidthFt / panelLengthFt);
-    const panels         = panelCols * panelRows * 2; // × 2 for both slopes
+    const panelRows      = panelRowCount(slopeWidthFt, panelLengthFt, Number(inputs.end_lap_in ?? 0) / 12);
+    const panels         = panelCols * panelRows * faces;
 
     const fasteners      = ceilQuantity(material_area_sqft * FASTENERS_PER_SQFT);
 
@@ -71,11 +77,11 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
     const roof_area_sqm    = Math.round(footprint_sqm * pitchFactor * 100) / 100;
     const material_area_sqm = Math.round(roof_area_sqm * (1 + wastePct) * 100) / 100;
 
-    const slopeWidthM    = (widthM / 2) * pitchFactor;
+    const slopeWidthM    = (widthM / faces) * pitchFactor;
     const panelCoverM    = panelCoverMm / 1000;
     const panelCols      = ceilQuantity(lengthM / panelCoverM);
-    const panelRows      = ceilQuantity(slopeWidthM / panelLengthM);
-    const panels         = panelCols * panelRows * 2;
+    const panelRows      = panelRowCount(slopeWidthM, panelLengthM, Number(inputs.end_lap_mm ?? 0) / 1000);
+    const panels         = panelCols * panelRows * faces;
 
     const fasteners      = ceilQuantity(material_area_sqm * FASTENERS_PER_SQM);
 
@@ -94,6 +100,7 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
 }
 
 const PITCH_OPTIONS = [
+  { value:'custom', label:'Use measured pitch' },
   { value: '0',  label: 'Flat / 0:12' },
   { value: '2',  label: '2:12 — low slope' },
   { value: '3',  label: '3:12' },
@@ -116,6 +123,10 @@ export const metalRoofingCalculator: CalculatorConfig = {
   description:
     'Calculate metal roofing panel count, roof area, and fastener quantities. Enter roof dimensions, panel coverage width, panel length, pitch, and waste percentage for accurate metal roofing estimates.',
   inputs: [
+    {id:'custom_pitch',label:'Measured rise per 12 (custom pitch)',type:'number',min:0,max:10000,defaultValue:6},
+    { id: 'roof_shape', label: 'Roof shape', type: 'select', defaultValue: 'gable', options: [{value:'gable', label:'Two equal slopes'}, {value:'shed', label:'Single slope'}] },
+    { id: 'end_lap_in', label: 'Panel end lap per joint', type: 'number', onlyIn:'imperial', unit:'in', min:0, max:10000000, defaultValue:0, helpText:'Enter the panel manufacturer’s end lap for multi-row runs.' },
+    { id: 'end_lap_mm', label: 'Panel end lap per joint', type: 'number', onlyIn:'metric', unit:'mm', min:0, max:10000000, defaultValue:0, helpText:'Enter the panel manufacturer’s end lap for multi-row runs.' },
     // ── Imperial ──────────────────────────────────────
     {
       id: 'length_ft',

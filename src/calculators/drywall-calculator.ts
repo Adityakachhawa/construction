@@ -1,3 +1,4 @@
+import { sectionFields, extraArea } from './project-sections';
 import { ceilQuantity } from './rounding';
 import type {
   CalculatorConfig,
@@ -37,7 +38,7 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
     const sheet = SHEET_SIZES_FT[sheetKey] ?? SHEET_SIZES_FT['4x8'];
     const sheetAreaSqFt = sheet.w * sheet.h;
 
-    const totalAreaSqFt  = wallHeightFt * wallWidthFt * numWalls;
+    const totalAreaSqFt  = wallHeightFt * wallWidthFt * numWalls + extraArea(inputs.sections_ft);
     const sheetsNet      = totalAreaSqFt / sheetAreaSqFt;
     const sheetsWithWaste = ceilQuantity(sheetsNet * WASTE_FACTOR);
 
@@ -62,7 +63,7 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
     const sheet = SHEET_SIZES_M[sheetKey] ?? SHEET_SIZES_M['4x8'];
     const sheetAreaM2 = sheet.w * sheet.h;
 
-    const totalAreaM2    = wallHeightM * wallWidthM * numWalls;
+    const totalAreaM2    = wallHeightM * wallWidthM * numWalls + extraArea(inputs.sections_m);
     const sheetsNet      = totalAreaM2 / sheetAreaM2;
     const sheetsWithWaste = ceilQuantity(sheetsNet * WASTE_FACTOR);
 
@@ -90,6 +91,8 @@ export const drywallCalculator: CalculatorConfig = {
   description:
     'Calculate how much drywall you need for any room or project. Enter wall dimensions to get total sheets, joint compound, tape, and estimated cost — with a 10% waste factor included.',
   inputs: [
+    ...sectionFields,
+    {id:'sheet_orientation',label:'Sheet layout direction',type:'select',defaultValue:'normal',options:[{value:'normal',label:'Long edge horizontal'}, {value:'rotated',label:'Long edge vertical'}]},
     // ── Imperial ──────────────────────────────────────
     {
       id: 'wall_height_ft',

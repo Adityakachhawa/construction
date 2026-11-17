@@ -87,7 +87,7 @@ export const interpretRegistry: Record<string, InterpretFn> = {
     const nextLen = nextLumberLength(totalFt);
     return [
       `Order ${nextLen}-foot lumber — the next standard length above your ${fmt(totalFt)} ft total rafter.`,
-      `At a ${fmt(pitchRatio, 2)}:12 pitch, set your saw bevel to ${fmt(angleDeg, 1)}° for plumb cuts at the ridge and bird's-mouth.`,
+      `At a ${fmt(pitchRatio, 2)}:12 pitch, the roof rises ${fmt(angleDeg, 1)}° above horizontal. Use your project details for cut references.`,
     ];
   },
 
@@ -98,8 +98,8 @@ export const interpretRegistry: Record<string, InterpretFn> = {
     const opening = outputs.opening_framing ?? 0;
     if (total <= 0) return [];
     return [
-      `This wall requires ${fmt(total, 0)} studs: ${fmt(field, 0)} field studs, ${fmt(corner, 0)} corner studs, and ${fmt(opening, 0)} opening framing studs.`,
-      `Order ${fmt(ceilQuantity(total * 1.1), 0)} studs to include a 10% allowance for miscuts and splits.`,
+      `Framing breakdown: ${fmt(field, 0)} field studs, ${fmt(corner, 0)} extra end/corner pieces, and ${fmt(opening, 0)} opening pieces.`,
+      'Group short cuts by stock length before ordering boards.',
     ];
   },
 

@@ -24,7 +24,10 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
     const waste_area_sqft   = Math.round((required_area_sqft - net_area_sqft) * 10) / 10;
     const panels            = panelCovSqFt > 0 ? ceilQuantity(required_area_sqft / panelCovSqFt) : 0;
 
+    const exposure = Number(inputs.exposure_in || 0);
+    const last_course = exposure > 0 ? heightFt*12 - (ceilQuantity(heightFt*12/exposure)-1)*exposure : 0;
     return {
+      last_course, courses: Number(inputs.exposure_in) > 0 ? ceilQuantity(heightFt * 12 / Number(inputs.exposure_in)) : 0,
       gross_area_sqft,
       gross_area_sqm: Math.round(gross_area_sqft * 0.092903 * 100) / 100,
       opening_area_sqft,
@@ -52,7 +55,10 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
     const waste_area_sqm    = Math.round((required_area_sqm - net_area_sqm) * 100) / 100;
     const panels            = panelCovSqM > 0 ? ceilQuantity(required_area_sqm / panelCovSqM) : 0;
 
+    const exposure = Number(inputs.exposure_mm || 0);
+    const last_course = exposure > 0 ? heightM*1000 - (ceilQuantity(heightM*1000/exposure)-1)*exposure : 0;
     return {
+      last_course, courses: Number(inputs.exposure_mm) > 0 ? ceilQuantity(heightM * 1000 / Number(inputs.exposure_mm)) : 0,
       gross_area_sqm,
       gross_area_sqft: Math.round(gross_area_sqm * 10.7639 * 10) / 10,
       opening_area_sqm,
@@ -75,6 +81,8 @@ export const sidingCalculator: CalculatorConfig = {
   description:
     'Calculate siding panels and material area for exterior walls. Enter wall height, width, number of walls, window and door openings, and waste percentage to get net wall area, required siding area, and panel count.',
   inputs: [
+    { id:'exposure_in', label:'Installed board exposure (optional)', unit:'in', type:'number', onlyIn:'imperial', min:0, max:10000000, defaultValue:0, helpText:'For lap siding, enter the exposed board height after overlap.' },
+    { id:'exposure_mm', label:'Installed board exposure (optional)', unit:'mm', type:'number', onlyIn:'metric', min:0, max:10000000, defaultValue:0 },
     // ── Imperial ──────────────────────────────────────
     {
       id: 'height_ft',
@@ -283,6 +291,8 @@ export const sidingCalculator: CalculatorConfig = {
     },
   ],
   outputs: [
+    {id:'last_course',label:'Final course exposed height',unit:'in',unitMetric:'mm',format:'length'},
+    { id:'courses', label:'Courses per wall (with exposure entered)', format:'number' },
     {
       id: 'gross_area_sqft',
       label: 'Gross Wall Area',

@@ -1,3 +1,4 @@
+import { sectionFields, extraArea } from './project-sections';
 import type {
   CalculatorConfig,
   CalculatorInputMap,
@@ -75,10 +76,11 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
     perimeter_ft = perimeter_m_direct / 0.3048;
   }
 
+  area_sqft += unitSystem === 'imperial' ? extraArea(inputs.sections_ft) : extraArea(inputs.sections_m) / 0.092903;
   const area_sqm     = Math.round(area_sqft    * 0.092903 * 1000)    / 1000;
   const perimeter_m  = Math.round(perimeter_ft * 0.3048   * 1000)    / 1000;
-  const acres        = Math.round(area_sqft / 43560        * 1000000) / 1000000;
-  const hectares     = Math.round(area_sqm  / 10000        * 1000000) / 1000000;
+  const acres        = area_sqft / 43560;
+  const hectares     = area_sqft * 0.09290304 / 10000;
 
   return {
     area_sqft:  Math.round(area_sqft    * 100) / 100,
@@ -97,6 +99,7 @@ export const squareFootageCalculator: CalculatorConfig = {
   description:
     'Calculate square footage, square meters, perimeter, acres, and hectares for any shape — rectangle, square, triangle, or circle. Ideal for rooms, flooring, roofing, landscaping, and construction projects.',
   inputs: [
+    ...sectionFields,
     // ── Shape selector ────────────────────────────────────
     {
       id: 'shape',
@@ -360,14 +363,14 @@ export const squareFootageCalculator: CalculatorConfig = {
     },
     {
       id: 'perimeter',
-      label: 'Perimeter',
+      label: 'Perimeter of first shape',
       unit: 'ft',
       format: 'length',
       description: 'Total perimeter or circumference in feet',
     },
     {
       id: 'perimeter_m',
-      label: 'Perimeter',
+      label: 'Perimeter of first shape',
       unit: 'm',
       format: 'length',
       description: 'Total perimeter or circumference in metres',

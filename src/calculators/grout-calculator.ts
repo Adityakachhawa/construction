@@ -58,6 +58,7 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
       tile_count: 0,
       grout_cuft: 0,
       grout_cum: 0,
+      grout_litres: 0,
       net_bags: 0,
       bags_required: 0,
     };
@@ -82,8 +83,9 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
     area_sqft:     Math.round(areaSqft        * 100)    / 100,
     area_sqm:      Math.round(area_sqm        * 100)    / 100,
     tile_count,
-    grout_cuft:    Math.round(grout_cuft      * 1000)   / 1000,
-    grout_cum:     Math.round(grout_cum       * 10000)  / 10000,
+    grout_cuft:    grout_cuft,
+    grout_cum,
+    grout_litres: grout_cum * 1000,
     net_bags,
     bags_required,
   };
@@ -306,7 +308,6 @@ export const groutCalculator: CalculatorConfig = {
       label: 'Tiled Area',
       unit: 'ft²',
       format: 'area',
-      primary: true,
     },
     {
       id: 'area_sqm',
@@ -321,6 +322,7 @@ export const groutCalculator: CalculatorConfig = {
       format: 'number',
       description: 'Tiles needed including waste',
     },
+    { id: 'grout_litres', label: 'Mixed grout including waste', unit: 'L', format: 'volume', primary: true, description: 'Bag estimates depend on the selected product yield.' },
     {
       id: 'grout_cuft',
       label: 'Grout Volume',
@@ -449,7 +451,6 @@ export const groutCalculator: CalculatorConfig = {
         'Sanded grout in a standard 25 lb bag typically costs $12–20. Unsanded grout runs $15–25 per 25 lb bag. Epoxy grout kits are $30–60 each. Prices vary by brand, retailer, and region. For larger jobs, buying 50 lb bags generally offers better value per cubic foot.',
     },
   ],
-  orderCallout: { hint: 'Illustrative area allowance only; not a verified material purchase quantity.' },
   wasteFactor: {
     default: 10,
     range: '10–15%',

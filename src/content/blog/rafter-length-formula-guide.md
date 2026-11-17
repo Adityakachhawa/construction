@@ -11,7 +11,7 @@ draft: false
 
 Calculating rafter length is one of the fundamental skills in roof framing. Every piece of the roof system — the ridge board, the rafters, the ceiling joists — depends on accurate rafter math. Get it right and your roof goes together smoothly. Get it wrong and you're making field corrections that waste material and time.
 
-> **Quick Answer:** Rafter Length = Run × Slope Multiplier. For 6:12 pitch the multiplier is 1.118. Add overhang × multiplier for the tail, subtract half the ridge board thickness at the top. Use our [Rafter Calculator](/calculators/rafter-calculator/) for complete dimensions including bird's mouth cut.
+> **Quick Answer:** Rafter Length = Run × Slope Multiplier. For 6:12 pitch the multiplier is 1.118. For a centered ridge board, subtract half its thickness from the horizontal centerline run before multiplying. Add horizontal overhang × multiplier for the tail. Use our [Rafter Calculator](/calculators/rafter-calculator/) for slope length and overhang.
 
 ## The Basic Rafter Triangle
 
@@ -35,7 +35,7 @@ Roof pitch is expressed as rise over run per 12 inches. For a 6:12 pitch:
 - Rise = 14 × (6 ÷ 12) = 14 × 0.5 = **7 feet**
 - Rafter length = √(14² + 7²) = √(196 + 49) = √245 = **15.65 feet**
 
-Use our [Rafter Calculator](/calculators/rafter-calculator/) to get this result instantly, along with bird's mouth and tail dimensions.
+Use our [Rafter Calculator](/calculators/rafter-calculator/) to get this result instantly, along with the tail length.
 
 ## The Slope Multiplier Shortcut
 
@@ -61,20 +61,20 @@ The multiplier method is faster when you're calculating many rafters of the same
 
 ## Ridge Board Adjustment
 
-The rafter length calculated above runs to the centerline of the ridge. In practice, the rafter sits against the side of the ridge board, not the center. Subtract half the ridge board thickness from the calculated length.
+The rafter length calculated above runs to the centerline of the ridge. In practice, the rafter sits against the side of the ridge board, not the center. Subtract half the ridge thickness from the horizontal centerline run, then apply the slope multiplier.
 
 For a 1.5-inch thick ridge board (a standard 2× ridge):
-- Deduct: 1.5 ÷ 2 = **0.75 inches** from the calculated rafter length
+- Deduct: 1.5 ÷ 2 = **0.75 inches** from the horizontal centerline run
 
 This is called the **ridge deduction** or **shortening allowance**.
 
 ## The Bird's Mouth Cut
 
 The bird's mouth is a notch cut near the bottom of the rafter where it seats on the wall plate. It has two cuts:
-- **Seat cut (plumb)** — vertical cut, parallel to the roof slope
-- **Heel cut (level)** — horizontal cut, resting on the top of the wall plate
+- **Seat cut (level)** — horizontal surface bearing on the plate
+- **Heel cut (plumb)** — vertical face of the notch
 
-Standard bird's mouth depth: 1.5 inches (so the rafter doesn't cut more than 1/3 of the rafter depth — code requirement).
+Use the bearing and notch details specified for the project.
 
 The bird's mouth is located at the outer face of the wall, measured along the rafter from the ridge end.
 
@@ -90,14 +90,15 @@ Add this to the rafter length for the total rafter to cut.
 
 ## Total Rafter Length to Order
 
-**Total = (Run × Multiplier) - Ridge deduction + Tail length + 6" cutting allowance**
+**Geometric length = (Centerline run − Half ridge thickness + Horizontal overhang) × Multiplier**
 
 For our example (14 ft run, 6:12, 18" overhang, 1.5" ridge):
 - Rafter to ridge: 14 × 1.118 = 15.65 ft
-- Ridge deduction: -0.0625 ft (0.75")
+- Sloped ridge deduction: 0.0625 × 1.118 ≈ 0.07 ft
 - Tail (18" ÷ 12" × 1.118): +1.68 ft
-- Cutting allowance: +0.5 ft
-- **Total: 17.77 ft → order 18-foot lumber**
+- Geometric length: (14 − 0.0625 + 1.5) × 1.118 ≈ 17.26 ft
+- Example purchasing allowance: +0.5 ft
+- **Total: 17.76 ft → order 18-foot lumber**
 
 ## Rafter Count
 

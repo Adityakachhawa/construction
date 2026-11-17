@@ -1,3 +1,4 @@
+import { dimensionRows } from './dimension-rows';
 import { ceilQuantity } from './rounding';
 import type {
   CalculatorConfig,
@@ -25,7 +26,7 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
     const diamIn     = Number(inputs.footing_diameter ?? 12);
     const depthIn    = Number(inputs.footing_depth   ?? 42);
 
-    const footings   = footingGrid(lengthFt, widthFt, spacingFt);
+    const footings   = dimensionRows(inputs.plan_points_ft).length || Number(inputs.plan_footings) || footingGrid(lengthFt, widthFt, spacingFt);
     const perHole    = cylVolumeImperial(diamIn, depthIn);
     const totalFt3   = perHole.cubic_feet   * footings;
     const totalYd3   = perHole.cubic_yards  * footings;
@@ -33,7 +34,7 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
     const bags       = bagsFromFeet(totalFt3, BAG_CUBIC_FEET);
 
     return {
-      footings,
+      footings, net_volume: totalFt3, per_footing: perHole.cubic_feet,
       cubic_yards:  Math.round(totalYd3 * 100) / 100,
       cubic_feet:   Math.round(totalFt3 * 100) / 100,
       cubic_meters: Math.round(totalM3  * 1000) / 1000,
@@ -46,7 +47,7 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
     const diamMm     = Number(inputs.footing_diameter_mm ?? 300);
     const depthMm    = Number(inputs.footing_depth_mm   ?? 1060);
 
-    const footings   = footingGrid(lengthM, widthM, spacingM);
+    const footings   = dimensionRows(inputs.plan_points_m).length || Number(inputs.plan_footings) || footingGrid(lengthM, widthM, spacingM);
     const perHole    = cylVolumeMetric(diamMm, depthMm);
     const totalM3    = perHole.cubic_meters * footings;
     const totalFt3   = perHole.cubic_feet   * footings;
@@ -54,7 +55,7 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
     const bags       = bagsFromFeet(totalFt3, BAG_CUBIC_FEET);
 
     return {
-      footings,
+      footings, net_volume: totalM3, per_footing: perHole.cubic_meters,
       cubic_meters: Math.round(totalM3  * 1000) / 1000,
       cubic_feet:   Math.round(totalFt3 * 100)  / 100,
       cubic_yards:  Math.round(totalYd3 * 100)  / 100,
@@ -70,7 +71,10 @@ export const deckFootingCalculator: CalculatorConfig = {
   description:
     'Calculate how many deck footings you need, concrete volume per hole, total cubic yards, and bags of concrete. Supports any deck size, footing spacing, diameter, and depth.',
   inputs: [
-    // â”€â”€ Imperial â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    {id:'plan_points_ft',label:'Footing positions from plan (ft)',type:'pairs',onlyIn:'imperial',defaultValue:'',helpText:'From the same corner, enter length offset x width offset per footing, e.g. 0x0, 8x0. Positions override count and grid.'},
+    {id:'plan_points_m',label:'Footing positions from plan (m)',type:'pairs',onlyIn:'metric',defaultValue:'',helpText:'Enter horizontal offsets from the same corner as x-offset x y-offset. Positions override count and grid.'},
+    { id:'plan_footings', label:'Footing count from approved plan (optional)', type:'number', min:0, max:10000, defaultValue:0, helpText:'Zero uses the rectangular grid estimate. A positive count uses your plan for the concrete order.' },
+    // ── Imperial ──────────────────────────────────────
     {
       id: 'deck_length_ft',
       label: 'Deck Length',
@@ -130,7 +134,7 @@ export const deckFootingCalculator: CalculatorConfig = {
       defaultValue: 8,
       required: true,
       onlyIn: 'imperial',
-      helpText: 'Max distance between footings. Typically 6â€“8 ft for wood decks.',
+      helpText: 'Max distance between footings. Typically 6–8 ft for wood decks.',
     },
     {
       id: 'footing_spacing_in',
@@ -155,7 +159,7 @@ export const deckFootingCalculator: CalculatorConfig = {
       defaultValue: 12,
       required: true,
       onlyIn: 'imperial',
-      helpText: 'Typically 10â€“12 in for residential decks.',
+      helpText: 'Typically 10–12 in for residential decks.',
     },
     {
       id: 'footing_depth',
@@ -168,9 +172,9 @@ export const deckFootingCalculator: CalculatorConfig = {
       defaultValue: 42,
       required: true,
       onlyIn: 'imperial',
-      helpText: 'Must be below local frost line. Typically 36â€“48 in.',
+      helpText: 'Must be below local frost line. Typically 36–48 in.',
     },
-    // â”€â”€ Metric â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Metric ────────────────────────────────────────
     {
       id: 'deck_length_m',
       label: 'Deck Length',
@@ -209,7 +213,7 @@ export const deckFootingCalculator: CalculatorConfig = {
       defaultValueMetric: 2.4,
       required: true,
       onlyIn: 'metric',
-      helpText: 'Max distance between footings. Typically 1.8â€“2.4 m.',
+      helpText: 'Max distance between footings. Typically 1.8–2.4 m.',
     },
     {
       id: 'footing_diameter_mm',
@@ -223,7 +227,7 @@ export const deckFootingCalculator: CalculatorConfig = {
       defaultValueMetric: 300,
       required: true,
       onlyIn: 'metric',
-      helpText: 'Typically 250â€“300 mm for residential decks.',
+      helpText: 'Typically 250–300 mm for residential decks.',
     },
     {
       id: 'footing_depth_mm',
@@ -237,42 +241,43 @@ export const deckFootingCalculator: CalculatorConfig = {
       defaultValueMetric: 1060,
       required: true,
       onlyIn: 'metric',
-      helpText: 'Must be below local frost line. Typically 900â€“1200 mm.',
+      helpText: 'Must be below local frost line. Typically 900–1200 mm.',
     },
   ],
   outputs: [
+    {id:'per_footing',label:'Concrete per footing',unit:'ft³',unitMetric:'m³',format:'volume'},
     {
       id: 'footings',
       label: 'Total Footings',
       unit: 'footings',
       format: 'number',
       primary: true,
-      description: 'Hypothetical full grid, including all perimeter supports; no ledger deduction',
+      description: 'Use footing count or positions from your approved plan. Without a plan entry, this estimates a full rectangular grid including perimeter supports.',
     },
     {
       id: 'bags',
       label: 'Bags of Concrete',
       unit: 'bags',
       format: 'number',
-      description: '80 lb bags (0.60 cu ft each) â€” rounds up',
+      description: '80 lb bags (0.60 cu ft each) — rounds up',
     },
     {
       id: 'cubic_yards',
       label: 'Cubic Yards',
-      unit: 'ydÂ³',
+      unit: 'yd³',
       format: 'volume',
       description: 'Total concrete for all footings',
     },
     {
       id: 'cubic_feet',
       label: 'Cubic Feet',
-      unit: 'ftÂ³',
+      unit: 'ft³',
       format: 'volume',
     },
     {
       id: 'cubic_meters',
       label: 'Cubic Meters',
-      unit: 'mÂ³',
+      unit: 'm³',
       format: 'volume',
     },
   ],
@@ -280,9 +285,9 @@ export const deckFootingCalculator: CalculatorConfig = {
   unitSystems: ['imperial', 'metric'],
   relatedCalculators: ['concrete-slab-calculator', 'fence-post-calculator', 'gravel-calculator'],
   seo: {
-    title: 'Deck Footing Calculator â€” How Many Footings Do I Need?',
+    title: 'Deck Footing Calculator — How Many Footings Do I Need?',
     description:
-      'Free deck footing calculator â€” enter deck size, footing spacing, diameter, and depth to calculate total footings needed, concrete volume, cubic yards, and bags of concrete.',
+      'Free deck footing calculator — enter deck size, footing spacing, diameter, and depth to calculate total footings needed, concrete volume, cubic yards, and bags of concrete.',
     h1: 'Deck Footing Calculator',
     focusKeyword: 'deck footing calculator',
   },
@@ -302,34 +307,34 @@ export const deckFootingCalculator: CalculatorConfig = {
   formulaSteps: [
     {
       label: 'Calculate footings along each dimension',
-      formula: 'Posts per side = âŒˆDeck Length Ã· SpacingâŒ‰ + 1',
-      description: 'Each dimension needs end posts plus one post per full span â€” partial spans round up',
+      formula: 'Posts per side = ⌈Deck Length ÷ Spacing⌉ + 1',
+      description: 'Each dimension needs end posts plus one post per full span — partial spans round up',
     },
     {
       label: 'Calculate total footing count',
-      formula: 'Footings = Posts along length Ã— Posts along width',
+      formula: 'Footings = Posts along length × Posts along width',
       description: 'Footings form a grid across the deck footprint',
     },
     {
       label: 'Calculate volume of one cylindrical footing',
-      formula: 'Volume (ftÂ³) = Ï€ Ã— (Diameter Ã· 2 Ã· 12)Â² Ã— (Depth Ã· 12)',
+      formula: 'Volume (ft³) = π × (Diameter ÷ 2 ÷ 12)² × (Depth ÷ 12)',
       description: 'Diameter and depth are converted from inches to feet before applying the cylinder formula',
     },
     {
       label: 'Calculate total concrete',
-      formula: 'Total (ydÂ³) = (Volume per hole Ã— Footings) Ã· 27',
+      formula: 'Total (yd³) = (Volume per hole × Footings) ÷ 27',
     },
     {
       label: 'Calculate bags',
-      formula: 'Bags = âŒˆTotal (ftÂ³) Ã· 0.60âŒ‰',
-      description: 'One 80 lb bag of concrete mix yields 0.60 cubic feet â€” always round up',
+      formula: 'Bags = ⌈Total (ft³) ÷ 0.60⌉',
+      description: 'One 80 lb bag of concrete mix yields 0.60 cubic feet — always round up',
     },
   ],
   faq: [
     {
       question: 'How many deck footings do I need?',
       answer:
-        'The number of footings depends on your deck dimensions and post spacing. The formula is: footings = (ceil(length Ã· spacing) + 1) Ã— (ceil(width Ã· spacing) + 1). A 12 Ã— 16 ft deck with 8 ft spacing needs (ceil(16/8)+1) Ã— (ceil(12/8)+1) = 3 Ã— 3 = 9 footings in this full-grid model. An attached deck with a ledger and one beam, or a freestanding deck with two beam lines, has a different layout. Use an approved framing plan to choose the actual support count; this tool does not design it.',
+        'The number of footings depends on your deck dimensions and post spacing. The formula is: footings = (ceil(length ÷ spacing) + 1) × (ceil(width ÷ spacing) + 1). A 12 × 16 ft deck with 8 ft spacing needs (ceil(16/8)+1) × (ceil(12/8)+1) = 3 × 3 = 9 footings in this full-grid model. An attached deck with a ledger and one beam, or a freestanding deck with two beam lines, has a different layout. Use an approved framing plan to choose the actual support count; this tool does not design it.',
     },
     {
       question: 'How deep should deck footings be?',
@@ -369,22 +374,22 @@ export const deckFootingCalculator: CalculatorConfig = {
   ],
   presets: [
     {
-      label: '10Ã—10 Deck (10" Ã— 36")',
+      label: '10×10 Deck (10" × 36")',
       values: { deck_length_ft: 10, deck_length_in: 0, deck_width_ft: 10, deck_width_in: 0, footing_spacing_ft: 8, footing_spacing_in: 0, footing_diameter: 10, footing_depth: 36 },
       unit: 'imperial',
     },
     {
-      label: '12Ã—16 Attached Deck (12" Ã— 42")',
+      label: '12×16 rectangular grid example (12" × 42")',
       values: { deck_length_ft: 16, deck_length_in: 0, deck_width_ft: 12, deck_width_in: 0, footing_spacing_ft: 8, footing_spacing_in: 0, footing_diameter: 12, footing_depth: 42 },
       unit: 'imperial',
     },
     {
-      label: '16Ã—20 Large Deck (12" Ã— 42")',
+      label: '16×20 Large Deck (12" × 42")',
       values: { deck_length_ft: 20, deck_length_in: 0, deck_width_ft: 16, deck_width_in: 0, footing_spacing_ft: 8, footing_spacing_in: 0, footing_diameter: 12, footing_depth: 42 },
       unit: 'imperial',
     },
     {
-      label: '20Ã—20 Freestanding (12" Ã— 48")',
+      label: '20×20 rectangular grid example (12" × 48")',
       values: { deck_length_ft: 20, deck_length_in: 0, deck_width_ft: 20, deck_width_in: 0, footing_spacing_ft: 8, footing_spacing_in: 0, footing_diameter: 12, footing_depth: 48 },
       unit: 'imperial',
     },
@@ -394,16 +399,16 @@ export const deckFootingCalculator: CalculatorConfig = {
     description: 'Illustrative full grid at maximum 8-foot spacing in both directions, 36-inch cylindrical depth, no waste. These are quantities, not approved layouts or frost depths:',
     headers: ['Deck Size (ft)', 'Hole Diameter', 'Footing Count', 'Cubic Yards', '80 lb Bags'],
     rows: [
-      ['10â€² Ã— 10â€² Deck', '8"', '9', '0.35', '16'],
-      ['10â€² Ã— 10â€² Deck', '10"', '9', '0.55', '25'],
-      ['12â€² Ã— 12â€² Deck', '10"', '9', '0.55', '25'],
-      ['12â€² Ã— 12â€² Deck', '12"', '9', '0.79', '36'],
-      ['12â€² Ã— 16â€² Deck', '10"', '9', '0.55', '25'],
-      ['12â€² Ã— 16â€² Deck', '12"', '9', '0.79', '36'],
-      ['16â€² Ã— 20â€² Deck', '10"', '12', '0.73', '33'],
-      ['16â€² Ã— 20â€² Deck', '12"', '12', '1.05', '48'],
-      ['20â€² Ã— 20â€² Deck', '10"', '16', '0.97', '44'],
-      ['20â€² Ã— 20â€² Deck', '12"', '16', '1.40', '63'],
+      ['10′ × 10′ Deck', '8"', '9', '0.35', '16'],
+      ['10′ × 10′ Deck', '10"', '9', '0.55', '25'],
+      ['12′ × 12′ Deck', '10"', '9', '0.55', '25'],
+      ['12′ × 12′ Deck', '12"', '9', '0.79', '36'],
+      ['12′ × 16′ Deck', '10"', '9', '0.55', '25'],
+      ['12′ × 16′ Deck', '12"', '9', '0.79', '36'],
+      ['16′ × 20′ Deck', '10"', '12', '0.73', '33'],
+      ['16′ × 20′ Deck', '12"', '12', '1.05', '48'],
+      ['20′ × 20′ Deck', '10"', '16', '0.97', '44'],
+      ['20′ × 20′ Deck', '12"', '16', '1.40', '63'],
     ],
   },
 };

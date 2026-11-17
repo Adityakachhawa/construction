@@ -7,10 +7,13 @@ import type {
 
 export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   if (unitSystem === 'imperial') {
-    const riseFt     = Number(inputs.rise_ft  ?? 6)  + Number(inputs.rise_in  ?? 0) / 12;
-    const runFt      = Number(inputs.run_ft   ?? 12) + Number(inputs.run_in   ?? 0) / 12;
+    let riseFt     = Number(inputs.rise_ft  ?? 6)  + Number(inputs.rise_in  ?? 0) / 12;
+    let runFt      = Number(inputs.run_ft   ?? 12) + Number(inputs.run_in   ?? 0) / 12;
     const overhangFt = Number(inputs.overhang_ft ?? 0) + Number(inputs.overhang_in ?? 0) / 12;
 
+    if (Number(inputs.building_width_ft) > 0) runFt = (Number(inputs.building_width_ft) - Number(inputs.ridge_thickness_in || 0) / 12) / 2;
+    if (inputs.pitch_method === 'pitch') riseFt = runFt * Number(inputs.given_pitch ?? 6) / 12;
+    if (inputs.pitch_method === 'angle') riseFt = runFt * Math.tan(Number(inputs.given_angle ?? 30) * Math.PI / 180);
     if (runFt <= 0) {
       return { rafter_length_ft: 0, rafter_length_m: 0, total_rafter_ft: 0, total_rafter_m: 0, overhang_rafter_ft: 0, overhang_rafter_m: 0, angle_deg: 0, slope_pct: 0, pitch_ratio: 0 };
     }
@@ -26,9 +29,11 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
     const overhang_rafter_ft = overhangFt > 0
       ? Math.round(Math.sqrt(overhangFt ** 2 + overhangRise ** 2) * 100) / 100
       : 0;
-    const total_rafter_ft = Math.round((rafter_length_ft + overhang_rafter_ft) * 100) / 100;
+    const total_rafter_ft = Math.round(((runFt + overhangFt) * Math.hypot(1, pitchDecimal)) * 100) / 100;
 
     return {
+      effective_run: runFt,
+      effective_rise: riseFt,
       rafter_length_ft,
       rafter_length_m: Math.round(rafter_length_ft * 0.3048 * 100) / 100,
       total_rafter_ft,
@@ -38,10 +43,13 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
       angle_deg, slope_pct, pitch_ratio,
     };
   } else {
-    const riseM     = Number(inputs.rise_m  ?? 1.8);
-    const runM      = Number(inputs.run_m   ?? 3.6);
+    let riseM     = Number(inputs.rise_m  ?? 1.8);
+    let runM      = Number(inputs.run_m   ?? 3.6);
     const overhangM = Number(inputs.overhang_m ?? 0);
 
+    if (Number(inputs.building_width_m) > 0) runM = (Number(inputs.building_width_m) - Number(inputs.ridge_thickness_mm || 0) / 1000) / 2;
+    if (inputs.pitch_method === 'pitch') riseM = runM * Number(inputs.given_pitch ?? 6) / 12;
+    if (inputs.pitch_method === 'angle') riseM = runM * Math.tan(Number(inputs.given_angle ?? 30) * Math.PI / 180);
     if (runM <= 0) {
       return { rafter_length_ft: 0, rafter_length_m: 0, total_rafter_ft: 0, total_rafter_m: 0, overhang_rafter_ft: 0, overhang_rafter_m: 0, angle_deg: 0, slope_pct: 0, pitch_ratio: 0 };
     }
@@ -56,9 +64,11 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
     const overhang_rafter_m = overhangM > 0
       ? Math.round(Math.sqrt(overhangM ** 2 + overhangRise ** 2) * 100) / 100
       : 0;
-    const total_rafter_m  = Math.round((rafter_length_m + overhang_rafter_m) * 100) / 100;
+    const total_rafter_m  = Math.round(((runM + overhangM) * Math.hypot(1, pitchDecimal)) * 100) / 100;
 
     return {
+      effective_run: runM,
+      effective_rise: riseM,
       rafter_length_m,
       rafter_length_ft: Math.round(rafter_length_m / 0.3048 * 100) / 100,
       total_rafter_m,
@@ -77,6 +87,13 @@ export const rafterCalculator: CalculatorConfig = {
   description:
     'Calculate rafter length, total rafter length with overhang, roof angle, and slope percentage from rise and run. Instant results for any roof framing project — imperial and metric.',
   inputs: [
+    { id:'building_width_ft', label:'Symmetrical gable width (optional)', unit:'ft', type:'number', min:0, max:10000000, defaultValue:0, onlyIn:'imperial', helpText:'A positive width replaces run with (building width − centered ridge thickness) ÷ 2. In rise mode, measure rise to the ridge face.' },
+    { id:'ridge_thickness_in', label:'Actual centered ridge thickness', unit:'in', type:'number', min:0, max:10000000, defaultValue:0, onlyIn:'imperial' },
+    { id:'building_width_m', label:'Symmetrical gable width (optional)', unit:'m', type:'number', min:0, max:10000000, defaultValue:0, onlyIn:'metric', helpText:'A positive width replaces run with (building width − centered ridge thickness) ÷ 2. In rise mode, measure rise to the ridge face.' },
+    { id:'ridge_thickness_mm', label:'Actual centered ridge thickness', unit:'mm', type:'number', min:0, max:10000000, defaultValue:0, onlyIn:'metric' },
+    { id: 'pitch_method', label: 'Known measurement', type:'select', defaultValue:'rise', options:[{value:'rise', label:'Rise and run'}, {value:'pitch', label:'Pitch per 12 and run'}, {value:'angle', label:'Angle and run'}] },
+    { id:'given_pitch', label:'Pitch per 12 (pitch mode)', type:'number', min:0, max:120, defaultValue:6 },
+    { id:'given_angle', label:'Angle (angle mode)', unit:'°', type:'number', min:0, max:89, defaultValue:30 },
     // ── Imperial ──────────────────────────────────────
     {
       id: 'rise_ft',
@@ -328,7 +345,7 @@ export const rafterCalculator: CalculatorConfig = {
     {
       question: 'What is the difference between run and span?',
       answer:
-        'The span is the full horizontal width of the building from outside wall to outside wall. The run is half the span — the horizontal distance from the wall to directly below the ridge. For a 24-foot wide building, the run is 12 feet. This calculator uses run, not span — enter half your building width if you\'re working from a total building dimension.',
+        'For a symmetrical gable, enter the full width and the centered ridge thickness or enter the measured run directly.',
     },
     {
       question: 'How do I include the eave overhang in rafter length?',
@@ -343,7 +360,7 @@ export const rafterCalculator: CalculatorConfig = {
     {
       question: 'How do I find the rafter angle for saw cuts?',
       answer:
-        'The roof angle in degrees is the number to set your circular saw or miter saw bevel for plumb cuts (ridge and bird\'s-mouth). For a 6:12 pitch, the angle is arctan(6/12) ≈ 26.57°. Set your saw to 26.57°. The seat cut (horizontal) is the complement: 90° − 26.57° = 63.43°. Always test on scrap lumber before cutting your full run of rafters.',
+        'A 6:12 roof rises at 26.57 degrees above horizontal. Mark cuts using the reference face and the project details. Saw settings depend on tool orientation.',
     },
     {
       question: 'What lumber size should I use for rafters?',

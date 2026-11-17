@@ -1,3 +1,4 @@
+import { sectionFields } from './project-sections';
 import type {
   CalculatorConfig,
   CalculatorInputMap,
@@ -28,6 +29,7 @@ export const sandCalculator: CalculatorConfig = {
   description:
     'Calculate how much sand you need for leveling, paver bases, sandboxes, and construction. Get cubic yards, cubic feet, cubic meters, and tons of sand instantly.',
   inputs: [
+    ...sectionFields,
     // ── Imperial ──────────────────────────────────────
     {
       id: 'length_ft',

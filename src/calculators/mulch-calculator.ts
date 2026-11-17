@@ -1,3 +1,4 @@
+import { sectionFields } from './project-sections';
 import type {
   CalculatorConfig,
   CalculatorInputMap,
@@ -11,10 +12,10 @@ const BAG_CUBIC_FEET = 2;
 export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   if (unitSystem === 'imperial') {
     const vol = rectVolumeImperial(inputs, 'depth');
-    return { ...vol, bags: bagsFromFeet(vol.cubic_feet, BAG_CUBIC_FEET) };
+    return { ...vol, bags: bagsFromFeet(vol.cubic_feet, Number(inputs.bag_ft3 || BAG_CUBIC_FEET)) };
   } else {
     const vol = rectVolumeMetric(inputs, 'depth_mm');
-    return { ...vol, bags: bagsFromFeet(vol.cubic_feet, BAG_CUBIC_FEET) };
+    return { ...vol, bags: bagsFromFeet(vol.cubic_meters * 1000, Number(inputs.bag_litres || BAG_CUBIC_FEET * 28.316846592)) };
   }
 }
 
@@ -25,6 +26,9 @@ export const mulchCalculator: CalculatorConfig = {
   description:
     'Calculate how much mulch you need for garden beds and landscaping. Get cubic yards, cubic feet, cubic meters, and bags of mulch for any area.',
   inputs: [
+    ...sectionFields,
+    { id:'bag_ft3', label:'Volume on bag label', unit:'ft³', type:'number', onlyIn:'imperial', min:0.001, max:10000000, defaultValue:2 },
+    { id:'bag_litres', label:'Volume on bag label', unit:'L', type:'number', onlyIn:'metric', min:0.001, max:10000000, defaultValue:56.633693184 },
     // ── Imperial ──────────────────────────────────────
     {
       id: 'length_ft',
@@ -143,7 +147,7 @@ export const mulchCalculator: CalculatorConfig = {
       label: 'Bags Required',
       unit: 'bags',
       format: 'number',
-      description: 'Standard 2 cu ft bags (rounds up to whole bags)',
+      description: 'Whole bags at the entered package volume',
     },
     {
       id: 'cubic_feet',
@@ -197,15 +201,15 @@ export const mulchCalculator: CalculatorConfig = {
     },
     {
       label: 'Calculate bags required',
-      formula: 'Bags = ⌈Volume (ft³) ÷ 2⌉',
-      description: 'Standard mulch bags hold 2 cubic feet — always round up to whole bags',
+      formula: 'Bags = ⌈Total volume ÷ Entered bag volume⌉',
+      description: 'Divide volume by the volume printed on the bag and round up once.',
     },
   ],
   faq: [
     {
       question: 'How much mulch do I need for my garden beds?',
       answer:
-        'For new garden beds, apply 3–4 inches of mulch. For refreshing existing beds, 1–2 inches is typically enough. A 100 sq ft bed at 3-inch depth requires approximately 0.93 cubic yards or 14 bags of mulch. Enter your exact dimensions above for a precise calculation.',
+        'For new garden beds, apply 3–4 inches of mulch. For refreshing existing beds, 1–2 inches is typically enough. A 100 sq ft bed at 3-inch depth requires approximately 0.93 cubic yards or 13 two-cubic-foot bags of mulch. Enter your exact dimensions above for a precise calculation.',
     },
     {
       question: 'How many bags of mulch are in a cubic yard?',

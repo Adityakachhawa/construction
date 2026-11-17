@@ -20,7 +20,7 @@ function getPitchFactor(pitchKey: string): number {
 }
 
 export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
-  const pitchKey  = String(inputs.pitch ?? '6');
+  const pitchKey  = String(inputs.pitch === 'custom' ? inputs.custom_pitch ?? 6 : inputs.pitch ?? '6');
   const wastePct  = Number(inputs.waste_pct ?? 10) / 100;
   const pitchFactor = getPitchFactor(pitchKey);
 
@@ -74,6 +74,7 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
 }
 
 const PITCH_OPTIONS = [
+  { value:'custom', label:'Use measured pitch' },
   { value: '0',  label: 'Flat / 0:12' },
   { value: '2',  label: '2:12 — low slope' },
   { value: '3',  label: '3:12' },
@@ -96,6 +97,7 @@ export const roofingCalculator: CalculatorConfig = {
   description:
     'Calculate roofing squares, shingle bundles, and material area for any roof. Enter length, width, pitch, and waste percentage to get exact shingle quantities for your project.',
   inputs: [
+    {id:'custom_pitch',label:'Measured rise per 12 (custom pitch)',type:'number',min:0,max:10000,defaultValue:6},
     // ── Imperial ──────────────────────────────────────
     {
       id: 'length_ft',

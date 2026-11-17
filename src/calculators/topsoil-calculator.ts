@@ -1,3 +1,4 @@
+import { sectionFields } from './project-sections';
 import type {
   CalculatorConfig,
   CalculatorInputMap,
@@ -30,6 +31,7 @@ export const topsoilCalculator: CalculatorConfig = {
   description:
     'Calculate how much topsoil you need for a garden bed, lawn, or landscaping project. Enter length, width, and depth to get cubic yards, cubic feet, cubic meters, and tons of topsoil.',
   inputs: [
+    ...sectionFields,
     // ── Imperial ──────────────────────────────────────
     {
       id: 'length_ft',

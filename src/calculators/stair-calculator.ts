@@ -10,19 +10,21 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
   if (unitSystem === 'imperial') {
     const totalRiseFt   = Number(inputs.total_rise_ft ?? 9) + Number(inputs.total_rise_in ?? 0) / 12;
     const desiredRiserIn = Number(inputs.riser_height_in ?? 7.5);
-    const treadDepthIn  = Number(inputs.tread_depth_in ?? 10);
+    let treadDepthIn  = Number(inputs.tread_depth_in ?? 10);
 
     if (totalRiseFt <= 0 || desiredRiserIn <= 0 || treadDepthIn <= 0) {
-      return { risers: 0, treads: 0, actual_riser_in: 0, actual_riser_mm: 0, total_run_ft: 0, total_run_m: 0, stair_angle_deg: 0, stringer_length_ft: 0, stringer_length_m: 0 };
+      return { effective_tread: 0, risers: 0, treads: 0, actual_riser_in: 0, actual_riser_mm: 0, total_run_ft: 0, total_run_m: 0, stair_angle_deg: 0, stringer_length_ft: 0, stringer_length_m: 0 };
     }
 
     const totalRiseIn    = totalRiseFt * 12;
     const risers         = ceilQuantity(totalRiseIn / desiredRiserIn);
     const actual_riser_in = Math.round((totalRiseIn / risers) * 1000) / 1000;
     const treads         = risers - 1;
+    const availableRun = Number(inputs.available_run_in ?? 0);
+    if (availableRun > 0 && treads > 0) treadDepthIn = availableRun / treads;
     const total_run_in   = treads * treadDepthIn;
     const total_run_ft   = Math.round(total_run_in / 12 * 100) / 100;
-    const stair_angle_deg = total_run_in > 0 ? Math.round(Math.atan(totalRiseIn / total_run_in) * (180 / Math.PI) * 100) / 100 : 90;
+    const stair_angle_deg = Math.round(Math.atan((totalRiseIn / risers) / treadDepthIn) * (180 / Math.PI) * 100) / 100;
     // Stringer = √(total_rise² + total_run²) in inches, then convert to ft
     const stringer_length_ft = Math.round(Math.sqrt(totalRiseIn ** 2 + total_run_in ** 2) / 12 * 100) / 100;
 
@@ -32,6 +34,7 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
       actual_riser_mm: Math.round(actual_riser_in * 25.4),
       total_run_ft,
       total_run_m: Math.round(total_run_ft * 0.3048 * 100) / 100,
+      effective_tread: treadDepthIn,
       stair_angle_deg,
       stringer_length_ft,
       stringer_length_m: Math.round(stringer_length_ft * 0.3048 * 100) / 100,
@@ -39,19 +42,21 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
   } else {
     const totalRiseM    = Number(inputs.total_rise_m ?? 2.7);
     const desiredRiserMm = Number(inputs.riser_height_mm ?? 190);
-    const treadDepthMm  = Number(inputs.tread_depth_mm ?? 250);
+    let treadDepthMm  = Number(inputs.tread_depth_mm ?? 250);
 
     if (totalRiseM <= 0 || desiredRiserMm <= 0 || treadDepthMm <= 0) {
-      return { risers: 0, treads: 0, actual_riser_in: 0, actual_riser_mm: 0, total_run_ft: 0, total_run_m: 0, stair_angle_deg: 0, stringer_length_ft: 0, stringer_length_m: 0 };
+      return { effective_tread: 0, risers: 0, treads: 0, actual_riser_in: 0, actual_riser_mm: 0, total_run_ft: 0, total_run_m: 0, stair_angle_deg: 0, stringer_length_ft: 0, stringer_length_m: 0 };
     }
 
     const totalRiseMm    = totalRiseM * 1000;
     const risers         = ceilQuantity(totalRiseMm / desiredRiserMm);
     const actual_riser_mm = Math.round(totalRiseMm / risers);
     const treads         = risers - 1;
+    const availableRun = Number(inputs.available_run_mm ?? 0);
+    if (availableRun > 0 && treads > 0) treadDepthMm = availableRun / treads;
     const total_run_mm   = treads * treadDepthMm;
     const total_run_m    = Math.round(total_run_mm / 1000 * 100) / 100;
-    const stair_angle_deg = total_run_mm > 0 ? Math.round(Math.atan(totalRiseMm / total_run_mm) * (180 / Math.PI) * 100) / 100 : 90;
+    const stair_angle_deg = Math.round(Math.atan((totalRiseMm / risers) / treadDepthMm) * (180 / Math.PI) * 100) / 100;
     const stringer_length_m = Math.round(Math.sqrt(totalRiseMm ** 2 + total_run_mm ** 2) / 1000 * 100) / 100;
 
     return {
@@ -60,6 +65,7 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
       actual_riser_in: Math.round(actual_riser_mm / 25.4 * 1000) / 1000,
       total_run_m,
       total_run_ft: Math.round(total_run_m / 0.3048 * 100) / 100,
+      effective_tread: treadDepthMm,
       stair_angle_deg,
       stringer_length_m,
       stringer_length_ft: Math.round(stringer_length_m / 0.3048 * 100) / 100,
@@ -73,8 +79,10 @@ export const stairCalculator: CalculatorConfig = {
   category: 'framing',
   secondaryCategories: ['decking'],
   description:
-    'Calculate stair rise, run, number of steps, stringer length, and stair angle for any staircase. Enter total rise, desired riser height, and tread depth to get code-compliant stair dimensions.',
+    'Calculate stair rise, run, number of steps, stringer length, and stair angle for any staircase. Enter total rise, desired riser height, and tread depth to estimate straight stair dimensions.',
   inputs: [
+    { id: 'available_run_in', label: 'Available total run (optional)', type: 'number', unit: 'in', onlyIn: 'imperial', min: 0, max:10000000, defaultValue: 0, helpText: 'A positive run divides the available space equally among the treads. Zero uses the entered tread depth.' },
+    { id: 'available_run_mm', label: 'Available total run (optional)', type: 'number', unit: 'mm', onlyIn: 'metric', min: 0, max:10000000, defaultValue: 0, helpText: 'A positive run divides the available space equally among the treads. Zero uses the entered tread depth.' },
     // ── Imperial ──────────────────────────────────────
     {
       id: 'total_rise_ft',
@@ -172,6 +180,7 @@ export const stairCalculator: CalculatorConfig = {
     },
   ],
   outputs: [
+    { id: "effective_tread", label: "Actual tread going", unit: "in", unitMetric: "mm", format: "length" },
     {
       id: 'risers',
       label: 'Number of Risers',
@@ -215,23 +224,23 @@ export const stairCalculator: CalculatorConfig = {
     },
     {
       id: 'stringer_length_ft',
-      label: 'Stringer Length',
+      label: 'Floor-to-floor diagonal',
       unit: 'ft',
       format: 'length',
-      description: 'Diagonal length of the stair stringer board — √(total rise² + total run²)',
+      description: 'Floor-to-floor reference diagonal — √(total rise² + total run²)',
     },
     {
       id: 'stringer_length_m',
-      label: 'Stringer Length',
+      label: 'Floor-to-floor diagonal',
       unit: 'm',
       format: 'length',
     },
     {
       id: 'stair_angle_deg',
-      label: 'Stair Angle',
+      label: 'Step pitch',
       unit: '°',
       format: 'number',
-      description: 'Angle of the stringer from horizontal — arctan(total rise ÷ total run)',
+      description: 'Angle from horizontal based on one riser and one going',
     },
   ],
   formula,
@@ -284,15 +293,15 @@ export const stairCalculator: CalculatorConfig = {
     },
     {
       label: 'Calculate stair angle',
-      formula: 'Stair Angle (°) = arctan(Total Rise ÷ Total Run)',
+      formula: 'Stair Angle (°) = arctan(Actual Riser ÷ Actual Tread Going)',
       description:
-        'The angle of the stringer from horizontal. Comfortable residential stairs are typically 30–37°. Steeper angles (above 45°) are generally not permitted for primary residential stairs by building codes.',
+        'The angle follows successive tread nosings. Use the unrounded rise per step and actual horizontal going.',
     },
     {
-      label: 'Calculate stringer length',
-      formula: 'Stringer Length = √(Total Rise² + Total Run²)',
+      label: 'Calculate floor-to-floor diagonal',
+      formula: 'Floor-to-floor diagonal = √(Total Rise² + Total Run²)',
       description:
-        'Apply the Pythagorean theorem to the right triangle formed by the total rise (vertical leg) and total run (horizontal leg). Add 12–18 in to the calculated stringer length when purchasing lumber to account for the top and bottom bearing cuts.',
+        'The floor-to-floor diagonal uses the full rise and run. Stock length depends on the top and bottom bearing details.',
     },
   ],
   faq: [
@@ -309,7 +318,7 @@ export const stairCalculator: CalculatorConfig = {
     {
       question: 'What is a stair stringer and how long should it be?',
       answer:
-        'A stair stringer is the diagonal structural board that supports the treads and risers along each side of the staircase. Its length is the hypotenuse of the right triangle formed by the total rise and total run: stringer = √(rise² + run²). For a staircase with 108 in total rise and 140 in total run: √(108² + 140²) = √(11,664 + 19,600) = √31,264 ≈ 176.8 in ≈ 14.7 ft. Buy lumber at least 16 ft long to allow for the top and bottom cuts.',
+        'A stair stringer is the diagonal structural board that supports the treads and risers along each side of the staircase. The calculator gives a floor-to-floor reference diagonal using √(rise² + run²). For a staircase with 108 in total rise and 140 in total run: √(108² + 140²) = √(11,664 + 19,600) = √31,264 ≈ 176.8 in ≈ 14.7 ft. Use project bearing and cut details when choosing stock.',
     },
     {
       question: 'What is a good stair angle?',

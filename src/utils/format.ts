@@ -6,6 +6,9 @@ export function formatNumber(
   locale = 'en-US'
 ): string {
   if (!isFinite(value) || isNaN(value)) return '—';
+  if (value !== 0 && Math.abs(value) < 10 ** -decimals) {
+    return value.toLocaleString(locale, { maximumSignificantDigits: 3 });
+  }
   return new Intl.NumberFormat(locale, {
     minimumFractionDigits: 0,
     maximumFractionDigits: decimals,

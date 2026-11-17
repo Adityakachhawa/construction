@@ -1,0 +1,57 @@
+---
+interface Props { class?: string; id: string; title: string }
+const { class: className, id, title } = Astro.props;
+---
+<figure class:list={['diagram-figure', className]} aria-labelledby={id}>
+  <diagram-view>
+    <div class="diagram-header">
+      <h2 id={id}><small>How to measure</small>{title}</h2>
+      <button type="button" hidden aria-label="Enlarge diagram" aria-haspopup="dialog">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M2 6V2h4m4 0h4v4M2 10v4h4m4 0h4v-4"/></svg>
+        Enlarge
+      </button>
+    </div>
+    <div class="diagram-box paper"><slot /></div>
+    <dialog aria-label={title}>
+      <div class="diagram-header"><strong>{title}</strong><button type="button" autofocus>Close</button></div>
+      <div class="zoom paper" tabindex="0" aria-label="Scrollable enlarged diagram" role="region"></div>
+    </dialog>
+  </diagram-view>
+  <figcaption><slot name="caption" /></figcaption>
+</figure>
+<script>
+  class DiagramView extends HTMLElement {
+    connectedCallback() {
+      const open = this.querySelector('button')!;
+      const dialog = this.querySelector('dialog')!;
+      const box = this.querySelector('.diagram-box')!;
+      const zoom = this.querySelector('.zoom')!;
+      const svg = box.querySelector('svg')!;
+      open.hidden = false;
+      open.onclick = () => { dialog.showModal(); zoom.append(svg); };
+      dialog.querySelector('button')!.onclick = () => dialog.close();
+      dialog.onclose = () => { box.append(svg); open.focus({ preventScroll: true }); };
+    }
+  }
+  if (!customElements.get('diagram-view')) customElements.define('diagram-view', DiagramView);
+</script>
+<style>
+  .diagram-figure { margin: 2.5rem 0; border: 1px solid var(--border-default); border-radius: 14px; overflow: hidden; background: var(--surface-card); }
+  diagram-view { display: block; }
+  .diagram-header { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .55rem clamp(.75rem, 3vw, 1.4rem); border-bottom: 1px solid var(--border-default); }
+  h2, strong { margin: 0; color: var(--color-text-primary); font-size: clamp(1rem, 2vw, 1.25rem); line-height: 1.3; font-weight: 700; letter-spacing: -.02em; }
+  h2 small { display: block; font-size: .8rem; font-weight: 550; color: var(--color-text-secondary); letter-spacing: 0; margin-bottom: .15rem; }
+  button { display: inline-flex; align-items: center; gap: .45rem; min-height: 44px; padding: 0 .5rem; font: inherit; font-size: .875rem; font-weight: 600; color: var(--color-text-secondary); background: transparent; border: 0; border-radius: .4rem; cursor: pointer; }
+  button[hidden] { display: none; }
+  button:hover { background: var(--surface-page); }
+  button:focus-visible, .zoom:focus-visible { outline: 2px solid #087883; outline-offset: -2px; }
+  .paper { background: radial-gradient(circle, #dbe4e6 .7px, transparent .85px) 0 0 / 16px 16px, #fcfdfd; }
+  .diagram-box { padding: clamp(.25rem, 1.4vw, 1rem); }
+  .paper :global(.diagram-svg) { display: block; width: 100%; max-width: 40rem; height: auto; margin-inline: auto; }
+  figcaption { padding: .85rem clamp(.85rem, 3vw, 1.4rem); border-top: 1px solid var(--border-default); color: var(--color-text-secondary); font-size: .9rem; line-height: 1.55; }
+  dialog { margin: auto; padding: 0; width: min(64rem, 96vw); max-height: 94dvh; overflow: auto; background: var(--surface-card); color: var(--color-text-primary); border: 1px solid var(--border-default); border-radius: .75rem; }
+  dialog::backdrop { background: rgb(16 30 43 / .68); }
+  .zoom { overflow: auto; max-height: 78dvh; }
+  .zoom :global(.diagram-svg) { min-width: 48rem; max-width: none; }
+  @media print { .diagram-header button { display: none; } .diagram-figure { break-inside: avoid; } }
+</style>

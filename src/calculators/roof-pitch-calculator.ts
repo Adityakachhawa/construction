@@ -17,9 +17,11 @@ import type {
 
 export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): CalculatorOutputMap {
   if (unitSystem === 'imperial') {
-    const riseFt  = Number(inputs.rise_ft  ?? 6) + Number(inputs.rise_in  ?? 0) / 12;
+    let riseFt  = Number(inputs.rise_ft  ?? 6) + Number(inputs.rise_in  ?? 0) / 12;
     const runFt   = Number(inputs.run_ft   ?? 12) + Number(inputs.run_in  ?? 0) / 12;
 
+    if (inputs.pitch_method === 'pitch') riseFt = runFt * Number(inputs.given_pitch ?? 6) / 12;
+    if (inputs.pitch_method === 'angle') riseFt = runFt * Math.tan(Number(inputs.given_angle ?? 30) * Math.PI / 180);
     if (runFt <= 0) {
       return { pitch_ratio: 0, angle_deg: 0, slope_pct: 0, rafter_length_ft: 0, rafter_length_m: 0 };
     }
@@ -31,11 +33,13 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
     // Rafter length = √(rise² + run²), in feet
     const rafter_length_ft = Math.round(Math.sqrt(riseFt ** 2 + runFt ** 2) * 100) / 100;
 
-    return { pitch_ratio, angle_deg, slope_pct, rafter_length_ft, rafter_length_m: Math.round(rafter_length_ft * 0.3048 * 100) / 100 };
+    return { effective_rise: riseFt, pitch_ratio, angle_deg, slope_pct, rafter_length_ft, rafter_length_m: Math.round(rafter_length_ft * 0.3048 * 100) / 100 };
   } else {
-    const riseM  = Number(inputs.rise_m  ?? 1.8);
+    let riseM  = Number(inputs.rise_m  ?? 1.8);
     const runM   = Number(inputs.run_m   ?? 3.6);
 
+    if (inputs.pitch_method === 'pitch') riseM = runM * Number(inputs.given_pitch ?? 6) / 12;
+    if (inputs.pitch_method === 'angle') riseM = runM * Math.tan(Number(inputs.given_angle ?? 30) * Math.PI / 180);
     if (runM <= 0) {
       return { pitch_ratio: 0, angle_deg: 0, slope_pct: 0, rafter_length_ft: 0, rafter_length_m: 0 };
     }
@@ -46,7 +50,7 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
     const slope_pct      = Math.round(pitchDecimal * 100 * 10) / 10;
     const rafter_length_m = Math.round(Math.sqrt(riseM ** 2 + runM ** 2) * 100) / 100;
 
-    return { pitch_ratio, angle_deg, slope_pct, rafter_length_m, rafter_length_ft: Math.round(rafter_length_m / 0.3048 * 100) / 100 };
+    return { effective_rise: riseM, pitch_ratio, angle_deg, slope_pct, rafter_length_m, rafter_length_ft: Math.round(rafter_length_m / 0.3048 * 100) / 100 };
   }
 }
 
@@ -57,6 +61,9 @@ export const roofPitchCalculator: CalculatorConfig = {
   description:
     'Calculate roof pitch ratio (X:12), angle in degrees, slope percentage, and rafter length from rise and run. Instant results for any roofing or framing project.',
   inputs: [
+    { id: 'pitch_method', label: 'Known measurement', type:'select', defaultValue:'rise', options:[{value:'rise', label:'Rise and run'}, {value:'pitch', label:'Pitch per 12 and run'}, {value:'angle', label:'Angle and run'}] },
+    { id:'given_pitch', label:'Pitch per 12 (pitch mode)', type:'number', min:0, max:120, defaultValue:6 },
+    { id:'given_angle', label:'Angle (angle mode)', unit:'°', type:'number', min:0, max:89, defaultValue:30 },
     // ── Imperial ──────────────────────────────────────
     {
       id: 'rise_ft',

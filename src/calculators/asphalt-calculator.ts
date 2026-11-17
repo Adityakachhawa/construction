@@ -1,3 +1,4 @@
+import { sectionFields } from './project-sections';
 import type {
   CalculatorConfig,
   CalculatorInputMap,
@@ -30,6 +31,7 @@ export const asphaltCalculator: CalculatorConfig = {
   description:
     'Calculate how much asphalt you need for a driveway, parking lot, or road. Enter length, width, and thickness to get cubic yards, cubic feet, cubic meters, and tons of hot-mix asphalt.',
   inputs: [
+    ...sectionFields,
     // ── Imperial ──────────────────────────────────────
     {
       id: 'length_ft',

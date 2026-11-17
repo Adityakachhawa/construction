@@ -1,3 +1,4 @@
+import { dimensionRows, listFields } from './dimension-rows';
 import type {
   CalculatorConfig,
   CalculatorInputMap,
@@ -27,13 +28,18 @@ export function formula(inputs: CalculatorInputMap, unitSystem: UnitSystem): Cal
   }
 
   // Board Feet = (T_in × W_in × L_ft × qty) ÷ 12
-  const board_feet   = Math.round(thicknessIn * widthIn * lengthFt * quantity / 12 * 100) / 100;
+  const stock = dimensionRows(unitSystem === 'imperial' ? inputs.stock_list_ft : inputs.stock_list_m);
+  const extraBF = stock.reduce((sum,[t,w,l,q]) => sum + (unitSystem === 'imperial' ? t*w*l*q/12 : t*w*l*q/(25.4**2*0.3048*12)),0);
+  const extraLength = stock.reduce((sum,[,,l,q]) => sum + l*q,0) / (unitSystem === 'imperial' ? 1 : 0.3048);
+  const pieces = stock.reduce((sum,[,,,q]) => sum + q,quantity);
+  const board_feet   = Math.round((thicknessIn * widthIn * lengthFt * quantity / 12 + extraBF) * 100) / 100;
   // 1 BF = 1/12 ft³  →  volume_cuft = board_feet / 12
   const volume_cuft  = Math.round(board_feet / 12 * 10000) / 10000;
   const volume_m3    = Math.round(volume_cuft * 0.0283168 * 100000) / 100000;
-  const linear_feet  = Math.round(lengthFt * quantity * 10) / 10;
+  const linear_feet  = Math.round((lengthFt * quantity + extraLength) * 10) / 10;
 
-  return { board_feet, volume_cuft, volume_m3, linear_feet, total_quantity: quantity };
+  const price_per_piece = thicknessIn * widthIn * lengthFt / 12 * Number(inputs.price_mbf ?? 0) / 1000;
+  return { price_per_piece, board_feet, volume_cuft, volume_m3, linear_feet, total_quantity: pieces };
 }
 
 export const boardFootCalculator: CalculatorConfig = {
@@ -43,6 +49,8 @@ export const boardFootCalculator: CalculatorConfig = {
   description:
     'Calculate board feet, lumber volume, and total wood quantity for woodworking, hardwood, framing, and timber projects. Enter exact thickness, width, and length to get board feet, cubic feet, cubic metres, and linear feet.',
   inputs: [
+    ...listFields('stock_list', 'More stock: thickness (in) x width (in) x length (ft) x quantity', 'More stock: thickness (mm) x width (mm) x length (m) x quantity', 4),
+    { id:'price_mbf', label:'Supplier price per 1,000 board feet (optional)', unit:'$', type:'number', min:0, max:10000000, defaultValue:0 },
     // ── Imperial ──────────────────────────────────────
     {
       id: 'thickness_in',
@@ -166,6 +174,7 @@ export const boardFootCalculator: CalculatorConfig = {
     },
   ],
   outputs: [
+    { id:'price_per_piece', label:'First size price per piece', unit:'$', format:'currency' },
     {
       id: 'board_feet',
       label: 'Total Board Feet',
