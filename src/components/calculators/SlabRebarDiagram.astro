@@ -4,7 +4,7 @@ interface Props { class?: string }
 ---
 
 <DiagramFrame class={Astro.props.class} id="slab-rebar-diagram-caption" title="Slab &amp; Reinforcement Diagram">
-  <svg class="diagram-svg" viewBox="0 0 410 243" role="img" aria-label="Slab outline around an inset grid, with spacing between adjacent bar centers">
+  <svg class="diagram-svg" viewBox="0 0 410 322" role="img" aria-label="Plan showing bar spacing and a side view showing slab thickness">
     <rect x="43" y="63" width="204" height="109" fill="#d0dbe0" stroke="#244858" stroke-width="1.5"/>
     <path d="M63 76v82" fill="none" stroke="#244858" stroke-width="1.6" />
     <path d="M110 76v82" fill="none" stroke="#244858" stroke-width="1.6" />
@@ -17,6 +17,10 @@ interface Props { class?: string }
     <path d="M263 63V172m-5 0h10M258 63h10" fill="none" stroke="#215e70" stroke-width="1.6" /><text x="273" y="122.5" text-anchor="start" font-size="16" font-weight="600" fill="#244858">Slab width</text>
     <path d="M110 164v38m47-38v38" fill="none" stroke="#215e70" stroke-width="1.6" stroke-dasharray="3 3"/>
     <path d="M110 213H157m0 -5v10M110 208v10" fill="none" stroke="#215e70" stroke-width="1.6" /><text x="133.5" y="204" text-anchor="middle" font-size="16" font-weight="600" fill="#244858">Bar spacing</text>
+    <rect x="43" y="266" width="204" height="26" fill="#d0dbe0" stroke="#244858" stroke-width="1.5"/>
+    <path d="M263 266v26m-5 0h10M258 266h10" fill="none" stroke="#215e70" stroke-width="1.6"/>
+    <text x="143" y="255" text-anchor="middle" font-size="16" fill="#244858">Side view</text>
+    <text x="273" y="285" font-size="16" fill="#244858">Thickness</text>
   </svg>
   <span slot="caption">Measure slab length and width from above. Use center-to-center bar spacing and grid inset from your plan. Measure slab thickness vertically for concrete volume.</span>
 </DiagramFrame>

@@ -4,13 +4,18 @@ interface Props { class?: string }
 ---
 
 <DiagramFrame class={Astro.props.class} id="roofing-diagram-caption" title="Roofing Area Diagram">
-  <svg class="diagram-svg" viewBox="0 0 410 232" role="img" aria-label="Gable end showing full horizontal span, one horizontal run, vertical rise and sloped roof face">
-    <path d="M36 147 181 57 326 147Z" fill="#d6e8e7" stroke="#244858" stroke-width="1.6" />
-    <path d="M181 58v89" fill="none" stroke="#215e70" stroke-width="1.6" stroke-dasharray="4 3"/>
-    <text x="105" y="87" text-anchor="middle" font-size="16" font-weight="600" fill="#244858">Roof slope</text>
-    <path d="M181 57V147m-5 0h10M176 57h10" fill="none" stroke="#215e70" stroke-width="1.6" /><text x="199" y="112.5" text-anchor="start" font-size="16" font-weight="600" fill="#244858">Rise</text>
-    <path d="M36 182H181m0 -5v10M36 177v10" fill="none" stroke="#215e70" stroke-width="1.6" /><text x="108.5" y="173" text-anchor="middle" font-size="16" font-weight="600" fill="#244858">Run</text>
-    <path d="M36 218H326m0 -5v10M36 213v10" fill="none" stroke="#215e70" stroke-width="1.6" /><text x="181" y="209" text-anchor="middle" font-size="16" font-weight="600" fill="#244858">Full span</text>
+  <svg class="diagram-svg" viewBox="0 0 410 231" role="img" aria-label="Plan view showing full horizontal roof length and width across both faces of a gable roof">
+    <g stroke="#244858" stroke-width="1.6" stroke-linejoin="round">
+      <rect x="52" y="72" width="203" height="108" fill="#d6e8e7"/>
+      <path d="M52 126h203" stroke-dasharray="5 4"/>
+      <path d="M52 53h203m0-5v10M52 48v10M274 72v108m-5 0h10M269 72h10" fill="none"/>
+    </g>
+    <g fill="#244858" font-size="16" font-weight="600">
+      <text x="154" y="42" text-anchor="middle">Roof length</text>
+      <text x="285" y="132">Roof width</text>
+      <text x="153" y="117" text-anchor="middle">Ridge</text>
+      <text x="154" y="212" text-anchor="middle">Footprint viewed from above</text>
+    </g>
   </svg>
-  <span slot="caption">Measure the horizontal roof footprint. The sloping roof face is longer than its horizontal run. The pitch factor converts projected area to sloped surface area.</span>
+  <span slot="caption">Measure the horizontal footprint, including any overhangs you want covered. Enter pitch separately; the calculator converts the footprint to sloped roof area.</span>
 </DiagramFrame>

@@ -4,17 +4,14 @@ interface Props { class?: string }
 ---
 
 <DiagramFrame class={Astro.props.class} id="block-diagram-caption" title="CMU Block Wall Diagram">
-  <svg class="diagram-svg" viewBox="0 0 410 255" role="img" aria-label="Wall face and a close-up of horizontal and vertical masonry joints">
+  <svg class="diagram-svg" viewBox="0 0 410 255" role="img" aria-label="Wall elevation with its measured dimensions and the face of one block">
     <rect x="41" y="60" width="207" height="86" fill="#d0dbe0" stroke="#244858" stroke-width="1.5"/>
     <path d="M41 103h207m-131-43v43m69-43v43m-101 0v43m69-43v43m69-43v43" fill="none" stroke="#244858" stroke-width="1.6" />
     <path d="M41 50H248m0 -5v10M41 45v10" fill="none" stroke="#215e70" stroke-width="1.6" /><text x="144.5" y="41" text-anchor="middle" font-size="16" font-weight="600" fill="#244858">Wall length</text>
     <path d="M261 60V146m-5 0h10M256 60h10" fill="none" stroke="#215e70" stroke-width="1.6" /><text x="271" y="108" text-anchor="start" font-size="16" font-weight="600" fill="#244858">Wall height</text>
-    <rect x="36" y="181" width="108" height="24" fill="#d3c2aa" stroke="#244858" stroke-width="1.5"/>
-    <rect x="156" y="181" width="78" height="24" fill="#d3c2aa" stroke="#244858" stroke-width="1.5"/>
-    <rect x="36" y="215" width="198" height="22" fill="#d3c2aa" stroke="#244858" stroke-width="1.5"/>
-    <path d="M150 193h106m-172 17h-58" fill="none" stroke="#244858" stroke-width="1.6" />
-    <text x="267" y="199" text-anchor="start" font-size="16" font-weight="600" fill="#244858">Vertical joint</text>
-    <text x="118" y="251" text-anchor="middle" font-size="13" font-weight="600" fill="#244858">Bed joint below unit</text>
+    <rect x="80" y="178" width="124" height="58" fill="#d0dbe0" stroke="#244858" stroke-width="1.6"/>
+    <path d="M204 207h33" stroke="#244858" stroke-width="1.6"/>
+    <text x="246" y="212" font-size="16" fill="#244858">One block face</text>
   </svg>
   <span slot="caption">Measure the wall face and deduct openings. Block count uses nominal face size. Mortar bags require product coverage or mixed yield and bedding details.</span>
 </DiagramFrame>

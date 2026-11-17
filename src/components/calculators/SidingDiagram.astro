@@ -4,12 +4,12 @@ interface Props { class?: string }
 ---
 
 <DiagramFrame class={Astro.props.class} id="siding-diagram-caption" title="Siding Area Diagram">
-  <svg class="diagram-svg" viewBox="0 0 410 219" role="img" aria-label="Wall elevation with an opening and measured wall edges">
+  <svg class="diagram-svg" viewBox="0 0 410 219" role="img" aria-label="Siding courses across a wall, with a door opening deducted from the area">
     <rect x="36" y="61" width="225" height="116" fill="#d6e8e7" stroke="#244858" stroke-width="1.5"/>
-    <path d="M36 116h225m-152-55v55m70 0v61" fill="none" stroke="#244858" stroke-width="1.6" />
+    <path d="M36 84h225m-225 23h225m-225 23h225m-225 23h225" fill="none" stroke="#244858" stroke-width="1.6" />
     <rect x="142" y="104" width="78" height="73" fill="#f9fcfc" stroke="#244858" stroke-width="1.5"/>
     <text x="181" y="149" text-anchor="middle" font-size="14" font-weight="600" fill="#244858">Opening</text>
-    <path d="M36 50H261m0 -5v10M36 45v10" fill="none" stroke="#215e70" stroke-width="1.6" /><text x="148.5" y="41" text-anchor="middle" font-size="16" font-weight="600" fill="#244858">Wall length</text>
+    <path d="M36 50H261m0 -5v10M36 45v10" fill="none" stroke="#215e70" stroke-width="1.6" /><text x="148.5" y="41" text-anchor="middle" font-size="16" font-weight="600" fill="#244858">Wall width</text>
     <path d="M273 61V177m-5 0h10M268 61h10" fill="none" stroke="#215e70" stroke-width="1.6" /><text x="283" y="124" text-anchor="start" font-size="16" font-weight="600" fill="#244858">Wall height</text>
   </svg>
   <span slot="caption">Measure each wall face and subtract the door and window openings entered in the calculator. Apply waste to the remaining siding area.</span>

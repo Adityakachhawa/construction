@@ -4,14 +4,18 @@ interface Props { class?: string }
 ---
 
 <DiagramFrame class={Astro.props.class} id="lumber-diagram-caption" title="Lumber Diagram">
-  <svg class="diagram-svg" viewBox="0 0 410 208" role="img" aria-label="One board showing its long edge, face width and end thickness">
-    <path d="M47 82h222l48 37H95Z" fill="#efd5ae" stroke="#244858" stroke-width="1.6" />
-    <path d="M47 82l48 37v21l-48-37Z" fill="#cfab7f" stroke="#244858" stroke-width="1.6" />
-    <path d="M95 119h222v21H95Z" fill="#dfbc91" stroke="#244858" stroke-width="1.6" />
-    <path d="M47 69H269m0 -5v10M47 64v10" fill="none" stroke="#215e70" stroke-width="1.6" /><text x="158" y="60" text-anchor="middle" font-size="16" font-weight="600" fill="#244858">Length</text>
-    <path d="M282 72l48 37m-52-34 8-6m40 43 8-6" fill="none" stroke="#244858" stroke-width="1.6" />
-    <text x="335" y="78" text-anchor="middle" font-size="16" font-weight="600" fill="#244858">Width</text>
-    <path d="M318 119V140m-5 0h10M313 119h10" fill="none" stroke="#215e70" stroke-width="1.6" /><text x="328" y="134.5" text-anchor="start" font-size="16" font-weight="600" fill="#244858">Thickness</text>
+  <svg class="diagram-svg" viewBox="0 0 410 232" role="img" aria-label="Three equal boards with the length dimension along one piece">
+    <g stroke="#244858" stroke-width="1.6" stroke-linejoin="round">
+      <path d="M44 94h225l33 19H77Z" fill="#efd5ae"/>
+      <path d="M44 94l33 19v18l-33-19Z M44 118l33 19v18l-33-19Z M44 142l33 19v18l-33-19Z" fill="#c9a477"/>
+      <path d="M77 113h225v18H77Z M77 137h225v18H77Z M77 161h225v18H77Z" fill="#ead1ad"/>
+      <path d="M77 71h225m0-5v10M77 66v10" fill="none"/>
+    </g>
+    <g fill="#244858" font-size="16" font-weight="600">
+      <text x="190" y="59" text-anchor="middle">Length per board</text>
+      <text x="318" y="150">3 boards</text>
+      <text x="205" y="214" text-anchor="middle">3 × 8 ft = 24 linear ft</text>
+    </g>
   </svg>
-  <span slot="caption">Measure the thickness and width of one board across its end, then measure along its long edge. Imperial board feet = thickness (in) × width (in) × length (ft) × count ÷ 12.</span>
+  <span slot="caption">Example with zero waste: three 8 ft boards give 24 linear ft. Select the board size, enter length and quantity, then set the waste allowance for your order.</span>
 </DiagramFrame>

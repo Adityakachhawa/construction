@@ -4,18 +4,16 @@ interface Props { class?: string }
 ---
 
 <DiagramFrame class={Astro.props.class} id="insulation-diagram-caption" title="Insulation Diagram">
-  <svg class="diagram-svg" viewBox="0 0 410 219" role="img" aria-label="Wall elevation with an opening and measured wall edges">
-    <rect x="36" y="61" width="225" height="116" fill="#efd5ae" stroke="#244858" stroke-width="1.5"/>
-    <path d="M61 62v114" fill="none" stroke="#244858" stroke-width="1.6" />
-    <path d="M107 62v114" fill="none" stroke="#244858" stroke-width="1.6" />
-    <path d="M153 62v114" fill="none" stroke="#244858" stroke-width="1.6" />
-    <path d="M199 62v114" fill="none" stroke="#244858" stroke-width="1.6" />
-    <path d="M245 62v114" fill="none" stroke="#244858" stroke-width="1.6" />
-    <rect x="142" y="104" width="78" height="73" fill="#f9fcfc" stroke="#244858" stroke-width="1.5"/>
-    <text x="181" y="149" text-anchor="middle" font-size="14" font-weight="600" fill="#244858">Opening</text>
-    <path d="M36 50H261m0 -5v10M36 45v10" fill="none" stroke="#215e70" stroke-width="1.6" /><text x="148.5" y="41" text-anchor="middle" font-size="16" font-weight="600" fill="#244858">Wall length</text>
-    <path d="M273 61V177m-5 0h10M268 61h10" fill="none" stroke="#215e70" stroke-width="1.6" /><text x="283" y="124" text-anchor="start" font-size="16" font-weight="600" fill="#244858">Wall height</text>
-    <path d="M61 211H107m0 -5v10M61 206v10" fill="none" stroke="#215e70" stroke-width="1.6" /><text x="84" y="202" text-anchor="middle" font-size="16" font-weight="600" fill="#244858">Stud spacing</text>
+  <svg class="diagram-svg" viewBox="0 0 410 195" role="img" aria-label="Measured rectangular area used to estimate insulation packages">
+    <g stroke="#244858" stroke-width="1.6" stroke-linejoin="round">
+      <rect x="52" y="69" width="197" height="95" fill="#eeddbb"/>
+      <path d="M52 52h197m0-5v10M52 47v10M268 69v95m-5 0h10M263 69h10" fill="none"/>
+    </g>
+    <g fill="#244858" font-size="16" font-weight="600">
+      <text x="151" y="42" text-anchor="middle">Length</text>
+      <text x="282" y="122">Width</text>
+      <text x="151" y="121" text-anchor="middle">Area to insulate</text>
+    </g>
   </svg>
-  <span slot="caption">Measure the area being insulated, account for openings, and use coverage per roll or package. Check the clear space between studs when choosing batt width.</span>
+  <span slot="caption">Measure the length and width of the surface and enter the coverage printed on one roll or package. The estimate uses surface area and the selected waste allowance.</span>
 </DiagramFrame>

@@ -1,3 +1,5 @@
+import { snapWholeQuantity } from './rounding';
+import { renderMeasurementView } from './measurement-view';
 import { dimensionRows } from './dimension-rows';
 import { fenceRuns } from './fence-runs';
 import type { CalculatorInputMap, CalculatorOutputMap, UnitSystem } from './_types';
@@ -9,6 +11,10 @@ export const layoutCalculators = [
 ];
 
 export function renderLayout(container: HTMLElement, slug: string, inputs: CalculatorInputMap, results: CalculatorOutputMap, unit: UnitSystem) {
+  if (!layoutCalculators.includes(slug)) {
+    renderMeasurementView(container, slug, inputs, results, unit);
+    return;
+  }
   const metric = unit === 'metric';
   const measure = (name: string) => metric ? Number(inputs[name + '_m']) :
     Number(inputs[name + '_ft']) + Number(inputs[name + '_in'] || 0) / 12;
@@ -54,8 +60,8 @@ export function renderLayout(container: HTMLElement, slug: string, inputs: Calcu
     const fixed = inputs.spacing_method === 'fixed';
     const spacing = fixed ? measure('post_spacing') : length / count;
     summary.textContent = `${count} sections · ${fmt(spacing)} ${lengthUnit} spacing. Marks are measured from the first post.`;
-    line(10,70,290,70);
     for (const run of projectRuns.length ? projectRuns : [{start:0, end:length, sections:count}]) {
+      line(10 + 280 * run.start / length, 70, 10 + 280 * run.end / length, 70);
       const interval = fixed ? measure('post_spacing') : (run.end - run.start) / (run.sections || 1);
       for (let i = 0; i <= run.sections && marks.length < 301; i++) {
       const distance = Math.min(run.start + i * interval, run.end);
@@ -102,7 +108,7 @@ export function renderLayout(container: HTMLElement, slug: string, inputs: Calcu
         const px = 12 + 276*x/measure('deck_length'), py = 10 + 100*y/measure('deck_width');
         line(px-3,py,px+3,py); line(px,py-3,px,py+3);
       }
-      summary.textContent = points.length + ' footing positions from the entered plan offsets.';
+      summary.textContent = 'Your plan positions · ' + points.length + ' footings from the entered offsets.';
     } else if (Number(inputs.plan_footings)) {
       summary.textContent = results.footings + ' footings from plan. Use their positions on the approved drawing.';
       container.replaceChildren(summary, detail);
@@ -110,7 +116,7 @@ export function renderLayout(container: HTMLElement, slug: string, inputs: Calcu
     } else {
       const step = measure('footing_spacing');
       const nx = Math.ceil(measure('deck_length') / step) + 1, ny = Math.ceil(measure('deck_width') / step) + 1;
-      summary.textContent = nx + ' by ' + ny + ' support positions in estimated rectangular grid.';
+      summary.textContent = 'Estimated grid · ' + nx + ' by ' + ny + ' support positions. Use your approved plan for construction.';
       for (let x=0;x<Math.min(80,nx);x++) for (let y=0;y<Math.min(80,ny);y++) {
         const px = 12 + 276*x/(nx-1), py = 10 + 105*y/(ny-1);
         line(px-1,py,px+1,py);
@@ -118,7 +124,7 @@ export function renderLayout(container: HTMLElement, slug: string, inputs: Calcu
     }
   } else if (slug === 'grout-calculator') {
     const suffix = metric ? '_mm' : '_in';
-    const w = Number(inputs['tile_width'+suffix]), h = Number(inputs['tile_length'+suffix]), joint = Number(inputs['joint_width'+suffix]);
+    const w = Number(inputs['tile_length'+suffix]), h = Number(inputs['tile_width'+suffix]), joint = Number(inputs['joint_width'+suffix]);
     legend = 'Tile: ' + fmt(w) + ' × ' + dimension(h, smallUnit) + ' · Joint: ' + dimension(joint, smallUnit);
     const scale = Math.min(270 / (2*w+joint),105 / (2*h+joint));
     for (let x=0;x<2;x++) for(let y=0;y<2;y++) {
@@ -137,20 +143,49 @@ export function renderLayout(container: HTMLElement, slug: string, inputs: Calcu
     const scale = Math.min(275/w,105/h);
     const rotated = inputs.sheet_orientation === 'rotated';
     const sw = rotated ? a:b, sh=rotated ? b:a;
-    for (let x=0;x < Math.min(150,Math.ceil(w/sw));x++) line(10+x*sw*scale,8,10+x*sw*scale,8+h*scale);
-    for (let y=0;y < Math.min(150,Math.ceil(h/sh));y++) line(10,8+y*sh*scale,10+w*scale,8+y*sh*scale);
+    const across = snapWholeQuantity(w / sw), down = snapWholeQuantity(h / sh);
+    const columns = Math.ceil(across), rows = Math.ceil(down);
+    const edgeW = (across - Math.floor(across)) * sw;
+    const edgeH = (down - Math.floor(down)) * sh;
+    function shade(x: number, y: number, width: number, height: number, color: string) {
+      if (width <= 0 || height <= 0) return;
+      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      rect.setAttribute('x', String(10 + x*scale));
+      rect.setAttribute('y', String(8 + y*scale));
+      rect.setAttribute('width', String(width*scale));
+      rect.setAttribute('height', String(height*scale));
+      rect.setAttribute('fill', color);
+      svg.prepend(rect);
+    }
+    if (!drywall) {
+      if (edgeW > 0) shade(w-edgeW,0,edgeW,h,'#f0cc89');
+      if (edgeH > 0) shade(0,h-edgeH,w-edgeW,edgeH,'#f0cc89');
+      shade(0,0,w,h,'#e0e9ed');
+    }
+    for (let x=0;x < Math.min(150,columns);x++) line(10+x*sw*scale,8,10+x*sw*scale,8+h*scale);
+    for (let y=0;y < Math.min(150,rows);y++) line(10,8+y*sh*scale,10+w*scale,8+y*sh*scale);
     line(10+w*scale,8,10+w*scale,8+h*scale); line(10,8+h*scale,10+w*scale,8+h*scale);
-    summary.textContent = 'First rectangle: '+Math.ceil(w/sw)+' columns × '+Math.ceil(h/sh)+' rows before openings or offcut reuse. Order quantity above uses combined area and waste.';
+    summary.textContent = 'First rectangle: '+columns+' columns × '+rows+' rows before openings or offcut reuse. Order quantity above uses combined area and waste.';
     if (!drywall) {
       const pieces = dimensionRows(inputs[metric ? 'offcuts_m' : 'offcuts_ft']).map(([w,h],index) => ({w,h,index:index+1}));
-      const columns = Math.ceil(w/sw), rows = Math.ceil(h/sh);
+      summary.textContent += ' Gray: full sheets. Amber: edge cuts. Green: matched offcuts.';
       const assignments: string[] = [];
       const match = (column:number, row:number) => {
-        const needW = Math.min(sw,w-column*sw), needH = Math.min(sh,h-row*sh);
+        const needW = column === columns - 1 && edgeW ? edgeW : sw;
+        const needH = row === rows - 1 && edgeH ? edgeH : sh;
         if (needW >= sw && needH >= sh) return;
-        const fit = pieces.findIndex(piece => piece.w >= needW && piece.h >= needH);
+        const fit = pieces.findIndex(piece => snapWholeQuantity(piece.w / needW) >= 1 && snapWholeQuantity(piece.h / needH) >= 1);
         if (fit < 0) return;
         const [piece] = pieces.splice(fit,1);
+        const patch = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        patch.setAttribute('x', String(10+column*sw*scale));
+        patch.setAttribute('y', String(8+row*sh*scale));
+        patch.setAttribute('width', String(needW*scale));
+        patch.setAttribute('height', String(needH*scale));
+        patch.setAttribute('fill', '#a5d5b3');
+        patch.setAttribute('stroke', '#315e46');
+        patch.setAttribute('stroke-dasharray', '3 2');
+        svg.append(patch);
         assignments.push('Offcut '+piece.index+' fits row '+(row+1)+', column '+(column+1)+' ('+fmt(needW)+' × '+fmt(needH)+' '+lengthUnit+')');
       };
       for (let row=0;row<rows && pieces.length;row++) match(columns-1,row);

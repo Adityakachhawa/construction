@@ -3,7 +3,6 @@ import type { CalculatorConfig, UnitSystem } from '../../calculators/_types';
 import { integerFields } from '../../calculators/validation';
 import { formatNumber } from '../../utils/format';
 import { projectHandoffs } from '../../calculators/project-handoffs';
-import { layoutCalculators } from '../../calculators/project-layout';
 import { isMeasurementSheet } from '../../calculators/order-checklist';
 import ResultTable from './ResultTable.astro';
 
@@ -321,7 +320,7 @@ const outputsJson = JSON.stringify(
     )}
 
     <!-- Action buttons -->
-    {layoutCalculators.includes(calc.slug) && <details class="project-layout" open><summary>Your layout</summary><div id="project-layout"></div></details>}
+    <details class="project-layout" open><summary>Your layout</summary><div id="project-layout"></div></details>
     {calc.inputs.some(f => f.type === "rectangles" || f.type === "dimensions") && <div id="section-summary" hidden></div>}
     <div id="project-handoffs">{projectHandoffs(calc.slug, defaultInputs, defaultOutputs, defaultUnit).map(link => <a href={link.href}>{link.label}</a>)}</div>
     <div class="result-actions"  id="result-actions">
@@ -1465,7 +1464,11 @@ const outputsJson = JSON.stringify(
       errorMsgEl.style.display = validation.valid ? 'none' : 'flex';
       errorMsgEl.textContent = validation.valid ? '' : Object.values(validation.errors)[0] + ' Results show the last valid inputs.';
     }
-    if (!validation.valid) return null;
+    const layout = document.getElementById('project-layout');
+    if (!validation.valid) {
+      if (layout) layout.textContent = 'Correct the highlighted inputs to see your layout.';
+      return null;
+    }
     const inputs = validation.inputs;
     restoreProductPrice(inputs);
     const results = formula(inputs, currentUnit);
@@ -1508,7 +1511,6 @@ const outputsJson = JSON.stringify(
     updateInterpretation(results, inputs);
     const sections = document.getElementById('section-summary');
     if (sections) renderSections(sections, inputs, currentUnit);
-    const layout = document.getElementById('project-layout');
     if (layout) renderLayout(layout, slug, inputs, results, currentUnit);
     const handoffs = document.getElementById('project-handoffs');
     if (handoffs) handoffs.replaceChildren(...projectHandoffs(slug, inputs, results, currentUnit).map(({href,label}) => {
